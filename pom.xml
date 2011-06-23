@@ -38,14 +38,26 @@
         </executions>
         <configuration>
           <target>${jaxws-api.version}</target>
+          <extension>true</extension>
+          <sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
         </configuration>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/wsdl</directory>
+        <targetPath>META-INF/wsdl</targetPath>
+      </resource>
+    </resources>
   </build>
   <modules>
     <module>kks</module>
     <module>pyh</module>
     <module>lok</module>
+    <module>customer-service</module>
   </modules>
   <repositories>
 
