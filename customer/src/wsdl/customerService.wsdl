@@ -72,11 +72,11 @@
     </wsdl:operation>
   </wsdl:portType>
 
-  <wsdl:binding name="bdJMOR-SOAP11HTTP" type="tns:ptCustomer">
+  <wsdl:binding name="bdCustomer-SOAP11HTTP" type="tns:ptCustomer">
     <soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
 
     <wsdl:operation name="opAddCustomer">
-      <soap11:operation/>
+      <soap11:operation soapAction="addCustomer"/>
         <wsdl:input>
           <soap11:body use="literal"/>
         </wsdl:input>
@@ -86,7 +86,7 @@
     </wsdl:operation>
 
     <wsdl:operation name="opGetCustomer">
-      <soap11:operation/>
+      <soap11:operation soapAction="getCustomer"/>
         <wsdl:input>
           <soap11:body use="literal"/>
         </wsdl:input>
@@ -96,21 +96,21 @@
     </wsdl:operation>
 
     <wsdl:operation name="opUpdateCustomer">
-      <soap11:operation/>
+      <soap11:operation soapAction="updateCustomer"/>
         <wsdl:input>
           <soap11:body use="literal"/>
         </wsdl:input>
     </wsdl:operation>
 
     <wsdl:operation name="opDeleteCustomer">
-      <soap11:operation/>
+      <soap11:operation soapAction="deleteCustomer"/>
         <wsdl:input>
           <soap11:body use="literal"/>
         </wsdl:input>
     </wsdl:operation>
     
     <wsdl:operation name="opQueryCustomers">
-      <soap11:operation/>
+      <soap11:operation soapAction="queryCustomers"/>
         <wsdl:input>
           <soap11:body use="literal"/>
         </wsdl:input>
