@@ -6,8 +6,14 @@
 
   <xsd:element name="customer" type="CustomerType"/>
 
+  <xsd:element name="customerUpdate" type="CustomerType"/>
+  
   <xsd:element name="customerSearchCriteria" type="CustomerSearchCriteriaType"/>
   
+  <xsd:element name="customerId" type="xsd:string"/>
+  
+  <xsd:element name="customerIdRemove" type="xsd:string"/>
+
   <xsd:element name="customers" type="CustomersType"/>
 
   <xsd:complexType name="CustomerType">
@@ -19,8 +25,6 @@
     </xsd:sequence>
   </xsd:complexType>
   
-  <xsd:element name="customerId" type="xsd:string"/>
-
   <xsd:complexType name="CustomersType">
     <xsd:sequence>
       <xsd:element name="customer" type="CustomerType" maxOccurs="unbounded"/>

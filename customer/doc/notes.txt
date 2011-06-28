@@ -1,19 +1,29 @@
 
 TODO
-- SOAP 1.2
+- faults in contract
+- authentication
+- slf4j
+- ws-addressing?
+- testability
+
+DONE
+- SOAP 1.2 binding
 - 00:29:28,109 ERROR [SOAPFaultHelperJAXWS] SOAP request exception
   org.jboss.ws.WSException: Cannot uniquely indentify operation: {http://koku.fi/schema/customer}customer
-- faults in contract
-- slf4j
-- authentication
-- ws-addressing
-- testability
+  issue: WS-I BP R2710
+  solutions:
+  * use SOAPAction HTTP header
+  	manually set SOAPAction: "http://foo.bar/addCustomer" ==> same result
+  * use WS-Addressing Action: difficult to manage in client code ==> makes API less usable
+  * use unique message types: OK
 
 ==================
 
 http://localhost:8080/customer-service-0.0.1-SNAPSHOT/CustomerServiceBean?wsdl
 
+==================
 
+http://jax-ws.java.net/articles/MessageContext.html
+http://blogs.oracle.com/artf/entry/using_jax_ws_2_1
 
-http://localhost:8080/customer-service-0.0.1-SNAPSHOT/CustomerServiceBean?wsdl
-
+==================
