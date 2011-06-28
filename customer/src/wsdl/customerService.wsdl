@@ -9,6 +9,11 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   >
 
+  <wsdl:documentation>
+    KoKu customer service contract definition.
+    Ixonos / aspluma
+  </wsdl:documentation>
+
   <wsdl:types>
     <xsd:schema>
       <xsd:import namespace="http://koku.fi/schema/customer" schemaLocation="customer.xsd"/>

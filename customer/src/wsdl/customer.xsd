@@ -4,6 +4,13 @@
   targetNamespace="http://koku.fi/schema/customer"
   elementFormDefault="qualified">
 
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">
+      KoKu customer service message type definitions.
+      Ixonos / aspluma
+    </xsd:documentation>
+  </xsd:annotation>
+
   <xsd:element name="customer" type="CustomerType"/>
 
   <xsd:element name="customerUpdate" type="CustomerType"/>
