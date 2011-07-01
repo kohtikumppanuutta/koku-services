@@ -1,9 +1,12 @@
 package fi.koku.services.entity.customer;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
+import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.SOAPBinding;
 
 
 /**
@@ -18,6 +21,8 @@ import javax.xml.ws.WebServiceContext;
         portName="customerService-http-soap12",
         serviceName="svCustomer"
 )
+@BindingType(SOAPBinding.SOAP12HTTP_BINDING)
+@RolesAllowed("koku-role")
 public class CustomerServiceBean implements PtCustomer {
 	@Resource WebServiceContext wsCtx;
 	

@@ -1,12 +1,13 @@
 
 TODO
+- package and namespace conventions
 - faults in contract
-- authentication
+- soap headers
 - slf4j
-- ws-addressing?
 - testability
 
 DONE
+- authentication
 - SOAP 1.2 binding
 - 00:29:28,109 ERROR [SOAPFaultHelperJAXWS] SOAP request exception
   org.jboss.ws.WSException: Cannot uniquely indentify operation: {http://koku.fi/schema/customer}customer
@@ -16,12 +17,14 @@ DONE
   	manually set SOAPAction: "http://foo.bar/addCustomer" ==> same result
   * use WS-Addressing Action: difficult to manage in client code ==> makes API less usable
   * use unique message types: OK
+- ws-addressing? no
 
 ==================
 
 http://localhost:8080/customer-service-0.0.1-SNAPSHOT/CustomerServiceBean?wsdl
 
 ==================
+
 JBoss EAP auth config
 - add a security domain config in conf/login-config.xml
 
@@ -29,5 +32,8 @@ JBoss EAP auth config
 
 http://jax-ws.java.net/articles/MessageContext.html
 http://blogs.oracle.com/artf/entry/using_jax_ws_2_1
+
+https://issues.jboss.org/browse/JBWS-2183?page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel
+
 
 ==================
