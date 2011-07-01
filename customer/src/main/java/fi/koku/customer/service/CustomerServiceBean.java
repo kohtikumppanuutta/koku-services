@@ -1,7 +1,9 @@
 package fi.koku.customer.service;
 
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
 
 import fi.koku.contract.customer.PtCustomer;
 import fi.koku.schema.customer.CustomerSearchCriteriaType;
@@ -11,7 +13,7 @@ import fi.koku.schema.customer.CustomersType;
 /**
  * KoKu Customer service implementation class.
  * 
- * @author aspluma
+ * @author Ixonos / aspluma
  */
 @Stateless
 @WebService(wsdlLocation="META-INF/wsdl/customerService.wsdl",
@@ -21,10 +23,13 @@ import fi.koku.schema.customer.CustomersType;
         serviceName="svCustomer"
 )
 public class CustomerServiceBean implements PtCustomer {
-
+	@Resource WebServiceContext wsCtx;
+	
 	@Override
 	public String opAddCustomer(CustomerType customer) {
 		System.out.println("opAddCustomer");
+		String caller = wsCtx.getUserPrincipal().getName();
+		System.out.println("caller: "+caller);
 		return "xyz";
 	}
 

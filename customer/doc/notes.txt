@@ -22,6 +22,10 @@ DONE
 http://localhost:8080/customer-service-0.0.1-SNAPSHOT/CustomerServiceBean?wsdl
 
 ==================
+JBoss EAP auth config
+- add a security domain config in conf/login-config.xml
+
+==================
 
 http://jax-ws.java.net/articles/MessageContext.html
 http://blogs.oracle.com/artf/entry/using_jax_ws_2_1
