@@ -16,14 +16,14 @@ import javax.xml.ws.soap.SOAPBinding;
  */
 @Stateless
 @WebService(wsdlLocation="META-INF/wsdl/customerService.wsdl",
-        endpointInterface="fi.koku.services.entity.customer.PtCustomer",
-        targetNamespace="http://services.koku.fi/entity/customer",
-        portName="customerService-http-soap12",
-        serviceName="svCustomer"
+    endpointInterface="fi.koku.services.entity.customer.CustomerServicePortType",
+    targetNamespace="http://services.koku.fi/entity/customer",
+    portName="customerService-soap12-port",
+    serviceName="svCustomer"
 )
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 @RolesAllowed("koku-role")
-public class CustomerServiceBean implements PtCustomer {
+public class CustomerServiceBean implements CustomerServicePortType {
 	@Resource WebServiceContext wsCtx;
 	
 	@Override

@@ -1,13 +1,13 @@
 
 TODO
-- package and namespace conventions
 - faults in contract
 - soap headers
 - slf4j
 - testability
 
 DONE
-- authentication
+- package and namespace conventions
+- HTTP basic authentication
 - SOAP 1.2 binding
 - 00:29:28,109 ERROR [SOAPFaultHelperJAXWS] SOAP request exception
   org.jboss.ws.WSException: Cannot uniquely indentify operation: {http://koku.fi/schema/customer}customer
