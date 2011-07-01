@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns="http://koku.fi/schema/customer"
-  targetNamespace="http://koku.fi/schema/customer"
+  xmlns="http://services.koku.fi/entity/customer"
+  targetNamespace="http://services.koku.fi/entity/customer"
   elementFormDefault="qualified">
 
   <xsd:annotation>

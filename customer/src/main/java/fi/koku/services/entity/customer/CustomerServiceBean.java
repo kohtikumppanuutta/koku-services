@@ -1,14 +1,10 @@
-package fi.koku.customer.service;
+package fi.koku.services.entity.customer;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
-import fi.koku.contract.customer.PtCustomer;
-import fi.koku.schema.customer.CustomerSearchCriteriaType;
-import fi.koku.schema.customer.CustomerType;
-import fi.koku.schema.customer.CustomersType;
 
 /**
  * KoKu Customer service implementation class.
@@ -17,8 +13,8 @@ import fi.koku.schema.customer.CustomersType;
  */
 @Stateless
 @WebService(wsdlLocation="META-INF/wsdl/customerService.wsdl",
-        endpointInterface="fi.koku.contract.customer.PtCustomer",
-        targetNamespace="http://koku.fi/contract/customer",
+        endpointInterface="fi.koku.services.entity.customer.PtCustomer",
+        targetNamespace="http://services.koku.fi/entity/customer",
         portName="customerService-http-soap12",
         serviceName="svCustomer"
 )
@@ -71,5 +67,4 @@ public class CustomerServiceBean implements PtCustomer {
 		c.setLastName("salminen");
 		return c;
 	}
-
 }
