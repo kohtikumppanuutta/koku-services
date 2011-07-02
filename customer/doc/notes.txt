@@ -1,13 +1,17 @@
 
 TODO
+- passing non-business contract related data to the service (e.g. logging data)
+  SOAP Headers?
 - faults in contract
 - soap headers
+- contract/schema versioning
 - slf4j
 - testability
+- schema reusability
 
 DONE
 - package and namespace conventions
-- HTTP basic authentication
+- authentication: HTTP basic authentication
 - SOAP 1.2 binding
 - 00:29:28,109 ERROR [SOAPFaultHelperJAXWS] SOAP request exception
   org.jboss.ws.WSException: Cannot uniquely indentify operation: {http://koku.fi/schema/customer}customer
@@ -18,6 +22,32 @@ DONE
   * use WS-Addressing Action: difficult to manage in client code ==> makes API less usable
   * use unique message types: OK
 - ws-addressing? no
+
+==================
+
+data model
+- nimi
+  hetu
+  henkilön tila
+  syntymäaika
+  siviilisääty (marital status)
+  kansalaisuus
+  kieli
+  yhteystieto
+  + osoite
+  + puhelinnumero
+  + sähköinen yhteystieto
+  sukupuoli
+  turvakielto
+  huollettavat
+
+kts. Asiakastiedon pääjäsennys
+	 soa palvelut
+  
+loggausta varten tarvitaan lisäksi seuraavat tiedot
+- komponentti?
+- käyttäjätunnus
+- 
 
 ==================
 

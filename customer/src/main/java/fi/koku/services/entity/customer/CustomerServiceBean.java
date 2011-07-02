@@ -8,6 +8,9 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * KoKu Customer service implementation class.
@@ -19,15 +22,20 @@ import javax.xml.ws.soap.SOAPBinding;
     endpointInterface="fi.koku.services.entity.customer.CustomerServicePortType",
     targetNamespace="http://services.koku.fi/entity/customer",
     portName="customerService-soap12-port",
-    serviceName="svCustomer"
+    serviceName="customerService"
 )
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 @RolesAllowed("koku-role")
 public class CustomerServiceBean implements CustomerServicePortType {
-	@Resource WebServiceContext wsCtx;
+  private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
+  
+	@Resource
+	private WebServiceContext wsCtx;
 	
 	@Override
 	public String opAddCustomer(CustomerType customer) {
+	  logger.debug("foo");
+	  logger.info("opAddCustomer");
 		System.out.println("opAddCustomer");
 		String caller = wsCtx.getUserPrincipal().getName();
 		System.out.println("caller: "+caller);

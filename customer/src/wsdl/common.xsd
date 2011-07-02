@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://services.koku.fi/common"
+  targetNamespace="http://services.koku.fi/common"
+  elementFormDefault="qualified">
+
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">
+      KoKu common service message type definitions.
+      Ixonos / aspluma
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:simpleType name="bigInteger">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

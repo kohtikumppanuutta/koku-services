@@ -2,6 +2,7 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns="http://services.koku.fi/entity/customer"
   targetNamespace="http://services.koku.fi/entity/customer"
+  xmlns:common="http://services.koku.fi/common"
   elementFormDefault="qualified">
 
   <xsd:annotation>
@@ -10,6 +11,8 @@
       Ixonos / aspluma
     </xsd:documentation>
   </xsd:annotation>
+
+  <xsd:import namespace="http://services.koku.fi/common" schemaLocation="common.xsd"/>
 
   <xsd:element name="customer" type="CustomerType"/>
 
@@ -25,7 +28,7 @@
 
   <xsd:complexType name="CustomerType">
     <xsd:sequence>
-      <xsd:element name="id" type="bigInteger"/>
+      <xsd:element name="id" type="common:bigInteger"/>
       <xsd:element name="hetu" type="xsd:string"/>
       <xsd:element name="firstName" type="xsd:string"/>
       <xsd:element name="lastName" type="xsd:string"/>
@@ -40,17 +43,11 @@
   
   <xsd:complexType name="CustomerSearchCriteriaType">
     <xsd:sequence>
-      <xsd:element name="id" type="bigInteger" minOccurs="0"/>
+      <xsd:element name="id" type="common:bigInteger" minOccurs="0"/>
       <xsd:element name="hetu" type="xsd:string" minOccurs="0"/>
       <xsd:element name="parentHetu" type="xsd:string" minOccurs="0"/>
       <xsd:element name="childHetu" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>
-
-  <xsd:simpleType name="bigInteger">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\d+" />
-    </xsd:restriction>
-  </xsd:simpleType>
 
 </xsd:schema>
