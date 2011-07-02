@@ -3,6 +3,7 @@
   targetNamespace="http://services.koku.fi/entity/customer"
   xmlns:tns="http://services.koku.fi/entity/customer"
   xmlns:cust="http://services.koku.fi/entity/customer"
+  xmlns:common="http://services.koku.fi/common"
   xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/"
   xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -16,11 +17,17 @@
 
   <wsdl:types>
     <xsd:schema>
+      <xsd:import namespace="http://services.koku.fi/common" schemaLocation="common.xsd"/>
       <xsd:import namespace="http://services.koku.fi/entity/customer" schemaLocation="customer.xsd"/>
     </xsd:schema>
   </wsdl:types>
   
   <!--  message definitions for CRUDL style operations: add, get, update, delete, query -->
+
+
+  <wsdl:message name="AuditHeader">
+    <wsdl:part name="AuditHeader" element="common:auditInfo"/>
+  </wsdl:message>
 
   <wsdl:message name="msgAddCustomerRequest">
     <wsdl:part name="Customer" element="cust:customer"/>
@@ -84,6 +91,7 @@
       <soap12:operation soapAction="http://koku.fi/action/customer/add"/>
         <wsdl:input>
           <soap12:body use="literal"/>
+          <soap11:header message="tns:AuditHeader" part="AuditHeader" />
         </wsdl:input>
         <wsdl:output>
           <soap12:body use="literal"/>

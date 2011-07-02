@@ -1,5 +1,8 @@
 package fi.koku.services.entity.customer;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -10,6 +13,8 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fi.koku.services.common.AuditInfoType;
 
 
 /**
@@ -31,17 +36,27 @@ public class CustomerServiceBean implements CustomerServicePortType {
   
 	@Resource
 	private WebServiceContext wsCtx;
-	
-	@Override
-	public String opAddCustomer(CustomerType customer) {
-	  logger.debug("foo");
-	  logger.info("opAddCustomer");
-		System.out.println("opAddCustomer");
-		String caller = wsCtx.getUserPrincipal().getName();
-		System.out.println("caller: "+caller);
-		return "xyz";
-	}
 
+  @Override
+  public String opAddCustomer(CustomerType customer, AuditInfoType auditHeader) {
+    logger.debug("foo");
+    logger.info("opAddCustomer");
+    System.out.println("opAddCustomer");
+
+    // soap headers
+    if(auditHeader != null)
+      System.out.println("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
+    
+    // message context
+    Set<String> keys = wsCtx.getMessageContext().keySet();
+    for(Iterator<String> i = keys.iterator(); i.hasNext(); )
+      System.out.println("i: "+i.next());
+    
+    String caller = wsCtx.getUserPrincipal().getName();
+    System.out.println("caller: "+caller);
+    return "xyz";
+  }
+	
 	@Override
 	public CustomerType opGetCustomer(String customerId) {
 		System.out.println("opGetCustomer");
@@ -80,4 +95,5 @@ public class CustomerServiceBean implements CustomerServicePortType {
 		c.setLastName("salminen");
 		return c;
 	}
+
 }

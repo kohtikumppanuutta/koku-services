@@ -3,13 +3,12 @@ TODO
 - passing non-business contract related data to the service (e.g. logging data)
   SOAP Headers?
 - faults in contract
-- soap headers
 - contract/schema versioning
-- slf4j
+- slf4j + log4j config
 - testability
-- schema reusability
 
 DONE
+- schema reusability
 - package and namespace conventions
 - authentication: HTTP basic authentication
 - SOAP 1.2 binding

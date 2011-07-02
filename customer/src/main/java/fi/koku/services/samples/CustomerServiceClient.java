@@ -6,6 +6,7 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
+import fi.koku.services.common.AuditInfoType;
 import fi.koku.services.entity.customer.CustomerService;
 import fi.koku.services.entity.customer.CustomerServicePortType;
 import fi.koku.services.entity.customer.CustomerType;
@@ -25,7 +26,10 @@ public class CustomerServiceClient {
 		((BindingProvider)port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "marko");
 		((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "marko"); 
 
-		String id = port.opAddCustomer(new CustomerType());
+		AuditInfoType audit = new AuditInfoType();
+		audit.setComponent("kks");
+		audit.setUserId("aspluma");
+		String id = port.opAddCustomer(new CustomerType(), audit);
 		System.out.println("id: "+id);
 	}
 
