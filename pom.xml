@@ -6,6 +6,14 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>koku-services</name>
+  <properties>
+    <slf4j.version>1.6.1</slf4j.version>
+    <spring.version>3.0.5.RELEASE</spring.version>
+    <ejb-api.version>3.0</ejb-api.version>
+    <jaxws-api.version>2.1</jaxws-api.version>
+    <jpa-api.version>1.0-rev-1</jpa-api.version>
+    <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
+  </properties>
   <build>
     <plugins>
       <plugin>
@@ -16,8 +24,23 @@
           <source>1.6</source>
           <target>1.6</target>
           <optimise>true</optimise>
+          <encoding>UTF-8</encoding>
           <debug>true</debug>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.zeroturnaround</groupId>
+        <artifactId>jrebel-maven-plugin</artifactId>
+        <version>${jrebel.plugin.version}</version>
+        <executions>
+          <execution>
+            <id>generate-rebel-xml</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -101,14 +124,6 @@
       <layout>default</layout> </pluginRepository> -->
 
   </pluginRepositories>
-
-  <properties>
-    <slf4j.version>1.6.1</slf4j.version>
-    <spring.version>3.0.5.RELEASE</spring.version>
-    <ejb-api.version>3.0</ejb-api.version>
-    <jaxws-api.version>2.1</jaxws-api.version>
-    <jpa-api.version>1.0-rev-1</jpa-api.version>
-  </properties>
 
   <dependencies>
     <dependency>
