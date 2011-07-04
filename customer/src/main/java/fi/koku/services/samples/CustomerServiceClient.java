@@ -29,8 +29,18 @@ public class CustomerServiceClient {
 		AuditInfoType audit = new AuditInfoType();
 		audit.setComponent("kks");
 		audit.setUserId("aspluma");
-		String id = port.opAddCustomer(new CustomerType(), audit);
+		String id = port.opAddCustomer(getCustomer(), audit);
 		System.out.println("id: "+id);
 	}
+	
+	 private static CustomerType getCustomer() {
+	    CustomerType c = new CustomerType();
+	    c.setId("1234567890");
+	    c.setHetu("123-456");
+	    c.setFirstName("simo");
+	    c.setLastName("salminen");
+	    return c;
+	  }
+
 
 }

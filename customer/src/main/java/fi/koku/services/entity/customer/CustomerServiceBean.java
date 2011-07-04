@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
@@ -31,6 +32,7 @@ import fi.koku.services.common.AuditInfoType;
 )
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 @RolesAllowed("koku-role")
+@HandlerChain(file="auditInfoHandler.xml")
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
   
@@ -47,6 +49,8 @@ public class CustomerServiceBean implements CustomerServicePortType {
     if(auditHeader != null)
       System.out.println("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
     
+    System.out.println("msg: "+wsCtx.getMessageContext().get("myownmsg"));
+    
     // message context
     Set<String> keys = wsCtx.getMessageContext().keySet();
     for(Iterator<String> i = keys.iterator(); i.hasNext(); )
@@ -54,7 +58,7 @@ public class CustomerServiceBean implements CustomerServicePortType {
     
     String caller = wsCtx.getUserPrincipal().getName();
     System.out.println("caller: "+caller);
-    return "xyz";
+    return "xyz2";
   }
 	
 	@Override
