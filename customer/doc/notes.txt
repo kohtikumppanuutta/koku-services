@@ -8,11 +8,23 @@ TODO
 
 DONE
 - passing non-business contract related data to the service (e.g. logging data)
-  SOAP Headers
+  SOAP Headers.
+  logging data should be passed in SOAP headers. Mandatory headers declared with "wsdl:required" but not enforced in implementation
+  (e.g. handler or interceptor).
+
 - schema reusability
+  message type definitions externalized to separate schema files and imported in wsdl.
+  separate service specific and common message type definitions.
+  common types reused across services.
+  
 - package and namespace conventions
-- authentication: HTTP basic authentication
+
+- authentication: HTTP basic authentication.
+  all clients must authenticate to service. each client has its own user id which can be used e.g. for auditing purposes
+  if clients don't follow the rules. 
+
 - SOAP 1.2 binding
+
 - 00:29:28,109 ERROR [SOAPFaultHelperJAXWS] SOAP request exception
   org.jboss.ws.WSException: Cannot uniquely indentify operation: {http://koku.fi/schema/customer}customer
   issue: WS-I BP R2710
@@ -21,6 +33,7 @@ DONE
   	manually set SOAPAction: "http://foo.bar/addCustomer" ==> same result
   * use WS-Addressing Action: difficult to manage in client code ==> makes API less usable
   * use unique message types: OK
+
 - ws-addressing? no
 
 ==================
