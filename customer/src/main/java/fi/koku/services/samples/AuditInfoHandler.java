@@ -1,5 +1,6 @@
 package fi.koku.services.samples;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -17,7 +18,8 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import fi.koku.services.common.AuditInfoType;
+import fi.koku.services.common.v1.AuditInfoType;
+import fi.koku.services.entity.customer.impl.Constants;
 
 /**
  * Parse and process SOAP header and pass a message to the service endpoint implementation.
@@ -27,21 +29,26 @@ import fi.koku.services.common.AuditInfoType;
  * @author aspluma
  */
 public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
-  private static final String NS_KOKU_COMMON = "http://services.koku.fi/common";
-  private static final String ELEM_AUDIT_INFO = "auditInfo";
-  private static final QName NAME_AUDIT_INFO = new QName(NS_KOKU_COMMON, ELEM_AUDIT_INFO);
 
   private JAXBContext jaxbContext;
+  private static final Set<QName> headers = createHeaders();
 
   @PostConstruct
   public void init() {
     try {
-      jaxbContext = JAXBContext.newInstance(fi.koku.services.common.AuditInfoType.class);
+      jaxbContext = JAXBContext.newInstance(fi.koku.services.common.v1.AuditInfoType.class);
     } catch (JAXBException e) {
       System.out.println("error: "+e.getMessage());
       throw new RuntimeException("failed to create JAXBContext", e);
     }
   }
+  
+  private static Set<QName> createHeaders() {
+    Set<QName> hdrs = new HashSet<QName>();
+    hdrs.add(Constants.NAME_AUDIT_INFO);
+    return hdrs;
+  }
+  
 
   @PreDestroy
   public void destroy() {
@@ -69,11 +76,14 @@ public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
     SOAPMessage msg = msgCtx.getMessage();
     try {
       SOAPHeader hdr = msg.getSOAPHeader();
+      if(hdr == null)
+        return true;
       
       for(Iterator<?> i = hdr.extractAllHeaderElements(); i.hasNext(); ) {
         SOAPHeaderElement h = (SOAPHeaderElement)i.next();
-        if(!NAME_AUDIT_INFO.equals(h.getElementQName()))
-          return true;
+        System.out.println("h: "+h.getNodeName());
+        if(!Constants.NAME_AUDIT_INFO.equals(h.getElementQName()))
+          continue;
           
         JAXBElement<AuditInfoType> a = jaxbContext.createUnmarshaller().unmarshal(h, AuditInfoType.class);
         System.out.println("audit: "+a+", "+a.getValue().getComponent());
@@ -81,6 +91,7 @@ public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
         msgCtx.put("myownmsg", "hello, world");
         msgCtx.setScope("myownmsg", MessageContext.Scope.APPLICATION);
       }
+      System.out.println("headers processed");
     } catch (SOAPException e) {
       System.out.println("soapexception: "+e.getMessage());
       e.printStackTrace();
@@ -95,7 +106,7 @@ public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
   @Override
   public Set<QName> getHeaders() { 
     System.out.println("getHeaders");
-    return null; // FIXME
+    return headers;
   }
   
 }

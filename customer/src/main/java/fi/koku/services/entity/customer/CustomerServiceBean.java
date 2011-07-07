@@ -15,7 +15,10 @@ import javax.xml.ws.soap.SOAPBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.koku.services.common.AuditInfoType;
+import fi.koku.services.entity.customer.v1.CustomerSearchCriteriaType;
+import fi.koku.services.entity.customer.v1.CustomerServicePortType;
+import fi.koku.services.entity.customer.v1.CustomerType;
+import fi.koku.services.entity.customer.v1.CustomersType;
 
 
 /**
@@ -25,8 +28,8 @@ import fi.koku.services.common.AuditInfoType;
  */
 @Stateless
 @WebService(wsdlLocation="META-INF/wsdl/customerService.wsdl",
-    endpointInterface="fi.koku.services.entity.customer.CustomerServicePortType",
-    targetNamespace="http://services.koku.fi/entity/customer",
+    endpointInterface="fi.koku.services.entity.customer.v1.CustomerServicePortType",
+    targetNamespace="http://services.koku.fi/entity/customer/v1",
     portName="customerService-soap12-port",
     serviceName="customerService"
 )
@@ -36,18 +39,19 @@ import fi.koku.services.common.AuditInfoType;
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
   
+  
 	@Resource
 	private WebServiceContext wsCtx;
 
   @Override
-  public String opAddCustomer(CustomerType customer, AuditInfoType auditHeader) {
+  public String opAddCustomer(CustomerType customer) {
     logger.debug("foo");
     logger.info("opAddCustomer");
     System.out.println("opAddCustomer");
 
     // soap headers
-    if(auditHeader != null)
-      System.out.println("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
+//    if(auditHeader != null)
+//      System.out.println("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
     
     System.out.println("msg: "+wsCtx.getMessageContext().get("myownmsg"));
     

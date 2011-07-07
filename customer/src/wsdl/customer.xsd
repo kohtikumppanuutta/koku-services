@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns="http://services.koku.fi/entity/customer"
-  targetNamespace="http://services.koku.fi/entity/customer"
-  xmlns:common="http://services.koku.fi/common"
-  elementFormDefault="qualified">
+  targetNamespace="http://services.koku.fi/entity/customer/v1"
+  xmlns="http://services.koku.fi/entity/customer/v1"
+  xmlns:common="http://services.koku.fi/common/v1"
+  elementFormDefault="qualified" version="1.0">
 
   <xsd:annotation>
     <xsd:documentation xml:lang="en">
@@ -12,7 +12,7 @@
     </xsd:documentation>
   </xsd:annotation>
 
-  <xsd:import namespace="http://services.koku.fi/common" schemaLocation="common.xsd"/>
+  <xsd:import namespace="http://services.koku.fi/common/v1" schemaLocation="common.xsd"/>
 
   <xsd:element name="customer" type="CustomerType"/>
 

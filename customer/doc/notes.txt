@@ -1,16 +1,16 @@
 
 TODO
-- require soap headers
 - faults in contract
 - contract/schema versioning
 - slf4j + log4j config
 - testability
 
 DONE
-- passing non-business contract related data to the service (e.g. logging data)
-  SOAP Headers.
-  logging data should be passed in SOAP headers. Mandatory headers declared with "wsdl:required" but not enforced in implementation
-  (e.g. handler or interceptor).
+- pass non-business contract related data to the service (e.g. logging data) via SOAP Headers
+	to keep the business interface clean and reusable.
+  mandatory headers: logging data should be passed in SOAP headers. Mandatory headers declared with "wsdl:required".
+  	Map headers as implementation method input parameters using JAX-WS and enforce header presence in method implementation if required
+    (not e.g. handler or interceptor).
 
 - schema reusability
   message type definitions externalized to separate schema files and imported in wsdl.

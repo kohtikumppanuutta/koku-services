@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <wsdl:definitions name="customerService"
-  targetNamespace="http://services.koku.fi/entity/customer"
-  xmlns:tns="http://services.koku.fi/entity/customer"
-  xmlns:cust="http://services.koku.fi/entity/customer"
-  xmlns:common="http://services.koku.fi/common"
+  targetNamespace="http://services.koku.fi/entity/customer/v1"
+  xmlns:tns="http://services.koku.fi/entity/customer/v1"
+  xmlns:cust="http://services.koku.fi/entity/customer/v1"
+  xmlns:common="http://services.koku.fi/common/v1"
   xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/"
   xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -11,14 +11,14 @@
   >
 
   <wsdl:documentation>
-    KoKu customer service contract definition.
+    KoKu customer service contract definition version 1.0.
     Ixonos / aspluma
   </wsdl:documentation>
 
   <wsdl:types>
     <xsd:schema>
-      <xsd:import namespace="http://services.koku.fi/common" schemaLocation="common.xsd"/>
-      <xsd:import namespace="http://services.koku.fi/entity/customer" schemaLocation="customer.xsd"/>
+      <xsd:import namespace="http://services.koku.fi/common/v1" schemaLocation="common.xsd"/>
+      <xsd:import namespace="http://services.koku.fi/entity/customer/v1" schemaLocation="customer.xsd"/>
     </xsd:schema>
   </wsdl:types>
   
@@ -91,7 +91,7 @@
       <soap12:operation soapAction="http://koku.fi/action/customer/add"/>
         <wsdl:input>
           <soap12:body use="literal"/>
-          <soap11:header message="tns:AuditHeader" part="AuditHeader" />
+          <soap11:header message="tns:AuditHeader" part="AuditHeader" wsdl:required="true"/>
         </wsdl:input>
         <wsdl:output>
           <soap12:body use="literal"/>
