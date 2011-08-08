@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>koku-gatein</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>koku-gatein</name>
+
+  <properties>
+  	<gatein.version>3.1.0-GA</gatein.version>
+  </properties>
+
+  <parent>
+  	<groupId>kohti-kumppanuutta</groupId>
+  	<artifactId>koku-services</artifactId>
+  	<version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
+  <repositories>
+
+        <repository>
+      <id>exoplatform-public</id>
+      <name>ExoPlatform Repository</name>
+      <url>http://repository.exoplatform.org/content/groups/public/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+
+  <dependencies>
+  	<dependency>
+  		<groupId>org.exoplatform.core</groupId>
+  		<artifactId>exo.core.component.organization.api</artifactId>
+  		<version>2.3.2-GA</version>
+		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.exoplatform.kernel</groupId>
+  		<artifactId>exo.kernel.container</artifactId>
+  		<version>2.2.2-GA</version>
+		<scope>provided</scope>
+  	</dependency>
+  </dependencies>
+</project>

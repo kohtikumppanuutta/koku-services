@@ -82,6 +82,8 @@
     <module>pyh</module>
     <module>lok</module>
     <module>customer-service</module>
+  	<module>kv</module>
+  	<module>gatein</module>
   </modules>
   <repositories>
 
