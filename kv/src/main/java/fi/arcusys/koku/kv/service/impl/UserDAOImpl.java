@@ -26,4 +26,23 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
 		final Map<String, Object> params = Collections.<String,Object>singletonMap("uid", uid);
 		return getSingleResultOrNull("findUserByUid", params);
 	}
+
+	/**
+	 * @param uid
+	 * @return
+	 */
+	@Override
+	public User getOrCreateUser(final String uid) {
+		if (uid == null) {
+			return null;
+		}
+		User fromUser = getUserByUid(uid);
+		
+		if (fromUser == null) {
+			fromUser = new User();
+			fromUser.setUid(uid);
+			fromUser = super.create(fromUser);
+		}
+		return fromUser;
+	}
 }

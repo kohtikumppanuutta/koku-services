@@ -22,10 +22,14 @@ public interface KokuMessageService {
 	 * @param subQuery Basic query for the message, such as 'message_subject like %keyword%' , 'ORDER BY message_creationDate'
 	 * @return The number of messages
 	 */
-	public int getTotalMessages(@WebParam(name = "user") String user, 
+	public int getTotalMessagesOld(@WebParam(name = "user") String user, 
 			@WebParam(name = "folderType") FolderType messageType, 
 			@WebParam(name = "subQuery") String subQuery);
 	
+	public int getTotalMessages(@WebParam(name = "user") String user, 
+			@WebParam(name = "folderType") FolderType messageType, 
+			@WebParam(name = "criteria") Criteria criteria);
+
 	/**
 	 * Gets unread messages
 	 * @param user Username
@@ -44,12 +48,25 @@ public interface KokuMessageService {
 	 * @param maxNum The maximum amount of messages that fulfill the condition
 	 * @return List of messages
 	 */
-	public List<MessageSummary> getMessages(@WebParam(name = "user") String user, 
+	public List<MessageSummary> getMessagesOld(@WebParam(name = "user") String user, 
 			@WebParam(name = "folderType") FolderType messageType, 
 			@WebParam(name = "subQuery") String subQuery, 
 			@WebParam(name = "startNum") int startNum, 
 			@WebParam(name = "maxNum") int maxNum);
 	
+	public List<MessageSummary> getMessages(@WebParam(name = "user") String user, 
+			@WebParam(name = "folderType") FolderType messageType, 
+			@WebParam(name = "subQuery") MessageQuery subQuery); 
+
+//	public List<MessageSummary> getMessagesByQueryParams(@WebParam(name = "user") String user, 
+//			@WebParam(name = "folderType") FolderType messageType,
+//			@WebParam(name = "keywords") String keywords, 
+//			@WebParam(name = "fields") List<MessageQuery.Fields> fields, 
+//			@WebParam(name = "orderByField") MessageQuery.Fields orderByField,
+//			@WebParam(name = "orderByType") OrderBy.Type orderByType,
+//			@WebParam(name = "startNum") int startNum, 
+//			@WebParam(name = "maxNum") int maxNum);
+
 	/**
 	 * Gets the detailed message with content by messageId
 	 * @param messageId

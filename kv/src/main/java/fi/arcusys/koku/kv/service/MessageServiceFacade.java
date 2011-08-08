@@ -6,6 +6,8 @@ import javax.jws.WebService;
 
 import fi.arcusys.koku.kv.service.datamodel.FolderType;
 import fi.arcusys.koku.kv.soa.Answer;
+import fi.arcusys.koku.kv.soa.Criteria;
+import fi.arcusys.koku.kv.soa.MessageQuery;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
 import fi.arcusys.koku.kv.soa.QuestionTO;
@@ -37,11 +39,9 @@ public interface MessageServiceFacade {
 
 	void setMessageStatus(final List<Long> messageIds, MessageStatus read);
 
-	int getTotalMessagesCount(final String userId, final FolderType folderType);
+	int getTotalMessagesCount(final String userId, final FolderType folderType, final Criteria criteria);
 
 	int getUnreadMessagesCount(final String userId, final FolderType folderType);
-
-	List<MessageSummary> getMessages(final String userUid, final FolderType folderType, final Object query, int startNum, int maxNum);
 
 	Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, final List<QuestionTO> questions);
 	
@@ -58,4 +58,12 @@ public interface MessageServiceFacade {
 	 * @return
 	 */
 	List<RequestSummary> getRequests(final String userId, int startNum, int maxNum);
+
+	/**
+	 * @param fromUserId
+	 * @param outbox
+	 * @param messageQuery
+	 * @return
+	 */
+	List<MessageSummary> getMessages(final String userId, final FolderType folderType, final MessageQuery query);
 }

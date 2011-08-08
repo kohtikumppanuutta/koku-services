@@ -1,8 +1,6 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
 	version="1.0">
-<!--    <persistence-unit name="kokuDatabase" transaction-type = "JTA">-->
-    <!-- for unit tests with OpenJPA and Spring -->
-	<persistence-unit name="kokuDatabase" transaction-type = "RESOURCE_LOCAL">
+    <persistence-unit name="kokuDatabase" transaction-type = "JTA">
 		<jta-data-source>java:/jdbc/koku</jta-data-source>
 		<properties>
 			<!-- JBoss specific -->
@@ -20,5 +18,8 @@
 		<class>fi.arcusys.koku.kv.service.datamodel.Folder</class>
 		<class>fi.arcusys.koku.kv.service.datamodel.MessageRef</class>
         <class>fi.arcusys.koku.kv.service.datamodel.User</class>
+        <class>fi.arcusys.koku.kv.service.datamodel.Appointment</class>
+        <class>fi.arcusys.koku.kv.service.datamodel.AppointmentSlot</class>
+        <class>fi.arcusys.koku.kv.service.datamodel.AppointmentResponse</class>
 	</persistence-unit>
 </persistence>

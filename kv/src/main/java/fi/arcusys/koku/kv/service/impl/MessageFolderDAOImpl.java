@@ -1,11 +1,18 @@
 package fi.arcusys.koku.kv.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.NamedQuery;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.kv.service.datamodel.Message;
 import fi.arcusys.koku.kv.service.datamodel.User;
@@ -14,6 +21,9 @@ import fi.arcusys.koku.kv.service.MessageRefDAO;
 import fi.arcusys.koku.kv.service.datamodel.Folder;
 import fi.arcusys.koku.kv.service.datamodel.FolderType;
 import fi.arcusys.koku.kv.service.datamodel.MessageRef;
+import fi.arcusys.koku.kv.soa.Criteria;
+import fi.arcusys.koku.kv.soa.MessageQuery;
+import fi.arcusys.koku.kv.soa.OrderBy;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -21,6 +31,8 @@ import fi.arcusys.koku.kv.service.datamodel.MessageRef;
  */
 @Stateless
 public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implements MessageFolderDAO {
+	private static final Logger logger = LoggerFactory.getLogger(MessageFolderDAOImpl.class);
+	
 	@EJB
 	private MessageRefDAO messageRefDao;
 	
@@ -63,7 +75,7 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 	 */
 	@Override
 	public List<MessageRef> getMessagesByUserAndFolderType(final User user, final FolderType folderType) {
-		return getMessagesByUserAndFolderType(user, folderType, null, FIRST_RESULT_NUMBER, MAX_RESULTS_COUNT);
+		return getMessagesByUserAndFolderType(user, folderType, null, FIRST_RESULT_NUMBER, FIRST_RESULT_NUMBER + MAX_RESULTS_COUNT - 1);
 	}
 
 	/**
@@ -71,8 +83,104 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 	 * @param folderType
 	 * @return
 	 */
-	public List<MessageRef> getMessagesByUserAndFolderType(final User user, final FolderType folderType, final Object query, final int startNum, final int maxNum) {
-		return getResultList("findMessagesByUserAndFolderType", getCommonQueryParams(user, folderType), startNum, maxNum);
+	@Override
+	public List<MessageRef> getMessagesByUserAndFolderType(final User user, final FolderType folderType, final MessageQuery query, final int startNum, final int maxNum) {
+		final Map<String, Object> params = getCommonQueryParams(user, folderType);
+		if (query == null || query.getCriteria() == null && query.getOrderBy() == null) {
+			return getResultList("findMessagesByUserAndFolderType", params, startNum, maxNum);
+		} else {
+			/*
+			 * SELECT mr FROM MessageRef mr 
+			 * WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user
+			 *   AND ((mr.message.subject LIKE '%test%' AND mr.message.subject LIKE '%sending%') OR
+			 *        (mr.message.content LIKE '%test%' AND mr.message.content LIKE '%sending%')
+			 *       )
+			 * ORDER BY 
+			 * */
+			final Criteria criteria = query.getCriteria();
+			final List<OrderBy> orderBys = query.getOrderBy();
+
+			final StringBuilder queryString = new StringBuilder("SELECT DISTINCT mr FROM MessageRef mr, IN(mr.message.receipients) to_ ");
+			// build "where" string, put params
+			final StringBuilder whereString = getWhereStringByCriteria(criteria, folderType, params);
+			// build "order by" string, put params
+			final StringBuilder orderByString = new StringBuilder();
+			if (orderBys != null && !orderBys.isEmpty()) {
+				orderByString.append(" ORDER BY ");
+				for (final OrderBy orderBy : orderBys) {
+					orderByString.append(getFieldNameForQuery(orderBy.getField(), folderType)).append(" ").append(orderBy.getType().name()).append(", ");
+				}
+				orderByString.setLength(orderByString.length() - 2);
+			}
+			
+			queryString.append(whereString);
+			queryString.append(orderByString);
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Execute search query: " + queryString);
+			}
+			
+			return executeQuery(queryString.toString(), params, startNum, maxNum);
+		}
+	}
+
+	private StringBuilder getWhereStringByCriteria(final Criteria criteria,
+			final FolderType folderType, final Map<String, Object> params) {
+		final StringBuilder whereString = new StringBuilder("WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user ");
+		if (criteria != null && !criteria.getFields().isEmpty() && !criteria.getKeywords().isEmpty()) {
+			// escape JPQL symbols
+			final List<String> keywords = new ArrayList<String>();
+			for (final String keyword : criteria.getKeywords()) {
+				keywords.add(keyword.trim().replaceAll("'", "''"));
+			}
+
+			whereString.append(" AND (");
+			
+			for (final MessageQuery.Fields field : criteria.getFields()) {
+				whereString.append(" (");
+
+				for (int i = 0; i < keywords.size(); i++) {
+					whereString.append(getFieldNameForQuery(field, folderType)).append(" LIKE :").append("keyword").append(i).append(" AND ");
+				}
+				// remove last 'AND ' in keywords concatenation 
+				whereString.setLength(whereString.length() - 4);
+				
+				whereString.append(") OR ");
+			}
+			// remove last 'OR ' in keywords concatenation 
+			whereString.setLength(whereString.length() - 3);
+			
+			whereString.append(")");
+			
+			for (int i = 0; i < keywords.size(); i++) {
+				params.put("keyword" + i, "%" + keywords.get(i) + "%");
+			}
+		}
+		return whereString;
+	}
+
+	private String getFieldNameForQuery(final MessageQuery.Fields field,
+			final FolderType folderType) {
+		final String fieldName;
+		if (field == MessageQuery.Fields.Subject) {
+			fieldName = "mr.message.subject";
+		} else if (field == MessageQuery.Fields.Content) {
+			fieldName = "mr.message.text";
+		} else if (field == MessageQuery.Fields.CreatedDate) {
+			fieldName = "mr.createdDate";
+		} else if (field == MessageQuery.Fields.Sender) {
+			fieldName = "mr.message.fromUser.uid";
+		} else if (field == MessageQuery.Fields.Receiver) {
+			fieldName = "to_.uid";
+//			if (folderType == FolderType.Outbox || folderType == FolderType.Archive_Outbox) {
+//				fieldName = "mr.folder.user.uid";
+//			} else {
+//				fieldName = "mr.message.fromUser.uid";
+//			}
+		} else {
+			throw new IllegalArgumentException("Unsupported field: " + field);
+		}
+		return fieldName;
 	}
 
 	/**
@@ -95,6 +203,15 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 	@Override
 	public Long getTotalMessagesCount(final User user, final FolderType folderType) {
 		return getSingleResult("getTotalMessagesCount", getCommonQueryParams(user, folderType));
+	}
+
+	@Override
+	public Long getTotalMessagesCount(final User user, final FolderType folderType, final Criteria criteria) {
+		final Map<String, Object> params = getCommonQueryParams(user, folderType);
+
+		final StringBuilder queryString = new StringBuilder("SELECT COUNT(DISTINCT mr) FROM MessageRef mr, IN (mr.message.receipients) to_ ");
+		queryString.append(getWhereStringByCriteria(criteria, folderType, params));
+		return executeQueryWithSingleResult(queryString.toString(), params);
 	}
 
 	/**

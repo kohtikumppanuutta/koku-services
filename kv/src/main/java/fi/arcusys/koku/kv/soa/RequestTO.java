@@ -12,7 +12,21 @@ import javax.xml.bind.annotation.XmlType;
 public class RequestTO extends RequestSummary {
 	private List<String> notResponded;
 	private List<ResponseTO> responses;
+	private List<QuestionTO> questions;
 	private String content;
+	
+	/**
+	 * @return the questions
+	 */
+	public List<QuestionTO> getQuestions() {
+		return questions;
+	}
+	/**
+	 * @param questions the questions to set
+	 */
+	public void setQuestions(List<QuestionTO> questions) {
+		this.questions = questions;
+	}
 	/**
 	 * @return the recipients
 	 */

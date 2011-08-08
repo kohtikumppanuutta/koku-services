@@ -7,7 +7,9 @@ import static junit.framework.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +56,7 @@ public class ResponseDAOTest {
 	@Test
 	public void createResponseWithAnswers() {
 		Response newResponse = new Response();
-		final List<Answer> answers = new ArrayList<Answer>();
+		final Set<Answer> answers = new HashSet<Answer>();
 
 		final Answer yesAnswer = new Answer();
 		yesAnswer.setComment("'yes' comment");

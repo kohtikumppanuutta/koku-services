@@ -9,9 +9,22 @@ import javax.persistence.MappedSuperclass;
  */
 @Entity
 public class Answer extends AbstractEntity {
+	private int index_;
 	private String comment;
 	private String value;
 	
+	/**
+	 * @return the index_
+	 */
+	public int getIndex() {
+		return index_;
+	}
+	/**
+	 * @param index the index_ to set
+	 */
+	public void setIndex(int index) {
+		index_ = index;
+	}
 	/**
 	 * @return the comment
 	 */

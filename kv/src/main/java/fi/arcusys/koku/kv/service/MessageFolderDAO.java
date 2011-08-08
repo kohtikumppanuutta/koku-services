@@ -7,6 +7,8 @@ import fi.arcusys.koku.kv.service.datamodel.User;
 import fi.arcusys.koku.kv.service.datamodel.Folder;
 import fi.arcusys.koku.kv.service.datamodel.FolderType;
 import fi.arcusys.koku.kv.service.datamodel.MessageRef;
+import fi.arcusys.koku.kv.soa.Criteria;
+import fi.arcusys.koku.kv.soa.MessageQuery;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -43,7 +45,7 @@ public interface MessageFolderDAO extends AbstractEntityDAO<Folder>{
 	 * @param sent
 	 * @return
 	 */
-	List<MessageRef> getMessagesByUserAndFolderType(final User user, final FolderType folderType, final Object query, final int startNum, final int maxNum);
+	List<MessageRef> getMessagesByUserAndFolderType(final User user, final FolderType folderType, final MessageQuery query, final int startNum, final int maxNum);
 
 	/**
 	 * @param testUser
@@ -57,6 +59,8 @@ public interface MessageFolderDAO extends AbstractEntityDAO<Folder>{
 	 * @return
 	 */
 	Long getTotalMessagesCount(final User user, final FolderType folderType);
+
+	Long getTotalMessagesCount(final User user, final FolderType folderType, final Criteria criteria);
 
 	/**
 	 * @param userId

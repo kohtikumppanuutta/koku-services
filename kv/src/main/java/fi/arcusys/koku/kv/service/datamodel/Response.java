@@ -2,6 +2,7 @@ package fi.arcusys.koku.kv.service.datamodel;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -22,7 +23,7 @@ public class Response extends AbstractEntity {
 	private User replier;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private List<Answer> answers;
+	private Set<Answer> answers;
 
 	/**
 	 * @return the replier
@@ -55,9 +56,9 @@ public class Response extends AbstractEntity {
 	/**
 	 * @return the answers
 	 */
-	public List<Answer> getAnswers() {
+	public Set<Answer> getAnswers() {
 		if (this.answers == null) {
-			return Collections.emptyList();
+			return Collections.emptySet();
 		}
 		return answers;
 	}
@@ -65,7 +66,7 @@ public class Response extends AbstractEntity {
 	/**
 	 * @param answers the answers to set
 	 */
-	public void setAnswers(List<Answer> answers) {
+	public void setAnswers(Set<Answer> answers) {
 		this.answers = answers;
 	}
 	

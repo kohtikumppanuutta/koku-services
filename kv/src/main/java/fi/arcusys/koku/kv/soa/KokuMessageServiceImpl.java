@@ -1,11 +1,15 @@
 package fi.arcusys.koku.kv.soa;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import fi.arcusys.koku.kv.service.datamodel.FolderType;
 
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
@@ -59,9 +63,38 @@ public class KokuMessageServiceImpl implements KokuMessageService {
 	 * @return
 	 */
 	@Override
-	public List<MessageSummary> getMessages(final String user, FolderType folderType, String subQuery, int startNum, int maxNum) {
-		return kvFacade.getMessages(user, folderType, null, startNum, maxNum);
+	public List<MessageSummary> getMessagesOld(final String user, FolderType folderType, String subQuery, int startNum, int maxNum) {
+		return kvFacade.getMessages(user, folderType, new MessageQuery(startNum, maxNum));
 	}
+	
+	@Override
+	public List<MessageSummary> getMessages(final String user, final FolderType folderType, final MessageQuery query) {
+		return kvFacade.getMessages(user, folderType, query);
+	}
+
+//	@Override
+//	public List<MessageSummary> getMessagesByQueryParams(
+//			final String user, final FolderType folderType, 
+//			final String keywords, 
+//			final List<MessageQuery.Fields> fields, 
+//			final MessageQuery.Fields orderByField,
+//			final OrderBy.Type orderByType,
+//			final int startNum, 
+//			final int maxNum) {
+//		final MessageQuery query = new MessageQuery(startNum, maxNum);
+//		if (keywords != null && !keywords.trim().isEmpty()) {
+//			final Criteria criteria = new Criteria();
+//			criteria.setKeywords(new HashSet<String>(Arrays.asList(keywords.split(" "))));
+//			criteria.setFields(new HashSet<MessageQuery.Fields>(fields));
+//			query.setCriteria(criteria);
+//		}
+//
+//		if (orderByType != null && orderByField != null) {
+//			query.setOrderBy(Collections.singletonList(new OrderBy()))
+//		}
+//		
+//		return kvFacade.getMessages(user, folderType, query);
+//	}
 
 	/**
 	 * @param user
@@ -70,8 +103,13 @@ public class KokuMessageServiceImpl implements KokuMessageService {
 	 * @return
 	 */
 	@Override
-	public int getTotalMessages(String user, FolderType messageType, String subQuery) {
-		return kvFacade.getTotalMessagesCount(user, messageType);
+	public int getTotalMessagesOld(String user, FolderType folderType, String subQuery) {
+		return getTotalMessages(user, folderType, null);
+	}
+
+	@Override
+	public int getTotalMessages(String user, FolderType folderType, Criteria criteria) {
+		return kvFacade.getTotalMessagesCount(user, folderType, criteria);
 	}
 
 	/**

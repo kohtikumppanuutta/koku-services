@@ -8,8 +8,22 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType (name = "answer", namespace = "http://soa.kv.koku.arcusys.fi/")
 public class AnswerTO {
+	private int questionNumber;
 	private String answer;
 	private String comment;
+	
+	/**
+	 * @return the questionNumber
+	 */
+	public int getQuestionNumber() {
+		return questionNumber;
+	}
+	/**
+	 * @param questionNumber the questionNumber to set
+	 */
+	public void setQuestionNumber(int questionNumber) {
+		this.questionNumber = questionNumber;
+	}
 	/**
 	 * @return the answer
 	 */

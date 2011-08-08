@@ -2,8 +2,6 @@ package fi.arcusys.koku.kv.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,13 +11,11 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.arcusys.koku.kv.service.common.CalendarUtil;
 import fi.arcusys.koku.kv.service.datamodel.Folder;
 import fi.arcusys.koku.kv.service.datamodel.FolderType;
 import fi.arcusys.koku.kv.service.datamodel.FreeTextAnswer;
@@ -41,6 +37,8 @@ import fi.arcusys.koku.kv.service.UserDAO;
 import fi.arcusys.koku.kv.service.datamodel.MessageRef;
 import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.AnswerTO;
+import fi.arcusys.koku.kv.soa.Criteria;
+import fi.arcusys.koku.kv.soa.MessageQuery;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
 import fi.arcusys.koku.kv.soa.QuestionTO;
@@ -49,6 +47,9 @@ import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.ResponseTO;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 import fi.arcusys.koku.kv.service.exception.UserNotFoundException;
+
+import static fi.arcusys.koku.kv.service.AbstractEntityDAO.FIRST_RESULT_NUMBER;
+import static fi.arcusys.koku.kv.service.AbstractEntityDAO.MAX_RESULTS_COUNT;
 
 /**
  * 
@@ -108,14 +109,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 	}
 	
 	private User getUserByUid(final String userUid) {
-		User fromUser = userDao.getUserByUid(userUid);
-		
-		if (fromUser == null) {
-			fromUser = new User();
-			fromUser.setUid(userUid);
-			fromUser = userDao.create(fromUser);
-		}
-		return fromUser;
+		return userDao.getOrCreateUser(userUid);
 	}
 
 	/**
@@ -124,7 +118,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 	 */
 	public List<MessageTO> getSentMessages(final String userUid) {
 		final List<MessageRef> messages = folderDAO.getMessagesByUserAndFolderType(getUserByUid(userUid), FolderType.Outbox, 
-				null, AbstractEntityDAO.FIRST_RESULT_NUMBER, AbstractEntityDAO.MAX_RESULTS_COUNT);
+				null, FIRST_RESULT_NUMBER, FIRST_RESULT_NUMBER + MAX_RESULTS_COUNT - 1);
 		
 		final List<MessageTO> result = new ArrayList<MessageTO>();
 		for (final MessageRef messageRef : messages) {
@@ -140,7 +134,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 		msg.setMessageId(messageRef.getId());
 		msg.setSender(message.getUser().getUid());
 		msg.setSubject(message.getSubject());
-		msg.setCreationDate(getXmlGregorianCalendar(message.getCreatedDate()));
+		msg.setCreationDate(CalendarUtil.getXmlGregorianCalendar(message.getCreatedDate()));
 		msg.setMessageStatus(MessageStatus.getStatus(messageRef.isRead()));
 		msg.setMessageType(messageRef.getFolder().getFolderType());
 		
@@ -154,21 +148,6 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 			receipients.add(receipient.getUid());
 		}
 		return receipients;
-	}
-
-	private XMLGregorianCalendar getXmlGregorianCalendar(final Date date) {
-		if (date == null) {
-			return null;
-		}
-		try {
-			final GregorianCalendar calendar = (GregorianCalendar)GregorianCalendar.getInstance();
-			calendar.setTime(date);
-			final XMLGregorianCalendar dateAsXmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-			return dateAsXmlCalendar;
-		} catch (DatatypeConfigurationException e) {
-			logger.error(null, e);
-		}
-		return null;
 	}
 
 	/**
@@ -194,7 +173,10 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 	 */
 	@Override
 	public List<MessageSummary> getMessages(final String userUid, final FolderType folderType) {
-		return getMessages(userUid, folderType, null, AbstractEntityDAO.FIRST_RESULT_NUMBER, AbstractEntityDAO.MAX_RESULTS_COUNT);
+		final MessageQuery query = new MessageQuery();
+		query.setStartNum(FIRST_RESULT_NUMBER);
+		query.setMaxNum(FIRST_RESULT_NUMBER + MAX_RESULTS_COUNT - 1);
+		return getMessages(userUid, folderType, query);
 	}
 
 	/**
@@ -293,8 +275,8 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 	 * @return
 	 */
 	@Override
-	public int getTotalMessagesCount(final String userId, final FolderType folderType) {
-		return getIntValue(folderDAO.getTotalMessagesCount(getUserByUid(userId), folderType));
+	public int getTotalMessagesCount(final String userId, final FolderType folderType, final Criteria criteria) {
+		return getIntValue(folderDAO.getTotalMessagesCount(getUserByUid(userId), folderType, criteria));
 	}
 
 	/**
@@ -323,7 +305,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 	 * @return
 	 */
 	@Override
-	public List<MessageSummary> getMessages(final String userUid, final FolderType folderType, final Object query, final int startNum, final int maxNum) {
+	public List<MessageSummary> getMessages(final String userUid, final FolderType folderType, final MessageQuery query) {
+		final int startNum = query.getStartNum();
+		final int maxNum = query.getMaxNum();
 		validateStartAndMaxNum(startNum, maxNum);
 		
 		final List<MessageRef> messages = folderDAO.getMessagesByUserAndFolderType(getUserByUid(userUid), folderType, query, startNum, maxNum - startNum + 1);
@@ -361,6 +345,16 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 		result.setNotResponded(receipientsNotResponded);
 		result.setResponses(responseTOs);
 
+		final List<QuestionTO> questions = new ArrayList<QuestionTO>();
+		for (final Question question : request.getQuestions()) {
+			final QuestionTO questionTO = new QuestionTO();
+			questionTO.setNumber(question.getIndex());
+			questionTO.setDescription(question.getDescription());
+			questionTO.setType(fi.arcusys.koku.kv.soa.QuestionType.valueOf(question.getType()));
+			questions.add(questionTO);
+		}
+
+		result.setQuestions(questions);
 
 		return result;
 	}
@@ -371,10 +365,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 		result.setRequestId(request.getId());
 		result.setSender(request.getUser().getUid());
 		result.setSubject(request.getSubject());
-		result.setCreationDate(getXmlGregorianCalendar(request.getCreatedDate()));
-		result.setEndDate(getXmlGregorianCalendar(request.getEndDate()));
+		result.setCreationDate(CalendarUtil.getXmlGregorianCalendar(request.getCreatedDate()));
+		result.setEndDate(CalendarUtil.getXmlGregorianCalendar(request.getEndDate()));
 		
-
 		result.setRespondedAmount(request.getResponses().size());
 		for (final Response response : request.getResponses()) {
 			final ResponseTO responseTO = new ResponseTO();
@@ -383,6 +376,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 				final AnswerTO answerTO = new AnswerTO();
 				answerTO.setAnswer(answer.getValueAsString());
 				answerTO.setComment(answer.getComment());
+				answerTO.setQuestionNumber(answer.getIndex());
 				answers.add(answerTO);
 			}
 			responseTO.setAnswers(answers);
@@ -470,20 +464,19 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 		final Response response = new Response();
 		response.setReplier(replier);
 		response.setRequest(sentRequest);
-		final List<fi.arcusys.koku.kv.service.datamodel.Answer> answersList = new ArrayList<fi.arcusys.koku.kv.service.datamodel.Answer>();
+		final Set<fi.arcusys.koku.kv.service.datamodel.Answer> answersList = new HashSet<fi.arcusys.koku.kv.service.datamodel.Answer>();
 		for (final Answer answerSoa : answers) {
 			fi.arcusys.koku.kv.service.datamodel.Answer answer = new fi.arcusys.koku.kv.service.datamodel.Answer();
 			if (answerSoa.getValue() != null) {
 				answer.setValue(answerSoa.getValue() ? "Kyllä" : "Ei");
-				answer.setComment(answerSoa.getComment());
-				answersList.add(answer); 
 			} else if (answerSoa.getTextValue() != null) {
 				answer.setValue(answerSoa.getTextValue());
-				answer.setComment(answerSoa.getComment());
-				answersList.add(answer); 
 			} else {
 				throw new IllegalArgumentException("Unknown answer type: value or textValue should be filled.");
 			}
+			answer.setComment(answerSoa.getComment());
+			answer.setIndex(answerSoa.getQuestionNumber());
+			answersList.add(answer); 
 		}
 		response.setAnswers(answersList);
 		

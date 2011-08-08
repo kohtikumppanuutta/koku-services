@@ -16,15 +16,53 @@
 	</parent>
 
 	<properties>
-        	<spring.framework.version>${spring.version}</spring.framework.version>
+		<spring.framework.version>${spring.version}</spring.framework.version>
 		<junit.version>4.8.2</junit.version>
 		<aspectj.weaver.version>1.6.9</aspectj.weaver.version>
 		<hsqldb.version>2.0.0</hsqldb.version>
 		<openjpa.version>1.2.2</openjpa.version>
-<!--        <openjpa.version>2.1.0</openjpa.version>-->
+		<!-- <openjpa.version>2.1.0</openjpa.version> -->
 		<cglib.version>2.2</cglib.version>
+		<scala.version>2.9.0-1</scala.version>
+		<scalatest.version>1.6.1</scalatest.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</repository>
+	</repositories>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.scala-tools</groupId>
+				<artifactId>maven-scala-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_${scala.version}</artifactId>
+			<version>${scalatest.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
@@ -35,11 +73,11 @@
 			<artifactId>ejb-api</artifactId>
 			<version>${ejb-api.version}</version>
 		</dependency>
-                <dependency>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                        <version>${junit.version}</version>
-                </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -98,8 +136,8 @@
 			<groupId>com.sun.jndi</groupId>
 			<artifactId>fscontext</artifactId>
 			<version>1.2-beta-3</version>
-<!--			<type>pom</type>-->
-            <scope>test</scope>
+			<!-- <type>pom</type> -->
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

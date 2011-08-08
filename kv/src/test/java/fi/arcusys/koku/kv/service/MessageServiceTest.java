@@ -3,7 +3,9 @@ package fi.arcusys.koku.kv.service;
 import static junit.framework.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -16,6 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import fi.arcusys.koku.kv.service.datamodel.FolderType;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 import fi.arcusys.koku.kv.soa.Answer;
+import fi.arcusys.koku.kv.soa.Criteria;
+import fi.arcusys.koku.kv.soa.MessageQuery;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
 import fi.arcusys.koku.kv.soa.QuestionTO;
@@ -125,17 +129,24 @@ public class MessageServiceTest {
 	public void getMessageCounts() {
 		final String fromUserId = "testSender3";
 		final String toUserId = "testReceiver3";
+		final String toUserId2 = "testReceiver3_2";
 		
-		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content");
+		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Arrays.asList(toUserId, toUserId2), "content");
 		final long receivedMessageId = serviceFacade.receiveMessage(toUserId, messageId);
 		
-		assertEquals("New message in Inbox: ", 1, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox));
+		assertEquals("New message in Inbox: ", 1, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox, null));
 		assertEquals("Unread message in Inbox: ", 1, serviceFacade.getUnreadMessagesCount(toUserId, FolderType.Inbox));
 		
 		serviceFacade.setMessageStatus(Collections.singletonList(receivedMessageId), MessageStatus.Read);
 
-		assertEquals("One message in Inbox: ", 1, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox));
+		assertEquals("One message in Inbox: ", 1, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox, null));
 		assertEquals("No unread messages in Inbox: ", 0, serviceFacade.getUnreadMessagesCount(toUserId, FolderType.Inbox));
+		
+		assertEquals("One message in Outbox: ", 1, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Outbox, null));
+		assertEquals("Nothing in Archive_Outbox: ", 0, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Archive_Outbox, null));
+		serviceFacade.archiveMessages(Collections.singletonList(messageId));
+		assertEquals("Nothing in Outbox: ", 0, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Outbox, null));
+		assertEquals("One message in Archive_Outbox: ", 1, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Archive_Outbox, null));
 	}
 	
 	@Test
@@ -155,11 +166,11 @@ public class MessageServiceTest {
 		for (int i = 0; i < 1; i ++) {
 			serviceFacade.sendNewMessage(fromUserId, "subject_" + i, Collections.singletonList(toUserId), "content");
 		}
-		assertEquals(1, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Outbox));
+		assertEquals(1, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Outbox, null));
 		
-		assertEquals("get first page: ", 1, serviceFacade.getMessages(fromUserId, FolderType.Outbox, null, 1, 10).size());
-		assertEquals("get next page: ", 0, serviceFacade.getMessages(fromUserId, FolderType.Outbox, null, 11, 20).size());
-		assertEquals("Oldest message is the last: ", "subject_0", serviceFacade.getMessages(fromUserId, FolderType.Outbox, null, 1, 10).get(0).getSubject());
+		assertEquals("get first page: ", 1, serviceFacade.getMessages(fromUserId, FolderType.Outbox, new MessageQuery(1, 10)).size());
+		assertEquals("get next page: ", 0, serviceFacade.getMessages(fromUserId, FolderType.Outbox, new MessageQuery(11, 20)).size());
+		assertEquals("Oldest message is the last: ", "subject_0", serviceFacade.getMessages(fromUserId, FolderType.Outbox, new MessageQuery(1, 10)).get(0).getSubject());
 	}
 	
 	@Test
@@ -190,9 +201,8 @@ public class MessageServiceTest {
 		final String fromUserId = "testRequestSender2";
 		final String toUserId = "testRequestReplier2";
 		final String toUser2Id = "testRequestReplier3";
-		final List<String> toUsers = new ArrayList<String>();
-		toUsers.add(toUserId);
-		toUsers.add(toUser2Id);
+        final String toUser3Id = "testRequestReplier4";
+		final List<String> toUsers = Arrays.asList(toUserId, toUser2Id, toUser3Id);
 		
 		final List<QuestionTO> questions = createTestQuestions();
 		
@@ -216,11 +226,70 @@ public class MessageServiceTest {
 		
 		final RequestTO request = serviceFacade.getRequestById(requestId);
 		assertEquals("One reply got: ", 1, request.getRespondedAmount());
-		assertEquals("One reply waiting: ", 1, request.getMissedAmout());
-		// TODO: other checks also
+		assertEquals("Two replies missing: ", 2, request.getMissedAmout());
+		
+		assertEquals(1, request.getResponses().size());
+		assertEquals(2, request.getResponses().get(0).getAnswers().size());
 		
 		final List<RequestSummary> requests = serviceFacade.getRequests(fromUserId, 1, 10);
 		assertEquals(1, requests.size());
+	}
+	
+	@Test
+	public void testMessageSearch() {
+		final String fromUserId = "testSearchSender";
+		final String toUserId = "testSearchReceiver";
+		final String subject = "subject for search test";
+		
+		final Long messageId = serviceFacade.sendNewMessage(fromUserId, subject, Collections.singletonList(toUserId), "content for search");
+		serviceFacade.receiveMessage(toUserId, messageId);
+		
+		final MessageQuery query = new MessageQuery(1, 10);
+		final Criteria criteria = new Criteria();
+		criteria.setKeywords(new HashSet<String>(Arrays.asList("search", "subject")));
+		criteria.setFields(Collections.singleton(MessageQuery.Fields.Content));
+		query.setCriteria(criteria);
+		assertMessageNotFound(fromUserId, FolderType.Outbox, query);
+		
+		criteria.setFields(Collections.singleton(MessageQuery.Fields.Subject));
+		assertMessageFound(fromUserId, FolderType.Outbox, query, subject);
+		
+		// Sender field testing
+		criteria.setFields(Collections.singleton(MessageQuery.Fields.Sender));
+
+		criteria.setKeywords(new HashSet<String>(Arrays.asList(fromUserId + "2")));
+		assertMessageNotFound(fromUserId, FolderType.Outbox, query);
+		assertMessageNotFound(toUserId, FolderType.Inbox, query);
+
+		criteria.setKeywords(new HashSet<String>(Arrays.asList(fromUserId)));
+		assertMessageFound(fromUserId, FolderType.Outbox, query, subject);
+		assertMessageFound(toUserId, FolderType.Inbox, query, subject);
+
+		// Receiver field testing
+		criteria.setFields(Collections.singleton(MessageQuery.Fields.Receiver));
+
+		criteria.setKeywords(new HashSet<String>(Arrays.asList(toUserId + "2")));
+		assertMessageNotFound(fromUserId, FolderType.Outbox, query);
+		assertMessageNotFound(toUserId, FolderType.Inbox, query);
+
+		criteria.setKeywords(new HashSet<String>(Arrays.asList(toUserId)));
+		assertMessageFound(fromUserId, FolderType.Outbox, query, subject);
+		assertMessageFound(toUserId, FolderType.Inbox, query, subject);
+	}
+
+	private void assertMessageFound(final String userId, FolderType folderType, final MessageQuery query, final String subject) {
+		List<MessageSummary> messages = serviceFacade.getMessages(userId, folderType, query);
+		assertNotNull(messages);
+		assertEquals(1, messages.size());
+		assertEquals(messages.size(), serviceFacade.getTotalMessagesCount(userId, folderType, query.getCriteria()));
+		assertEquals(subject, messages.get(0).getSubject());
+	}
+
+	private void assertMessageNotFound(final String userId, FolderType folderType, final MessageQuery query) {
+		List<MessageSummary> messages = serviceFacade.getMessages(userId, folderType, query);
+		assertNotNull(messages);
+		assertEquals(0, messages.size());
+		assertEquals(messages.size(), serviceFacade.getTotalMessagesCount(userId, folderType, query.getCriteria()));
 	}
 
 	private List<QuestionTO> createTestQuestions() {
