@@ -13,6 +13,7 @@
     <jaxws-api.version>2.1</jaxws-api.version>
     <jpa-api.version>1.0-rev-1</jpa-api.version>
     <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
+    <junit.version>4.8.2</junit.version>
   </properties>
   <build>
     <plugins>
@@ -82,8 +83,9 @@
     <module>pyh</module>
     <module>lok</module>
     <module>customer-service</module>
-  	<module>kv</module>
-  	<module>gatein</module>
+    <module>kv</module>
+    <module>tiva</module>
+    <module>gatein</module>
   </modules>
   <repositories>
 
@@ -133,6 +135,11 @@
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.ejb</groupId>
