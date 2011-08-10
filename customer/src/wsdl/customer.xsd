@@ -37,7 +37,47 @@
       <xsd:element name="lastName" type="xsd:string"/>
     </xsd:sequence>
   </xsd:complexType>
-  
+
+  <xsd:complexType name="CustomerNewType">
+    <xsd:sequence>
+      <xsd:element name="id" type="common:bigInteger"/>
+
+      <xsd:element name="status" type="xsd:string"/>
+      <xsd:element name="statusDate" type="xsd:date"/>
+      <xsd:element ref="jhs:HenkiloTunnus"/>
+      <xsd:element ref="jhs:SyntymaPvm"/>
+      <xsd:element ref="jhs:SukuNimi"/>
+      <xsd:element ref="jhs:EtuNimi"/>
+      <xsd:element ref="jhs:KansalaisuusKoodi"/>
+      <xsd:element ref="jhs:KuntaKoodi"/>
+      <xsd:element ref="jhs:KieliKoodi"/>
+      
+      <xsd:element name="addresses" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="phoneNumbers" type="PhoneNumberType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="PhoneNumberType">
+    <xsd:sequence>
+      <xsd:element name="numberClass" type="xsd:string"/>
+      <xsd:element name="numberType" type="xsd:string"/>
+      <xsd:element ref="jhs:PuhelinnumeroTeksti"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="AddressType">
+    <xsd:sequence>
+      <xsd:element name="addressType" type="xsd:string"/>
+      <xsd:element ref="jhs:KatuNimi"/>
+      <xsd:element ref="jhs:PostitoimipaikkaNimi"/>
+      <xsd:element ref="jhs:PostinumeroKoodi"/>
+      <xsd:element ref="jhs:PostilokeroTeksti"/>
+      <xsd:element ref="jhs:MaatunnusKoodi"/>
+      <xsd:element ref="jhs:AlkuPvm" minOccurs="0"/>
+      <xsd:element ref="jhs:LoppuPvm" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
   <xsd:complexType name="CustomersType">
     <xsd:sequence>
       <xsd:element name="customer" type="CustomerType" maxOccurs="unbounded"/>
