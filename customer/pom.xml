@@ -10,4 +10,16 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>ejb</packaging>
   <name>customer-service</name>
+  
+  <dependencies>
+<!-- 
+    <dependency>
+      <groupId>org.jboss.ejb3</groupId>
+      <artifactId>jboss-ejb3-ext-api</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+ -->
+
+  </dependencies>
 </project>
