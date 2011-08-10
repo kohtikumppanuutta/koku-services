@@ -17,6 +17,7 @@
 
   <wsdl:types>
     <xsd:schema>
+      <xsd:import namespace= "http://skeemat.jhs-suositukset.fi/yhteiset/2009/10/19" schemaLocation="jhs-ydin-20091019.xsd"/>
       <xsd:import namespace="http://services.koku.fi/common/v1" schemaLocation="common.xsd"/>
       <xsd:import namespace="http://services.koku.fi/entity/customer/v1" schemaLocation="customer.xsd"/>
     </xsd:schema>

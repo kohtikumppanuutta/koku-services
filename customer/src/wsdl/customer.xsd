@@ -3,6 +3,7 @@
   targetNamespace="http://services.koku.fi/entity/customer/v1"
   xmlns="http://services.koku.fi/entity/customer/v1"
   xmlns:common="http://services.koku.fi/common/v1"
+  xmlns:jhs="http://skeemat.jhs-suositukset.fi/yhteiset/2009/10/19"
   elementFormDefault="qualified" version="1.0">
 
   <xsd:annotation>
@@ -11,6 +12,8 @@
       Ixonos / aspluma
     </xsd:documentation>
   </xsd:annotation>
+
+  <xsd:import namespace= "http://skeemat.jhs-suositukset.fi/yhteiset/2009/10/19" schemaLocation="jhs-ydin-20091019.xsd"/>
 
   <xsd:import namespace="http://services.koku.fi/common/v1" schemaLocation="common.xsd"/>
 
