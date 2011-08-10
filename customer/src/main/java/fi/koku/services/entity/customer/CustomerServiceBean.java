@@ -36,6 +36,10 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 @RolesAllowed("koku-role")
 @HandlerChain(file="auditInfoHandler.xml")
+
+//@SecurityDomain("koku-domain")
+//@WebContext(authMethod="BASIC")
+
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
   
