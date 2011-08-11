@@ -38,6 +38,8 @@
     </xsd:sequence>
   </xsd:complexType>
 
+  <xsd:element name="customerNew" type="CustomerNewType"/>
+
   <xsd:complexType name="CustomerNewType">
     <xsd:sequence>
       <xsd:annotation>
@@ -57,11 +59,17 @@
       <xsd:element ref="jhs:KieliKoodi"/>
       <xsd:element ref="jhs:TurvakieltoKytkin"/>
 
-      <xsd:element name="addresses" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element name="phoneNumbers" type="PhoneNumberType" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element name="electronicContactInfos" type="ElectronicContactInfoType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="addresses" type="AddressesType"/>
+      <xsd:element name="phoneNumbers" type="PhoneNumbersType"/>
+      <xsd:element name="electronicContactInfos" type="ElectronicContactInfosType"/>
     </xsd:sequence>
     <xsd:attribute name="id" type="common:bigInteger"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="ElectronicContactInfosType">
+    <xsd:sequence>
+      <xsd:element name="eContactInfo" type="ElectronicContactInfoType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="ElectronicContactInfoType">
@@ -76,6 +84,12 @@
     </xsd:sequence>
   </xsd:complexType>
 
+  <xsd:complexType name="PhoneNumbersType">
+    <xsd:sequence>
+      <xsd:element name="phone" type="PhoneNumberType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
   <xsd:complexType name="PhoneNumberType">
     <xsd:sequence>
       <xsd:annotation>
@@ -87,6 +101,12 @@
       <xsd:element name="numberClass" type="xsd:string"/>
       <xsd:element name="numberType" type="xsd:string"/>
       <xsd:element ref="jhs:PuhelinnumeroTeksti"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="AddressesType">
+    <xsd:sequence>
+      <xsd:element name="address" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -110,7 +130,7 @@
 
   <xsd:complexType name="CustomersType">
     <xsd:sequence>
-      <xsd:element name="customer" type="CustomerType" maxOccurs="unbounded"/>
+      <xsd:element name="customer" type="CustomerType" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
   
@@ -118,8 +138,6 @@
     <xsd:sequence>
       <xsd:element name="id" type="common:bigInteger" minOccurs="0"/>
       <xsd:element name="hetu" type="xsd:string" minOccurs="0"/>
-      <xsd:element name="parentHetu" type="xsd:string" minOccurs="0"/>
-      <xsd:element name="childHetu" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>
 
