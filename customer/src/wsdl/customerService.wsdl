@@ -103,6 +103,7 @@
       <soap12:operation soapAction="http://koku.fi/action/customer/get"/>
         <wsdl:input>
           <soap12:body use="literal"/>
+          <soap11:header message="tns:AuditHeader" part="AuditHeader" wsdl:required="true"/>
         </wsdl:input>
         <wsdl:output>
           <soap12:body use="literal"/>
@@ -113,6 +114,7 @@
       <soap12:operation soapAction="http://koku.fi/action/customer/update"/>
         <wsdl:input>
           <soap12:body use="literal"/>
+          <soap11:header message="tns:AuditHeader" part="AuditHeader" wsdl:required="true"/>
         </wsdl:input>
     </wsdl:operation>
 
@@ -120,6 +122,7 @@
       <soap12:operation soapAction="http://koku.fi/action/customer/delete"/>
         <wsdl:input>
           <soap12:body use="literal"/>
+          <soap11:header message="tns:AuditHeader" part="AuditHeader" wsdl:required="true"/>
         </wsdl:input>
     </wsdl:operation>
     
@@ -127,6 +130,7 @@
       <soap12:operation soapAction="http://koku.fi/action/customer/query"/>
         <wsdl:input>
           <soap12:body use="literal"/>
+          <soap11:header message="tns:AuditHeader" part="AuditHeader" wsdl:required="true"/>
         </wsdl:input>
         <wsdl:output>
           <soap12:body use="literal"/>
