@@ -41,7 +41,7 @@
   <xsd:complexType name="CustomerNewType">
     <xsd:sequence>
       <xsd:annotation>
-        <xsd:documentation xsd:lang="fi">
+        <xsd:documentation xml:lang="fi">
           elossa, kuollut, kadonnut, julistettu kuolleeksi
         </xsd:documentation>
       </xsd:annotation>
@@ -64,16 +64,10 @@
     <xsd:attribute name="id" type="common:bigInteger"/>
   </xsd:complexType>
 
-  <xsd:complexType name="HetuListType">
-    <xsd:sequence>
-      <xsd:element ref="jhs:HenkiloTunnus" maxOccurs="unbounded"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
   <xsd:complexType name="ElectronicContactInfoType">
     <xsd:sequence>
       <xsd:annotation>
-        <xsd:documentation>
+        <xsd:documentation xml:lang="fi">
           sähköposti, skype, www
         </xsd:documentation>
       </xsd:annotation>
@@ -85,16 +79,12 @@
   <xsd:complexType name="PhoneNumberType">
     <xsd:sequence>
       <xsd:annotation>
-        <xsd:documentation>
-          gsm, lankapuhelin
+        <xsd:documentation xml:lang="fi">
+          numberClass: gsm, lankapuhelin
+          NumberType: fax, kotipuhelin, työpuhelin, vaihde
         </xsd:documentation>
       </xsd:annotation>
       <xsd:element name="numberClass" type="xsd:string"/>
-      <xsd:annotation>
-        <xsd:documentation>
-          fax, kotipuhelin, työpuhelin, vaihde
-        </xsd:documentation>
-      </xsd:annotation>
       <xsd:element name="numberType" type="xsd:string"/>
       <xsd:element ref="jhs:PuhelinnumeroTeksti"/>
     </xsd:sequence>
@@ -103,7 +93,7 @@
   <xsd:complexType name="AddressType">
     <xsd:sequence>
       <xsd:annotation>
-        <xsd:documentation xsd:lang="fi">
+        <xsd:documentation xml:lang="fi">
           kotiosoite, käyntiosoite, opiskelupaikan osoite, postiosoite, vapaa-ajan asunnon osoite, virallinen osoite
         </xsd:documentation>
       </xsd:annotation>
