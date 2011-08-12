@@ -15,7 +15,6 @@ import javax.jws.WebService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.kv.service.common.CalendarUtil;
 import fi.arcusys.koku.kv.service.datamodel.Folder;
 import fi.arcusys.koku.kv.service.datamodel.FolderType;
 import fi.arcusys.koku.kv.service.datamodel.FreeTextAnswer;
@@ -47,6 +46,7 @@ import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.ResponseTO;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 import fi.arcusys.koku.kv.service.exception.UserNotFoundException;
+import fi.arcusys.koku.service.common.CalendarUtil;
 
 import static fi.arcusys.koku.kv.service.AbstractEntityDAO.FIRST_RESULT_NUMBER;
 import static fi.arcusys.koku.kv.service.AbstractEntityDAO.MAX_RESULTS_COUNT;

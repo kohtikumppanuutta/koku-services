@@ -87,6 +87,7 @@
     <module>pyh</module>
     <module>lok</module>
     <module>customer</module>
+    <module>arcusys-common</module>
     <module>kv</module>
     <module>tiva</module>
     <module>gatein</module>
@@ -144,27 +145,31 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>javax.ejb</groupId>
       <artifactId>ejb-api</artifactId>
       <version>${ejb-api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.xml.ws</groupId>
       <artifactId>jaxws-api</artifactId>
       <version>${jaxws-api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
       <version>${jpa-api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <version>${spring.version}</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>

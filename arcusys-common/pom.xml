@@ -3,66 +3,26 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>kv-model</artifactId>
-	<groupId>fi.arcusys.koku.kv</groupId>
+	<artifactId>arcusys-common</artifactId>
+	<groupId>fi.arcusys.koku</groupId>
 	<version>0.1-SNAPSHOT</version>
-	<name>Data Model and services for KV</name>
-	<packaging>ejb</packaging>
-	<description>Data Model and services for doing users communication in KoKu project</description>
+	<name>Arcusys common</name>
+	<packaging>jar</packaging>
+	<description>Common classes for KV, AV, HAK and TIVA modules</description>
 	<parent>
 		<groupId>kohti-kumppanuutta</groupId>
 		<artifactId>koku-services</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<properties>
-		<aspectj.weaver.version>1.6.9</aspectj.weaver.version>
-		<hsqldb.version>2.0.0</hsqldb.version>
-		<openjpa.version>1.2.2</openjpa.version>
-		<cglib.version>2.2</cglib.version>
-	</properties>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-ejb-plugin</artifactId>
-				<configuration>
-					<ejbVersion>3.0</ejbVersion>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeGroupIds>fi.arcusys.koku</includeGroupIds>
-							<includeArtifactIds>arcusys-common</includeArtifactIds>
-							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <properties>
+        <aspectj.weaver.version>1.6.9</aspectj.weaver.version>
+        <hsqldb.version>2.0.0</hsqldb.version>
+        <openjpa.version>1.2.2</openjpa.version>
+        <cglib.version>2.2</cglib.version>
+    </properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>fi.arcusys.koku</groupId>
-			<artifactId>arcusys-common</artifactId>
-			<version>0.1-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>

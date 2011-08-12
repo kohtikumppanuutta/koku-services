@@ -17,7 +17,6 @@ import fi.arcusys.koku.kv.service.AbstractEntityDAO;
 import fi.arcusys.koku.kv.service.AppointmentDAO;
 import fi.arcusys.koku.kv.service.AppointmentServiceFacade;
 import fi.arcusys.koku.kv.service.UserDAO;
-import fi.arcusys.koku.kv.service.common.CalendarUtil;
 import fi.arcusys.koku.kv.service.datamodel.Appointment;
 import fi.arcusys.koku.kv.service.datamodel.AppointmentResponse;
 import fi.arcusys.koku.kv.service.datamodel.AppointmentSlot;
@@ -26,6 +25,7 @@ import fi.arcusys.koku.kv.service.datamodel.User;
 import fi.arcusys.koku.kv.soa.AppointmentSlotTO;
 import fi.arcusys.koku.kv.soa.AppointmentSummary;
 import fi.arcusys.koku.kv.soa.AppointmentTO;
+import fi.arcusys.koku.service.common.CalendarUtil;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
