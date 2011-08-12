@@ -31,7 +31,7 @@
 
   <xsd:complexType name="CustomerType">
     <xsd:sequence>
-      <xsd:element name="id" type="common:bigInteger"/>
+      <xsd:element name="id" type="common:numericId"/>
       <xsd:element name="hetu" type="xsd:string"/>
       <xsd:element name="firstName" type="xsd:string"/>
       <xsd:element name="lastName" type="xsd:string"/>
@@ -63,7 +63,7 @@
       <xsd:element name="phoneNumbers" type="PhoneNumbersType"/>
       <xsd:element name="electronicContactInfos" type="ElectronicContactInfosType"/>
     </xsd:sequence>
-    <xsd:attribute name="id" type="common:bigInteger"/>
+    <xsd:attribute name="id" type="common:numericId"/>
   </xsd:complexType>
 
   <xsd:complexType name="ElectronicContactInfosType">
@@ -136,7 +136,7 @@
   
   <xsd:complexType name="CustomerSearchCriteriaType">
     <xsd:sequence>
-      <xsd:element name="id" type="common:bigInteger" minOccurs="0"/>
+      <xsd:element name="id" type="common:numericId" minOccurs="0"/>
       <xsd:element name="hetu" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>

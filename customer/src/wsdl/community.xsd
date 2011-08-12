@@ -37,7 +37,7 @@
       <xsd:element name="name" type="xsd:string" minOccurs="0"/>
       <xsd:element name="members" type="MembersType"/>
     </xsd:sequence>
-    <xsd:attribute name="id" type="common:bigInteger"/>
+    <xsd:attribute name="id" type="common:numericId"/>
   </xsd:complexType>
 
   <xsd:complexType name="MembersType">
@@ -47,11 +47,13 @@
   </xsd:complexType>
 
   <xsd:complexType name="MemberType">
+    <xsd:sequence>
       <xsd:annotation>
         <xsd:documentation xml:lang="fi">huoltaja, huollettava, vanhempi, isä, äiti</xsd:documentation>
       </xsd:annotation>
-    <xsd:attribute name="role" type="xsd:string"/>
-    <xsd:attribute name="hetu" type="jhs:HenkiloTunnusTyyppi"/> 
+      <xsd:element name="role" type="xsd:string"/>
+      <xsd:element name="hetu" type="jhs:HenkiloTunnusTyyppi"/> 
+    </xsd:sequence>
   </xsd:complexType>
 
 </xsd:schema>

@@ -20,9 +20,10 @@
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:simpleType name="bigInteger">
+  <xsd:simpleType name="numericId">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+" />
+      <xsd:maxLength value="19"/>
     </xsd:restriction>
   </xsd:simpleType>
 
