@@ -14,6 +14,7 @@
     <jpa-api.version>1.0-rev-1</jpa-api.version>
     <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
     <junit.version>4.8.2</junit.version>
+	<hamcrest.version>1.1</hamcrest.version>
   </properties>
   <build>
     <plugins>
@@ -85,7 +86,7 @@
     <module>kks</module>
     <module>pyh</module>
     <module>lok</module>
-    <module>customer-service</module>
+    <module>customer</module>
     <module>kv</module>
     <module>tiva</module>
     <module>gatein</module>
@@ -165,5 +166,11 @@
       <version>${spring.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-integration</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>	
   </dependencies>
 </project>
