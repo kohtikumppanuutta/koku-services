@@ -18,8 +18,8 @@
   <xsd:import namespace="http://services.koku.fi/common/v1" schemaLocation="common.xsd"/>
 
   <xsd:element name="customer" type="CustomerType"/>
-
-  <xsd:element name="customerUpdate" type="CustomerType"/>
+  
+  <xsd:element name="customerNew" type="CustomerType"/>
   
   <xsd:element name="customerSearchCriteria" type="CustomerSearchCriteriaType"/>
   
@@ -30,17 +30,6 @@
   <xsd:element name="customers" type="CustomersType"/>
 
   <xsd:complexType name="CustomerType">
-    <xsd:sequence>
-      <xsd:element name="id" type="common:numericId"/>
-      <xsd:element name="hetu" type="xsd:string"/>
-      <xsd:element name="firstName" type="xsd:string"/>
-      <xsd:element name="lastName" type="xsd:string"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:element name="customerNew" type="CustomerNewType"/>
-
-  <xsd:complexType name="CustomerNewType">
     <xsd:sequence>
       <xsd:annotation>
         <xsd:documentation xml:lang="fi">

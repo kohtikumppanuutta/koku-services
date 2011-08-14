@@ -11,7 +11,9 @@
   >
 
   <wsdl:documentation>
-    KoKu customer service contract definition version 1.0.
+    KoKu customer service contract definition.
+
+    version: 0.9
     Ixonos / aspluma
   </wsdl:documentation>
 
@@ -31,7 +33,7 @@
   </wsdl:message>
 
   <wsdl:message name="msgAddCustomerRequest">
-    <wsdl:part name="Customer" element="cust:customer"/>
+    <wsdl:part name="Customer" element="cust:customerNew"/>
   </wsdl:message>
 
   <wsdl:message name="msgAddCustomerResponse">
@@ -47,7 +49,7 @@
   </wsdl:message>
 
   <wsdl:message name="msgUpdateCustomerRequest">
-    <wsdl:part name="Customer" element="cust:customerUpdate"/>
+    <wsdl:part name="Customer" element="cust:customer"/>
   </wsdl:message>
 
   <wsdl:message name="msgDeleteCustomerRequest">

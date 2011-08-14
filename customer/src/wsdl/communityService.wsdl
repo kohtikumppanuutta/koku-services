@@ -11,7 +11,9 @@
   >
 
   <wsdl:documentation>
-    KoKu community service contract definition version 1.0.
+    KoKu community service contract definition.
+    
+    version: 0.5.
     Ixonos / aspluma
   </wsdl:documentation>
 
