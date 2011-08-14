@@ -21,7 +21,7 @@ public class CustomerServiceClient {
 		URL wsdlLocation = new URL("http://localhost:8080/customer-service-0.0.1-SNAPSHOT/CustomerServiceBean?wsdl");
         QName serviceName = new QName("http://services.koku.fi/entity/customer/v1", "customerService");
 		CustomerService customerService = new CustomerService(wsdlLocation, serviceName);
-		CustomerServicePortType port = customerService.getCustomerServiceSoap12Port();
+		CustomerServicePortType port = customerService.getCustomerServiceSoap11Port();
 	
 		((BindingProvider)port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "marko");
 		((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "marko"); 
@@ -36,9 +36,6 @@ public class CustomerServiceClient {
 	 private static CustomerType getCustomer() {
 	    CustomerType c = new CustomerType();
 	    c.setId("1234567890");
-	    c.setHetu("123-456");
-	    c.setFirstName("simo");
-	    c.setLastName("salminen");
 	    return c;
 	  }
 

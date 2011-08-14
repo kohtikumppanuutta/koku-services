@@ -30,10 +30,10 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 @WebService(wsdlLocation="META-INF/wsdl/customerService.wsdl",
     endpointInterface="fi.koku.services.entity.customer.v1.CustomerServicePortType",
     targetNamespace="http://services.koku.fi/entity/customer/v1",
-    portName="customerService-soap12-port",
+    portName="customerService-soap11-port",
     serviceName="customerService"
 )
-@BindingType(SOAPBinding.SOAP12HTTP_BINDING)
+//@BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 @RolesAllowed("koku-role")
 @HandlerChain(file="auditInfoHandler.xml")
 
@@ -102,9 +102,6 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	private CustomerType getCustomer() {
 		CustomerType c = new CustomerType();
 		c.setId("1234567890");
-		c.setHetu("123-456");
-		c.setFirstName("simo");
-		c.setLastName("salminen");
 		return c;
 	}
 
