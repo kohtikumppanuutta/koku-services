@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<wsdl:definitions name="customerService"
-  targetNamespace="http://services.koku.fi/entity/customer/v1"
-  xmlns:tns="http://services.koku.fi/entity/customer/v1"
-  xmlns:commu="http://services.koku.fi/entity/customer/v1"
+<wsdl:definitions name="communityService"
+  targetNamespace="http://services.koku.fi/entity/community/v1"
+  xmlns:tns="http://services.koku.fi/entity/community/v1"
+  xmlns:commu="http://services.koku.fi/entity/community/v1"
   xmlns:common="http://services.koku.fi/common/v1"
   xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/"
   xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
@@ -24,17 +24,87 @@
       <xsd:import namespace="http://services.koku.fi/entity/community/v1" schemaLocation="community.xsd"/>
     </xsd:schema>
   </wsdl:types>
+
+  <wsdl:message name="AuditHeader">
+    <wsdl:part name="AuditHeader" element="common:auditInfo"/>
+  </wsdl:message>
+
+  <wsdl:message name="msgAddCommunityRequest">
+    <wsdl:part name="Community" element="commu:community"/>
+  </wsdl:message>
+
+  <wsdl:message name="msgAddCommunityResponse">
+    <wsdl:part name="CommunityId" element="commu:communityId"/>
+  </wsdl:message>
+
+  <wsdl:message name="msgGetCommunityRequest">
+    <wsdl:part name="CommunityId" element="commu:communityId"/>
+  </wsdl:message>
+  
+  <wsdl:message name="msgGetCommunityResponse">
+    <wsdl:part name="Community" element="commu:community"/>
+  </wsdl:message>
+  
+  <wsdl:message name="msgUpdateCommunityRequest">
+    <wsdl:part name="Community" element="commu:community"/>
+  </wsdl:message>
+  
+  <wsdl:message name="msgDeleteCommunityRequest">
+    <wsdl:part name="CommunityId" element="commu:communityId"/>
+  </wsdl:message>
+  
+  <wsdl:message name="msgQueryCommunitiesRequest">
+    <wsdl:part name="CommunityQueryCriteria" element="commu:communityQueryCriteriaType"/>
+  </wsdl:message>
+
+  <wsdl:message name="msgQueryCommunitiesResponse">
+    <wsdl:part name="Communities" element="commu:communities"/>
+  </wsdl:message>
   
   <wsdl:portType name="communityServicePortType">
+    <wsdl:operation name="opAddCommunity">
+      <wsdl:input message="tns:msgAddCommunityRequest"/>
+      <wsdl:output message="tns:msgAddCommunityResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="opGetCommunity">
+      <wsdl:input message="tns:msgGetCommunityRequest"/>
+      <wsdl:output message="tns:msgGetCommunityResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="opUpdateCommunity">
+      <wsdl:input message="tns:msgUpdateCommunityRequest"/>
+    </wsdl:operation>
+    <wsdl:operation name="opDeleteCommunity">
+      <wsdl:input message="tns:msgDeleteCommunityRequest"/>
+    </wsdl:operation>
+    <wsdl:operation name="opQueryCommunities">
+      <wsdl:input message="tns:msgQueryCommunitiesRequest"/>
+      <wsdl:output message="tns:msgQueryCommunitiesResponse"/>
+    </wsdl:operation>
   </wsdl:portType>
   
-  <wsdl:binding name="communityService-soap12-binding" type="tns:communityServicePortType">
-    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+  <wsdl:binding name="communityService-soap11-binding" type="tns:communityServicePortType">
+    <soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+
+    <wsdl:operation name="opAddCommunity">
+      <soap11:operation soapAction="http://koku.fi/action/community/add"/>
+      <wsdl:input>
+        <soap11:body use="literal"/>
+        <soap11:header use="literal" part="AuditHeader" message="tns:AuditHeader" wsdl:required="true"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap11:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="opGetCommunity">
+      
+    </wsdl:operation>
+
   </wsdl:binding>
   
   <wsdl:service name="communityService">
-    <wsdl:port name="communityService-soap12-port" binding="tns:communityService-soap12-binding" >
-      <soap12:address location="http://localhost:8088/community/"/>
+    <wsdl:port name="communityService-soap11-port" binding="tns:communityService-soap11-binding" >
+      <soap11:address location="http://localhost:8088/community/"/>
     </wsdl:port>
   </wsdl:service>
 

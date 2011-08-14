@@ -20,6 +20,12 @@
 
   <xsd:element name="community" type="CommunityType"/>
   
+  <xsd:element name="communityNew" type="CommunityType"/>
+  
+  <xsd:element name="communityQueryCriteriaType" type="CommunityQueryCriteriaType"/>
+  
+  <xsd:element name="communityId" type="common:numericId"/>
+  
   <xsd:element name="communities" type="CommunitiesType"/>
 
   <xsd:complexType name="CommunitiesType">
@@ -53,6 +59,13 @@
       </xsd:annotation>
       <xsd:element name="role" type="xsd:string"/>
       <xsd:element name="hetu" type="jhs:HenkiloTunnusTyyppi"/> 
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="CommunityQueryCriteriaType">
+    <xsd:sequence>
+      <xsd:element name="memberHetu" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="communityType" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>
 
