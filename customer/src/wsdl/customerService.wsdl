@@ -13,7 +13,7 @@
   <wsdl:documentation>
     KoKu customer service contract definition.
 
-    version: 0.91
+    version: 0.92
     Ixonos / aspluma
   </wsdl:documentation>
 

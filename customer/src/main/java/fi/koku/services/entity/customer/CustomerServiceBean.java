@@ -94,8 +94,8 @@ public class CustomerServiceBean implements CustomerServicePortType {
 
 	private CustomersType getCustomers() {
 		CustomersType c = new CustomersType();
-		c.getCustomers().add(getCustomer());
-		c.getCustomers().add(getCustomer());
+		c.getCustomer().add(getCustomer());
+		c.getCustomer().add(getCustomer());
 		return c;
 	}
 	
