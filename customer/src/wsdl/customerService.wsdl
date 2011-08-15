@@ -80,8 +80,8 @@
       delete all customer info for a customer identified by pic.
       
       opQueryCustomers
-      query customers either by id or pic. selection identifies information set to return.
-      selection values: basic (default): no contact info; all: basic + contact info.
+      query customers based on a given query criteria (currently either by id or pic).
+      selection identifies information set to return. selection values: basic (default): no contact info; all: basic + contact info.
     </wsdl:documentation>
     <wsdl:operation name="opAddCustomer">
       <wsdl:input message="tns:msgAddCustomerRequest"/>
