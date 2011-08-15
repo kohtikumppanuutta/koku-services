@@ -13,7 +13,7 @@
   <wsdl:documentation>
     KoKu customer service contract definition.
 
-    version: 0.9
+    version: 0.91
     Ixonos / aspluma
   </wsdl:documentation>
 
@@ -37,11 +37,11 @@
   </wsdl:message>
 
   <wsdl:message name="msgAddCustomerResponse">
-    <wsdl:part name="CustomerId" element="cust:customerId"/>
+    <wsdl:part name="CustomerPic" element="cust:customerPic"/>
   </wsdl:message>
 
   <wsdl:message name="msgGetCustomerRequest">
-    <wsdl:part name="CustomerId" element="cust:customerId"/>
+    <wsdl:part name="CustomerPic" element="cust:customerPic"/>
   </wsdl:message>
 
   <wsdl:message name="msgGetCustomerResponse">
@@ -53,7 +53,7 @@
   </wsdl:message>
 
   <wsdl:message name="msgDeleteCustomerRequest">
-    <wsdl:part name="CustomerId" element="cust:customerIdRemove"/>
+    <wsdl:part name="CustomerPic" element="cust:customerPicRemove"/>
   </wsdl:message>
   
   <wsdl:message name="msgQueryCustomersRequest">
@@ -67,6 +67,22 @@
   <!-- interface / port type -->
 
   <wsdl:portType name="customerServicePortType">
+    <wsdl:documentation xml:lang="en">
+      opGetCustomer
+      return customer info (selection: basic) identified by pic (hetu).
+      
+      opUpdateCustomer
+      sets the customer information based on the input.
+      the input customer information is expected to be complete meaning that any missing information
+      will result in the corresponding data to be removed.
+      
+      opDeleteCustomer
+      delete all customer info for a customer identified by pic.
+      
+      opQueryCustomers
+      query customers either by id or pic. selection identifies information set to return.
+      selection values: basic (default): no contact info; all: basic + contact info.
+    </wsdl:documentation>
     <wsdl:operation name="opAddCustomer">
       <wsdl:input message="tns:msgAddCustomerRequest"/>
       <wsdl:output message="tns:msgAddCustomerResponse"/>
@@ -127,7 +143,7 @@
           <soap11:header use="literal" message="tns:AuditHeader" part="AuditHeader" wsdl:required="true"/>
         </wsdl:input>
     </wsdl:operation>
-    
+
     <wsdl:operation name="opQueryCustomers">
       <soap11:operation soapAction="http://koku.fi/action/customer/query"/>
         <wsdl:input>

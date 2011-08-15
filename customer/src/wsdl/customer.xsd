@@ -21,9 +21,9 @@
   
   <xsd:element name="customerNew" type="CustomerType"/>
   
-  <xsd:element name="customerId" type="xsd:string"/>
+  <xsd:element name="customerPic" type="xsd:string"/>
   
-  <xsd:element name="customerIdRemove" type="xsd:string"/>
+  <xsd:element name="customerPicRemove" type="xsd:string"/>
 
   <xsd:element name="customerQueryCriteria" type="CustomerQueryCriteriaType"/>
   
@@ -57,7 +57,7 @@
 
   <xsd:complexType name="ElectronicContactInfosType">
     <xsd:sequence>
-      <xsd:element name="eContactInfo" type="ElectronicContactInfoType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="eContactInfos" type="ElectronicContactInfoType" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -75,7 +75,7 @@
 
   <xsd:complexType name="PhoneNumbersType">
     <xsd:sequence>
-      <xsd:element name="phone" type="PhoneNumberType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="phones" type="PhoneNumberType" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -95,7 +95,7 @@
 
   <xsd:complexType name="AddressesType">
     <xsd:sequence>
-      <xsd:element name="address" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="addresses" type="AddressType" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -119,14 +119,20 @@
 
   <xsd:complexType name="CustomersType">
     <xsd:sequence>
-      <xsd:element name="customer" type="CustomerType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="customers" type="CustomerType" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
-  
+
   <xsd:complexType name="CustomerQueryCriteriaType">
     <xsd:sequence>
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+          selection: basic, all
+        </xsd:documentation>
+      </xsd:annotation>
       <xsd:element name="id" type="common:numericId" minOccurs="0"/>
-      <xsd:element name="hetu" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="pic" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="selection" type="xsd:string" default="basic"/>
     </xsd:sequence>
   </xsd:complexType>
 
