@@ -13,7 +13,7 @@
   <wsdl:documentation>
     KoKu community service contract definition.
     
-    version: 0.5.
+    version: 0.6.
     Ixonos / aspluma
   </wsdl:documentation>
 
@@ -30,7 +30,7 @@
   </wsdl:message>
 
   <wsdl:message name="msgAddCommunityRequest">
-    <wsdl:part name="Community" element="commu:community"/>
+    <wsdl:part name="Community" element="commu:communityNew"/>
   </wsdl:message>
 
   <wsdl:message name="msgAddCommunityResponse">
@@ -50,7 +50,7 @@
   </wsdl:message>
   
   <wsdl:message name="msgDeleteCommunityRequest">
-    <wsdl:part name="CommunityId" element="commu:communityId"/>
+    <wsdl:part name="CommunityId" element="commu:communityIdRemove"/>
   </wsdl:message>
   
   <wsdl:message name="msgQueryCommunitiesRequest">
@@ -96,6 +96,44 @@
       </wsdl:output>
     </wsdl:operation>
 
+    <wsdl:operation name="opGetCommunity">
+      <soap11:operation soapAction="http://koku.fi/action/community/get"/>
+      <wsdl:input>
+        <soap11:body use="literal"/>
+        <soap11:header use="literal" part="AuditHeader" message="tns:AuditHeader" wsdl:required="true"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap11:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="opUpdateCommunity">
+      <soap11:operation soapAction="http://koku.fi/action/community/update"/>
+      <wsdl:input>
+        <soap11:body use="literal"/>
+        <soap11:header use="literal" part="AuditHeader" message="tns:AuditHeader" wsdl:required="true"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="opDeleteCommunity">
+      <soap11:operation soapAction="http://koku.fi/action/community/delete"/>
+      <wsdl:input>
+        <soap11:body use="literal"/>
+        <soap11:header use="literal" part="AuditHeader" message="tns:AuditHeader" wsdl:required="true"/>
+      </wsdl:input>
+    </wsdl:operation>
+
+    <wsdl:operation name="opQueryCommunities">
+      <soap11:operation soapAction="http://koku.fi/action/community/query"/>
+      <wsdl:input>
+        <soap11:header use="literal" part="AuditHeader" message="tns:AuditHeader" wsdl:required="true"/>
+        <soap11:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap11:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+ 
   </wsdl:binding>
   
   <wsdl:service name="communityService">

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:customerNew id="" xmlns:jhs="http://skeemat.jhs-suositukset.fi/yhteiset/2009/10/19" xmlns:p="http://services.koku.fi/entity/customer/v1" xmlns:p1="http://services.koku.fi/common/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://services.koku.fi/entity/customer/v1 customer.xsd ">
+  <p:status>p:status</p:status>
+  <p:statusDate>2001-01-01</p:statusDate>
+  <jhs:HenkiloTunnus>jhs:HenkiloTunnus</jhs:HenkiloTunnus>
+  <jhs:SyntymaPvm>2001-01-01</jhs:SyntymaPvm>
+  <jhs:SukuNimi>jhs:SukuNimi</jhs:SukuNimi>
+  <jhs:EtuNimi>jhs:EtuNimi</jhs:EtuNimi>
+  <jhs:EtunimetNimi>jhs:EtunimetNimi</jhs:EtunimetNimi>
+  <jhs:KansalaisuusKoodi>jhs:KansalaisuusKoodi</jhs:KansalaisuusKoodi>
+  <jhs:KuntaKoodi>jhs:KuntaKoodi</jhs:KuntaKoodi>
+  <jhs:KieliKoodi>jhs:KieliKoodi</jhs:KieliKoodi>
+  <jhs:TurvakieltoKytkin>true</jhs:TurvakieltoKytkin>
+  <p:addresses>
+    <p:address>
+      <p:addressType>p:addressType</p:addressType>
+      <jhs:KatuNimi>jhs:KatuNimi</jhs:KatuNimi>
+      <jhs:PostitoimipaikkaNimi>jhs:PostitoimipaikkaNimi</jhs:PostitoimipaikkaNimi>
+      <jhs:PostinumeroKoodi>jhs:PostinumeroKoodi</jhs:PostinumeroKoodi>
+      <jhs:PostilokeroTeksti>jhs:PostilokeroTeksti</jhs:PostilokeroTeksti>
+      <jhs:MaatunnusKoodi>jhs:MaatunnusKoodi</jhs:MaatunnusKoodi>
+    </p:address>
+  </p:addresses>
+  <p:phoneNumbers>
+    <p:phone>
+      <p:numberClass>p:numberClass</p:numberClass>
+      <p:numberType>p:numberType</p:numberType>
+      <jhs:PuhelinnumeroTeksti>jhs:PuhelinnumeroTeksti</jhs:PuhelinnumeroTeksti>
+    </p:phone>
+  </p:phoneNumbers>
+  <p:electronicContactInfos>
+    <p:eContactInfo>
+      <p:contactInfoType>p:contactInfoType</p:contactInfoType>
+      <p:contactInfo>p:contactInfo</p:contactInfo>
+    </p:eContactInfo>
+  </p:electronicContactInfos>
+</p:customerNew>

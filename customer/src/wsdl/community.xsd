@@ -14,7 +14,6 @@
   </xsd:annotation>
 
   <xsd:import namespace= "http://skeemat.jhs-suositukset.fi/yhteiset/2009/10/19" schemaLocation="jhs-ydin-20091019.xsd"/>
-
   <xsd:import namespace="http://services.koku.fi/common/v1" schemaLocation="common.xsd"/>
 
 
@@ -22,9 +21,11 @@
   
   <xsd:element name="communityNew" type="CommunityType"/>
   
-  <xsd:element name="communityQueryCriteriaType" type="CommunityQueryCriteriaType"/>
-  
   <xsd:element name="communityId" type="common:numericId"/>
+  
+  <xsd:element name="communityIdRemove" type="common:numericId"/>
+
+  <xsd:element name="communityQueryCriteriaType" type="CommunityQueryCriteriaType"/>
   
   <xsd:element name="communities" type="CommunitiesType"/>
 

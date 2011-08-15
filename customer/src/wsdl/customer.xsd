@@ -14,19 +14,19 @@
   </xsd:annotation>
 
   <xsd:import namespace= "http://skeemat.jhs-suositukset.fi/yhteiset/2009/10/19" schemaLocation="jhs-ydin-20091019.xsd"/>
-
   <xsd:import namespace="http://services.koku.fi/common/v1" schemaLocation="common.xsd"/>
+
 
   <xsd:element name="customer" type="CustomerType"/>
   
   <xsd:element name="customerNew" type="CustomerType"/>
   
-  <xsd:element name="customerSearchCriteria" type="CustomerSearchCriteriaType"/>
-  
   <xsd:element name="customerId" type="xsd:string"/>
   
   <xsd:element name="customerIdRemove" type="xsd:string"/>
 
+  <xsd:element name="customerQueryCriteria" type="CustomerQueryCriteriaType"/>
+  
   <xsd:element name="customers" type="CustomersType"/>
 
   <xsd:complexType name="CustomerType">
@@ -123,7 +123,7 @@
     </xsd:sequence>
   </xsd:complexType>
   
-  <xsd:complexType name="CustomerSearchCriteriaType">
+  <xsd:complexType name="CustomerQueryCriteriaType">
     <xsd:sequence>
       <xsd:element name="id" type="common:numericId" minOccurs="0"/>
       <xsd:element name="hetu" type="xsd:string" minOccurs="0"/>

@@ -57,7 +57,7 @@
   </wsdl:message>
   
   <wsdl:message name="msgQueryCustomersRequest">
-    <wsdl:part name="CustomerSearchCriteria" element="cust:customerSearchCriteria"/>
+    <wsdl:part name="CustomerSearchCriteria" element="tns:customerQueryCriteria"/>
   </wsdl:message>
 
   <wsdl:message name="msgQueryCustomersResponse">

@@ -15,7 +15,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.koku.services.entity.customer.v1.CustomerSearchCriteriaType;
+import fi.koku.services.entity.customer.v1.CustomerQueryCriteriaType;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.CustomersType;
@@ -87,7 +87,7 @@ public class CustomerServiceBean implements CustomerServicePortType {
 
 	@Override
 	public CustomersType opQueryCustomers(
-			CustomerSearchCriteriaType customerSearchCriteria) {
+			CustomerQueryCriteriaType customerQueryCriteria) {
 		System.out.println("opQueryCustomers");
 		return getCustomers();
 	}
