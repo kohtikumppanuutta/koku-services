@@ -25,13 +25,13 @@
   
   <xsd:element name="communityIdRemove" type="common:numericId"/>
 
-  <xsd:element name="communityQueryCriteriaType" type="CommunityQueryCriteriaType"/>
+  <xsd:element name="communityQueryCriteria" type="CommunityQueryCriteriaType"/>
   
   <xsd:element name="communities" type="CommunitiesType"/>
 
   <xsd:complexType name="CommunitiesType">
     <xsd:sequence>
-      <xsd:element name="community" type="CommunityType" maxOccurs="unbounded"/>
+      <xsd:element name="communities" type="CommunityType" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -49,7 +49,7 @@
 
   <xsd:complexType name="MembersType">
     <xsd:sequence>
-      <xsd:element name="member" type="MemberType" maxOccurs="unbounded" />
+      <xsd:element name="members" type="MemberType" maxOccurs="unbounded" />
     </xsd:sequence>
   </xsd:complexType>
 
@@ -59,13 +59,13 @@
         <xsd:documentation xml:lang="fi">huoltaja, huollettava, vanhempi, isä, äiti</xsd:documentation>
       </xsd:annotation>
       <xsd:element name="role" type="xsd:string"/>
-      <xsd:element name="hetu" type="jhs:HenkiloTunnusTyyppi"/> 
+      <xsd:element name="pic" type="jhs:HenkiloTunnusTyyppi"/> 
     </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="CommunityQueryCriteriaType">
     <xsd:sequence>
-      <xsd:element name="memberHetu" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="memberPic" type="xsd:string" minOccurs="0"/>
       <xsd:element name="communityType" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>

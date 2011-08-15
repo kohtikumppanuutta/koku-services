@@ -13,7 +13,7 @@
   <wsdl:documentation>
     KoKu community service contract definition.
     
-    version: 0.6.
+    version: 0.8.
     Ixonos / aspluma
   </wsdl:documentation>
 
@@ -25,10 +25,12 @@
     </xsd:schema>
   </wsdl:types>
 
+  <!-- common messages -->
   <wsdl:message name="AuditHeader">
     <wsdl:part name="AuditHeader" element="common:auditInfo"/>
   </wsdl:message>
 
+  <!-- community messages -->
   <wsdl:message name="msgAddCommunityRequest">
     <wsdl:part name="Community" element="commu:communityNew"/>
   </wsdl:message>
@@ -54,13 +56,14 @@
   </wsdl:message>
   
   <wsdl:message name="msgQueryCommunitiesRequest">
-    <wsdl:part name="CommunityQueryCriteria" element="commu:communityQueryCriteriaType"/>
+    <wsdl:part name="CommunityQueryCriteria" element="tns:communityQueryCriteria"/>
   </wsdl:message>
 
   <wsdl:message name="msgQueryCommunitiesResponse">
     <wsdl:part name="Communities" element="commu:communities"/>
   </wsdl:message>
-  
+
+  <!-- port type -->
   <wsdl:portType name="communityServicePortType">
     <wsdl:operation name="opAddCommunity">
       <wsdl:input message="tns:msgAddCommunityRequest"/>
@@ -82,6 +85,7 @@
     </wsdl:operation>
   </wsdl:portType>
   
+  <!-- bindings -->
   <wsdl:binding name="communityService-soap11-binding" type="tns:communityServicePortType">
     <soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
 
@@ -136,6 +140,7 @@
  
   </wsdl:binding>
   
+  <!-- service -->
   <wsdl:service name="communityService">
     <wsdl:port name="communityService-soap11-port" binding="tns:communityService-soap11-binding" >
       <soap11:address location="http://localhost:8088/community/"/>
