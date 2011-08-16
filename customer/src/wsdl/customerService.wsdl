@@ -67,7 +67,7 @@
   <!-- interface / port type -->
 
   <wsdl:portType name="customerServicePortType">
-    <wsdl:documentation xml:lang="en">
+    <wsdl:documentation>
       opGetCustomer
       return customer info (selection: basic) identified by pic (hetu).
       
