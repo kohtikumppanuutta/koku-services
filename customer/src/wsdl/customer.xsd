@@ -67,7 +67,7 @@
     <xsd:sequence>
       <xsd:annotation>
         <xsd:documentation xml:lang="fi">
-          sähköposti, skype, www
+          sahkoposti, skype, www
         </xsd:documentation>
       </xsd:annotation>
       <xsd:element name="contactInfoType" type="xsd:string"/>
@@ -86,7 +86,7 @@
       <xsd:annotation>
         <xsd:documentation xml:lang="fi">
           numberClass: gsm, lankapuhelin
-          NumberType: fax, kotipuhelin, työpuhelin, vaihde
+          NumberType: fax, kotipuhelin, tyopuhelin, vaihde
         </xsd:documentation>
       </xsd:annotation>
       <xsd:element name="numberClass" type="xsd:string"/>
@@ -105,7 +105,7 @@
     <xsd:sequence>
       <xsd:annotation>
         <xsd:documentation xml:lang="fi">
-          kotiosoite, käyntiosoite, opiskelupaikan osoite, postiosoite, vapaa-ajan asunnon osoite, virallinen osoite
+          kotiosoite, kayntiosoite, opiskelupaikan osoite, postiosoite, vapaa-ajan asunnon osoite, virallinen osoite
         </xsd:documentation>
       </xsd:annotation>
       <xsd:element name="addressType" type="xsd:string"/>
