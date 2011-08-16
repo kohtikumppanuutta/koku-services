@@ -1,4 +1,4 @@
-package fi.koku.services.entity.customer;
+package fi.koku.services.entity.customer.impl;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -8,9 +8,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
-import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.soap.SOAPBinding;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +35,8 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 @RolesAllowed("koku-role")
 @HandlerChain(file="auditInfoHandler.xml")
 
-//@SecurityDomain("koku-domain")
-//@WebContext(authMethod="BASIC")
-
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
-  
   
 	@Resource
 	private WebServiceContext wsCtx;
