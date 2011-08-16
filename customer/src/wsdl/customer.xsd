@@ -4,7 +4,9 @@
   xmlns="http://services.koku.fi/entity/customer/v1"
   xmlns:common="http://services.koku.fi/common/v1"
   xmlns:jhs="http://skeemat.jhs-suositukset.fi/yhteiset/2009/10/19"
-  elementFormDefault="qualified" version="1.0">
+  elementFormDefault="qualified"
+  version="0.92"
+  >
 
   <xsd:annotation>
     <xsd:documentation xml:lang="en">
