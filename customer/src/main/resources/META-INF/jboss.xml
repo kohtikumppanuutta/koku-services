@@ -14,4 +14,13 @@
     </session>
   </enterprise-beans>
 
+  <enterprise-beans>
+    <session>
+      <ejb-name>CommunityServiceBean</ejb-name>
+      <port-component>
+        <auth-method>BASIC</auth-method>
+      </port-component>
+    </session>
+  </enterprise-beans>
+
 </jboss>
