@@ -7,10 +7,25 @@ import javax.xml.bind.annotation.XmlType;
  * Aug 11, 2011
  */
 @XmlType (name = "toimenpidepyynto", namespace = "http://soa.tiva.koku.arcusys.fi/",
-    propOrder={"number", "description"})
+    propOrder={"number", "name", "description"})
 public class ActionRequestTO {
     private int number;
+    private String name;
     private String description;
+    
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
     /**
      * @return the number
      */

@@ -62,7 +62,8 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
         for (int number = 1; number <= 2; number++ ) {
             final ActionRequestTO actionRequest = new ActionRequestTO();
             actionRequest.setNumber(number);
-            actionRequest.setDescription("toimenpidepyyntö " + number);
+            actionRequest.setName("toimenpidepyyntö " + number);
+            actionRequest.setDescription("descripton of toimenpidepyyntö " + number);
             actions.add(actionRequest);
         } 
         template.setActions(actions);
@@ -96,8 +97,7 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
     public void giveConsent(long consentId, String replierUid, 
             final List<ActionPermittedTO> actions,
             XMLGregorianCalendar endDate,
-            String comment) {
-        // TODO Auto-generated method stub
+            String comment) {        // TODO Auto-generated method stub
         logger.info("giveConsent: " + consentId + ", replierUid = " + replierUid + ", endDate = " + endDate + ", comment = " + comment);
     }
 

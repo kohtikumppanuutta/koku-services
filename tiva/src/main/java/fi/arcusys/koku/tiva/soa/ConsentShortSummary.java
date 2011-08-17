@@ -1,13 +1,27 @@
 package fi.arcusys.koku.tiva.soa;
 
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 11, 2011
  */
 public class ConsentShortSummary {
-    protected String templateName;
-    protected String anotherPermitterUid;
-    protected String requestor;
+    private Long consentId;
+    private String templateName;
+    private String anotherPermitterUid;
+    private String requestor;
+    /**
+     * @return the consentId
+     */
+    public Long getConsentId() {
+        return consentId;
+    }
+    /**
+     * @param consentId the consentId to set
+     */
+    public void setConsentId(Long consentId) {
+        this.consentId = consentId;
+    }
     /**
      * @return the templateName
      */

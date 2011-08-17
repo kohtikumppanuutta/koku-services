@@ -20,7 +20,7 @@ public interface KokuKunpoSuostumusService {
 
     public int getTotalOwnConsents(@WebParam(name = "user") final String user);
 
-    public List<ConsentSummary>  getOwnConsents(
+    public List<ConsentSummary> getOwnConsents(
             @WebParam(name = "user") final String user,
             @WebParam(name = "startNum") int startNum, 
             @WebParam(name = "maxNum") int maxNum);

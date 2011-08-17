@@ -1,6 +1,7 @@
 package fi.arcusys.koku.tiva.soa;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
         logger.info("getAssignedConsents: " + user);
         final List<ConsentShortSummary> result = new ArrayList<ConsentShortSummary>();
         final ConsentShortSummary consent = new ConsentShortSummary();
+        consent.setConsentId(123L);
         consent.setAnotherPermitterUid("Kirsi Kuntalainen");
         consent.setTemplateName("suostumuspohja #1");
         consent.setRequestor("Ville Virkamies");
@@ -78,14 +80,11 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
             int maxNum) {
         // TODO Auto-generated method stub
         logger.info("getOwnConsents: " + user);
-        final List<ConsentSummary> result = new ArrayList<ConsentSummary>();
-        final ConsentSummary consent = new ConsentSummary();
-        fillTestConsent(consent);
-        result.add(consent);
-        return result;
+        return Collections.singletonList(fillTestConsent(new ConsentSummary()));
     }
 
-    private void fillTestConsent(final ConsentSummary consent) {
+    private ConsentSummary fillTestConsent(final ConsentSummary consent) {
+        consent.setConsentId(123L);
         consent.setAnotherPermitterUid("Kirsi Kuntalainen");
         consent.setTemplateName("suostumuspohja #2");
         consent.setRequestor("Ville Virkamies");
@@ -95,6 +94,7 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
         final XMLGregorianCalendar validTill = CalendarUtil.getXmlDate(new Date());
         validTill.setMonth(validTill.getMonth() + 1);
         consent.setValidTill(validTill);
+        return consent;
     }
 
     /**
