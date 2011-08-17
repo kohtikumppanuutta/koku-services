@@ -89,6 +89,7 @@
     <module>customer</module>
     <module>arcusys-common</module>
     <module>kv</module>
+    <module>intalio</module>
     <module>tiva</module>
     <module>gatein</module>
   </modules>
