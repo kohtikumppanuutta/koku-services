@@ -17,7 +17,8 @@ import fi.koku.services.entity.customer.v1.CustomerQueryCriteriaType;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.CustomersType;
-
+import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager;
 
 /**
  * KoKu Customer service implementation class.
@@ -37,6 +38,9 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
+  
+  @PersistenceContext
+  private EntityManager em;
   
 	@Resource
 	private WebServiceContext wsCtx;
@@ -65,7 +69,7 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	
 	@Override
 	public CustomerType opGetCustomer(String customerId) {
-		System.out.println("opGetCustomer");
+		System.out.println("opGetCustomer: "+em);
 		return getCustomer();
 	}
 
