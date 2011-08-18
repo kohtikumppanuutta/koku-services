@@ -10,6 +10,7 @@ CREATE TABLE customer (
   first_names VARCHAR(50) NOT NULL,
   nationality VARCHAR(3) NOT NULL,
   municipality VARCHAR(10) NOT NULL,
-  turvakielto BOOLEAN NOT NULL
+  turvakielto BOOLEAN NOT NULL,
+  version INT NOT NULL
 );
 
