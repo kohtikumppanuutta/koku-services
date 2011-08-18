@@ -1,0 +1,99 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>koku-services</artifactId>
+    <groupId>kohti-kumppanuutta</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>kohti-kumppanuutta</groupId>
+  <artifactId>koku-integration-tests</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>koku-integration-tests</name>
+
+  <properties>
+    <failsafe.plugin.version>2.9</failsafe.plugin.version>
+    <koku.customer.service.version>0.0.1-SNAPSHOT</koku.customer.service.version>
+    <ant.run.plugin.version>1.6</ant.run.plugin.version>
+    <wagon.plugin.version>1.0-beta-3</wagon.plugin.version>
+    <wagon.ssh.extension.version>1.0-beta-6</wagon.ssh.extension.version>
+  </properties>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh</artifactId>
+        <version>${wagon.ssh.extension.version}</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${failsafe.plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Deploy service layer artifacts to JBoss server -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>${wagon.plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <serverId>jboss-eap</serverId>
+              <fromDir>../customer/target</fromDir>
+              <includes>*.jar</includes>
+              <url>scp://jboss-user:jboss8976@192.168.9.41/</url>
+              <toDir>/tmp</toDir>              
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Wait for JBoss for deploy complete -->
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${ant.run.plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <echo message="Waiting 20 seconds for JBoss to redeploy..." />
+                <sleep seconds="20" />
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>kohti-kumppanuutta</groupId>
+      <artifactId>customer-service</artifactId>
+      <version>${koku.customer.service.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
