@@ -39,7 +39,8 @@ import javax.persistence.EntityManager;
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
   
-  @PersistenceContext
+  // Temporarily disabled
+  //@PersistenceContext
   private EntityManager em;
   
 	@Resource
