@@ -66,6 +66,7 @@
         </executions>
         <configuration>
           <target>${jaxws-api.version}</target>
+          <wsdlDirectory>${project.build.directory}/wsdl</wsdlDirectory>
           <extension>true</extension>
           <xadditionalHeaders>false</xadditionalHeaders>
           <sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
@@ -77,7 +78,7 @@
         <directory>${basedir}/src/main/resources</directory>
       </resource>
       <resource>
-        <directory>${basedir}/src/wsdl</directory>
+        <directory>${project.build.directory}/wsdl</directory>
         <targetPath>META-INF/wsdl</targetPath>
       </resource>
     </resources>
@@ -93,6 +94,7 @@
     <module>tiva</module>
     <module>gatein</module>
   </modules>
+
   <repositories>
 
     <repository>
@@ -113,6 +115,12 @@
     <!-- <repository> <id>maven-repository.java.net</id> <name>Java.net Repository for Maven 1</name> <url>http://download.java.net/maven/1/</url> 
       <layout>legacy</layout> </repository> <repository> <id>maven2-repository.java.net</id> <name>Java.net Repository for Maven 
       2</name> <url>http://download.java.net/maven/2/</url> </repository> -->
+
+    <repository>
+      <id>ElasticService.com</id>
+      <name>ElasticService.com-releases</name>
+      <url>https://m2.elasticservice.com/artifactory/koku</url>
+    </repository>
 
   </repositories>
 
