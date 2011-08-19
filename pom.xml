@@ -11,6 +11,7 @@
     <spring.version>3.0.5.RELEASE</spring.version>
     <ejb-api.version>3.0</ejb-api.version>
     <jaxws-api.version>2.1</jaxws-api.version>
+    <jsr250-api.version>1.0</jsr250-api.version>
     <jpa-api.version>1.0-rev-1</jpa-api.version>
     <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
     <junit.version>4.8.2</junit.version>
@@ -177,6 +178,11 @@
       <artifactId>jaxws-api</artifactId>
       <version>${jaxws-api.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>jsr250-api</artifactId>
+      <version>${jsr250-api.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.persistence</groupId>
