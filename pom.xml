@@ -95,7 +95,7 @@
     <!--module>av</module-->
     <module>intalio</module>
     <module>tiva</module>
-    <module>gatein</module>
+    <!--module>gatein</module-->
   </modules>
 
   <repositories>
