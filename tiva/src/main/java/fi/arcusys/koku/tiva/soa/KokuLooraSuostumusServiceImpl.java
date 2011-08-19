@@ -8,7 +8,7 @@ import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import fi.arcusys.koku.service.common.CalendarUtil;
+import fi.arcusys.koku.common.service.CalendarUtil;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -85,6 +85,7 @@ public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService 
     }
 
     private void fillTestConsent(final ConsentSummary consent) {
+        consent.setConsentId(123L);
         consent.setTemplateName("suostumuspohja #1");
         consent.setRequestor("Ville Virkamies");
         consent.setCreateType(ConsentCreateType.Electronic);

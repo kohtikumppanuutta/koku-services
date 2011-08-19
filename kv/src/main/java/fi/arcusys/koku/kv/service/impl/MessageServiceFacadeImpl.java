@@ -15,29 +15,31 @@ import javax.jws.WebService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.kv.service.datamodel.Folder;
-import fi.arcusys.koku.kv.service.datamodel.FolderType;
-import fi.arcusys.koku.kv.service.datamodel.FreeTextAnswer;
-import fi.arcusys.koku.kv.service.datamodel.Message;
-import fi.arcusys.koku.kv.service.datamodel.Question;
-import fi.arcusys.koku.kv.service.datamodel.QuestionType;
-import fi.arcusys.koku.kv.service.datamodel.Request;
-import fi.arcusys.koku.kv.service.datamodel.Response;
-import fi.arcusys.koku.kv.service.datamodel.User;
-import fi.arcusys.koku.kv.service.datamodel.YesNoAnswer;
-import fi.arcusys.koku.kv.service.AbstractEntityDAO;
-import fi.arcusys.koku.kv.service.MessageDAO;
-import fi.arcusys.koku.kv.service.MessageFolderDAO;
-import fi.arcusys.koku.kv.service.MessageRefDAO;
+import fi.arcusys.koku.common.service.AbstractEntityDAO;
+import fi.arcusys.koku.common.service.CalendarUtil;
+import fi.arcusys.koku.common.service.MessageDAO;
+import fi.arcusys.koku.common.service.MessageFolderDAO;
+import fi.arcusys.koku.common.service.MessageRefDAO;
+import fi.arcusys.koku.common.service.RequestDAO;
+import fi.arcusys.koku.common.service.ResponseDAO;
+import fi.arcusys.koku.common.service.UserDAO;
+import fi.arcusys.koku.common.service.datamodel.Folder;
+import fi.arcusys.koku.common.service.datamodel.FolderType;
+import fi.arcusys.koku.common.service.datamodel.FreeTextAnswer;
+import fi.arcusys.koku.common.service.datamodel.Message;
+import fi.arcusys.koku.common.service.datamodel.MessageRef;
+import fi.arcusys.koku.common.service.datamodel.Question;
+import fi.arcusys.koku.common.service.datamodel.QuestionType;
+import fi.arcusys.koku.common.service.datamodel.Request;
+import fi.arcusys.koku.common.service.datamodel.Response;
+import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.service.datamodel.YesNoAnswer;
+import fi.arcusys.koku.common.service.dto.Criteria;
+import fi.arcusys.koku.common.service.dto.MessageQuery;
+import fi.arcusys.koku.common.service.exception.UserNotFoundException;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
-import fi.arcusys.koku.kv.service.RequestDAO;
-import fi.arcusys.koku.kv.service.ResponseDAO;
-import fi.arcusys.koku.kv.service.UserDAO;
-import fi.arcusys.koku.kv.service.datamodel.MessageRef;
 import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.AnswerTO;
-import fi.arcusys.koku.kv.soa.Criteria;
-import fi.arcusys.koku.kv.soa.MessageQuery;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
 import fi.arcusys.koku.kv.soa.QuestionTO;
@@ -45,11 +47,9 @@ import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.ResponseTO;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
-import fi.arcusys.koku.kv.service.exception.UserNotFoundException;
-import fi.arcusys.koku.service.common.CalendarUtil;
 
-import static fi.arcusys.koku.kv.service.AbstractEntityDAO.FIRST_RESULT_NUMBER;
-import static fi.arcusys.koku.kv.service.AbstractEntityDAO.MAX_RESULTS_COUNT;
+import static fi.arcusys.koku.common.service.AbstractEntityDAO.FIRST_RESULT_NUMBER;
+import static fi.arcusys.koku.common.service.AbstractEntityDAO.MAX_RESULTS_COUNT;
 
 /**
  * 
@@ -372,7 +372,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 		for (final Response response : request.getResponses()) {
 			final ResponseTO responseTO = new ResponseTO();
 			final List<AnswerTO> answers = new ArrayList<AnswerTO>();
-			for (final fi.arcusys.koku.kv.service.datamodel.Answer answer : response.getAnswers()) {
+			for (final fi.arcusys.koku.common.service.datamodel.Answer answer : response.getAnswers()) {
 				final AnswerTO answerTO = new AnswerTO();
 				answerTO.setAnswer(answer.getValueAsString());
 				answerTO.setComment(answer.getComment());
@@ -464,9 +464,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 		final Response response = new Response();
 		response.setReplier(replier);
 		response.setRequest(sentRequest);
-		final Set<fi.arcusys.koku.kv.service.datamodel.Answer> answersList = new HashSet<fi.arcusys.koku.kv.service.datamodel.Answer>();
+		final Set<fi.arcusys.koku.common.service.datamodel.Answer> answersList = new HashSet<fi.arcusys.koku.common.service.datamodel.Answer>();
 		for (final Answer answerSoa : answers) {
-			fi.arcusys.koku.kv.service.datamodel.Answer answer = new fi.arcusys.koku.kv.service.datamodel.Answer();
+			fi.arcusys.koku.common.service.datamodel.Answer answer = new fi.arcusys.koku.common.service.datamodel.Answer();
 			if (answerSoa.getValue() != null) {
 				answer.setValue(answerSoa.getValue() ? "Kyllä" : "Ei");
 			} else if (answerSoa.getTextValue() != null) {

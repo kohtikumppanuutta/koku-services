@@ -12,7 +12,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.service.common.CalendarUtil;
+import fi.arcusys.koku.common.service.CalendarUtil;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

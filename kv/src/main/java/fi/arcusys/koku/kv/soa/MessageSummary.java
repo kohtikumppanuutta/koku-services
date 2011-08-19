@@ -6,7 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import fi.arcusys.koku.kv.service.datamodel.FolderType;
+
+import fi.arcusys.koku.common.service.datamodel.FolderType;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Jun 9, 2011

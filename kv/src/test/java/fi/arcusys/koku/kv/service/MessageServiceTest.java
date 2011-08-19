@@ -15,11 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fi.arcusys.koku.kv.service.datamodel.FolderType;
+import fi.arcusys.koku.common.service.CommonTestUtil;
+import fi.arcusys.koku.common.service.datamodel.FolderType;
+import fi.arcusys.koku.common.service.dto.Criteria;
+import fi.arcusys.koku.common.service.dto.MessageQuery;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 import fi.arcusys.koku.kv.soa.Answer;
-import fi.arcusys.koku.kv.soa.Criteria;
-import fi.arcusys.koku.kv.soa.MessageQuery;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
 import fi.arcusys.koku.kv.soa.QuestionTO;
