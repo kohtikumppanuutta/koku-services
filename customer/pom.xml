@@ -5,9 +5,7 @@
     <groupId>kohti-kumppanuutta</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>kohti-kumppanuutta</groupId>
   <artifactId>customer-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>ejb</packaging>
   <name>customer-service</name>
 
@@ -47,6 +45,38 @@
        </plugin>
       
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <versionRange>[2.3,)</versionRange>
+                    <goals>
+                      <goal>copy-dependencies</goal>
+                      <goal>unpack</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
   </build>
   
   <dependencies>
