@@ -5,9 +5,7 @@
     <groupId>kohti-kumppanuutta</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>kohti-kumppanuutta</groupId>
   <artifactId>lok-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>ejb</packaging>
   <name>lok-service</name>
 </project>
