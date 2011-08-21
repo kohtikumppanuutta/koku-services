@@ -49,7 +49,7 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
   
-  @PersistenceContext
+  //@PersistenceContext
   private EntityManager em;
   
 	@Resource
