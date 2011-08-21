@@ -1,6 +1,5 @@
 package fi.koku.services.entity.customer.impl;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -108,8 +107,7 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	public CustomersType opQueryCustomers(CustomerQueryCriteriaType criteria) {
 		logger.info("opQueryCustomers");
 		
-		BigInteger id = new BigInteger(criteria.getId());
-		CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(id, criteria.getPic(), criteria.getSelection());
+		CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(Long.valueOf(criteria.getId()), criteria.getPic(), criteria.getSelection());
 		Collection<Customer> customers = customerService.query(customerQueryCriteria);
 		CustomersType r = new CustomersType();
 		for(Customer c : customers)

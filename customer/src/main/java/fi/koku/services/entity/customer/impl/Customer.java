@@ -1,6 +1,5 @@
 package fi.koku.services.entity.customer.impl;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -23,7 +22,7 @@ import javax.persistence.Version;
 public class Customer {
   @Id
   @GeneratedValue
-  private BigInteger id;
+  private Long id;
   
   private String status;
   
@@ -58,11 +57,11 @@ public class Customer {
   public Customer() {
   }
   
-  public BigInteger getId() {
+  public Long getId() {
     return id;
   }
   
-  public void setId(BigInteger id) {
+  public void setId(Long id) {
     this.id = id;
   }
   
