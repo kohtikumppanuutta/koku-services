@@ -1,13 +1,19 @@
 package fi.koku.services.entity.customer.impl;
 
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.ws.WebServiceContext;
 
 import org.slf4j.Logger;
@@ -17,8 +23,6 @@ import fi.koku.services.entity.customer.v1.CustomerQueryCriteriaType;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.CustomersType;
-import javax.persistence.PersistenceContext;
-import javax.persistence.EntityManager;
 
 /**
  * KoKu Customer service implementation class.
@@ -45,6 +49,15 @@ public class CustomerServiceBean implements CustomerServicePortType {
   
 	@Resource
 	private WebServiceContext wsCtx;
+	
+	private CustomerService customerService;
+	private CustomerConverter customerConverter;
+	
+	@PostConstruct
+	public void initialize() {
+	  customerService = new CustomerServiceImpl(em);
+	  customerConverter = new CustomerConverter();
+	}
 
   @Override
   public String opAddCustomer(CustomerType customer) {
@@ -69,9 +82,9 @@ public class CustomerServiceBean implements CustomerServicePortType {
   }
 	
 	@Override
-	public CustomerType opGetCustomer(String customerId) {
+	public CustomerType opGetCustomer(String pic) {
 		System.out.println("opGetCustomer: "+em);
-		return getCustomer();
+		return customerConverter.toWsType(customerService.getCustomer(pic));
 	}
 
 	@Override
@@ -103,5 +116,52 @@ public class CustomerServiceBean implements CustomerServicePortType {
 		c.setId("1234567890");
 		return c;
 	}
+	
+	public void setCustomerService(CustomerService cs) {
+	  this.customerService = cs;
+	}
+ 
+	/**
+	 * Convert between CustomerType and Customer types.
+	 * 
+	 * @author aspluma
+	 */
+	private static class CustomerConverter {
+	  private DatatypeFactory datatypeFactory;
+	  
+	  public CustomerConverter() {
+	    try {
+        datatypeFactory = DatatypeFactory.newInstance();
+      } catch (DatatypeConfigurationException e) {
+        throw new RuntimeException("Failed to create DatatypeFactory", e);
+      }
+	  }
+	  
+	  public CustomerType toWsType(Customer c) {
+	    CustomerType ct = new CustomerType();
+	    ct.setId(c.getId().toString());
+	    ct.setHenkiloTunnus(c.getPic());
+	    ct.setEtunimetNimi(c.getFirstNames());
+	    ct.setEtuNimi(c.getFirstName());
+      ct.setSukuNimi(c.getLastName());
+	    ct.setKansalaisuusKoodi(c.getNationality());
+	    ct.setKuntaKoodi(c.getMunicipality());
+	    ct.setStatus(c.getStatus());
+	    
+	    GregorianCalendar gc = new GregorianCalendar();
+	    gc.setTime(c.getStatusDate());
+	    ct.setStatusDate(datatypeFactory.newXMLGregorianCalendar(gc));
+	    
+	    gc.setTime(c.getBirthDate());
+	    ct.setSyntymaPvm(datatypeFactory.newXMLGregorianCalendar(gc));
 
+	    ct.setTurvakieltoKytkin(c.isTurvakielto());
+	    ct.setKieliKoodi("FI");
+	    
+	    return ct;
+	  }
+	  
+	}
+	
+	
 }

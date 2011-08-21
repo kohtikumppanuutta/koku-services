@@ -5,13 +5,14 @@
   version="1.0"
   >
 
-  <!-- Temporarily disabled
-  <persistence-unit name="kokuPU" transaction-type="JTA">
+<!-- Temporarily disabled
+  <persistence-unit name="customerServicePU" transaction-type="JTA">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>java:jdbc/kokuDS</jta-data-source>
     <properties>
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
     </properties>
-  </persistence-unit> -->
+  </persistence-unit>
+-->
 
 </persistence>

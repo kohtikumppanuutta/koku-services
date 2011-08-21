@@ -1,4 +1,4 @@
-package fi.koku.services.entity.community.impl;
+package fi.koku.services.entity.customer.impl;
 
 import java.util.Date;
 
@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
@@ -16,6 +17,7 @@ import javax.persistence.Version;
  * 
  * @author Ixonos / aspluma
  */
+@NamedQuery(name="getCustomerByPic", query="FROM Customer c WHERE c.pic = :pic")
 @Entity
 public class Customer {
   @Id
