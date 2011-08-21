@@ -18,6 +18,9 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fi.koku.services.common.v1.AuditInfoType;
 import fi.koku.services.entity.customer.impl.Constants;
 
@@ -29,7 +32,7 @@ import fi.koku.services.entity.customer.impl.Constants;
  * @author aspluma
  */
 public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
-
+  private Logger logger = LoggerFactory.getLogger(AuditInfoHandler.class);
   private JAXBContext jaxbContext;
   private static final Set<QName> headers = createHeaders();
 
@@ -38,7 +41,7 @@ public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
     try {
       jaxbContext = JAXBContext.newInstance(fi.koku.services.common.v1.AuditInfoType.class);
     } catch (JAXBException e) {
-      System.out.println("error: "+e.getMessage());
+      logger.error("error: "+e.getMessage(), e);
       throw new RuntimeException("failed to create JAXBContext", e);
     }
   }
@@ -52,23 +55,23 @@ public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
 
   @PreDestroy
   public void destroy() {
-    System.out.println("PreDestroy");
+    logger.info("PreDestroy");
   }
   
   @Override
   public void close(MessageContext msgCtx) {
-    System.out.println("close");
+    logger.info("close");
   }
 
   @Override
   public boolean handleFault(SOAPMessageContext msgCtx) {
-    System.out.println("handleFault");
+    logger.info("handleFault");
     return true;
   }
 
   @Override
   public boolean handleMessage(SOAPMessageContext msgCtx) {
-    System.out.println("handleMessage");
+    logger.info("handleMessage");
     Boolean isOutgoing = (Boolean) msgCtx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
     if(isOutgoing)
       return true;
@@ -81,22 +84,21 @@ public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
       
       for(Iterator<?> i = hdr.extractAllHeaderElements(); i.hasNext(); ) {
         SOAPHeaderElement h = (SOAPHeaderElement)i.next();
-        System.out.println("h: "+h.getNodeName());
+        logger.info("h: "+h.getNodeName());
         if(!Constants.NAME_AUDIT_INFO.equals(h.getElementQName()))
           continue;
           
         JAXBElement<AuditInfoType> a = jaxbContext.createUnmarshaller().unmarshal(h, AuditInfoType.class);
-        System.out.println("audit: "+a+", "+a.getValue().getComponent());
+        logger.info("audit: "+a+", "+a.getValue().getComponent());
         
         msgCtx.put("myownmsg", "hello, world");
         msgCtx.setScope("myownmsg", MessageContext.Scope.APPLICATION);
       }
-      System.out.println("headers processed");
+      logger.info("headers processed");
     } catch (SOAPException e) {
-      System.out.println("soapexception: "+e.getMessage());
-      e.printStackTrace();
+      logger.error("soapexception: "+e.getMessage(), e);
     } catch (JAXBException e) {
-      System.out.println("jaxb error: "+e.getMessage());
+      logger.error("jaxb error: "+e.getMessage(), e);
       e.printStackTrace();
     }
     
@@ -105,7 +107,7 @@ public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
 
   @Override
   public Set<QName> getHeaders() { 
-    System.out.println("getHeaders");
+    logger.info("getHeaders");
     return headers;
   }
   

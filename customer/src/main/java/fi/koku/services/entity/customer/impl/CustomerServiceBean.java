@@ -1,5 +1,7 @@
 package fi.koku.services.entity.customer.impl;
 
+import java.math.BigInteger;
+import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Set;
@@ -27,6 +29,10 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 /**
  * KoKu Customer service implementation class.
  * 
+ * TODO
+ * - logging (fix log level)
+ * - exception handling
+ * 
  * @author Ixonos / aspluma
  */
 @Stateless
@@ -43,8 +49,7 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
   
-  // Temporarily disabled
-  //@PersistenceContext
+  @PersistenceContext
   private EntityManager em;
   
 	@Resource
@@ -61,68 +66,64 @@ public class CustomerServiceBean implements CustomerServicePortType {
 
   @Override
   public String opAddCustomer(CustomerType customer) {
-    logger.debug("foo");
     logger.info("opAddCustomer");
-    System.out.println("opAddCustomer");
 
     // soap headers
 //    if(auditHeader != null)
-//      System.out.println("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
+//      logger.info("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
     
-    System.out.println("msg: "+wsCtx.getMessageContext().get("myownmsg"));
+    logger.info("msg: "+wsCtx.getMessageContext().get("myownmsg"));
     
     // message context
     Set<String> keys = wsCtx.getMessageContext().keySet();
     for(Iterator<String> i = keys.iterator(); i.hasNext(); )
-      System.out.println("i: "+i.next());
+      logger.info("i: "+i.next());
     
     String caller = wsCtx.getUserPrincipal().getName();
-    System.out.println("caller: "+caller);
-    return "xyz2";
+    logger.info("caller: "+caller);
+    
+    Long id = customerService.add(customerConverter.fromWsType(customer));
+    return id.toString();
   }
 	
 	@Override
 	public CustomerType opGetCustomer(String pic) {
-		System.out.println("opGetCustomer: "+em);
-		return customerConverter.toWsType(customerService.getCustomer(pic));
+		logger.info("opGetCustomer");
+		return customerConverter.toWsType(customerService.get(pic));
 	}
 
 	@Override
 	public void opUpdateCustomer(CustomerType customer) {
-		System.out.println("opUpdateCustomer: "+customer);
+		logger.info("opUpdateCustomer: "+customer);
+		customerService.update(customerConverter.fromWsType(customer));
 	}
 
 	@Override
-	public void opDeleteCustomer(String customerId) {
-		System.out.println("opDeleteCustomer: "+customerId);
+	public void opDeleteCustomer(String pic) {
+		logger.info("opDeleteCustomer: "+pic);
+		customerService.delete(pic);
 	}
 
 	@Override
-	public CustomersType opQueryCustomers(
-			CustomerQueryCriteriaType customerQueryCriteria) {
-		System.out.println("opQueryCustomers");
-		return getCustomers();
+	public CustomersType opQueryCustomers(CustomerQueryCriteriaType criteria) {
+		logger.info("opQueryCustomers");
+		
+		BigInteger id = new BigInteger(criteria.getId());
+		CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(id, criteria.getPic(), criteria.getSelection());
+		Collection<Customer> customers = customerService.query(customerQueryCriteria);
+		CustomersType r = new CustomersType();
+		for(Customer c : customers)
+		  r.getCustomer().add(customerConverter.toWsType(c));
+		
+		return r;
 	}
 
-	private CustomersType getCustomers() {
-		CustomersType c = new CustomersType();
-		c.getCustomer().add(getCustomer());
-		c.getCustomer().add(getCustomer());
-		return c;
-	}
-	
-	private CustomerType getCustomer() {
-		CustomerType c = new CustomerType();
-		c.setId("1234567890");
-		return c;
-	}
-	
 	public void setCustomerService(CustomerService cs) {
 	  this.customerService = cs;
 	}
  
 	/**
-	 * Convert between CustomerType and Customer types.
+	 * Convert between webservice type (CustomerType) and the internal object representation.
 	 * 
 	 * @author aspluma
 	 */
@@ -159,6 +160,23 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	    ct.setKieliKoodi("FI");
 	    
 	    return ct;
+	  }
+	  
+	  public Customer fromWsType(CustomerType ct) {
+	    Customer c = new Customer();
+	    
+	    c.setBirthDate(ct.getSyntymaPvm().toGregorianCalendar().getTime());
+	    c.setFirstName(ct.getEtuNimi());
+	    c.setFirstNames(ct.getEtunimetNimi());
+	    c.setLastName(ct.getSukuNimi());
+	    c.setMunicipality(ct.getKuntaKoodi());
+	    c.setNationality(ct.getKansalaisuusKoodi());
+	    c.setPic(ct.getHenkiloTunnus());
+	    c.setStatus(ct.getStatus());
+	    c.setStatusDate(ct.getStatusDate().toGregorianCalendar().getTime());
+	    c.setTurvakielto(ct.isTurvakieltoKytkin());
+	    
+	    return c;
 	  }
 	  
 	}

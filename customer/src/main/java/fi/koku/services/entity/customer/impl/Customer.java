@@ -1,5 +1,6 @@
 package fi.koku.services.entity.customer.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -22,7 +23,7 @@ import javax.persistence.Version;
 public class Customer {
   @Id
   @GeneratedValue
-  private Long id; // FIXME
+  private BigInteger id;
   
   private String status;
   
@@ -30,6 +31,7 @@ public class Customer {
   @Temporal(TemporalType.DATE)
   private Date statusDate;
 
+  @Column(unique=true, nullable=false)
   private String pic;
   
   @Column(name="birth_date")
@@ -56,10 +58,14 @@ public class Customer {
   public Customer() {
   }
   
-  public Long getId() {
+  public BigInteger getId() {
     return id;
   }
-
+  
+  public void setId(BigInteger id) {
+    this.id = id;
+  }
+  
   public String getStatus() {
     return status;
   }
@@ -142,6 +148,19 @@ public class Customer {
 
   public int getVersion() {
     return version;
+  }
+
+  public void setCustomer(Customer c) {
+    setStatus(c.getStatus());
+    setStatusDate(c.getStatusDate());
+    setPic(c.getPic());
+    setBirthDate(c.getBirthDate());
+    setLastName(c.getLastName());
+    setFirstName(c.getFirstName());
+    setFirstNames(c.getFirstNames());
+    setNationality(c.getNationality());
+    setMunicipality(c.getMunicipality());
+    setTurvakielto(c.isTurvakielto());
   }
 
 }
