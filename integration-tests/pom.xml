@@ -58,7 +58,7 @@
               <serverId>jboss-eap</serverId>
               <fromDir>../customer/target</fromDir>
               <includes>*.jar</includes>
-              <url>scp://kohtikumppanuutta-dev.dmz/</url>
+              <url>scp://10.5.21.229/</url>
               <toDir>/tmp</toDir>              
             </configuration>
           </execution>
