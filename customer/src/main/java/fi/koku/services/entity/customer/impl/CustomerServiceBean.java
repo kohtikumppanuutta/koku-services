@@ -30,7 +30,7 @@ import fi.koku.services.entity.customer.v1.CustomersType;
  * 
  * TODO
  * - logging (fix log level)
- * - exception handling
+ * - exception handling (establish fault barrier)
  * 
  * @author Ixonos / aspluma
  */
@@ -57,10 +57,13 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	private CustomerService customerService;
 	private CustomerConverter customerConverter;
 	
+	public CustomerServiceBean() {
+	  customerConverter = new CustomerConverter();
+	}
+	
 	@PostConstruct
 	public void initialize() {
 	  customerService = new CustomerServiceImpl(em);
-	  customerConverter = new CustomerConverter();
 	}
 
   @Override
