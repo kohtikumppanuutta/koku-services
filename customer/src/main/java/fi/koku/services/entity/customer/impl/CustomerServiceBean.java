@@ -68,21 +68,21 @@ public class CustomerServiceBean implements CustomerServicePortType {
 
   @Override
   public String opAddCustomer(CustomerType customer, AuditInfoType auditHeader) {
-    logger.info("opAddCustomer");
+    logger.debug("opAddCustomer");
 
     // soap headers
 //    if(auditHeader != null)
-//      logger.info("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
+//      logger.debug("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
     
-    logger.info("msg: "+wsCtx.getMessageContext().get("myownmsg"));
+    logger.debug("msg: "+wsCtx.getMessageContext().get("myownmsg"));
     
     // message context
     Set<String> keys = wsCtx.getMessageContext().keySet();
     for(Iterator<String> i = keys.iterator(); i.hasNext(); )
-      logger.info("i: "+i.next());
+      logger.debug("i: "+i.next());
     
     String caller = wsCtx.getUserPrincipal().getName();
-    logger.info("caller: "+caller);
+    logger.debug("caller: "+caller);
     
     Long id = customerService.add(customerConverter.fromWsType(customer));
     return id.toString();
@@ -90,25 +90,25 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	
 	@Override
 	public CustomerType opGetCustomer(String pic, AuditInfoType auditHeader) {
-		logger.info("opGetCustomer");
+		logger.debug("opGetCustomer");
 		return customerConverter.toWsType(customerService.get(pic));
 	}
 
 	@Override
 	public void opUpdateCustomer(CustomerType customer, AuditInfoType auditHeader) {
-		logger.info("opUpdateCustomer: "+customer);
+		logger.debug("opUpdateCustomer: "+customer);
 		customerService.update(customerConverter.fromWsType(customer));
 	}
 
 	@Override
 	public void opDeleteCustomer(String pic, AuditInfoType auditHeader) {
-		logger.info("opDeleteCustomer: "+pic);
+		logger.debug("opDeleteCustomer: "+pic);
 		customerService.delete(pic);
 	}
 
 	@Override
 	public CustomersType opQueryCustomers(CustomerQueryCriteriaType criteria, AuditInfoType auditHeader) {
-		logger.info("opQueryCustomers");
+		logger.debug("opQueryCustomers");
 		
 		CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(Long.valueOf(criteria.getId()), criteria.getPic(), criteria.getSelection());
 		Collection<Customer> customers = customerService.query(customerQueryCriteria);

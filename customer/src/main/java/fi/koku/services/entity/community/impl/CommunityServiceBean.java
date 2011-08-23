@@ -4,6 +4,9 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fi.koku.services.common.v1.AuditInfoType;
 import fi.koku.services.entity.community.v1.CommunitiesType;
 import fi.koku.services.entity.community.v1.CommunityQueryCriteriaType;
@@ -26,9 +29,11 @@ import fi.koku.services.entity.community.v1.CommunityType;
 @RolesAllowed("koku-role")
 
 public class CommunityServiceBean implements CommunityServicePortType {
+  private Logger logger = LoggerFactory.getLogger(CommunityServiceBean.class);
 
   @Override
   public String opAddCommunity(CommunityType community, AuditInfoType auditHeader) {
+    logger.debug("opAddCommunity");
     return "12345";
   }
 
