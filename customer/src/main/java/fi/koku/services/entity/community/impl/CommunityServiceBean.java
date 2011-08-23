@@ -4,6 +4,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
+import fi.koku.services.common.v1.AuditInfoType;
 import fi.koku.services.entity.community.v1.CommunitiesType;
 import fi.koku.services.entity.community.v1.CommunityQueryCriteriaType;
 import fi.koku.services.entity.community.v1.CommunityServicePortType;
@@ -27,26 +28,26 @@ import fi.koku.services.entity.community.v1.CommunityType;
 public class CommunityServiceBean implements CommunityServicePortType {
 
   @Override
-  public String opAddCommunity(CommunityType community) {
+  public String opAddCommunity(CommunityType community, AuditInfoType auditHeader) {
     return "12345";
   }
 
   @Override
-  public CommunityType opGetCommunity(String communityId) {
+  public CommunityType opGetCommunity(String communityId, AuditInfoType auditHeader) {
     CommunityType c = new CommunityType();
     return c;
   }
 
   @Override
-  public void opUpdateCommunity(CommunityType community) {
+  public void opUpdateCommunity(CommunityType community, AuditInfoType auditHeader) {
   }
 
   @Override
-  public void opDeleteCommunity(String communityId) {
+  public void opDeleteCommunity(String communityId, AuditInfoType auditHeader) {
   }
 
   @Override
-  public CommunitiesType opQueryCommunities(CommunityQueryCriteriaType communityQueryCriteria) {
+  public CommunitiesType opQueryCommunities(CommunityQueryCriteriaType communityQueryCriteria, AuditInfoType auditHeader) {
     CommunitiesType c = new CommunitiesType();
     c.getCommunity().add(new CommunityType());
     c.getCommunity().add(new CommunityType());

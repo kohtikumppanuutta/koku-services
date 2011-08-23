@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import fi.koku.services.common.v1.AuditInfoType;
 import fi.koku.services.entity.customer.impl.Customer;
 import fi.koku.services.entity.customer.impl.CustomerQueryCriteria;
 import fi.koku.services.entity.customer.impl.CustomerService;
@@ -46,7 +47,10 @@ public class CustomerServiceBeanTest {
   
   @Test
   public void testGet() {
-    CustomerType cust = customerServiceBean.opGetCustomer("abc");
+    AuditInfoType audit = new AuditInfoType();
+    audit.setComponent("kks");
+    audit.setUserId("erkki");
+    CustomerType cust = customerServiceBean.opGetCustomer("abc", audit);
     assertEquals("asiakas", cust.getSukuNimi());
   }
   

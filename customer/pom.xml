@@ -58,11 +58,5 @@
     </dependency>
  -->
 
-    <dependency>
-      <groupId>kohti-kumppanuutta</groupId>
-      <artifactId>customerservice-api</artifactId>
-      <version>${customerservice-api.version}</version>
-    </dependency>    
-
   </dependencies>
 </project>

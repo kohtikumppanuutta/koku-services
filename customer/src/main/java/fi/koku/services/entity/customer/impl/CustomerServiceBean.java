@@ -9,7 +9,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,6 +19,7 @@ import javax.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.services.common.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerQueryCriteriaType;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
@@ -42,13 +42,13 @@ import fi.koku.services.entity.customer.v1.CustomersType;
     serviceName="customerService"
 )
 //@BindingType(SOAPBinding.SOAP12HTTP_BINDING)
+//@HandlerChain(file="auditInfoHandler.xml")
 @RolesAllowed("koku-role")
-@HandlerChain(file="auditInfoHandler.xml")
 
 public class CustomerServiceBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
   
-  //@PersistenceContext
+//  @PersistenceContext
   private EntityManager em;
   
 	@Resource
@@ -67,7 +67,7 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	}
 
   @Override
-  public String opAddCustomer(CustomerType customer) {
+  public String opAddCustomer(CustomerType customer, AuditInfoType auditHeader) {
     logger.info("opAddCustomer");
 
     // soap headers
@@ -89,25 +89,25 @@ public class CustomerServiceBean implements CustomerServicePortType {
   }
 	
 	@Override
-	public CustomerType opGetCustomer(String pic) {
+	public CustomerType opGetCustomer(String pic, AuditInfoType auditHeader) {
 		logger.info("opGetCustomer");
 		return customerConverter.toWsType(customerService.get(pic));
 	}
 
 	@Override
-	public void opUpdateCustomer(CustomerType customer) {
+	public void opUpdateCustomer(CustomerType customer, AuditInfoType auditHeader) {
 		logger.info("opUpdateCustomer: "+customer);
 		customerService.update(customerConverter.fromWsType(customer));
 	}
 
 	@Override
-	public void opDeleteCustomer(String pic) {
+	public void opDeleteCustomer(String pic, AuditInfoType auditHeader) {
 		logger.info("opDeleteCustomer: "+pic);
 		customerService.delete(pic);
 	}
 
 	@Override
-	public CustomersType opQueryCustomers(CustomerQueryCriteriaType criteria) {
+	public CustomersType opQueryCustomers(CustomerQueryCriteriaType criteria, AuditInfoType auditHeader) {
 		logger.info("opQueryCustomers");
 		
 		CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(Long.valueOf(criteria.getId()), criteria.getPic(), criteria.getSelection());

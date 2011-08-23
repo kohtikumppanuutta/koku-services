@@ -71,7 +71,7 @@
           <target>${jaxws-api.version}</target>
           <wsdlDirectory>${project.build.directory}/wsdl</wsdlDirectory>
           <extension>true</extension>
-          <xadditionalHeaders>false</xadditionalHeaders>
+          <xadditionalHeaders>true</xadditionalHeaders>
           <sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
         </configuration>
       </plugin>
