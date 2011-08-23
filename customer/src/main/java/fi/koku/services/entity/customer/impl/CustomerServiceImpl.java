@@ -36,7 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
     //q.setParameter("pic", pic);
     //Customer c = (Customer)q.getSingleResult();
     Customer c = new Customer();
-    c.setId(12344L);
+    c.setId(12345L);
     c.setBirthDate(new Date());
     c.setStatusDate(new Date());
     return c;
