@@ -1,0 +1,2 @@
+# You can override the TestPropertiesUtil properties set with this file (remove the .svn suffix)
+koku.srv.layer.endpoint.address=http://localhost:8080

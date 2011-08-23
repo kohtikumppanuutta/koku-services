@@ -2,6 +2,7 @@ package fi.koku.services.entity.customer.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -30,9 +31,14 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Override
   public Customer get(String pic) {
-    Query q = em.createNamedQuery("getCustomerByPic");
-    q.setParameter("pic", pic);
-    Customer c = (Customer)q.getSingleResult();
+    // Temporarily commented out
+    //Query q = em.createNamedQuery("getCustomerByPic");
+    //q.setParameter("pic", pic);
+    //Customer c = (Customer)q.getSingleResult();
+    Customer c = new Customer();
+    c.setId(12345L);
+    c.setBirthDate(new Date());
+    c.setStatusDate(new Date());
     return c;
   }
   

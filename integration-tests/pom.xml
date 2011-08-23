@@ -59,7 +59,7 @@
               <fromDir>../customer/target</fromDir>
               <includes>*.jar</includes>
               <url>scp://62.61.65.15/</url>
-              <toDir>/tmp</toDir>              
+              <toDir>/opt/jboss-eap-5.1/jboss-as/server/default/deploy</toDir>              
             </configuration>
           </execution>
         </executions>
