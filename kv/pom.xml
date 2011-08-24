@@ -4,7 +4,6 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>kv-model</artifactId>
-	<groupId>fi.arcusys.koku.kv</groupId>
 	<version>0.1-SNAPSHOT</version>
 	<name>Data Model and services for KV</name>
 	<packaging>ejb</packaging>
@@ -24,7 +23,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
+			<!--plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ejb-plugin</artifactId>
 				<configuration>
@@ -53,7 +52,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin-->
 		</plugins>
 	</build>
 
