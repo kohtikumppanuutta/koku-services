@@ -12,9 +12,8 @@ import javax.jws.WebService;
  */
 @WebService(targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public interface KokuAppointmentService {
+    public int getTotalCreatedAppointments(@WebParam(name = "user") final String user);
 
-	public int getTotalCreatedAppointments(@WebParam(name = "user") final String user);
-	
 	public int getTotalRespondedAppointments(@WebParam(name = "user") final String user);
 
 	public int getTotalAssignedAppointments(@WebParam(name = "user") final String user);

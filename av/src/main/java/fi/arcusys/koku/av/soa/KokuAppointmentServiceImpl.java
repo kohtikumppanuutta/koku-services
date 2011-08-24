@@ -19,7 +19,7 @@ import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
  */
 @Stateless
 @WebService(serviceName = "KokuAppointmentService", portName = "KokuAppointmentServicePort", 
-		endpointInterface = "fi.arcusys.koku.kv.soa.KokuAppointmentService",
+		endpointInterface = "fi.arcusys.koku.av.soa.KokuAppointmentService",
 		targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public class KokuAppointmentServiceImpl implements KokuAppointmentService {
 

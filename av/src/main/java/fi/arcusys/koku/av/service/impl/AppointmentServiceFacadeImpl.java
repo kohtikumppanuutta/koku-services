@@ -3,6 +3,7 @@ package fi.arcusys.koku.av.service.impl;
 import static fi.arcusys.koku.common.service.AbstractEntityDAO.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,17 +15,23 @@ import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
+import fi.arcusys.koku.av.soa.AppointmentForEditTO;
+import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
+import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
 import fi.arcusys.koku.av.soa.AppointmentSlotTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
 import fi.arcusys.koku.av.soa.AppointmentTO;
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
+import fi.arcusys.koku.common.service.TargetPersonDAO;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.Appointment;
 import fi.arcusys.koku.common.service.datamodel.AppointmentResponse;
+import fi.arcusys.koku.common.service.datamodel.AppointmentResponseStatus;
 import fi.arcusys.koku.common.service.datamodel.AppointmentSlot;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
+import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
@@ -39,6 +46,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	
 	@EJB
 	private UserDAO userDao;
+	
+	@EJB
+	private TargetPersonDAO targetPersonDao;
 
 	/**
 	 * @param appointmentId
@@ -46,15 +56,20 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	 * @param comment
 	 */
 	@Override
-	public void approveAppointment(final String userUid, final Long appointmentId, final int slotNumber, final String comment) {
-		final Appointment appointment = processReply(userUid, appointmentId, comment);
+	public void approveAppointment(final String targetPersonUid, final String userUid, final Long appointmentId, final int slotNumber, final String comment) {
+		final Appointment appointment = appointmentDAO.getById(appointmentId);
+        if (appointment == null) {
+        	throw new IllegalArgumentException("Appointment is not found by id: " + appointmentId);
+        }
+        
+        if(appointment.getSlotByNumber(slotNumber) == null) {
+            throw new IllegalStateException("There is no slot with number " + slotNumber + " in appointment id = " + appointmentId);
+        }
 
-		if(appointment.getSlotByNumber(slotNumber) == null) {
-			throw new IllegalStateException("There is no slot with number " + slotNumber + " in appointment id = " + appointmentId);
-		}
-		appointment.getResponse().setSlotNumber(slotNumber);
+        final AppointmentResponse response = processReply(targetPersonUid, userUid, comment, appointment);
+        response.setSlotNumber(slotNumber);
+        response.setStatus(AppointmentResponseStatus.Accepted);
 		
-		appointment.setStatus(AppointmentStatus.Approved);
 		appointmentDAO.update(appointment);
 	}
 
@@ -63,35 +78,49 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	 * @param comment
 	 */
 	@Override
-	public void declineAppointment(final String userUid, final Long appointmentId, final String comment) {
-		final Appointment appointment = processReply(userUid, appointmentId, comment);
+	public void declineAppointment(final String targetPersonUid, final String userUid, final Long appointmentId, final String comment) {
+		final Appointment appointment = appointmentDAO.getById(appointmentId);
+        if (appointment == null) {
+        	throw new IllegalArgumentException("Appointment is not found by id: " + appointmentId);
+        }
+        
+        final AppointmentResponse response = processReply(targetPersonUid, userUid, comment, appointment);
+        response.setStatus(AppointmentResponseStatus.Rejected);
 		
-		appointment.setStatus(AppointmentStatus.Declined);
 		appointmentDAO.update(appointment);
 	}
 
-	private Appointment processReply(final String userUid,
-			final Long appointmentId, final String comment) {
-		final Appointment appointment = appointmentDAO.getById(appointmentId);
-		if (appointment == null) {
-			throw new IllegalArgumentException("Appointment is not found by id: " + appointmentId);
+	private AppointmentResponse processReply(final String targetPersonUid,
+            final String userUid, final String comment,
+            final Appointment appointment) {
+        if (appointment.getStatus() != AppointmentStatus.Created) {
+			throw new IllegalStateException("Appointment for approval (id = " + appointment.getId() + ") should be in status 'Created' but it has status " + appointment.getStatus());
+		}
+        
+        for (final AppointmentResponse response : appointment.getResponses() ) {
+            if (response.getTarget().getTargetUser().getUid().equals(targetPersonUid)) {
+                throw new IllegalStateException("Apppointment id " + appointment.getId() + " already have response for targetPerson " + targetPersonUid);
+            }
+        }
+		
+		final TargetPerson targetPerson = appointment.getTargetPersonByUid(targetPersonUid);
+		if(targetPerson == null) {
+			throw new IllegalStateException("There is no target person with uid '" + userUid + "' in appointment id = " + appointment.getId());
 		}
 		
-		if (appointment.getStatus() != AppointmentStatus.Created) {
-			throw new IllegalStateException("Appointment for approval (id = " + appointmentId + ") should be in status 'Created' but it has status " + appointment.getStatus());
-		}
-		
-		final User replier = appointment.getReceipientByUid(userUid);
-		if(replier == null) {
-			throw new IllegalStateException("There is no receipient with uid '" + userUid + "' in appointment id = " + appointmentId);
-		}
+		final User replier = targetPerson.getGuardianByUid(userUid);
+        if(replier == null) {
+            throw new IllegalStateException("There is no guardian with uid '" + userUid + "' for target person " + targetPersonUid);
+        }
 
 		final AppointmentResponse response = new AppointmentResponse();
 		response.setReplier(replier);
 		response.setComment(comment);
-		appointment.setResponse(response);
-		return appointment;
-	}
+		response.setTarget(targetPerson);
+		response.setAppointment(appointment);
+		appointment.getResponses().add(response);
+        return response;
+    }
 
 	/**
 	 * @param appointmentId
@@ -107,18 +136,44 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		final AppointmentTO appointmentTO = new AppointmentTO();
 		convertAppointmentToDTO(appointment, appointmentTO);
 
-		appointmentTO.setStatus(appointment.getStatus().name());
-		if (appointment.getResponse() != null) {
-			appointmentTO.setApprovedSlotNumber(appointment.getResponse().getSlotNumber());
-			appointmentTO.setReplierComment(appointment.getResponse().getComment());
-			final User replier = appointment.getResponse().getReplier();
-			appointmentTO.setReplier(replier != null ? replier.getUid() : "");
+        appointmentTO.setRecipients(getReceipientsDTOByAppointment(appointment));
+
+        appointmentTO.setStatus(appointment.getStatus().name());
+
+		final HashMap<Integer, String> acceptedSlots = new HashMap<Integer, String>();
+        final List<String> usersRejected = new ArrayList<String>();
+		
+		for (final AppointmentResponse response : appointment.getResponses()) {
+		    final String targetPersonUid = response.getTarget().getTargetUser().getUid();
+            if (response.getStatus() == AppointmentResponseStatus.Accepted) {
+	            acceptedSlots.put(response.getSlotNumber(), targetPersonUid);
+		    } else {
+		        usersRejected.add(targetPersonUid);
+		    }
 		}
+        appointmentTO.setAcceptedSlots(acceptedSlots);
+        appointmentTO.setUsersRejected(usersRejected);
 		
 		appointmentTO.setSlots(getSlotTOsByAppointment(appointment));
 		
 		return appointmentTO;
 	}
+
+    private List<AppointmentReceipientTO> getReceipientsDTOByAppointment(
+            final Appointment appointment) {
+        final List<AppointmentReceipientTO> recipients = new ArrayList<AppointmentReceipientTO>();
+        for (final TargetPerson receipient : appointment.getRecipients()) {
+            final AppointmentReceipientTO receipientTO = new AppointmentReceipientTO();
+            receipientTO.setTargetPerson(receipient.getTargetUser().getUid());
+            final List<String> guardians = new ArrayList<String>();
+            for (final User guardian : receipient.getGuardians()) {
+                guardians.add(guardian.getUid());
+            }
+            receipientTO.setReceipients(guardians);
+            recipients.add(receipientTO);
+        }
+        return recipients;
+    }
 
 	private List<AppointmentSlotTO> getSlotTOsByAppointment(final Appointment appointment) {
 		final List<AppointmentSlotTO> result = new ArrayList<AppointmentSlotTO>();
@@ -178,22 +233,17 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		appointmentSummary.setDescription(appointment.getDescription());
 		appointmentSummary.setSubject(appointment.getSubject());
 		appointmentSummary.setSender(appointment.getSender().getUid());
-		final List<String> recipients = new ArrayList<String>();
-		for (final User receipient : appointment.getRecipients()) {
-			recipients.add(receipient.getUid());
-		}
-		appointmentSummary.setRecipients(recipients);
 		
 		return appointmentSummary;
 	}
 	
-	private Appointment fillAppointmentByDto(final AppointmentTO appointmentTO, final Appointment appointment) {
+	private Appointment fillAppointmentByDto(final AppointmentForEditTO appointmentTO, final Appointment appointment) {
 		appointment.setDescription(appointmentTO.getDescription());
 		appointment.setSubject(appointmentTO.getSubject());
 		appointment.setSender(userDao.getOrCreateUser(appointmentTO.getSender()));
-		final Set<User> recipients = new HashSet<User>();
-		for (final String receipient : appointmentTO.getRecipients()) {
-			recipients.add(userDao.getOrCreateUser(receipient));
+		final Set<TargetPerson> recipients = new HashSet<TargetPerson>();
+		for (final AppointmentReceipientTO receipient : appointmentTO.getReceipients()) {
+			recipients.add(targetPersonDao.getOrCreateTargetPerson(receipient.getTargetPerson(), receipient.getReceipients()));
 		}
 		appointment.setRecipients(recipients);
 		
@@ -232,7 +282,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	 * @return
 	 */
 	@Override
-	public Long storeAppointment(AppointmentTO appointmentTO) {
+	public Long storeAppointment(AppointmentForEditTO appointmentTO) {
 		final Appointment appointment;
 		if (appointmentTO.getAppointmentId() > 0) {
 			appointment = appointmentDAO.getById(appointmentTO.getAppointmentId());
@@ -286,4 +336,50 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	private int getIntValue(final Long value) {
 		return value != null ? value.intValue() : 0;
 	}
+
+    /**
+     * @param appointmentId
+     * @return
+     */
+    @Override
+    public AppointmentForEditTO getAppointmentForEdit(Long appointmentId) {
+        final AppointmentForEditTO appointmentTO = new AppointmentForEditTO();
+        final Appointment appointment = fillAppointmentTOForReply(appointmentId, appointmentTO);
+        
+        appointmentTO.setReceipients(getReceipientsDTOByAppointment(appointment));
+
+        return appointmentTO;
+    }
+
+    private Appointment fillAppointmentTOForReply(final Long appointmentId, final AppointmentForReplyTO appointmentTO) {
+        final Appointment appointment = appointmentDAO.getById(appointmentId);
+        if (appointment == null) {
+            throw new IllegalArgumentException("Appointment id " + appointmentId + " not found.");
+        }
+        
+        convertAppointmentToDTO(appointment, appointmentTO);
+        appointmentTO.setSlots(getSlotTOsByAppointment(appointment));
+        return appointment;
+    }
+
+    /**
+     * @param appointmentId
+     * @param targetPersonUid
+     * @return
+     */
+    @Override
+    public AppointmentForReplyTO getAppointmentForReply(Long appointmentId, String targetPersonUid) {
+        final AppointmentForReplyTO appointmentTO = new AppointmentForReplyTO();
+        final Appointment appointment = fillAppointmentTOForReply(appointmentId, appointmentTO);
+        
+        if (appointment.getTargetPersonByUid(targetPersonUid) == null) {
+            throw new IllegalArgumentException("Appointment id " + appointmentId + " doesn't have target person " + targetPersonUid);
+        }
+        
+        if (appointment.getResponseForTargetPerson(targetPersonUid) != null) {
+            throw new IllegalArgumentException("Appointment id " + appointmentId + " already have response for target person " + targetPersonUid);
+        }
+        
+        return appointmentTO;
+    }
 }

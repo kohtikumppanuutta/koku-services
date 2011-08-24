@@ -16,14 +16,18 @@ public interface KokuAppointmentProcessingService {
 	
 	Long storeAppointment(@WebParam(name = "appointment") final AppointmentForEditTO appointment);
 	
-    AppointmentForReplyTO getAppointmentForReply(@WebParam(name = "appointmentId") final Long appointmentId);
+    AppointmentForReplyTO getAppointmentForReply(@WebParam(name = "appointmentId") final Long appointmentId, final String targetUserUid);
 
-    void approveAppointment(@WebParam(name = "user") final String userUid,
-							@WebParam(name = "appointmentId") final Long appointmentId, 
-							@WebParam(name = "slotNumber") final int slotNumber, 
-							@WebParam(name = "comment") final String comment);
+    void approveAppointment(
+            @WebParam(name = "targetUser") final String targetUserUid,
+            @WebParam(name = "user") final String userUid,
+			@WebParam(name = "appointmentId") final Long appointmentId, 
+			@WebParam(name = "slotNumber") final int slotNumber, 
+			@WebParam(name = "comment") final String comment);
 
-	void declineAppointment(@WebParam(name = "user") final String userUid,
-							@WebParam(name = "appointmentId") final Long appointmentId, 
-							@WebParam(name = "comment") final String comment);
+	void declineAppointment(
+            @WebParam(name = "targetUser") final String targetUserUid,
+	        @WebParam(name = "user") final String userUid,
+			@WebParam(name = "appointmentId") final Long appointmentId, 
+			@WebParam(name = "comment") final String comment);
 }

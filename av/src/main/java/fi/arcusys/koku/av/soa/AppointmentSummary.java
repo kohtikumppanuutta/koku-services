@@ -1,6 +1,5 @@
 package fi.arcusys.koku.av.soa;
 
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlType;
 
@@ -9,15 +8,13 @@ import javax.xml.bind.annotation.XmlType;
  * Jul 22, 2011
  */
 @XmlType (name = "appointmentSummary", namespace = "http://soa.kv.koku.arcusys.fi/",
-		propOrder={"appointmentId", "sender" , "recipients", "subject", "description"})
+		propOrder={"appointmentId", "sender" , "subject", "description"})
 public class AppointmentSummary {
 
 	private long appointmentId;
 	private String sender;
 	private String subject;
 	private String description;
-	private List<String> recipients;
-
 	/**
 	 * @return the appointmentId
 	 */
@@ -72,20 +69,6 @@ public class AppointmentSummary {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @return the recipients
-	 */
-	public List<String> getRecipients() {
-		return recipients;
-	}
-
-	/**
-	 * @param recipients the recipients to set
-	 */
-	public void setRecipients(List<String> recipients) {
-		this.recipients = recipients;
 	}
 
 }

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -22,6 +23,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
+import fi.arcusys.koku.av.soa.AppointmentForEditTO;
+import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
 import fi.arcusys.koku.av.soa.AppointmentSlotTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
 import fi.arcusys.koku.av.soa.AppointmentTO;
@@ -47,7 +50,7 @@ public class AppointmentServiceTest {
 	
 	@Test
 	public void getUserAppointments() {
-		final AppointmentTO newAppointment = createTestAppointment("new appointment", "appointment description", 1);
+		final AppointmentForEditTO newAppointment = createTestAppointment("new appointment", "appointment description", 1);
 		final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
 		
 		for (final AppointmentSummary appointment : serviceFacade.getAppointments(newAppointment.getSender(), Collections.singleton(AppointmentStatus.Created))) {
@@ -60,31 +63,38 @@ public class AppointmentServiceTest {
 	
 	@Test
 	public void approveAndDecline() {
-		final AppointmentTO newAppointmentForApprove = createTestAppointment("new appointment for approve", "appointment description", 1);
-		final AppointmentTO newAppointmentForDecline = createTestAppointment("new appointment for decline", "appointment description", 1);
-		final String receipient = newAppointmentForApprove.getRecipients().iterator().next();
-		final Long approvedAppointmentId = serviceFacade.storeAppointment(newAppointmentForApprove);
-		final Long declinedAppointmentId = serviceFacade.storeAppointment(newAppointmentForDecline);
+		final AppointmentForEditTO newAppointment = createTestAppointment("new appointment for approve & decline", "appointment description", 1);
+
+		final AppointmentReceipientTO appointmentReceipient = newAppointment.getReceipients().get(0);
+        final String receipient = appointmentReceipient.getReceipients().get(0);
+        final String targetPerson = appointmentReceipient.getTargetPerson();
+        final String targetPersonForDecline = newAppointment.getReceipients().get(1).getTargetPerson();
+		final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
 		
 
-		final List<AppointmentSummary> appointments = serviceFacade.getAssignedAppointments(receipient);
+		List<AppointmentSummary> appointments = serviceFacade.getAssignedAppointments(receipient);
 		assertFalse(appointments.isEmpty());
 		
-		final AppointmentSummary appointmentForApprove = getById(appointments, approvedAppointmentId);
-		serviceFacade.approveAppointment(receipient, appointmentForApprove.getAppointmentId(), 1, "approved");
-		assertEquals(AppointmentStatus.Approved.name(), serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getStatus());
+		final AppointmentSummary appointmentForApprove = getById(appointments, appointmentId);
+        assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getAcceptedSlots().isEmpty());
+		serviceFacade.approveAppointment(targetPerson, receipient, appointmentForApprove.getAppointmentId(), 1, "approved");
+        assertFalse(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getAcceptedSlots().isEmpty());
 		
-		final AppointmentSummary appointmentForDecline = getById(appointments, declinedAppointmentId);
-		serviceFacade.declineAppointment(receipient, appointmentForDecline.getAppointmentId(), "declined");
-		assertEquals(AppointmentStatus.Declined.name(), serviceFacade.getAppointment(appointmentForDecline.getAppointmentId()).getStatus());
+        appointments = serviceFacade.getAssignedAppointments(receipient);
+        assertFalse(appointments.isEmpty());
 
-		for (final AppointmentSummary appointmentSummary : serviceFacade.getAssignedAppointments(receipient)) {
-			if (appointmentSummary.getAppointmentId() == appointmentForApprove.getAppointmentId()) {
-				fail("Appointment approved already and shouldn't be in list of assigned");
-			} else if (appointmentSummary.getAppointmentId() == appointmentForDecline.getAppointmentId()) {
-				fail("Appointment declined already and shouldn't be in list of assigned");
-			}
-		}
+        final AppointmentSummary appointmentForDecline = getById(appointments, appointmentId);
+        assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().isEmpty());
+		serviceFacade.declineAppointment(targetPersonForDecline, receipient, appointmentForDecline.getAppointmentId(), "declined");
+        assertFalse(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().isEmpty());
+        assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().contains(targetPersonForDecline));
+
+        try {
+            getById(serviceFacade.getAssignedAppointments(receipient), appointmentId);
+            fail("All appointments should be processed already");
+        } catch (IllegalArgumentException e) {
+            // do nothing, exception expected
+        }
 	}
 
 	private AppointmentSummary getById(final List<AppointmentSummary> appointments, final Long appointmentId) {
@@ -96,12 +106,19 @@ public class AppointmentServiceTest {
 		throw new IllegalArgumentException("Appointment ID " + appointmentId + " not found.");
 	}
 
-	private AppointmentTO createTestAppointment(final String testSubject, final String description, int numberOfSlots) {
-		final AppointmentTO appointment = new AppointmentTO();
+	private AppointmentForEditTO createTestAppointment(final String testSubject, final String description, int numberOfSlots) {
+		final AppointmentForEditTO appointment = new AppointmentForEditTO();
 		appointment.setSubject(testSubject);
 		appointment.setDescription(description);
 		appointment.setSender("testAppSender");
-		appointment.setRecipients(Arrays.asList("testAppReceiver1", "testAppReceiver2"));
+		final AppointmentReceipientTO receipientTO = new AppointmentReceipientTO();
+		receipientTO.setTargetPerson("testAppReceiver1");
+		receipientTO.setReceipients(Arrays.asList("testGuardian1", "testGuardian2"));
+        final AppointmentReceipientTO receipientTO2 = new AppointmentReceipientTO();
+        receipientTO2.setTargetPerson("testAppReceiver2");
+        receipientTO2.setReceipients(Arrays.asList("testGuardian1", "testGuardian2"));
+        appointment.setReceipients(
+		        Arrays.asList(receipientTO, receipientTO2));
 		appointment.setSlots(createTestSlots(numberOfSlots));
 		return appointment;
 	}

@@ -1,6 +1,7 @@
 package fi.arcusys.koku.av.soa;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -10,16 +11,40 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Jul 21, 2011
  */
 @XmlType (name = "appointment", namespace = "http://soa.kv.koku.arcusys.fi/",
-		  propOrder={"slots", "status", "replier", "approvedSlotNumber", "replierComment" })
+		  propOrder={"slots", "status", "recipients", "acceptedSlots", "usersRejected" })
 public class AppointmentTO extends AppointmentSummary {
 	private List<AppointmentSlotTO> slots;
 
 	private String status;
-	private String replier;
-	private Integer approvedSlotNumber;
-	private String replierComment;
+    private List<AppointmentReceipientTO> recipients;
+    private Map<Integer, String> acceptedSlots;
+    private List<String> usersRejected;
 	
 	/**
+     * @return the acceptedSlots
+     */
+    public Map<Integer, String> getAcceptedSlots() {
+        return acceptedSlots;
+    }
+    /**
+     * @param acceptedSlots the acceptedSlots to set
+     */
+    public void setAcceptedSlots(Map<Integer, String> acceptedSlots) {
+        this.acceptedSlots = acceptedSlots;
+    }
+    /**
+     * @return the rejectedUsers
+     */
+    public List<String> getUsersRejected() {
+        return usersRejected;
+    }
+    /**
+     * @param rejectedUsers the rejectedUsers to set
+     */
+    public void setUsersRejected(List<String> usersRejected) {
+        this.usersRejected = usersRejected;
+    }
+    /**
 	 * @return the slots
 	 */
 	public List<AppointmentSlotTO> getSlots() {
@@ -43,40 +68,16 @@ public class AppointmentTO extends AppointmentSummary {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	/**
-	 * @return the replier
-	 */
-	public String getReplier() {
-		return replier;
-	}
-	/**
-	 * @param replier the replier to set
-	 */
-	public void setReplier(String replier) {
-		this.replier = replier;
-	}
-	/**
-	 * @return the approvedSlotNumber
-	 */
-	public Integer getApprovedSlotNumber() {
-		return approvedSlotNumber;
-	}
-	/**
-	 * @param approvedSlotNumber the approvedSlotNumber to set
-	 */
-	public void setApprovedSlotNumber(Integer approvedSlotNumber) {
-		this.approvedSlotNumber = approvedSlotNumber;
-	}
-	/**
-	 * @return the replierComment
-	 */
-	public String getReplierComment() {
-		return replierComment;
-	}
-	/**
-	 * @param replierComment the replierComment to set
-	 */
-	public void setReplierComment(String replierComment) {
-		this.replierComment = replierComment;
-	}
+    /**
+     * @return the recipients
+     */
+    public List<AppointmentReceipientTO> getRecipients() {
+    	return recipients;
+    }
+    /**
+     * @param recipients the recipients to set
+     */
+    public void setRecipients(List<AppointmentReceipientTO> recipients) {
+    	this.recipients = recipients;
+    }
 }
