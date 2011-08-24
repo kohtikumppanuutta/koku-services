@@ -1,6 +1,7 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,10 +26,20 @@ import javax.persistence.PrePersist;
  */
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "findAppointmentByUserAndStatuses", query = "SELECT DISTINCT ap FROM Appointment ap WHERE (ap.sender = :user OR :user MEMBER OF ap.recipients) AND ap.status in (:statuses)"),
-	@NamedQuery(name = "countAppointmentsByUserAndStatuses", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap WHERE (ap.sender = :user OR :user MEMBER OF ap.recipients) AND ap.status in (:statuses)"),
-	@NamedQuery(name = "findAssignedAppointments", query = "SELECT DISTINCT ap FROM Appointment ap WHERE :user MEMBER OF ap.recipients AND ap.status in (:statuses)"),
-	@NamedQuery(name = "countAssignedAppointments", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap WHERE :user MEMBER OF ap.recipients AND ap.status in (:statuses)")
+	@NamedQuery(name = "findAppointmentByUserAndStatuses", query = "SELECT DISTINCT ap FROM Appointment ap LEFT OUTER JOIN ap.recipients as tp " +
+			"WHERE (ap.sender = :user OR :user MEMBER OF tp.guardians) AND ap.status in (:statuses)"),
+	@NamedQuery(name = "countAppointmentsByUserAndStatuses", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap LEFT OUTER JOIN ap.recipients as tp " +
+			"WHERE (ap.sender = :user OR :user MEMBER OF tp.guardians) AND ap.status in (:statuses)"),
+	@NamedQuery(name = "findAssignedAppointments", query = "SELECT DISTINCT ap FROM Appointment ap LEFT OUTER JOIN ap.recipients as tp " +
+			"    " +
+			"WHERE tp.id not in ( SELECT ar.target.id FROM AppointmentResponse ar WHERE " +
+			" ar.appointment = ap " +
+			")" +
+			"    AND :user MEMBER OF tp.guardians " +
+			"    AND ap.status in (:statuses) " +
+			""),
+	@NamedQuery(name = "countAssignedAppointments", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap LEFT OUTER JOIN ap.recipients as tp " +
+			"WHERE :user MEMBER OF tp.guardians AND ap.status in (:statuses)")
 })
 public class Appointment extends AbstractEntity {
 
@@ -36,7 +47,7 @@ public class Appointment extends AbstractEntity {
 	private User sender;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<User> recipients;
+	private Set<TargetPerson> recipients;
 	
 	private String subject;
 	
@@ -49,8 +60,8 @@ public class Appointment extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<AppointmentSlot> slots;
 	
-	@Embedded
-	private AppointmentResponse response;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "appointment")
+	private Set<AppointmentResponse> responses;
 
 	/**
 	 * @return the sender
@@ -69,14 +80,17 @@ public class Appointment extends AbstractEntity {
 	/**
 	 * @return the recipients
 	 */
-	public Set<User> getRecipients() {
+	public Set<TargetPerson> getRecipients() {
+	    if (recipients == null) {
+	        this.recipients = new HashSet<TargetPerson>();
+	    }
 		return recipients;
 	}
 
 	/**
 	 * @param recipients the recipients to set
 	 */
-	public void setRecipients(Set<User> recipients) {
+	public void setRecipients(Set<TargetPerson> recipients) {
 		this.recipients = recipients;
 	}
 
@@ -126,9 +140,9 @@ public class Appointment extends AbstractEntity {
 	 * @return the slots
 	 */
 	public Set<AppointmentSlot> getSlots() {
-		if (this.slots == null) {
-			return Collections.emptySet();
-		}
+        if (slots == null) {
+            this.slots = new HashSet<AppointmentSlot>();
+        }
 		return slots;
 	}
 
@@ -140,20 +154,23 @@ public class Appointment extends AbstractEntity {
 	}
 	
 	/**
-	 * @return the response
-	 */
-	public AppointmentResponse getResponse() {
-		return response;
-	}
+     * @return the responses
+     */
+    public Set<AppointmentResponse> getResponses() {
+        if (responses == null) {
+            this.responses = new HashSet<AppointmentResponse>();
+        }
+        return responses;
+    }
 
-	/**
-	 * @param response the response to set
-	 */
-	public void setResponse(AppointmentResponse response) {
-		this.response = response;
-	}
+    /**
+     * @param responses the responses to set
+     */
+    public void setResponses(Set<AppointmentResponse> responses) {
+        this.responses = responses;
+    }
 
-	/**
+    /**
 	 * 
 	 */
 	@Override
@@ -174,12 +191,21 @@ public class Appointment extends AbstractEntity {
 		return null;
 	}
 
-	public User getReceipientByUid(final String userUid) {
-		for (final User receipient : this.getRecipients()) {
-			if (receipient.getUid().equals(userUid)) {
+	public TargetPerson getTargetPersonByUid(final String userUid) {
+		for (final TargetPerson receipient : this.getRecipients()) {
+			if (receipient.getTargetUser().getUid().equals(userUid)) {
 				return receipient;
 			}
 		}
 		return null;
 	}
+
+    public AppointmentResponse getResponseForTargetPerson(final String userUid) {
+        for (final AppointmentResponse response : this.getResponses()) {
+            if (response.getTarget().getTargetUser().getUid().equals(userUid)) {
+                return response;
+            }
+        }
+        return null;
+    }
 }

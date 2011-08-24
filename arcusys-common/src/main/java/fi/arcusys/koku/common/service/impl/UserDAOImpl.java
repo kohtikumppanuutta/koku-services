@@ -1,11 +1,14 @@
 package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.UserDAO;
+import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**

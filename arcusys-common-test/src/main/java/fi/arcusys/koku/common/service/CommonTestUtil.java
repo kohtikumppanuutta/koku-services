@@ -3,6 +3,7 @@ package fi.arcusys.koku.common.service;
 import static junit.framework.Assert.assertNotNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import fi.arcusys.koku.common.service.datamodel.Appointment;
 import fi.arcusys.koku.common.service.datamodel.AppointmentSlot;
+import fi.arcusys.koku.common.service.datamodel.ConsentActionRequest;
+import fi.arcusys.koku.common.service.datamodel.ConsentTemplate;
+import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.impl.UserDAOImpl;
@@ -25,7 +29,10 @@ public class CommonTestUtil {
 	@Autowired
 	private UserDAO userDao;
 	
-	public User getUserByUid(final String userUid) {
+    @Autowired
+    private TargetPersonDAO targetPersonDao;
+
+    public User getUserByUid(final String userUid) {
 		User user = userDao.getUserByUid(userUid);
 		if (user == null) {
 			final User newUser = new User();
@@ -59,10 +66,34 @@ public class CommonTestUtil {
 		appointment.setSubject(testSubject);
 		appointment.setDescription(description);
 		appointment.setSender(getUserByUid("testAppSender"));
-		appointment.setRecipients(new HashSet<User>(
-				Arrays.asList(getUserByUid("testAppReceiver1"),
-							  getUserByUid("testAppReceiver2"))));
+		appointment.setRecipients(new HashSet<TargetPerson>(
+				Arrays.asList(
+				        targetPersonDao.getOrCreateTargetPerson("testAppReceiver1", 
+				                Arrays.asList("testGuardian1", "testGuardian2")),
+				        targetPersonDao.getOrCreateTargetPerson("testAppReceiver2", 
+				                Arrays.asList("testGuardian3", "testGuardian4")))));
 		appointment.setSlots(createTestSlots(numberOfSlots));
 		return appointment;
 	}
+	
+    public ConsentTemplate createTestConsentTemplate() {
+        final ConsentTemplate consentTemplate = new ConsentTemplate();
+        final String title = "testConsent";
+        final String description = "consent for testing";
+        final String senderUid = "consentCreator";
+        final Set<ConsentActionRequest> actions = new HashSet<ConsentActionRequest>();
+        for (int i = 1; i <= 3; i++) {
+            final ConsentActionRequest action = new ConsentActionRequest();
+            action.setNumber(i);
+            action.setName("action" + i);
+            action.setDescription("description " + i);
+            actions.add(action);
+        }
+
+        consentTemplate.setTitle(title);
+        consentTemplate.setDescription(description);
+        consentTemplate.setCreator(getUserByUid(senderUid));
+        consentTemplate.setActions(actions);
+        return consentTemplate;
+    }
 }

@@ -21,5 +21,11 @@
         <class>fi.arcusys.koku.common.service.datamodel.Appointment</class>
         <class>fi.arcusys.koku.common.service.datamodel.AppointmentSlot</class>
         <class>fi.arcusys.koku.common.service.datamodel.AppointmentResponse</class>
+        <class>fi.arcusys.koku.common.service.datamodel.TargetPerson</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentTemplate</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentActionRequest</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Consent</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentReply</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentActionReply</class>
 	</persistence-unit>
 </persistence>

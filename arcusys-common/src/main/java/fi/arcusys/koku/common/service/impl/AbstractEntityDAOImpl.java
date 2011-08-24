@@ -105,13 +105,13 @@ public abstract class AbstractEntityDAOImpl<T> implements AbstractEntityDAO<T> {
 		em.merge(entity);
 	}
 
-	protected <E> List<E> getResultList(final String queryName, final Map<String, Object> params) {
+	protected <E> List<E> getResultList(final String queryName, final Map<String, ? extends Object> params) {
 		return getResultList(queryName, params, FIRST_RESULT_NUMBER, MAX_RESULTS_COUNT);
 	}
 
-	protected <E> List<E> getResultList(final String queryName, final Map<String, Object> params, final int firstResult, final int maxResults) {
+	protected <E> List<E> getResultList(final String queryName, final Map<String, ? extends Object> params, final int firstResult, final int maxResults) {
 		final Query query = em.createNamedQuery(queryName);
-		for (final Map.Entry<String, Object> param : params.entrySet()) {
+		for (final Map.Entry<String, ? extends Object> param : params.entrySet()) {
 			query.setParameter(param.getKey(), param.getValue());
 		}
 		query.setFirstResult(firstResult - 1);
@@ -119,9 +119,9 @@ public abstract class AbstractEntityDAOImpl<T> implements AbstractEntityDAO<T> {
 		return (List<E>)query.getResultList();
 	}
 
-	protected <E> List<E> executeQuery(final String queryString, final Map<String, Object> params, final int firstResult, final int maxResults) {
+	protected <E> List<E> executeQuery(final String queryString, final Map<String, ? extends Object> params, final int firstResult, final int maxResults) {
 		final Query query = em.createQuery(queryString);
-		for (final Map.Entry<String, Object> param : params.entrySet()) {
+		for (final Map.Entry<String, ? extends Object> param : params.entrySet()) {
 			query.setParameter(param.getKey(), param.getValue());
 		}
 		query.setFirstResult(firstResult - 1);

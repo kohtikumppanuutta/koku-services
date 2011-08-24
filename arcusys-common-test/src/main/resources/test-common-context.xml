@@ -51,7 +51,7 @@
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="openjpa.Log">DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=TRACE</prop>
+                <prop key="openjpa.Log">DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=INFO</prop>
 <!--                    <prop key="openjpa.Log">DefaultLevel=TRACE, Runtime=TRACE, Tool=TRACE, SQL=TRACE</prop>-->
                 <prop key="openjpa.TransactionMode">local</prop>
             </props>
@@ -88,5 +88,11 @@
     <bean id="requestDao" class="fi.arcusys.koku.common.service.impl.RequestDAOImpl" />
     <bean id="responseDao" class="fi.arcusys.koku.common.service.impl.ResponseDAOImpl" />
     <bean id="userDao" class="fi.arcusys.koku.common.service.impl.UserDAOImpl" />
+    <bean id="targetPersonDao" class="fi.arcusys.koku.common.service.impl.TargetPersonDAOImpl" />
     <bean id="appointmentDao" class="fi.arcusys.koku.common.service.impl.AppointmentDAOImpl" />
+    <bean id="consentTemplateDao" class="fi.arcusys.koku.common.service.impl.ConsentTemplateDAOImpl" />
+    <bean id="consentDao" class="fi.arcusys.koku.common.service.impl.ConsentDAOImpl" />
+    <bean id="consentReplyDao" class="fi.arcusys.koku.common.service.impl.ConsentReplyDAOImpl" />
+    
+    
 </beans>

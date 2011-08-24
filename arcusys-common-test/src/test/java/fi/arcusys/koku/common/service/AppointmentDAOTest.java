@@ -70,7 +70,7 @@ public class AppointmentDAOTest {
 	public void listAssignedAppointments() {
 		final Appointment appointment = createTestAppointment("new appointment", "appointment description", 3);
 		
-		final User receipient = appointment.getRecipients().iterator().next();
+		final User receipient = appointment.getRecipients().iterator().next().getGuardians().iterator().next();
 		final List<Appointment> appointments = service.getAssignedAppointments(receipient);
 		assertFalse(appointments.isEmpty());
 		assertTrue(appointments.contains(appointment));

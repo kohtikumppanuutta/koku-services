@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

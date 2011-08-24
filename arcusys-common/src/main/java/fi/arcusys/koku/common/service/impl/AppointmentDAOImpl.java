@@ -3,8 +3,10 @@ package fi.arcusys.koku.common.service.impl;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.AppointmentDAO;
@@ -51,7 +53,7 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
 		if (user == null || statuses == null || statuses.isEmpty()) {
 			return Collections.emptyList();
 		}
-		final HashMap<String, Object> params = getCommonSearchParams(user, statuses);
+		final Map<String, Object> params = getCommonSearchParams(user, statuses);
 		return getResultList(queryName, params, startNum, maxResults);
 	}
 
