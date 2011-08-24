@@ -31,6 +31,16 @@ public interface KokuSuostumusProcessingService {
     Long requestForConsent(
             @WebParam(name = "suostumuspohjaId") final long consentTemplateId,
             @WebParam(name = "lahettaja") final String senderUid,
+            @WebParam(name = "kohdehenkilo") final String targetPersonUid,
+            @WebParam(name = "vastaanottaja") final List<String> receivers);
+
+    @WebResult(name = "suostumusId")
+    @WebMethod(operationName = "kirjaaSuostumus")
+    Long writeConsentOnBehalf(
+            @WebParam(name = "suostumuspohjaId") final long consentTemplateId,
+            @WebParam(name = "lahettaja") final String senderUid,
+            @WebParam(name = "suostumustapa") final String consentType,
+            @WebParam(name = "kohdehenkilo") final String targetPersonUid,
             @WebParam(name = "vastaanottaja") final List<String> receivers);
 
     @WebMethod(operationName = "annaSuostumus")

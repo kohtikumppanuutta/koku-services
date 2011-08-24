@@ -21,9 +21,7 @@ public interface KokuTietopyyntoProcessingService {
     
     @WebMethod(operationName = "hyvaksyTietopyynto")
     void approveRequest(
-            @WebParam(name = "tietopyyntoId") final Long requestId,
-            @WebParam(name = "tietoelementtiId") final List<Long> categoryId,
-            @WebParam(name = "tietoVapaaTeksti") final String informationDetails);
+            @WebParam(name = "tietoPynnonVastaus") final InformationRequestReplyTO reply);
     
     @WebMethod(operationName = "hylkaTietopyynto")
     void declineRequest(

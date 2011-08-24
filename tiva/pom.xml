@@ -22,7 +22,7 @@
     </properties>
 
     <build>
-        <plugins>
+        <!--plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ejb-plugin</artifactId>
@@ -53,13 +53,18 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+        </plugins-->
     </build>
 
 	<dependencies>
         <dependency>
             <groupId>fi.arcusys.koku</groupId>
             <artifactId>arcusys-common</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.arcusys.koku</groupId>
+            <artifactId>arcusys-common-test</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

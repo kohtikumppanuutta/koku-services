@@ -77,7 +77,7 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      * @return
      */
     @Override
-    public Long requestForConsent(long consentTemplateId, String senderUid,
+    public Long requestForConsent(long consentTemplateId, String senderUid, final String targetPersonUid,
             List<String> receivers) {
         // TODO Auto-generated method stub
         logger.info("requestForConsent: " + consentTemplateId + ", senderUid = " + senderUid + ", receivers = " + receivers);
@@ -156,6 +156,25 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
         consent.setReplyComment("Hyväksynyt suostumus");
         consent.setTemplate(createTestTemplate());
         return consent;
+    }
+
+    /**
+     * @param consentTemplateId
+     * @param senderUid
+     * @param consentType
+     * @param targetPersonUid
+     * @param receivers
+     * @return
+     */
+    @Override
+    public Long writeConsentOnBehalf(long consentTemplateId, String senderUid,
+            String consentType, String targetPersonUid, List<String> receivers) {
+        // TODO Auto-generated method stub
+        logger.info("writeConsentOnBehalf: " + consentTemplateId + ", senderUid = " + senderUid + ", receivers = " + receivers);
+        if (consentTemplateId != 1) {
+            throw new IllegalArgumentException("There is no template with ID " + consentTemplateId);
+        }
+        return 456L;
     }
 
 }

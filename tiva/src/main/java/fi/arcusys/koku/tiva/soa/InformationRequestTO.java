@@ -13,12 +13,26 @@ public class InformationRequestTO {
     private String title;
     private String targetPersonUid;
     private List<InformationCategoryTO> categories;
-    private String informationRequest;
     private String receiverUid;
     private String description;
     private String requestPurpose;
     private String legislationInfo;
+    private String additionalInfo;
     private XMLGregorianCalendar validTill;
+    
+    
+    /**
+     * @return the additionalInfo
+     */
+    public String getAdditionalInfo() {
+        return additionalInfo;
+    }
+    /**
+     * @param additionalInfo the additionalInfo to set
+     */
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
     /**
      * @return the requestId
      */
@@ -66,18 +80,6 @@ public class InformationRequestTO {
      */
     public void setCategories(List<InformationCategoryTO> categories) {
         this.categories = categories;
-    }
-    /**
-     * @return the informationRequest
-     */
-    public String getInformationRequest() {
-        return informationRequest;
-    }
-    /**
-     * @param informationRequest the informationRequest to set
-     */
-    public void setInformationRequest(String informationRequest) {
-        this.informationRequest = informationRequest;
     }
     /**
      * @return the receiverUid

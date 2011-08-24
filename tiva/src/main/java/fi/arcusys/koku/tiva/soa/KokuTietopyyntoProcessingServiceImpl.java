@@ -38,10 +38,9 @@ public class KokuTietopyyntoProcessingServiceImpl implements KokuTietopyyntoProc
      * @param informationDetails
      */
     @Override
-    public void approveRequest(Long requestId, List<Long> categoryIds,
-            String informationDetails) {
+    public void approveRequest(InformationRequestReplyTO reply) {
         // TODO Auto-generated method stub
-        logger.info("approveRequest: " + requestId + ", " + categoryIds + ", " + informationDetails);
+        logger.info("approveRequest: " + reply.getRequestId() + ", " + reply.getCategoryIds() + ", " + reply.getInformationDetails());
     }
 
     /**

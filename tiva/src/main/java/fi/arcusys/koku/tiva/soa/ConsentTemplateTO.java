@@ -1,5 +1,6 @@
 package fi.arcusys.koku.tiva.soa;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -23,6 +24,9 @@ public class ConsentTemplateTO {
      */
     @XmlElement(name = "toimenpiteet")
     public List<ActionRequestTO> getActions() {
+        if (actions == null) {
+            return Collections.emptyList();
+        }
         return actions;
     }
     /**
