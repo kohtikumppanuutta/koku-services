@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>arcusys-koku</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<name>Deployable unit with Data Model and services</name>
+	<packaging>ear</packaging>
+	<description>Deployable unit with Data Model and services for KoKu project</description>
+	<parent>
+		<groupId>kohti-kumppanuutta</groupId>
+		<artifactId>koku-services</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+        <dependency>
+            <groupId>fi.arcusys.koku</groupId>
+            <artifactId>arcusys-common</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+                <dependency>
+                        <groupId>kohti-kumppanuutta</groupId>
+                        <artifactId>av-model</artifactId>
+                        <version>0.1-SNAPSHOT</version>
+                </dependency>
+                <dependency>
+                        <groupId>kohti-kumppanuutta</groupId>
+                        <artifactId>kv-model</artifactId>
+                        <version>0.1-SNAPSHOT</version>
+                </dependency>
+                <dependency>
+                        <groupId>kohti-kumppanuutta</groupId>
+                        <artifactId>tiva-model</artifactId>
+                        <version>0.1-SNAPSHOT</version>
+                </dependency>
+	</dependencies>
+
+</project>

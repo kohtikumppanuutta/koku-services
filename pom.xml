@@ -154,9 +154,10 @@
     <module>arcusys-common</module>
     <module>arcusys-common-test</module>
     <module>kv</module>
-    <!--module>av</module-->
+    <module>av</module>
     <module>intalio</module>
     <module>tiva</module>
+    <module>arcusys-ear</module>
     <!--module>gatein</module-->
   </modules>
 
