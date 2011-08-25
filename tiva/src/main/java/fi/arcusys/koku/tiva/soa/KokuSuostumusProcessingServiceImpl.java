@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.service.CalendarUtil;
+import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -26,15 +28,16 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
 
     private static final Logger logger = LoggerFactory.getLogger(KokuSuostumusProcessingServiceImpl.class);
     
+    @EJB
+    private ConsentServiceFacade serviceFacade;
+    
     /**
      * @param consentTemplate
      * @return
      */
     @Override
     public Long createConsentTemplate(ConsentTemplateTO consentTemplate) {
-        // TODO Auto-generated method stub
-        logger.info("createConsentTemplate: " + (consentTemplate != null ? consentTemplate.getTitle() : "null"));
-        return 1L;
+        return serviceFacade.createConsentTemplate(consentTemplate);
     }
 
     /**
@@ -44,7 +47,12 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public List<ConsentTemplateTO> getConsentTemplates(String searchString, int limit) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getConsentTemplates(searchString, limit);
+//        return getConsentTemplates_stubVersion(searchString, limit);
+    }
+
+    private List<ConsentTemplateTO> getConsentTemplates_stubVersion(
+            String searchString, int limit) {
         logger.info("getConsentTemplates: " + searchString + ", limit = " + limit);
         final List<ConsentTemplateTO> result = new ArrayList<ConsentTemplateTO>();
         final ConsentTemplateTO template = createTestTemplate();
@@ -54,7 +62,7 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
 
     private ConsentTemplateTO createTestTemplate() {
         final ConsentTemplateTO template = new ConsentTemplateTO();
-        template.setConcentTemplateId(1L);
+        template.setConsentTemplateId(1L);
         template.setCreatorUid("Ville Virkamies");
         template.setDescription("Testing suostumus from service stub.");
         template.setTitle("Testing suostumus");
@@ -79,12 +87,12 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
     @Override
     public Long requestForConsent(long consentTemplateId, String senderUid, final String targetPersonUid,
             List<String> receivers) {
-        // TODO Auto-generated method stub
-        logger.info("requestForConsent: " + consentTemplateId + ", senderUid = " + senderUid + ", receivers = " + receivers);
-        if (consentTemplateId != 1) {
-            throw new IllegalArgumentException("There is no template with ID " + consentTemplateId);
-        }
-        return 123L;
+        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers);
+//        logger.info("requestForConsent: " + consentTemplateId + ", senderUid = " + senderUid + ", receivers = " + receivers);
+//        if (consentTemplateId != 1) {
+//            throw new IllegalArgumentException("There is no template with ID " + consentTemplateId);
+//        }
+//        return 123L;
     }
 
     /**
@@ -97,8 +105,9 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
     public void giveConsent(long consentId, String replierUid, 
             final List<ActionPermittedTO> actions,
             XMLGregorianCalendar endDate,
-            String comment) {        // TODO Auto-generated method stub
-        logger.info("giveConsent: " + consentId + ", replierUid = " + replierUid + ", endDate = " + endDate + ", comment = " + comment);
+            String comment) {        
+//        logger.info("giveConsent: " + consentId + ", replierUid = " + replierUid + ", endDate = " + endDate + ", comment = " + comment);
+        serviceFacade.giveConsent(consentId, replierUid, actions, endDate, comment);
     }
 
     /**
@@ -108,8 +117,8 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public void declineConsent(long consentId, String replierUid, String comment) {
-        // TODO Auto-generated method stub
-        logger.info("declineConsent: " + consentId + ", replierUid = " + replierUid + ", comment = " + comment);
+//        logger.info("declineConsent: " + consentId + ", replierUid = " + replierUid + ", comment = " + comment);
+        serviceFacade.declineConsent(consentId, replierUid, comment);
     }
 
     /**
@@ -121,8 +130,7 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
     @Override
     public void updateConsent(long consentId, String replierUid, XMLGregorianCalendar endDate,
             String comment) {
-        // TODO Auto-generated method stub
-        logger.info("giveConsent: " + consentId + ", replierUid = " + replierUid + ", endDate = " + endDate + ", comment = " + comment);
+        serviceFacade.updateConsent(consentId, replierUid, endDate, comment);
     }
 
     /**
@@ -132,8 +140,7 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public void revokeConsent(long consentId, String replierUid, String comment) {
-        // TODO Auto-generated method stub
-        logger.info("revokeConsent: " + consentId + ", replierUid = " + replierUid + ", comment = " + comment);
+        serviceFacade.revokeConsent(consentId, replierUid, comment);
     }
 
     /**
@@ -143,7 +150,11 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public ConsentForReplyTO getConsentForReply(long consentId, String userUid) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getConsentForReply(consentId, userUid);
+//        return getConsentForReply_stubVersion(consentId);
+    }
+
+    private ConsentForReplyTO getConsentForReply_stubVersion(long consentId) {
         if (consentId != 123) {
             throw new IllegalArgumentException("Consent with ID " + consentId + " is not found.");
         }
@@ -170,11 +181,7 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
     public Long writeConsentOnBehalf(long consentTemplateId, String senderUid,
             String consentType, String targetPersonUid, List<String> receivers) {
         // TODO Auto-generated method stub
-        logger.info("writeConsentOnBehalf: " + consentTemplateId + ", senderUid = " + senderUid + ", receivers = " + receivers);
-        if (consentTemplateId != 1) {
-            throw new IllegalArgumentException("There is no template with ID " + consentTemplateId);
-        }
-        return 456L;
+        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers);
     }
 
 }

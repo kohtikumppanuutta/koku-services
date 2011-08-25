@@ -25,7 +25,7 @@ public interface KokuKunpoSuostumusService {
             @WebParam(name = "startNum") int startNum, 
             @WebParam(name = "maxNum") int maxNum);
     
-    public ConsentTO getConsentById(@WebParam(name = "suostumusId") final long suostumusId);
+    public ConsentTO getConsentById(@WebParam(name = "suostumusId") final long suostumusId, final String userUid);
     
-    public void revokeOwnConsent(@WebParam(name = "suostumusId") final long suostumusId);
+    public void revokeOwnConsent(@WebParam(name = "suostumusId") final long suostumusId, final String userUid);
 }

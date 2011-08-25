@@ -5,8 +5,23 @@ package fi.arcusys.koku.tiva.soa;
  * Aug 11, 2011
  */
 public class ActionRequestSummary {
+    private String name;
     private String description;
     private ActionRequestStatus status;
+    
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
     /**
      * @return the description
      */

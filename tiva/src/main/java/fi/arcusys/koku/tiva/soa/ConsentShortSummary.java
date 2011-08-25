@@ -10,6 +10,7 @@ public class ConsentShortSummary {
     private String templateName;
     private String anotherPermitterUid;
     private String requestor;
+    private ConsentCreateType createType;
     /**
      * @return the consentId
      */
@@ -54,5 +55,17 @@ public class ConsentShortSummary {
     }
     public String getRequestor() {
         return this.requestor;
+    }
+    /**
+     * @return the createType
+     */
+    public ConsentCreateType getCreateType() {
+        return createType;
+    }
+    /**
+     * @param createType the createType to set
+     */
+    public void setCreateType(ConsentCreateType createType) {
+        this.createType = createType;
     }
 }

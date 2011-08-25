@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.common.service.CalendarUtil;
+import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -20,15 +22,17 @@ import fi.arcusys.koku.common.service.CalendarUtil;
         targetNamespace = "http://soa.tiva.koku.arcusys.fi/")
 public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService {
 
+    @EJB
+    private ConsentServiceFacade serviceFacade;
+    
     /**
      * @param user
      * @param query
      * @return
      */
     @Override
-    public int getTotalConsents(String user, ConsentQuery query) {
-        // TODO Auto-generated method stub
-        return 1;
+    public int getTotalConsents(String user) {
+        return serviceFacade.getTotalProcessedConsents(user);
     }
 
     /**
@@ -38,7 +42,11 @@ public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService 
      */
     @Override
     public List<ConsentSummary> getConsents(String user, ConsentQuery query) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getProcessedConsents(user, query.getStartNum(), query.getMaxNum());
+//        return getConsents_stubVersion();
+    }
+
+    private List<ConsentSummary> getConsents_stubVersion() {
         final List<ConsentSummary> result = new ArrayList<ConsentSummary>();
         final ConsentSummary consentSummary = new ConsentSummary();
         fillTestConsent(consentSummary);
@@ -54,11 +62,15 @@ public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService 
     @Override
     public List<ConsentTemplateSummary> searchConsentTemplates(
             String searchString, int limit) {
-        // TODO Auto-generated method stub
+        return serviceFacade.searchConsentTemplates(searchString, limit);
+//        return searchTemplates_stubVersion();
+    }
+
+    private List<ConsentTemplateSummary> searchTemplates_stubVersion() {
         final List<ConsentTemplateSummary> result = new ArrayList<ConsentTemplateSummary>();
         final ConsentTemplateSummary template = new ConsentTemplateSummary();
         template.setConsentTemplateId(1);
-        template.setName("suostumuspohja #1");
+        template.setTitle("suostumuspohja #1");
         result.add(template);
         return result;
     }
@@ -69,19 +81,20 @@ public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService 
      */
     @Override
     public ConsentTO getConsentDetails(long suostumusId) {
-        final ConsentTO consent = new ConsentTO();
-        fillTestConsent(consent);
-        final List<ActionRequestSummary> actionRequests = new ArrayList<ActionRequestSummary>();
-        final ActionRequestSummary actionRequest = new ActionRequestSummary();
-        actionRequest.setDescription("Some action given");
-        actionRequest.setStatus(ActionRequestStatus.Given);
-        actionRequests.add(actionRequest);
-        final ActionRequestSummary anotherActionRequest = new ActionRequestSummary();
-        anotherActionRequest.setDescription("Another action declined");
-        anotherActionRequest.setStatus(ActionRequestStatus.Declined);
-        actionRequests.add(anotherActionRequest);
-        consent.setActionRequests(actionRequests);
-        return consent;
+        return serviceFacade.getCombinedConsentById(suostumusId);
+//        final ConsentTO consent = new ConsentTO();
+//        fillTestConsent(consent);
+//        final List<ActionRequestSummary> actionRequests = new ArrayList<ActionRequestSummary>();
+//        final ActionRequestSummary actionRequest = new ActionRequestSummary();
+//        actionRequest.setDescription("Some action given");
+//        actionRequest.setStatus(ActionRequestStatus.Given);
+//        actionRequests.add(actionRequest);
+//        final ActionRequestSummary anotherActionRequest = new ActionRequestSummary();
+//        anotherActionRequest.setDescription("Another action declined");
+//        anotherActionRequest.setStatus(ActionRequestStatus.Declined);
+//        actionRequests.add(anotherActionRequest);
+//        consent.setActionRequests(actionRequests);
+//        return consent;
     }
 
     private void fillTestConsent(final ConsentSummary consent) {

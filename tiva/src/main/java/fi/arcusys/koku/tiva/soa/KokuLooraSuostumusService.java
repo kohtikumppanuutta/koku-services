@@ -12,8 +12,7 @@ import javax.jws.WebService;
 @WebService(targetNamespace = "http://soa.tiva.koku.arcusys.fi/")
 public interface KokuLooraSuostumusService {
     public int getTotalConsents(
-            @WebParam(name = "user") final String user,
-            @WebParam(name = "query") final ConsentQuery query);
+            @WebParam(name = "user") final String user);
             
     public List<ConsentSummary> getConsents(
             @WebParam(name = "user") final String user,

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.service.CalendarUtil;
+import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -26,15 +28,16 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
 
     private final static Logger logger = LoggerFactory.getLogger(KokuKunpoSuostumusServiceImpl.class);
     
+    @EJB
+    private ConsentServiceFacade serviceFacade;
+    
     /**
      * @param user
      * @return
      */
     @Override
     public int getTotalAssignedConsents(String user) {
-        // TODO Auto-generated method stub
-        logger.info("getTotalAssignedConsents: " + user);
-        return 1;
+        return serviceFacade.getTotalAssignedConsents(user);
     }
 
     /**
@@ -46,7 +49,12 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
     @Override
     public List<ConsentShortSummary> getAssignedConsents(String user, int startNum,
             int maxNum) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getAssignedConsents(user, startNum, maxNum);
+//        return getAssignedConsents_stubVersion(user);
+    }
+
+    private List<ConsentShortSummary> getAssignedConsents_stubVersion(
+            String user) {
         logger.info("getAssignedConsents: " + user);
         final List<ConsentShortSummary> result = new ArrayList<ConsentShortSummary>();
         final ConsentShortSummary consent = new ConsentShortSummary();
@@ -64,9 +72,7 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
      */
     @Override
     public int getTotalOwnConsents(String user) {
-        // TODO Auto-generated method stub
-        logger.info("getTotalOwnConsents: " + user);
-        return 1;
+        return serviceFacade.getTotalOwnConsents(user);
     }
 
     /**
@@ -78,9 +84,11 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
     @Override
     public List<ConsentSummary> getOwnConsents(String user, int startNum,
             int maxNum) {
-        // TODO Auto-generated method stub
-        logger.info("getOwnConsents: " + user);
-        return Collections.singletonList(fillTestConsent(new ConsentSummary()));
+        if (logger.isDebugEnabled()) {
+            logger.debug("getOwnConsents: " + user);
+        }
+        return serviceFacade.getOwnConsents(user, startNum, maxNum);
+//        return Collections.singletonList(fillTestConsent(new ConsentSummary()));
     }
 
     private ConsentSummary fillTestConsent(final ConsentSummary consent) {
@@ -102,8 +110,12 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
      * @return
      */
     @Override
-    public ConsentTO getConsentById(long suostumusId) {
-        // TODO Auto-generated method stub
+    public ConsentTO getConsentById(long suostumusId, final String userUid) {
+        return serviceFacade.getConsentById(suostumusId, userUid);
+//        return getConsentById_stubVersion(suostumusId);
+    }
+
+    private ConsentTO getConsentById_stubVersion(long suostumusId) {
         logger.info("getConsentById: " + suostumusId);
         final ConsentTO consent = new ConsentTO();
         fillTestConsent(consent);
@@ -124,9 +136,11 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
      * @param suostumusId
      */
     @Override
-    public void revokeOwnConsent(long suostumusId) {
-        // TODO Auto-generated method stub
-        logger.info("revokeConsent: " + suostumusId);
+    public void revokeOwnConsent(long suostumusId, final String userUid) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("revokeConsent: " + suostumusId);
+        }
+        serviceFacade.revokeConsent(suostumusId, userUid, "");
     }
 
 }

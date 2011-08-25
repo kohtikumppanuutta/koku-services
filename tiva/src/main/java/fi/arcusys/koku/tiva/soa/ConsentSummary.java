@@ -17,8 +17,6 @@ public class ConsentSummary extends ConsentShortSummary {
     private ConsentStatus status;
     private XMLGregorianCalendar givenAt;
     private XMLGregorianCalendar validTill;
-    private ConsentCreateType createType;
-
     /**
      * @return the receipients
      */
@@ -91,20 +89,6 @@ public class ConsentSummary extends ConsentShortSummary {
      */
     public void setValidTill(XMLGregorianCalendar validTill) {
         this.validTill = validTill;
-    }
-
-    /**
-     * @return the createType
-     */
-    public ConsentCreateType getCreateType() {
-        return createType;
-    }
-
-    /**
-     * @param createType the createType to set
-     */
-    public void setCreateType(ConsentCreateType createType) {
-        this.createType = createType;
     }
     
     
