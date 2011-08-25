@@ -46,7 +46,7 @@ public class ConsentReplyDAOTest {
 
         consentReply.setReplier(testUtil.getUserByUid("consentReplier"));
         consentReply.setActions(actions);
-        consentReply.setStatus(ConsentReplyStatus.Approved);
+        consentReply.setStatus(ConsentReplyStatus.Given);
         consentReply.setComment("reply to consent");
         consentReply.setConsent(consentService.create(new Consent()));
         consentReply.setValidTill(new Date());

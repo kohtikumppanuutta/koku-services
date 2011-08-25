@@ -37,7 +37,7 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
 	@Override
 	public User getOrCreateUser(final String uid) {
 		if (uid == null) {
-			return null;
+			throw new IllegalArgumentException("Can't retrieve user with empty UID.");
 		}
 		User fromUser = getUserByUid(uid);
 		

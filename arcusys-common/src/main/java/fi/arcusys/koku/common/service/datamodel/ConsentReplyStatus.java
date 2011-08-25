@@ -5,5 +5,5 @@ package fi.arcusys.koku.common.service.datamodel;
  * Aug 23, 2011
  */
 public enum ConsentReplyStatus {
-    Approved, Declined;
+    Given, Declined, Revoked;
 }

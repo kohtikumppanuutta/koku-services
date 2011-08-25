@@ -1,5 +1,8 @@
 package fi.arcusys.koku.common.service;
 
+import java.util.List;
+import java.util.Set;
+
 import fi.arcusys.koku.common.service.datamodel.Consent;
 import fi.arcusys.koku.common.service.datamodel.ConsentReply;
 import fi.arcusys.koku.common.service.datamodel.User;
@@ -16,5 +19,25 @@ public interface ConsentReplyDAO extends AbstractEntityDAO<ConsentReply> {
      * @return
      */
     ConsentReply getReplyByConsentAndUser(final Consent consent, final User replier);
+
+    /**
+     * @param replier
+     * @param startNum
+     * @param i
+     * @return
+     */
+    List<ConsentReply> getRepliedConsents(final User replier, final int startNum, final int maxNum);
+
+    /**
+     * @param orCreateUser
+     * @return
+     */
+    Long getTotalRepliedConsents(final User user);
+
+    /**
+     * @param consent
+     * @return
+     */
+    List<ConsentReply> getReplies(final Consent consent);
 
 }

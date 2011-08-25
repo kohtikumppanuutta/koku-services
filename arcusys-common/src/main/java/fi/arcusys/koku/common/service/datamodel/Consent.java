@@ -19,13 +19,18 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @NamedQueries({
-//    @NamedQuery(name = "findConsentsByUser", query = "SELECT cn FROM Consent cn WHERE :user MEMBER OF cn.receipients " +
-//    		" AND :userUid NOT IN (SELECT cr.replier.uid FROM ConsentReply cr WHERE cr.consent = cn)")
-    @NamedQuery(name = "findConsentsByUser", query = "SELECT DISTINCT cn FROM Consent cn JOIN cn.receipients rs WHERE " +
+    @NamedQuery(name = "findAssignedConsentsByUser", query = "SELECT DISTINCT cn FROM Consent cn JOIN cn.receipients rs WHERE " +
     		"(NOT EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn AND cr.replier.uid = :userUid))" +
-//    		" AND (:user MEMBER OF (cn.receipients)) " +
-    		" AND rs.uid = :userUid" +
-    		"")
+    		" AND rs.uid = :userUid"),
+    @NamedQuery(name = "countAssignedConsentsByUser", query = "SELECT COUNT(DISTINCT cn) FROM Consent cn JOIN cn.receipients rs WHERE " +
+            "(NOT EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn AND cr.replier.uid = :userUid))" +
+            " AND rs.uid = :userUid"),
+    @NamedQuery(name = "findProcessedConsentsBySender", query = "SELECT DISTINCT cn FROM Consent cn WHERE " +
+            "(EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn))" +
+            " AND cn.creator.uid = :senderUid"),
+    @NamedQuery(name = "countProcessedConsentsBySender", query = "SELECT COUNT(DISTINCT cn) FROM Consent cn WHERE " +
+            "(EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn))" +
+            " AND cn.creator.uid = :senderUid")
 })
 public class Consent extends AbstractEntity {
     private Date validTill;

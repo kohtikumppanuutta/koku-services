@@ -31,15 +31,31 @@ import javax.persistence.PrePersist;
 	@NamedQuery(name = "countAppointmentsByUserAndStatuses", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap LEFT OUTER JOIN ap.recipients as tp " +
 			"WHERE (ap.sender = :user OR :user MEMBER OF tp.guardians) AND ap.status in (:statuses)"),
 	@NamedQuery(name = "findAssignedAppointments", query = "SELECT DISTINCT ap FROM Appointment ap LEFT OUTER JOIN ap.recipients as tp " +
-			"    " +
-			"WHERE tp.id not in ( SELECT ar.target.id FROM AppointmentResponse ar WHERE " +
+			" WHERE tp.id not in ( SELECT ar.target.id FROM AppointmentResponse ar WHERE " +
 			" ar.appointment = ap " +
 			")" +
 			"    AND :user MEMBER OF tp.guardians " +
 			"    AND ap.status in (:statuses) " +
 			""),
 	@NamedQuery(name = "countAssignedAppointments", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap LEFT OUTER JOIN ap.recipients as tp " +
-			"WHERE :user MEMBER OF tp.guardians AND ap.status in (:statuses)")
+			"WHERE :user MEMBER OF tp.guardians AND ap.status in (:statuses)"),
+    @NamedQuery(name = "findProcessedAppointmentsBySender", query = "SELECT DISTINCT ap FROM Appointment ap " +
+            " WHERE EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            "    AND :sender = ap.sender "),
+    @NamedQuery(name = "countProcessedAppointmentsBySender", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap " +
+            " WHERE NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            "    AND :sender = ap.sender "),
+    @NamedQuery(name = "findCreatedAppointmentsBySender", query = "SELECT DISTINCT ap FROM Appointment ap " +
+            " WHERE EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            "    AND :sender = ap.sender "),
+    @NamedQuery(name = "countCreatedAppointmentsBySender", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap " +
+            " WHERE NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            "    AND :sender = ap.sender "),
+    @NamedQuery(name = "findAppointmentResponsesByUser", query = "SELECT DISTINCT ar FROM AppointmentResponse ar " +
+            " WHERE replier = :user "),
+    @NamedQuery(name = "countAppointmentResponsesByUser", query = "SELECT COUNT(DISTINCT ar) FROM AppointmentResponse ar " +
+            " WHERE replier = :user ")
+				
 })
 public class Appointment extends AbstractEntity {
 

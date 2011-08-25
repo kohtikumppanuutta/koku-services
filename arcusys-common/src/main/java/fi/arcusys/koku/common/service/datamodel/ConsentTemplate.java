@@ -1,5 +1,8 @@
 package fi.arcusys.koku.common.service.datamodel;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -69,6 +72,9 @@ public class ConsentTemplate extends AbstractEntity {
      * @return the actions
      */
     public Set<ConsentActionRequest> getActions() {
+        if (actions == null) {
+            return Collections.emptySet();
+        }
         return actions;
     }
     /**
@@ -76,5 +82,13 @@ public class ConsentTemplate extends AbstractEntity {
      */
     public void setActions(Set<ConsentActionRequest> actions) {
         this.actions = actions;
+    }
+
+    public Map<Integer, ConsentActionRequest> getNumberToActionMap() {
+        final Map<Integer, ConsentActionRequest> actionRequests = new HashMap<Integer, ConsentActionRequest>();
+        for (final ConsentActionRequest actionRequest : getActions()) {
+            actionRequests.put(actionRequest.getNumber(), actionRequest);
+        }
+        return actionRequests;
     }
 }

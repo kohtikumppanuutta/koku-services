@@ -2,6 +2,8 @@ package fi.arcusys.koku.common.service;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
+
 import fi.arcusys.koku.common.service.datamodel.ConsentTemplate;
 
 /**

@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.datamodel.Appointment;
+import fi.arcusys.koku.common.service.datamodel.AppointmentResponse;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 import fi.arcusys.koku.common.service.datamodel.User;
 
@@ -82,4 +83,63 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
 	public Long getTotalAssignedAppointments(User user) {
 		return getSingleResult("countAssignedAppointments", getCommonSearchParams(user, getAssignedAppointmentsStatus()));
 	}
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public List<Appointment> getProcessedAppointments(User user, final int startNum, final int maxResults) {
+        return getResultList("findProcessedAppointmentsBySender", Collections.singletonMap("sender", user), startNum, maxResults);
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public Long getTotalProcessedAppointments(User user) {
+        return getSingleResult("countProcessedAppointmentsBySender", Collections.singletonMap("sender", user));
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxResults
+     * @return
+     */
+    @Override
+    public List<Appointment> getCreatedAppointments(User user, int startNum, int maxResults) {
+        return getResultList("findCreatedAppointmentsBySender", Collections.singletonMap("sender", user), startNum, maxResults);
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public Long getTotalCreatedAppointments(User user) {
+        return getSingleResult("countCreatedAppointmentsBySender", Collections.singletonMap("sender", user));
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxResults
+     * @return
+     */
+    @Override
+    public List<AppointmentResponse> getAppointmentResponses(User user,
+            int startNum, int maxResults) {
+        return getResultList("findAppointmentResponsesByUser", Collections.singletonMap("user", user), startNum, maxResults);
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public Long getTotalRespondedAppointments(User user) {
+        return getSingleResult("countAppointmentResponsesByUser", Collections.singletonMap("user", user));
+    }
 }

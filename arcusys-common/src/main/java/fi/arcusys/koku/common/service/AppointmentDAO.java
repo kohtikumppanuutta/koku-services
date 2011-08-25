@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import fi.arcusys.koku.common.service.datamodel.Appointment;
+import fi.arcusys.koku.common.service.datamodel.AppointmentResponse;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 import fi.arcusys.koku.common.service.datamodel.User;
 
@@ -42,4 +43,44 @@ public interface AppointmentDAO extends AbstractEntityDAO<Appointment>{
 	 * @return
 	 */
 	Long getTotalAssignedAppointments(final User user);
+
+    /**
+     * @param orCreateUser
+     * @return
+     */
+    List<Appointment> getProcessedAppointments(final User user, final int startNum, final int maxResults);
+
+    /**
+     * @param orCreateUser
+     * @return
+     */
+    Long getTotalProcessedAppointments(User user);
+
+    /**
+     * @param orCreateUser
+     * @param startNum
+     * @param i
+     * @return
+     */
+    List<Appointment> getCreatedAppointments(User user, int startNum, int maxResults);
+
+    /**
+     * @param orCreateUser
+     * @return
+     */
+    Long getTotalCreatedAppointments(User user);
+
+    /**
+     * @param orCreateUser
+     * @param startNum
+     * @param i
+     * @return
+     */
+    List<AppointmentResponse> getAppointmentResponses(User user, int startNum, int maxResults);
+
+    /**
+     * @param orCreateUser
+     * @return
+     */
+    Long getTotalRespondedAppointments(User user);
 }

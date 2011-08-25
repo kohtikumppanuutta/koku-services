@@ -19,4 +19,23 @@ public interface ConsentDAO extends AbstractEntityDAO<Consent> {
      */
     List<Consent> getAssignedConsents(final User user, final int startNum, final int maxNum);
 
+    /**
+     * @param orCreateUser
+     * @return
+     */
+    Long getTotalAssignedConsents(User user);
+
+    /**
+     * @param replier
+     * @param startNum
+     * @param i
+     * @return
+     */
+    List<Consent> getProcessedConsents(User user, int startNum, int maxNum);
+
+    /**
+     * @param orCreateUser
+     * @return
+     */
+    Long getTotalProcessedConsents(final User user);
 }
