@@ -27,7 +27,7 @@ import fi.koku.services.utility.log.v1.LogServicePortType;
 )
 @RolesAllowed("koku-role")
 public class LogServiceBean implements LogServicePortType {
-  private Logger logger = LoggerFactory.getLogger(LogServiceBean.class);
+  private static final Logger logger = LoggerFactory.getLogger(LogServiceBean.class);
   
   @Override
   public void opLog(LogEntryType logEntry) {
