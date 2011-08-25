@@ -10,7 +10,7 @@ import javax.jws.WebService;
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 27, 2011
  */
-@WebService(targetNamespace = "http://soa.av.koku.arcusys.fi/")
+//@WebService(targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public interface KokuAppointmentService {
     public int getTotalCreatedAppointments(@WebParam(name = "user") final String user);
 

@@ -27,7 +27,7 @@ import fi.arcusys.koku.common.service.datamodel.User;
 @Stateless
 @WebService(serviceName = "KokuAppointmentProcessingService", portName = "KokuAppointmentProcessingServicePort", 
 		endpointInterface = "fi.arcusys.koku.av.soa.KokuAppointmentProcessingService",
-		targetNamespace = "http://soa.kv.koku.arcusys.fi/")
+		targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public class KokuAppointmentProcessingServiceImpl implements KokuAppointmentProcessingService {
 	private static final Logger log = LoggerFactory.getLogger(KokuAppointmentProcessingServiceImpl.class);
 	

@@ -21,6 +21,7 @@ import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
 import fi.arcusys.koku.av.soa.AppointmentSlotTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
 import fi.arcusys.koku.av.soa.AppointmentTO;
+import fi.arcusys.koku.av.soa.AppointmentWithTarget;
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
@@ -179,7 +180,6 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		final List<AppointmentSlotTO> result = new ArrayList<AppointmentSlotTO>();
 		for (final AppointmentSlot slot : appointment.getSlots()) {
 			final AppointmentSlotTO slotTO = new AppointmentSlotTO();
-			slotTO.setAppointmentId(appointment.getId());
 			slotTO.setSlotNumber(slot.getSlotNumber());
 			slotTO.setAppointmentDate(CalendarUtil.getXmlDate(slot.getAppointmentDate()));
 			slotTO.setStartTime(CalendarUtil.getXmlTime(slot.getAppointmentDate(), slot.getStartTime()));
@@ -215,20 +215,26 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	 * @return
 	 */
 	@Override
-	public List<AppointmentSummary> getAssignedAppointments(final String userUid) {
+	public List<AppointmentWithTarget> getAssignedAppointments(final String userUid) {
 		return getAssignedAppointments(userUid, FIRST_RESULT_NUMBER, FIRST_RESULT_NUMBER + MAX_RESULTS_COUNT - 1);		
 	}
 	
 	@Override
-	public List<AppointmentSummary> getAssignedAppointments(final String userUid, final int startNum, final int maxNum) {
-		final List<AppointmentSummary> result = new ArrayList<AppointmentSummary>();
+	public List<AppointmentWithTarget> getAssignedAppointments(final String userUid, final int startNum, final int maxNum) {
+		final List<AppointmentWithTarget> result = new ArrayList<AppointmentWithTarget>();
 		for (final Appointment appointment : appointmentDAO.getAssignedAppointments(userDao.getOrCreateUser(userUid), startNum, maxNum - startNum + 1)) {
-			result.add(convertAppointmentToDTO(appointment, new AppointmentSummary()));
+		    for (final TargetPerson target : appointment.getRecipients()) {
+		        if (target.getGuardianByUid(userUid) != null) {
+		            final AppointmentWithTarget appointmentTO = convertAppointmentToDTO(appointment, new AppointmentWithTarget());
+		            appointmentTO.setTargetPerson(target.getTargetUser().getUid());
+                    result.add(appointmentTO);
+		        }
+		    }
 		}
 		return result;
 	}
 
-	private AppointmentSummary convertAppointmentToDTO(final Appointment appointment, final AppointmentSummary appointmentSummary) {
+	private <AS extends AppointmentSummary> AS convertAppointmentToDTO(final Appointment appointment, final AS appointmentSummary) {
 		appointmentSummary.setAppointmentId(appointment.getId());
 		appointmentSummary.setDescription(appointment.getDescription());
 		appointmentSummary.setSubject(appointment.getSubject());
@@ -381,5 +387,80 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         }
         
         return appointmentTO;
+    }
+
+    /**
+     * @param userUid
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<AppointmentWithTarget> getRespondedAppointments(String userUid, int startNum, int maxNum) {
+        final List<AppointmentWithTarget> result = new ArrayList<AppointmentWithTarget>();
+        for (final AppointmentResponse response : appointmentDAO.getAppointmentResponses(userDao.getOrCreateUser(userUid), startNum, maxNum - startNum + 1)) {
+            final AppointmentWithTarget appointmentTO = new AppointmentWithTarget();
+            convertAppointmentToDTO(response.getAppointment(), appointmentTO);
+            appointmentTO.setTargetPerson(response.getTarget().getTargetUser().getUid());
+            result.add(appointmentTO);
+        }
+        return result;
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public int getTotalRespondedAppointments(String user) {
+        return getIntValue(appointmentDAO.getTotalRespondedAppointments(userDao.getOrCreateUser(user)));
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public int getTotalCreatedAppointments(String user) {
+        return getIntValue(appointmentDAO.getTotalCreatedAppointments(userDao.getOrCreateUser(user)));
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public int getTotalProcessedAppointments(String user) {
+        return getIntValue(appointmentDAO.getTotalProcessedAppointments(userDao.getOrCreateUser(user)));
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<AppointmentSummary> getCreatedAppointments(String user, int startNum, int maxNum) {
+        return getSummaryByAppointments(appointmentDAO.getCreatedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1));
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<AppointmentSummary> getProcessedAppointments(String user, int startNum, int maxNum) {
+        return getSummaryByAppointments(appointmentDAO.getProcessedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1));
+    }
+
+    private List<AppointmentSummary> getSummaryByAppointments(List<Appointment> appointments) {
+        final List<AppointmentSummary> result = new ArrayList<AppointmentSummary>();
+        for (final Appointment appointment : appointments) {
+            result.add(convertAppointmentToDTO(appointment, new AppointmentSummary()));
+        }
+        return result;
     }
 }

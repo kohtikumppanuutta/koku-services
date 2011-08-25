@@ -8,7 +8,7 @@ import javax.jws.WebService;
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */
-@WebService(targetNamespace = "http://soa.kv.koku.arcusys.fi/")
+@WebService(targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public interface KokuAppointmentProcessingService {
 
 	@WebResult(name = "appointment")

@@ -18,9 +18,9 @@ import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
  * Jul 27, 2011
  */
 @Stateless
-@WebService(serviceName = "KokuAppointmentService", portName = "KokuAppointmentServicePort", 
-		endpointInterface = "fi.arcusys.koku.av.soa.KokuAppointmentService",
-		targetNamespace = "http://soa.av.koku.arcusys.fi/")
+//@WebService(serviceName = "KokuAppointmentService", portName = "KokuAppointmentServicePort", 
+//		endpointInterface = "fi.arcusys.koku.av.soa.KokuAppointmentService",
+//		targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public class KokuAppointmentServiceImpl implements KokuAppointmentService {
 
 	@EJB
@@ -43,7 +43,8 @@ public class KokuAppointmentServiceImpl implements KokuAppointmentService {
 	 */
 	@Override
 	public List<AppointmentSummary> getAssignedAppointments(final String user, final int startNum, final int maxNum) {
-		return kvFacade.getAssignedAppointments(user, startNum, maxNum);
+	    throw new UnsupportedOperationException();
+//		return kvFacade.getAssignedAppointments(user, startNum, maxNum);
 	}
 
 	/**

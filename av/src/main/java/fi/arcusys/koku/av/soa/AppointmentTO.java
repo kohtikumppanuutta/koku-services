@@ -10,7 +10,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */
-@XmlType (name = "appointment", namespace = "http://soa.kv.koku.arcusys.fi/",
+@XmlType (name = "appointment", namespace = "http://soa.av.koku.arcusys.fi/",
 		  propOrder={"slots", "status", "recipients", "acceptedSlots", "usersRejected" })
 public class AppointmentTO extends AppointmentSummary {
 	private List<AppointmentSlotTO> slots;

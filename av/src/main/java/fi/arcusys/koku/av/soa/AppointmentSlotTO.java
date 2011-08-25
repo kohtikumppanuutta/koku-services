@@ -9,28 +9,15 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */
-@XmlType (name = "appointmentSlot", namespace = "http://soa.kv.koku.arcusys.fi/",
-		  propOrder={"appointmentId", "slotNumber" , "appointmentDate", "startTime", "endTime", "location", "comment" })
+@XmlType (name = "appointmentSlot", namespace = "http://soa.av.koku.arcusys.fi/",
+		  propOrder={"slotNumber" , "appointmentDate", "startTime", "endTime", "location", "comment" })
 public class AppointmentSlotTO {
-	private long appointmentId;
 	private int slotNumber;
 	private XMLGregorianCalendar appointmentDate;
 	private XMLGregorianCalendar startTime;
 	private XMLGregorianCalendar endTime;
 	private String location;
 	private String comment;
-	/**
-	 * @return the appointmentId
-	 */
-	public long getAppointmentId() {
-		return appointmentId;
-	}
-	/**
-	 * @param appointmentId the appointmentId to set
-	 */
-	public void setAppointmentId(long appointmentId) {
-		this.appointmentId = appointmentId;
-	}
 	/**
 	 * @return the slotNumber
 	 */

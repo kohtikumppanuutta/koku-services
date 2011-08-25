@@ -128,7 +128,6 @@ public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentServ
         } catch (DatatypeConfigurationException e) {
             throw new RuntimeException(e);
         }
-        slotTO.setAppointmentId(appointmentId);
         slotTO.setSlotNumber(slotNumber);
         final GregorianCalendar calendar = (GregorianCalendar)GregorianCalendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
