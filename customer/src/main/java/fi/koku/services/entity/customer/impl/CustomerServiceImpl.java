@@ -31,14 +31,9 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Override
   public Customer get(String pic) {
-    // Temporarily commented out
-    //Query q = em.createNamedQuery("getCustomerByPic");
-    //q.setParameter("pic", pic);
-    //Customer c = (Customer)q.getSingleResult();
-    Customer c = new Customer();
-    c.setId(12345L);
-    c.setBirthDate(new Date());
-    c.setStatusDate(new Date());
+    Query q = em.createNamedQuery("getCustomerByPic");
+    q.setParameter("pic", pic);
+    Customer c = (Customer)q.getSingleResult();
     return c;
   }
   
