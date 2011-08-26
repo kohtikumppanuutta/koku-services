@@ -1,2 +1,2 @@
-INSERT INTO customer (id, birth_date, first_name, lastName, pic, turvakielto, version, status_date) VALUES ('12345', '2011-08-24', 'Matti', 'Virtanen', '12345', false, '1', '2009-08-24');
-INSERT INTO customer (id, birth_date, first_name, lastName, pic, turvakielto, version, status_date) VALUES ('12346', '2009-08-24', 'Liisa', 'Virtanen', '12346', false, '1', '2009-08-24');
+INSERT INTO CUSTOMER (id, birth_date, first_name, lastName, pic, turvakielto, version, status_date) VALUES ('12345', '2011-08-24', 'Matti', 'Virtanen', '12345', false, '1', '2009-08-24');
+INSERT INTO CUSTOMER (id, birth_date, first_name, lastName, pic, turvakielto, version, status_date) VALUES ('12346', '2009-08-24', 'Liisa', 'Virtanen', '12346', false, '1', '2009-08-24');
