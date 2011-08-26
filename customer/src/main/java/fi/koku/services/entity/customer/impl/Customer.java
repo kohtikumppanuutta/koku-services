@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
@@ -19,6 +20,7 @@ import javax.persistence.Version;
  */
 @NamedQuery(name="getCustomerByPic", query="FROM Customer c WHERE c.pic = :pic")
 @Entity
+@Table(name = "CUSTOMER")
 public class Customer {
   @Id
   @GeneratedValue
