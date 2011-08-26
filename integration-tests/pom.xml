@@ -18,6 +18,8 @@
     <ant.run.plugin.version>1.6</ant.run.plugin.version>
     <wagon.plugin.version>1.0-beta-3</wagon.plugin.version>
     <wagon.ssh.extension.version>1.0-beta-6</wagon.ssh.extension.version>
+    <mysql.driver.version>5.1.17</mysql.driver.version>
+    <spring.version>3.0.5.RELEASE</spring.version>
   </properties>
 
   <build>
@@ -93,6 +95,24 @@
       <groupId>kohti-kumppanuutta</groupId>
       <artifactId>customer-service</artifactId>
       <version>${koku.customer.service.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>      
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>      
+    </dependency>    
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql.driver.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

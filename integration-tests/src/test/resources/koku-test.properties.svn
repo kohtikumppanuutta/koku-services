@@ -1,2 +1,8 @@
 # You can override the TestPropertiesUtil properties set with this file (remove the .svn suffix)
 koku.srv.layer.endpoint.address=http://localhost:8080
+koku.srv.layer.ws.username=marko
+koku.srv.layer.ws.pwd=marko
+
+koku.ds.url=jdbc:mysql://localhost:3306/koku1
+koku.ds.username=koku1
+koku.ds.pwd=koku1
