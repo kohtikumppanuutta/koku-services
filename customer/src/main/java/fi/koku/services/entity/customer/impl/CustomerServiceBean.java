@@ -19,6 +19,7 @@ import javax.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.KoKuFaultException;
 import fi.koku.services.common.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerQueryCriteriaType;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
@@ -41,6 +42,7 @@ import fi.koku.services.entity.customer.v1.CustomersType;
     portName="customerService-soap11-port",
     serviceName="customerService"
 )
+//@SchemaValidation
 //@BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 //@HandlerChain(file="auditInfoHandler.xml")
 @RolesAllowed("koku-role")
@@ -135,7 +137,7 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	    try {
         datatypeFactory = DatatypeFactory.newInstance();
       } catch (DatatypeConfigurationException e) {
-        throw new RuntimeException("Failed to create DatatypeFactory", e);
+        throw new KoKuFaultException("Failed to create DatatypeFactory", e);
       }
 	  }
 	  

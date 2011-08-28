@@ -16,6 +16,7 @@
     <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
     <junit.version>4.8.2</junit.version>
     <hamcrest.version>1.1</hamcrest.version>
+    <koku-common.version>0.0.2</koku-common.version>
   </properties>
 
   <build>
@@ -206,6 +207,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>kohti-kumppanuutta</groupId>
+      <artifactId>koku-common</artifactId>
+      <version>${koku-common.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
@@ -251,6 +258,6 @@
       <artifactId>hamcrest-integration</artifactId>
       <version>${hamcrest.version}</version>
       <scope>test</scope>
-    </dependency>	
+    </dependency>
   </dependencies>
 </project>
