@@ -53,7 +53,7 @@ public class ConsentServiceTest {
         
         final ConsentTemplateTO templateById = service.getConsentTemplate(templateId);
         
-        assertEquals(templateId.longValue(), templateById.getConsentTemplateId());
+        assertEquals(templateId, templateById.getConsentTemplateId());
         assertEquals(template.getTitle(), templateById.getTitle());
         assertEquals(template.getCreatorUid(), templateById.getCreatorUid());
         assertEquals(template.getDescription(), templateById.getDescription());

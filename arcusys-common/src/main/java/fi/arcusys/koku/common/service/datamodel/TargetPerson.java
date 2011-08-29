@@ -57,7 +57,7 @@ public class TargetPerson extends AbstractEntity {
     
     public User getGuardianByUid(final String userUid) {
         for (final User guardian : this.getGuardians()) {
-            if (guardian.getUid() == userUid) {
+            if (guardian.getUid().equals(userUid)) {
                 return guardian;
             }
         }

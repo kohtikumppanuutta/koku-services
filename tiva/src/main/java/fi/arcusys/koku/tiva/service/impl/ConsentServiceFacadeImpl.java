@@ -97,7 +97,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         final ConsentTemplateTO templateTO = new ConsentTemplateTO();
         templateTO.setConsentTemplateId(template.getId());
         templateTO.setCreatorUid(getSafeUserUid(template.getCreator()));
-        templateTO.setDescription(template.getDescription());
+        templateTO.setDescription(template.getDescription() == null ? "" : template.getDescription());
         templateTO.setTitle(template.getTitle());
         final List<ActionRequestTO> actionTOs = new ArrayList<ActionRequestTO>();
         for (final ConsentActionRequest action : template.getActions()) {

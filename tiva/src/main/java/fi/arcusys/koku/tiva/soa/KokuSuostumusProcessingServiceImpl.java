@@ -184,4 +184,13 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
         return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers);
     }
 
+    /**
+     * @param consentTemplateId
+     * @return
+     */
+    @Override
+    public ConsentTemplateTO getConsentTemplateById(long consentTemplateId) {
+        return serviceFacade.getConsentTemplate(consentTemplateId);
+    }
+
 }

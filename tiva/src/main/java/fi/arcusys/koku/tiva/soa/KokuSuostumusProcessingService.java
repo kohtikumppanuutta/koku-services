@@ -76,5 +76,6 @@ public interface KokuSuostumusProcessingService {
             @WebParam(name = "suostumusId") final long consentId,
             @WebParam(name = "suostuja") final String replierUid);
 
-    // ConsentTO getConsent(final long consentId);
+    ConsentTemplateTO getConsentTemplateById(
+            @WebParam(name = "pohjaId") final long consentTemplateId);
 }

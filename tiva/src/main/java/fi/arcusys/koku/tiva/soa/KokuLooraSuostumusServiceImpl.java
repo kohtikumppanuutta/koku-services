@@ -69,7 +69,7 @@ public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService 
     private List<ConsentTemplateSummary> searchTemplates_stubVersion() {
         final List<ConsentTemplateSummary> result = new ArrayList<ConsentTemplateSummary>();
         final ConsentTemplateSummary template = new ConsentTemplateSummary();
-        template.setConsentTemplateId(1);
+        template.setConsentTemplateId(1L);
         template.setTitle("suostumuspohja #1");
         result.add(template);
         return result;

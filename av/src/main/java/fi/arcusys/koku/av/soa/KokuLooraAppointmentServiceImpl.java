@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+
+import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -24,14 +27,16 @@ import javax.xml.datatype.DatatypeFactory;
         targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentService {
 
+    @EJB
+    private AppointmentServiceFacade serviceFacade;
+    
     /**
      * @param user
      * @return
      */
     @Override
     public int getTotalCreatedAppointments(String user) {
-        // TODO Auto-generated method stub
-        return 1;
+        return serviceFacade.getTotalCreatedAppointments(user);
     }
 
     /**
@@ -40,8 +45,7 @@ public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentServ
      */
     @Override
     public int getTotalProcessedAppointments(String user) {
-        // TODO Auto-generated method stub
-        return 1;
+        return serviceFacade.getTotalProcessedAppointments(user);
     }
 
     /**
@@ -52,7 +56,11 @@ public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentServ
      */
     @Override
     public List<AppointmentSummary> getCreatedAppointments(String user, int startNum, int maxNum) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getCreatedAppointments(user, startNum, maxNum);
+//        return getCreatedAppointments_stubVersion();
+    }
+
+    private List<AppointmentSummary> getCreatedAppointments_stubVersion() {
         final List<AppointmentSummary> result = new ArrayList<AppointmentSummary>();
         final AppointmentSummary appointment = new AppointmentSummary();
         appointment.setAppointmentId(2L);
@@ -72,7 +80,11 @@ public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentServ
     @Override
     public List<AppointmentSummary> getProcessedAppointments(String user,
             int startNum, int maxNum) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getProcessedAppointments(user, startNum, maxNum);
+//        return getProcessedAppointments_stubVersion();
+    }
+
+    private List<AppointmentSummary> getProcessedAppointments_stubVersion() {
         final List<AppointmentSummary> result = new ArrayList<AppointmentSummary>();
         final AppointmentSummary appointment = new AppointmentSummary();
         appointment.setAppointmentId(1L);
@@ -89,7 +101,11 @@ public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentServ
      */
     @Override
     public AppointmentTO getAppointmentById(long appointmentId) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getAppointment(appointmentId);
+//        return getAppointmentById_stubVersion(appointmentId);
+    }
+
+    private AppointmentTO getAppointmentById_stubVersion(long appointmentId) {
         final AppointmentTO appointment = new AppointmentTO();
         appointment.setAppointmentId(appointmentId);
         appointment.setSender("Ville Virkamies");

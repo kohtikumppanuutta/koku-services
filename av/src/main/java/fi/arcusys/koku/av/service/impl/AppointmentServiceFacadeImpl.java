@@ -18,6 +18,7 @@ import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 import fi.arcusys.koku.av.soa.AppointmentForEditTO;
 import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
 import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
+import fi.arcusys.koku.av.soa.AppointmentRespondedTO;
 import fi.arcusys.koku.av.soa.AppointmentSlotTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
 import fi.arcusys.koku.av.soa.AppointmentTO;
@@ -179,17 +180,21 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	private List<AppointmentSlotTO> getSlotTOsByAppointment(final Appointment appointment) {
 		final List<AppointmentSlotTO> result = new ArrayList<AppointmentSlotTO>();
 		for (final AppointmentSlot slot : appointment.getSlots()) {
-			final AppointmentSlotTO slotTO = new AppointmentSlotTO();
-			slotTO.setSlotNumber(slot.getSlotNumber());
-			slotTO.setAppointmentDate(CalendarUtil.getXmlDate(slot.getAppointmentDate()));
-			slotTO.setStartTime(CalendarUtil.getXmlTime(slot.getAppointmentDate(), slot.getStartTime()));
-			slotTO.setEndTime(CalendarUtil.getXmlTime(slot.getAppointmentDate(), slot.getEndTime()));
-			slotTO.setLocation(slot.getLocation());
-			slotTO.setComment(slot.getComment());
-			result.add(slotTO);
+			result.add(getSlotTOBySlot(slot));
 		}
 		return result;
 	}
+
+    private AppointmentSlotTO getSlotTOBySlot(final AppointmentSlot slot) {
+        final AppointmentSlotTO slotTO = new AppointmentSlotTO();
+        slotTO.setSlotNumber(slot.getSlotNumber());
+        slotTO.setAppointmentDate(CalendarUtil.getXmlDate(slot.getAppointmentDate()));
+        slotTO.setStartTime(CalendarUtil.getXmlTime(slot.getAppointmentDate(), slot.getStartTime()));
+        slotTO.setEndTime(CalendarUtil.getXmlTime(slot.getAppointmentDate(), slot.getEndTime()));
+        slotTO.setLocation(slot.getLocation());
+        slotTO.setComment(slot.getComment());
+        return slotTO;
+    }
 
 	/**
 	 * @param userUid
@@ -462,5 +467,32 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
             result.add(convertAppointmentToDTO(appointment, new AppointmentSummary()));
         }
         return result;
+    }
+
+    /**
+     * @param appointmentId
+     * @return
+     */
+    @Override
+    public AppointmentRespondedTO getAppointmentRespondedById(long appointmentId, final String targetPerson) {
+        final AppointmentRespondedTO appointmentTO = new AppointmentRespondedTO();
+        final Appointment appointment = appointmentDAO.getById(appointmentId);
+        if (appointment == null) {
+            throw new IllegalArgumentException("Appointment id " + appointmentId + " not found.");
+        }
+        
+        final AppointmentResponse response = appointment.getResponseForTargetPerson(targetPerson);
+        if (response == null) {
+            throw new IllegalArgumentException("Can't find response to appointment ID " + appointmentId + " for target person " + targetPerson);
+        }
+        
+        convertAppointmentToDTO(appointment, appointmentTO);
+        appointmentTO.setTargetPerson(targetPerson);
+        appointmentTO.setStatus(response.getStatus().name());
+        appointmentTO.setReplier(response.getReplier().getUid());
+        appointmentTO.setReplierComment(response.getComment());
+        appointmentTO.setApprovedSlot(getSlotTOBySlot(appointment.getSlotByNumber(response.getSlotNumber())));
+        
+        return appointmentTO;
     }
 }

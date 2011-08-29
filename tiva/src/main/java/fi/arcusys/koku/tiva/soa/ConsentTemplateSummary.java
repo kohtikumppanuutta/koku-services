@@ -10,19 +10,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType (name = "suostumuspohjaShort", namespace = "http://soa.tiva.koku.arcusys.fi/",
 propOrder={"consentTemplateId", "title"})
 public class ConsentTemplateSummary {
-    private long consentTemplateId;
+    private Long consentTemplateId;
     private String title;
     /**
      * @return the consentTemplateId
      */
     @XmlElement(name = "suostumuspohjaId")
-    public long getConsentTemplateId() {
+    public Long getConsentTemplateId() {
         return consentTemplateId;
     }
     /**
      * @param consentTemplateId the consentTemplateId to set
      */
-    public void setConsentTemplateId(long consentTemplateId) {
+    public void setConsentTemplateId(Long consentTemplateId) {
         this.consentTemplateId = consentTemplateId;
     }
     /**

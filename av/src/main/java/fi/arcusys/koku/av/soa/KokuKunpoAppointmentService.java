@@ -26,5 +26,7 @@ public interface KokuKunpoAppointmentService {
             @WebParam(name = "startNum") int startNum, 
             @WebParam(name = "maxNum") int maxNum);
     
-    public AppointmentRespondedTO getAppointmentRespondedById(@WebParam(name = "appointmentId") final long appointmentId);
+    public AppointmentRespondedTO getAppointmentRespondedById(
+            @WebParam(name = "appointmentId") final long appointmentId,
+            @WebParam(name = "targetUser") final String targetUser);
 }

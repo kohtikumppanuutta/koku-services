@@ -51,8 +51,8 @@
         </property>
         <property name="jpaProperties">
             <props>
-<!--                 <prop key="openjpa.Log">DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=INFO</prop> -->
-                   <prop key="openjpa.Log">DefaultLevel=WARN, Runtime=TRACE, Tool=TRACE, SQL=TRACE</prop>
+                <prop key="openjpa.Log">DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=INFO</prop>
+<!--                    <prop key="openjpa.Log">DefaultLevel=WARN, Runtime=TRACE, Tool=TRACE, SQL=TRACE</prop> -->
                 <prop key="openjpa.TransactionMode">local</prop>
             </props>
         </property>

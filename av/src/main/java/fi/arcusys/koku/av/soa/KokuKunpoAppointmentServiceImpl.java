@@ -41,8 +41,7 @@ public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentServ
      */
     @Override
     public int getTotalRespondedAppointments(String user) {
-        return 2;
-//        return serviceFacade.getTotalAppointments(user, Collection);
+        return serviceFacade.getTotalRespondedAppointments(user);
     }
 
     /**
@@ -53,7 +52,11 @@ public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentServ
      */
     @Override
     public List<AppointmentWithTarget> getRespondedAppointments(String user, int startNum, int maxNum) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getRespondedAppointments(user, startNum, maxNum);
+//        return getRespondedAppointments_stubVersion();
+    }
+
+    private List<AppointmentWithTarget> getRespondedAppointments_stubVersion() {
         final List<AppointmentWithTarget> result = new ArrayList<AppointmentWithTarget>();
         final AppointmentWithTarget appointment = new AppointmentWithTarget();
         appointment.setAppointmentId(1L);
@@ -81,7 +84,11 @@ public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentServ
     @Override
     public List<AppointmentWithTarget> getAssignedAppointments(String user,
             int startNum, int maxNum) {
-        // TODO Auto-generated method stub
+        return serviceFacade.getAssignedAppointments(user, startNum, maxNum);
+//        return getAssignedAppointments_stubVersion();
+    }
+
+    private List<AppointmentWithTarget> getAssignedAppointments_stubVersion() {
         final List<AppointmentWithTarget> result = new ArrayList<AppointmentWithTarget>();
         final AppointmentWithTarget appointment = new AppointmentWithTarget();
         appointment.setAppointmentId(2L);
@@ -98,8 +105,13 @@ public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentServ
      * @return
      */
     @Override
-    public AppointmentRespondedTO getAppointmentRespondedById(long appointmentId) {
-        // TODO Auto-generated method stub
+    public AppointmentRespondedTO getAppointmentRespondedById(long appointmentId, final String targetUser) {
+        return serviceFacade.getAppointmentRespondedById(appointmentId, targetUser);
+//        return getAppointmentRespondedById_stubVersion(appointmentId);
+    }
+
+    private AppointmentRespondedTO getAppointmentRespondedById_stubVersion(
+            long appointmentId) {
         final AppointmentRespondedTO appointment = new AppointmentRespondedTO();
         appointment.setAppointmentId(appointmentId);
         appointment.setSender("Ville Virkamies");

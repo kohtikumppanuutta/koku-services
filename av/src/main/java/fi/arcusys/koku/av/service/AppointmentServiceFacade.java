@@ -7,6 +7,7 @@ import javax.jws.WebParam;
 
 import fi.arcusys.koku.av.soa.AppointmentForEditTO;
 import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
+import fi.arcusys.koku.av.soa.AppointmentRespondedTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
 import fi.arcusys.koku.av.soa.AppointmentTO;
 import fi.arcusys.koku.av.soa.AppointmentWithTarget;
@@ -73,4 +74,10 @@ public interface AppointmentServiceFacade {
 	List<AppointmentSummary> getCreatedAppointments(final String user, int startNum, int maxNum);
     
     List<AppointmentSummary> getProcessedAppointments(final String user, int startNum, int maxNum);
+
+    /**
+     * @param appointmentId
+     * @return
+     */
+    AppointmentRespondedTO getAppointmentRespondedById(long appointmentId, final String targetPerson);
 }
