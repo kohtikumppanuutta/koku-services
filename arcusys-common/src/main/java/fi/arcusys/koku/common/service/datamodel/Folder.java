@@ -17,7 +17,8 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "findFolderByUserAndType", query = "SELECT f FROM Folder f WHERE f.user = :user AND f.folderType = :folderType"),
-	@NamedQuery(name = "findMessagesByUserAndFolderType", query = "SELECT mr FROM MessageRef mr WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user ORDER BY mr.createdDate DESC, mr.id DESC"),
+	@NamedQuery(name = "findMessagesByUserAndFolderType", query = "SELECT DISTINCT mr FROM MessageRef mr WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user " +
+			" ORDER BY mr.createdDate DESC, mr.id DESC"),
 	@NamedQuery(name = "getTotalMessagesCount", query = "SELECT COUNT(mr) FROM MessageRef mr WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user"),
 	@NamedQuery(name = "getMessagesCountByReadStatus", query = "SELECT COUNT(mr) FROM MessageRef mr WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user and mr.isRead = :isRead")
 }) 

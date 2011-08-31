@@ -17,7 +17,7 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "findTargetPersonByUid", query = "SELECT tp FROM TargetPerson tp WHERE tp.targetUser.uid = :uid")
+    @NamedQuery(name = "findTargetPersonByUid", query = "SELECT DISTINCT tp FROM TargetPerson tp WHERE tp.targetUser.uid = :uid")
 }) 
 public class TargetPerson extends AbstractEntity {
 

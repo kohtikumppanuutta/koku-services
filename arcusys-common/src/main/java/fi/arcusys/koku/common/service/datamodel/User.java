@@ -15,7 +15,7 @@ import javax.persistence.NamedQuery;
 @Entity(name = "User_")
 //@Entity
 @NamedQueries({
-	@NamedQuery(name = "findUserByUid", query = "SELECT u FROM User_ u WHERE u.uid = :uid")
+	@NamedQuery(name = "findUserByUid", query = "SELECT DISTINCT u FROM User_ u WHERE u.uid = :uid")
 }) 
 public class User extends AbstractEntity {
 	/**

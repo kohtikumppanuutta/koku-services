@@ -17,10 +17,10 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "findReplyByConsentAndUser", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.consent = :consent AND rp.replier = :user"),
-    @NamedQuery(name = "findRepliedConsentsByUser", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.replier = :user"),
+    @NamedQuery(name = "findReplyByConsentAndUser", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.consent = :consent AND rp.replier = :user ORDER BY rp.id DESC"),
+    @NamedQuery(name = "findRepliedConsentsByUser", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.replier = :user ORDER BY rp.id DESC"),
     @NamedQuery(name = "countRepliedConsentsByUser", query = "SELECT COUNT(DISTINCT rp) FROM ConsentReply rp WHERE rp.replier = :user"),
-    @NamedQuery(name = "findRepliesByConsent", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.consent = :consent")
+    @NamedQuery(name = "findRepliesByConsent", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.consent = :consent ORDER BY rp.id DESC")
 })
 public class ConsentReply extends AbstractEntity {
     private Date validTill;

@@ -20,8 +20,8 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @NamedQueries({
-	@NamedQuery(name = Request.GET_REQUESTS_BY_IDS, query = "SELECT r FROM Request r WHERE r.id in (:ids)"),
-	@NamedQuery(name = Request.GET_REQUESTS_BY_USER_UID, query = "SELECT r FROM Request r WHERE r.fromUser = :user")
+	@NamedQuery(name = Request.GET_REQUESTS_BY_IDS, query = "SELECT DISTINCT r FROM Request r WHERE r.id in (:ids) ORDER BY r.id DESC"),
+	@NamedQuery(name = Request.GET_REQUESTS_BY_USER_UID, query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user ORDER BY r.id DESC")
 })
 public class Request extends Message {
 	public static final String GET_REQUESTS_BY_IDS = "getRequestsByIds";

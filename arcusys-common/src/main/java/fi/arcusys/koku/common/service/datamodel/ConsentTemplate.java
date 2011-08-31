@@ -20,7 +20,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "findTemplatesByPrefix", query = "SELECT tmp FROM ConsentTemplate tmp WHERE tmp.title LIKE :prefix")
+    @NamedQuery(name = "findTemplatesByPrefix", query = "SELECT tmp FROM ConsentTemplate tmp WHERE tmp.title LIKE :prefix  ORDER BY tmp.id DESC")
 })
 public class ConsentTemplate extends AbstractEntity {
     private String title;

@@ -21,13 +21,13 @@ import javax.persistence.OneToMany;
 @NamedQueries({
     @NamedQuery(name = "findAssignedConsentsByUser", query = "SELECT DISTINCT cn FROM Consent cn JOIN cn.receipients rs WHERE " +
     		"(NOT EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn AND cr.replier.uid = :userUid))" +
-    		" AND rs.uid = :userUid"),
+    		" AND rs.uid = :userUid ORDER BY cn.id DESC"),
     @NamedQuery(name = "countAssignedConsentsByUser", query = "SELECT COUNT(DISTINCT cn) FROM Consent cn JOIN cn.receipients rs WHERE " +
             "(NOT EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn AND cr.replier.uid = :userUid))" +
             " AND rs.uid = :userUid"),
     @NamedQuery(name = "findProcessedConsentsBySender", query = "SELECT DISTINCT cn FROM Consent cn WHERE " +
             "(EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn))" +
-            " AND cn.creator.uid = :senderUid"),
+            " AND cn.creator.uid = :senderUid ORDER BY cn.id DESC"),
     @NamedQuery(name = "countProcessedConsentsBySender", query = "SELECT COUNT(DISTINCT cn) FROM Consent cn WHERE " +
             "(EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn))" +
             " AND cn.creator.uid = :senderUid")
