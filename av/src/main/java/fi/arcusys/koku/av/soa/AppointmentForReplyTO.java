@@ -1,5 +1,6 @@
 package fi.arcusys.koku.av.soa;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,6 +14,9 @@ public class AppointmentForReplyTO extends AppointmentSummary {
      * @return the slots
      */
     public List<AppointmentSlotTO> getSlots() {
+        if (this.slots == null) {
+            this.slots = new ArrayList<AppointmentSlotTO>();
+        }
         return slots;
     }
 
