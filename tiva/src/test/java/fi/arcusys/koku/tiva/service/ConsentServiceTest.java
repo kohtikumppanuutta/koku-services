@@ -24,7 +24,9 @@ import fi.arcusys.koku.tiva.soa.ActionRequestStatus;
 import fi.arcusys.koku.tiva.soa.ActionRequestSummary;
 import fi.arcusys.koku.tiva.soa.ActionRequestTO;
 import fi.arcusys.koku.tiva.soa.ConsentApprovalStatus;
+import fi.arcusys.koku.tiva.soa.ConsentCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
+import fi.arcusys.koku.tiva.soa.ConsentQuery;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
 import fi.arcusys.koku.tiva.soa.ConsentStatus;
 import fi.arcusys.koku.tiva.soa.ConsentSummary;
@@ -81,9 +83,9 @@ public class ConsentServiceTest {
         
         final String employeeUid = "Ville Virkamies";
         final Long consentId = service.requestForConsent(templateId, employeeUid, 
-                "Lassi Lapsi", Arrays.asList(parentForApprove, parentForDecline));
+                "Lassi Lapsi", Arrays.asList(parentForApprove, parentForDecline), null, Boolean.FALSE);
 
-        assertNull(getById(consentId, service.getProcessedConsents(employeeUid, 1, 10)));
+        assertNull(getById(consentId, service.getProcessedConsents(employeeUid, new ConsentQuery(1, 10))));
         
         // first parent's approval
         final List<ConsentShortSummary> consentsForApprove = service.getAssignedConsents(parentForApprove, 1, 10);
@@ -102,7 +104,7 @@ public class ConsentServiceTest {
                 CalendarUtil.getXmlDate(new Date()), "consent given");
         assertNull("already processed consent: ", getById(consentId, service.getAssignedConsents(parentForApprove, 1, 10)));
         
-        assertNotNull(getById(consentId, service.getProcessedConsents(employeeUid, 1, 10)));
+        assertNotNull(getById(consentId, service.getProcessedConsents(employeeUid, new ConsentQuery(1, 10))));
         final ConsentTO combinedAfterApprove = service.getCombinedConsentById(consentId);
         assertNotNull(combinedAfterApprove);
         assertEquals(ConsentStatus.PartiallyGiven, combinedAfterApprove.getStatus());
@@ -153,7 +155,7 @@ public class ConsentServiceTest {
         final String employee = "testTotalsEmployee";
         
         final Long consentId = service.requestForConsent(templateId, employee, 
-                "Lassi Lapsi", Arrays.asList(parent));
+                "Lassi Lapsi", Arrays.asList(parent), null, Boolean.FALSE);
         
         assertEquals(1, service.getTotalAssignedConsents(parent));
         assertEquals(0, service.getTotalOwnConsents(parent));
@@ -164,6 +166,40 @@ public class ConsentServiceTest {
         assertEquals(0, service.getTotalAssignedConsents(parent));
         assertEquals(1, service.getTotalOwnConsents(parent));
         assertEquals(1, service.getTotalProcessedConsents(employee));
+    }
+    
+    @Test
+    public void searchByTemplateAndUserUid() {
+        // new consent
+        final Long templateId = service.createConsentTemplate(createTestTemplate("templateForSearchTesting"));
+        final String parent1 = "Kalle Kuntalainen";
+        final String parent2 = "Kirsi Kuntalainen";
+        
+        final String employeeUid = "Ville Virkamies";
+        final Long consentId = service.requestForConsent(templateId, employeeUid, 
+                "Lassi Lapsi", Arrays.asList(parent1, parent2), null, Boolean.FALSE);
+        
+        final ConsentQuery query = new ConsentQuery(1, 100);
+        assertNull(getById(consentId, service.getProcessedConsents(employeeUid, query)));
+        
+        final ActionPermittedTO actionPermittedTO = new ActionPermittedTO();
+        actionPermittedTO.setActionRequestNumber(1);
+        actionPermittedTO.setPermitted(true);
+        
+        service.giveConsent(consentId, parent1, Collections.singletonList(actionPermittedTO), null, "");
+        assertNotNull(getById(consentId, service.getProcessedConsents(employeeUid, query)));
+        
+        query.setCriteria(new ConsentCriteria());
+        // filter by templateId
+        query.getCriteria().setConsentTemplateId(0L);
+        assertNull("not found by wrong template id: ", getById(consentId, service.getProcessedConsents(employeeUid, query)));
+        query.getCriteria().setConsentTemplateId(templateId);
+        assertNotNull("found by template id: ", getById(consentId, service.getProcessedConsents(employeeUid, query)));
+        // filter by userid
+        query.getCriteria().setReceipientUid(parent2);
+        assertNull("not found by wrong receipient uid: ", getById(consentId, service.getProcessedConsents(employeeUid, query)));
+        query.getCriteria().setReceipientUid(parent1);
+        assertNotNull("found by receipient uid: ", getById(consentId, service.getProcessedConsents(employeeUid, query)));
     }
 
     /**

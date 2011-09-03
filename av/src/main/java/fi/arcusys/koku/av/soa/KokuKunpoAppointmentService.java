@@ -29,4 +29,10 @@ public interface KokuKunpoAppointmentService {
     public AppointmentRespondedTO getAppointmentRespondedById(
             @WebParam(name = "appointmentId") final long appointmentId,
             @WebParam(name = "targetUser") final String targetUser);
+    
+    public void cancelRespondedAppointment(
+            @WebParam(name = "appointmentId") final long appointmentId,
+            @WebParam(name = "targetUser") final String targetUser,
+            @WebParam(name = "user") final String user,
+            @WebParam(name = "comment") final String comment);
 }

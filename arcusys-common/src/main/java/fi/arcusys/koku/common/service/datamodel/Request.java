@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -28,15 +29,28 @@ public class Request extends Message {
 	public static final String GET_REQUESTS_BY_USER_UID = "getRequestsByUserUid";
 	
 	private Date endDate;
-	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<Question> questions;
 
+	@ManyToOne
+	private RequestTemplate template;
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "request")
 	private Set<Response> responses;
 	
-	
 	/**
+     * @return the template
+     */
+    public RequestTemplate getTemplate() {
+        return template;
+    }
+
+    /**
+     * @param template the template to set
+     */
+    public void setTemplate(RequestTemplate template) {
+        this.template = template;
+    }
+
+    /**
 	 * @return the responses
 	 */
 	public List<Response> getResponses() {
@@ -51,20 +65,6 @@ public class Request extends Message {
 	 */
 	public void setResponses(List<Response> responses) {
 		this.responses = new HashSet<Response>(responses);
-	}
-
-	/**
-	 * @param questions
-	 */
-	public void setQuestions(final List<Question> questions) {
-		this.questions = new HashSet(questions);
-	}
-	
-	public List<Question> getQuestions() {
-		if (this.questions == null) {
-			return Collections.emptyList();
-		}
-		return new ArrayList<Question>(this.questions);
 	}
 
 	/**

@@ -5,12 +5,16 @@
 		<properties>
 			<!-- JBoss specific -->
 			<!-- Following is for development only - use "validate" in production instead-->
-			<property name="hibernate.hbm2ddl.auto" value="update" />
+<!-- 			<property name="hibernate.hbm2ddl.auto" value="update" /> -->
+            <!-- For re-creation of database structure if it is changed -->
+            <property name="hibernate.hbm2ddl.auto" value="create-drop" />
 		</properties>
 		<class>fi.arcusys.koku.common.service.datamodel.AbstractEntity</class>
 		<class>fi.arcusys.koku.common.service.datamodel.Message</class>
         <class>fi.arcusys.koku.common.service.datamodel.Request</class>
+        <class>fi.arcusys.koku.common.service.datamodel.RequestTemplate</class>
         <class>fi.arcusys.koku.common.service.datamodel.Question</class>
+        <class>fi.arcusys.koku.common.service.datamodel.MultipleChoice</class>
         <class>fi.arcusys.koku.common.service.datamodel.Response</class>
         <class>fi.arcusys.koku.common.service.datamodel.Answer</class>
 <!--        <class>fi.arcusys.koku.common.service.datamodel.YesNoAnswer</class>-->

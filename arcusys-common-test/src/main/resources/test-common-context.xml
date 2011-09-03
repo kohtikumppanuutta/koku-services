@@ -86,6 +86,7 @@
     <bean id="messageFolderDao" class="fi.arcusys.koku.common.service.impl.MessageFolderDAOImpl" />
     <bean id="messageRefDao" class="fi.arcusys.koku.common.service.impl.MessageRefDAOImpl" />
     <bean id="requestDao" class="fi.arcusys.koku.common.service.impl.RequestDAOImpl" />
+    <bean id="requestTemplateDao" class="fi.arcusys.koku.common.service.impl.RequestTemplateDAOImpl" />
     <bean id="responseDao" class="fi.arcusys.koku.common.service.impl.ResponseDAOImpl" />
     <bean id="userDao" class="fi.arcusys.koku.common.service.impl.UserDAOImpl" />
     <bean id="targetPersonDao" class="fi.arcusys.koku.common.service.impl.TargetPersonDAOImpl" />
@@ -93,6 +94,5 @@
     <bean id="consentTemplateDao" class="fi.arcusys.koku.common.service.impl.ConsentTemplateDAOImpl" />
     <bean id="consentDao" class="fi.arcusys.koku.common.service.impl.ConsentDAOImpl" />
     <bean id="consentReplyDao" class="fi.arcusys.koku.common.service.impl.ConsentReplyDAOImpl" />
-    
     
 </beans>

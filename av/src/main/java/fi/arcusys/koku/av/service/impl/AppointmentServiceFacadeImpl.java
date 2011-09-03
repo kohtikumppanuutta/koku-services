@@ -4,6 +4,7 @@ import static fi.arcusys.koku.common.service.AbstractEntityDAO.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +15,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 import fi.arcusys.koku.av.soa.AppointmentForEditTO;
 import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
@@ -21,11 +25,13 @@ import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
 import fi.arcusys.koku.av.soa.AppointmentRespondedTO;
 import fi.arcusys.koku.av.soa.AppointmentSlotTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
+import fi.arcusys.koku.av.soa.AppointmentSummaryStatus;
 import fi.arcusys.koku.av.soa.AppointmentTO;
 import fi.arcusys.koku.av.soa.AppointmentWithTarget;
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
+import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.TargetPersonDAO;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.Appointment;
@@ -43,6 +49,8 @@ import fi.arcusys.koku.common.service.datamodel.User;
 @Stateless
 public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 
+    private final static Logger logger = LoggerFactory.getLogger(AppointmentServiceFacadeImpl.class);
+    
 	@EJB
 	private AppointmentDAO appointmentDAO;
 	
@@ -51,6 +59,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	
 	@EJB
 	private TargetPersonDAO targetPersonDao;
+	
+	@EJB
+	private KokuSystemNotificationsService notificationService;
 
 	/**
 	 * @param appointmentId
@@ -59,10 +70,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	 */
 	@Override
 	public void approveAppointment(final String targetPersonUid, final String userUid, final Long appointmentId, final int slotNumber, final String comment) {
-		final Appointment appointment = appointmentDAO.getById(appointmentId);
-        if (appointment == null) {
-        	throw new IllegalArgumentException("Appointment is not found by id: " + appointmentId);
-        }
+		final Appointment appointment = loadAppointment(appointmentId);
         
         if(appointment.getSlotByNumber(slotNumber) == null) {
             throw new IllegalStateException("There is no slot with number " + slotNumber + " in appointment id = " + appointmentId);
@@ -81,10 +89,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	 */
 	@Override
 	public void declineAppointment(final String targetPersonUid, final String userUid, final Long appointmentId, final String comment) {
-		final Appointment appointment = appointmentDAO.getById(appointmentId);
-        if (appointment == null) {
-        	throw new IllegalArgumentException("Appointment is not found by id: " + appointmentId);
-        }
+		final Appointment appointment = loadAppointment(appointmentId);
         
         final AppointmentResponse response = processReply(targetPersonUid, userUid, comment, appointment);
         response.setStatus(AppointmentResponseStatus.Rejected);
@@ -92,7 +97,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		appointmentDAO.update(appointment);
 	}
 
-	private AppointmentResponse processReply(final String targetPersonUid,
+    private AppointmentResponse processReply(final String targetPersonUid,
             final String userUid, final String comment,
             final Appointment appointment) {
         if (appointment.getStatus() != AppointmentStatus.Created) {
@@ -130,17 +135,14 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	 */
 	@Override
 	public AppointmentTO getAppointment(final Long appointmentId) {
-		final Appointment appointment = appointmentDAO.getById(appointmentId);
-		if (appointment == null) {
-			throw new IllegalArgumentException("Appointment id " + appointmentId + " not found.");
-		}
+		final Appointment appointment = loadAppointment(appointmentId);
 		
 		final AppointmentTO appointmentTO = new AppointmentTO();
 		convertAppointmentToDTO(appointment, appointmentTO);
+		
+		appointmentTO.setStatus(AppointmentSummaryStatus.valueOf(getSummaryAppointmentStatus(appointment)));
 
         appointmentTO.setRecipients(getReceipientsDTOByAppointment(appointment));
-
-        appointmentTO.setStatus(appointment.getStatus().name());
 
 		final HashMap<Integer, String> acceptedSlots = new HashMap<Integer, String>();
         final List<String> usersRejected = new ArrayList<String>();
@@ -210,7 +212,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	public List<AppointmentSummary> getAppointments(final String userUid, final Set<AppointmentStatus> statuses, final int startNum, final int maxNum) {
 		final List<AppointmentSummary> result = new ArrayList<AppointmentSummary>();
 		for (final Appointment appointment : appointmentDAO.getUserAppointments(userDao.getOrCreateUser(userUid), statuses, startNum, maxNum - startNum + 1)) {
-			result.add(convertAppointmentToDTO(appointment, new AppointmentSummary()));
+			final AppointmentSummary appointmentTO = convertAppointmentToDTO(appointment, new AppointmentSummary());
+			appointmentTO.setStatus(AppointmentSummaryStatus.valueOf(getSummaryAppointmentStatus(appointment)));
+            result.add(appointmentTO);
 		}
 		return result;
 	}
@@ -244,9 +248,23 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		appointmentSummary.setDescription(appointment.getDescription());
 		appointmentSummary.setSubject(appointment.getSubject());
 		appointmentSummary.setSender(appointment.getSender().getUid());
+		appointmentSummary.setStatus(AppointmentSummaryStatus.valueOf(appointment.getStatus()));
 		
 		return appointmentSummary;
 	}
+
+    private AppointmentStatus getSummaryAppointmentStatus(
+            final Appointment appointment) {
+        if (appointment.getStatus() != AppointmentStatus.Cancelled && appointment.getResponses() != null && !appointment.getResponses().isEmpty()) {
+            for (final AppointmentResponse response : appointment.getResponses()) {
+                if (response.getStatus() == AppointmentResponseStatus.Accepted) {
+                    return AppointmentStatus.Approved;
+                }
+            }
+            return AppointmentStatus.Cancelled;
+        }
+        return appointment.getStatus();
+    }
 	
 	private Appointment fillAppointmentByDto(final AppointmentForEditTO appointmentTO, final Appointment appointment) {
 		appointment.setDescription(appointmentTO.getDescription());
@@ -296,10 +314,8 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	public Long storeAppointment(AppointmentForEditTO appointmentTO) {
 		final Appointment appointment;
 		if (appointmentTO.getAppointmentId() > 0) {
-			appointment = appointmentDAO.getById(appointmentTO.getAppointmentId());
-			if (appointment == null) {
-				throw new IllegalArgumentException("Appointment with ID " + appointmentTO.getAppointmentId() + " not found.");
-			}
+			final long appointmentId = appointmentTO.getAppointmentId();
+            appointment = loadAppointment(appointmentId);
 		} else {
 			appointment = new Appointment();
 		}
@@ -312,20 +328,17 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		}
 	}
 
-	/**
+    /**
 	 * @param appointmentId
 	 */
 	@Override
 	public void removeAppointment(long appointmentId) {
-		final Appointment appointment = appointmentDAO.getById(appointmentId);
-		if (appointment == null) {
-			throw new IllegalArgumentException("Appointment with ID " + appointmentId + " not found.");
-		}
-		appointment.setStatus(AppointmentStatus.Deleted);
+		final Appointment appointment = loadAppointment(appointmentId);
+		appointment.setStatus(AppointmentStatus.Cancelled);
 		appointmentDAO.update(appointment);
 	}
 
-	/**
+    /**
 	 * @param user
 	 * @param statuses
 	 * @return
@@ -363,13 +376,18 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
     }
 
     private Appointment fillAppointmentTOForReply(final Long appointmentId, final AppointmentForReplyTO appointmentTO) {
+        final Appointment appointment = loadAppointment(appointmentId);
+        
+        convertAppointmentToDTO(appointment, appointmentTO);
+        appointmentTO.setSlots(getSlotTOsByAppointment(appointment));
+        return appointment;
+    }
+
+    private Appointment loadAppointment(final Long appointmentId) {
         final Appointment appointment = appointmentDAO.getById(appointmentId);
         if (appointment == null) {
             throw new IllegalArgumentException("Appointment id " + appointmentId + " not found.");
         }
-        
-        convertAppointmentToDTO(appointment, appointmentTO);
-        appointmentTO.setSlots(getSlotTOsByAppointment(appointment));
         return appointment;
     }
 
@@ -407,6 +425,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
             final AppointmentWithTarget appointmentTO = new AppointmentWithTarget();
             convertAppointmentToDTO(response.getAppointment(), appointmentTO);
             appointmentTO.setTargetPerson(response.getTarget().getTargetUser().getUid());
+            appointmentTO.setStatus(getAppointmentStatusByResponse(response));
             result.add(appointmentTO);
         }
         return result;
@@ -447,7 +466,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
      */
     @Override
     public List<AppointmentSummary> getCreatedAppointments(String user, int startNum, int maxNum) {
-        return getSummaryByAppointments(appointmentDAO.getCreatedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1));
+        return getEmployeeSummaryByAppointments(appointmentDAO.getCreatedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1));
     }
 
     /**
@@ -458,13 +477,15 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
      */
     @Override
     public List<AppointmentSummary> getProcessedAppointments(String user, int startNum, int maxNum) {
-        return getSummaryByAppointments(appointmentDAO.getProcessedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1));
+        return getEmployeeSummaryByAppointments(appointmentDAO.getProcessedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1));
     }
 
-    private List<AppointmentSummary> getSummaryByAppointments(List<Appointment> appointments) {
+    private List<AppointmentSummary> getEmployeeSummaryByAppointments(List<Appointment> appointments) {
         final List<AppointmentSummary> result = new ArrayList<AppointmentSummary>();
         for (final Appointment appointment : appointments) {
-            result.add(convertAppointmentToDTO(appointment, new AppointmentSummary()));
+            final AppointmentSummary appointmentTO = convertAppointmentToDTO(appointment, new AppointmentSummary());
+            appointmentTO.setStatus(AppointmentSummaryStatus.valueOf(getSummaryAppointmentStatus(appointment)));
+            result.add(appointmentTO);
         }
         return result;
     }
@@ -475,24 +496,85 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
      */
     @Override
     public AppointmentRespondedTO getAppointmentRespondedById(long appointmentId, final String targetPerson) {
+        final AppointmentResponse response = getAppointmentResponse(appointmentId, targetPerson);
+        
+        final Appointment appointment = response.getAppointment();
+        
         final AppointmentRespondedTO appointmentTO = new AppointmentRespondedTO();
-        final Appointment appointment = appointmentDAO.getById(appointmentId);
-        if (appointment == null) {
-            throw new IllegalArgumentException("Appointment id " + appointmentId + " not found.");
-        }
-        
-        final AppointmentResponse response = appointment.getResponseForTargetPerson(targetPerson);
-        if (response == null) {
-            throw new IllegalArgumentException("Can't find response to appointment ID " + appointmentId + " for target person " + targetPerson);
-        }
-        
         convertAppointmentToDTO(appointment, appointmentTO);
         appointmentTO.setTargetPerson(targetPerson);
-        appointmentTO.setStatus(response.getStatus().name());
+        appointmentTO.setStatus(getAppointmentStatusByResponse(response));
         appointmentTO.setReplier(response.getReplier().getUid());
         appointmentTO.setReplierComment(response.getComment());
         appointmentTO.setApprovedSlot(getSlotTOBySlot(appointment.getSlotByNumber(response.getSlotNumber())));
         
         return appointmentTO;
+    }
+
+    private AppointmentSummaryStatus getAppointmentStatusByResponse(
+            final AppointmentResponse response) {
+        return response.getStatus() == AppointmentResponseStatus.Accepted && response.getAppointment().getStatus() != AppointmentStatus.Cancelled ?
+                AppointmentSummaryStatus.Approved :
+                AppointmentSummaryStatus.Cancelled;
+    }
+
+    private AppointmentResponse getAppointmentResponse(long appointmentId,
+            final String targetPerson) {
+        final Appointment appointment = loadAppointment(appointmentId);
+        
+        final AppointmentResponse response = appointment.getResponseForTargetPerson(targetPerson);
+        if (response == null) {
+            throw new IllegalArgumentException("Can't find response to appointment ID " + appointmentId + " for target person " + targetPerson);
+        }
+        return response;
+    }
+
+    /**
+     * @param targetUser
+     * @param user
+     * @param appointmentId
+     * @param comment
+     */
+    @Override
+    public void cancelAppointment(String targetUser, String user, long appointmentId, String comment) {
+        final AppointmentResponse response = getAppointmentResponse(appointmentId, targetUser);
+        final String replierUid = response.getReplier().getUid();
+        if (!replierUid.equals(user)) {
+            logger.warn("Appointment id " + appointmentId + " replied by " + replierUid + " but cancelled by " + user);
+        }
+        
+        response.setStatus(AppointmentResponseStatus.Rejected);
+        response.setComment(comment);
+        appointmentDAO.update(response.getAppointment());
+        notificationService.sendNotification("Appointment cancelled", 
+                Collections.singletonList(response.getAppointment().getSender().getUid()), 
+                "Appointment " + response.getAppointment().getSubject() + " for person " + targetUser + " cancelled by user " + user);
+    }
+
+    /**
+     * @param appointmentId
+     * @param comment
+     */
+    @Override
+    public void cancelWholeAppointment(long appointmentId, String comment) {
+        final Appointment appointment = loadAppointment(appointmentId);
+        
+        appointment.setStatus(AppointmentStatus.Cancelled);
+        appointmentDAO.update(appointment);
+
+        final Set<String> notificationReceivers = new HashSet<String>();
+        for (final TargetPerson target : appointment.getRecipients()) {
+            final AppointmentResponse response = appointment.getResponseForTargetPerson(target.getTargetUser().getUid());
+            if (response != null) {
+                notificationReceivers.add(response.getReplier().getUid());
+            } else {
+                for (final User guardian : target.getGuardians()) {
+                    notificationReceivers.add(guardian.getUid());
+                }
+            }
+        }
+        notificationService.sendNotification("Appointment cancelled", 
+                new ArrayList<String>(notificationReceivers), 
+                "Appointment " + appointment.getSubject() + " cancelled by user " + appointment.getSender().getUid());
     }
 }

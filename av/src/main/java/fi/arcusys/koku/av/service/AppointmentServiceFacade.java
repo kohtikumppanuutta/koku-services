@@ -3,8 +3,6 @@ package fi.arcusys.koku.av.service;
 import java.util.List;
 import java.util.Set;
 
-import javax.jws.WebParam;
-
 import fi.arcusys.koku.av.soa.AppointmentForEditTO;
 import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
 import fi.arcusys.koku.av.soa.AppointmentRespondedTO;
@@ -80,4 +78,18 @@ public interface AppointmentServiceFacade {
      * @return
      */
     AppointmentRespondedTO getAppointmentRespondedById(long appointmentId, final String targetPerson);
+
+    /**
+     * @param targetUser
+     * @param user
+     * @param appointmentId
+     * @param comment
+     */
+    void cancelAppointment(final String targetUser, final String user, final long appointmentId, final String comment);
+
+    /**
+     * @param appointmentId
+     * @param comment
+     */
+    void cancelWholeAppointment(long appointmentId, String comment);
 }

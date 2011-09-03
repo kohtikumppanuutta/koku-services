@@ -144,4 +144,13 @@ public abstract class AbstractEntityDAOImpl<T> implements AbstractEntityDAO<T> {
 		}
 		return (E)query.getSingleResult();
 	}
+	
+    protected String getPrefixLike(String searchString) {
+        if (searchString == null) {
+            return "%";
+        } else {
+            return searchString + "%";
+        }
+    }
+
 }

@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -16,6 +18,7 @@ propOrder={"description", "creatorUid", "actions"})
 public class ConsentTemplateTO extends ConsentTemplateSummary {
     private String description;
     private String creatorUid;
+    
     private List<ActionRequestTO> actions;
     
     /**

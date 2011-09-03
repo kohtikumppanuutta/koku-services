@@ -127,7 +127,7 @@ public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentServ
             slots.add(createTestSlot(appointmentId, 1));
             slots.add(createTestSlot(appointmentId, 2));
             appointment.setSlots(slots); 
-            appointment.setStatus("Partially Processed");
+            appointment.setStatus(AppointmentSummaryStatus.Approved);
             appointment.setUsersRejected(Collections.singletonList("Toinen Lapsi"));
         } else {
             throw new IllegalArgumentException("Appointment id=" + appointmentId + " is not found");
@@ -157,6 +157,14 @@ public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentServ
         slotTO.setEndTime(datatypeFactory.newXMLGregorianCalendar(calendar));
         slotTO.setLocation("Office");
         return slotTO;
+    }
+
+    /**
+     * @param appointmentId
+     */
+    @Override
+    public void cancelAppointment(long appointmentId, final String comment) {
+        serviceFacade.cancelWholeAppointment(appointmentId, comment);
     }
 
 }

@@ -42,7 +42,7 @@ public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService 
      */
     @Override
     public List<ConsentSummary> getConsents(String user, ConsentQuery query) {
-        return serviceFacade.getProcessedConsents(user, query.getStartNum(), query.getMaxNum());
+        return serviceFacade.getProcessedConsents(user, query);
 //        return getConsents_stubVersion();
     }
 

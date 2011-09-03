@@ -27,6 +27,7 @@ import fi.arcusys.koku.av.soa.AppointmentForEditTO;
 import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
 import fi.arcusys.koku.av.soa.AppointmentSlotTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
+import fi.arcusys.koku.av.soa.AppointmentSummaryStatus;
 import fi.arcusys.koku.av.soa.AppointmentTO;
 import fi.arcusys.koku.av.soa.AppointmentWithTarget;
 import fi.arcusys.koku.common.service.CommonTestUtil;
@@ -49,7 +50,7 @@ public class AppointmentServiceTest {
 	@Autowired
 	private CommonTestUtil testUtil;
 	
-//	@Test
+	@Test
 	public void getUserAppointments() {
 		final AppointmentForEditTO newAppointment = createTestAppointment("new appointment", "appointment description", 1);
 		final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
@@ -80,6 +81,7 @@ public class AppointmentServiceTest {
         assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getAcceptedSlots().isEmpty());
 		serviceFacade.approveAppointment(targetPerson, receipient, appointmentForApprove.getAppointmentId(), 1, "approved");
         assertFalse(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getAcceptedSlots().isEmpty());
+        assertEquals(AppointmentSummaryStatus.Approved, serviceFacade.getAppointmentRespondedById(appointmentForApprove.getAppointmentId(), targetPerson).getStatus());
 		
         appointments = serviceFacade.getAssignedAppointments(receipient);
         assertFalse(appointments.isEmpty());
@@ -96,6 +98,10 @@ public class AppointmentServiceTest {
         } catch (IllegalArgumentException e) {
             // do nothing, exception expected
         }
+        
+        // cancel appointment
+        serviceFacade.cancelAppointment(targetPerson, receipient, appointmentForApprove.getAppointmentId(), "cancelled");
+        assertEquals(AppointmentSummaryStatus.Cancelled, serviceFacade.getAppointmentRespondedById(appointmentForApprove.getAppointmentId(), targetPerson).getStatus());
 	}
 
 	private <AS extends AppointmentSummary> AS getById(final List<AS> appointments, final Long appointmentId) {

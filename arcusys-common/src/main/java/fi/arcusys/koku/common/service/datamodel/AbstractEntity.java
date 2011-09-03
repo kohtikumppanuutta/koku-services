@@ -68,4 +68,9 @@ public class AbstractEntity {
 		AbstractEntity other = (AbstractEntity) obj;
 		return id != null && id.equals(other.id);
 	}
+	
+	@Override
+	public String toString() {
+	    return getClass().getSimpleName() + ":" + id;
+	}
 }

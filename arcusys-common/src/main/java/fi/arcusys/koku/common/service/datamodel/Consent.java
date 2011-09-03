@@ -27,13 +27,14 @@ import javax.persistence.OneToMany;
             " AND rs.uid = :userUid"),
     @NamedQuery(name = "findProcessedConsentsBySender", query = "SELECT DISTINCT cn FROM Consent cn WHERE " +
             "(EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn))" +
-            " AND cn.creator.uid = :senderUid ORDER BY cn.id DESC"),
+            " AND cn.creator = :sender ORDER BY cn.id DESC"),
     @NamedQuery(name = "countProcessedConsentsBySender", query = "SELECT COUNT(DISTINCT cn) FROM Consent cn WHERE " +
             "(EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn))" +
-            " AND cn.creator.uid = :senderUid")
+            " AND cn.creator = :sender")
 })
 public class Consent extends AbstractEntity {
     private Date validTill;
+    private Boolean endDateMandatory;
     
     @ManyToOne
     private ConsentTemplate template;
@@ -49,26 +50,21 @@ public class Consent extends AbstractEntity {
     
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> receipients;
-    
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "consent")
-//    private Set<ConsentReply> replies;
-//    
-//    
-//
-//    /**
-//     * @return the replies
-//     */
-//    public Set<ConsentReply> getReplies() {
-//        return replies;
-//    }
-//
-//    /**
-//     * @param replies the replies to set
-//     */
-//    public void setReplies(Set<ConsentReply> replies) {
-//        this.replies = replies;
-//    }
-//
+
+    /**
+     * @return the isEndDateMandatory
+     */
+    public Boolean getEndDateMandatory() {
+        return endDateMandatory;
+    }
+
+    /**
+     * @param isEndDateMandatory the isEndDateMandatory to set
+     */
+    public void setEndDateMandatory(Boolean isEndDateMandatory) {
+        this.endDateMandatory = isEndDateMandatory;
+    }
+
     /**
      * @return the validTill
      */

@@ -15,5 +15,7 @@
     <import resource="classpath:test-common-context.xml"/>
 
     <bean id="appointmentServiceFacade" class="fi.arcusys.koku.av.service.impl.AppointmentServiceFacadeImpl" />
+    
+    <bean id="notificationService" class="fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl" />
 
 </beans>

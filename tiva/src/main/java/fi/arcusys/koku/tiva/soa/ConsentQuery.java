@@ -10,6 +10,14 @@ public class ConsentQuery {
     
     private ConsentCriteria criteria;
 
+    public ConsentQuery() {
+    }
+    
+    public ConsentQuery(int startNum, int maxNum) {
+        this.startNum = startNum;
+        this.maxNum = maxNum;
+    }
+    
     /**
      * @return the startNum
      */

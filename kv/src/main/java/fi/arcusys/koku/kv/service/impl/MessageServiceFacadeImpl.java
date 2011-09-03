@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
@@ -17,10 +18,12 @@ import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
+import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.MessageDAO;
 import fi.arcusys.koku.common.service.MessageFolderDAO;
 import fi.arcusys.koku.common.service.MessageRefDAO;
 import fi.arcusys.koku.common.service.RequestDAO;
+import fi.arcusys.koku.common.service.RequestTemplateDAO;
 import fi.arcusys.koku.common.service.ResponseDAO;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.Folder;
@@ -28,9 +31,11 @@ import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.datamodel.FreeTextAnswer;
 import fi.arcusys.koku.common.service.datamodel.Message;
 import fi.arcusys.koku.common.service.datamodel.MessageRef;
+import fi.arcusys.koku.common.service.datamodel.MultipleChoice;
 import fi.arcusys.koku.common.service.datamodel.Question;
 import fi.arcusys.koku.common.service.datamodel.QuestionType;
 import fi.arcusys.koku.common.service.datamodel.Request;
+import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 import fi.arcusys.koku.common.service.datamodel.Response;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.datamodel.YesNoAnswer;
@@ -42,9 +47,14 @@ import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.AnswerTO;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
+import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
+import fi.arcusys.koku.kv.soa.Questions;
+import fi.arcusys.koku.kv.soa.Receipients;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
+import fi.arcusys.koku.kv.soa.RequestTemplateSummary;
+import fi.arcusys.koku.kv.soa.RequestTemplateTO;
 import fi.arcusys.koku.kv.soa.ResponseTO;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 
@@ -57,11 +67,14 @@ import static fi.arcusys.koku.common.service.AbstractEntityDAO.MAX_RESULTS_COUNT
  * May 18, 2011
  */
 @Stateless
+@Local({MessageServiceFacade.class, KokuSystemNotificationsService.class})
 //@WebService(serviceName = "MessageServiceFacade", portName = "MessageServiceFacadePort", 
 //		endpointInterface = "fi.arcusys.koku.kv.service.MessageServiceFacade",
 //		targetNamespace = "http://service.kv.koku.arcusys.fi/")
-public class MessageServiceFacadeImpl implements MessageServiceFacade {
+public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSystemNotificationsService {
 	private final static Logger logger = LoggerFactory.getLogger(MessageServiceFacadeImpl.class);
+	
+	public static final String SYSTEM_USER_NAME_FOR_NOTIFICATIONS = "KohtiKumppanuutta";
 	
 	@EJB
 	private MessageDAO messageDao;
@@ -78,7 +91,10 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 	@EJB
 	private RequestDAO requestDAO;
 
-	@EJB
+    @EJB
+    private RequestTemplateDAO requestTemplateDAO;
+
+    @EJB
 	private ResponseDAO responseDAO;
 
 	public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content) {
@@ -345,19 +361,22 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 		result.setNotResponded(receipientsNotResponded);
 		result.setResponses(responseTOs);
 
-		final List<QuestionTO> questions = new ArrayList<QuestionTO>();
-		for (final Question question : request.getQuestions()) {
+		result.setQuestions(getQuestionsTObyDTO(request.getTemplate().getQuestions()));
+
+		return result;
+	}
+
+    private List<QuestionTO> getQuestionsTObyDTO(Set<Question> questions) {
+        final List<QuestionTO> questionTOs = new ArrayList<QuestionTO>();
+		for (final Question question : questions) {
 			final QuestionTO questionTO = new QuestionTO();
 			questionTO.setNumber(question.getIndex());
 			questionTO.setDescription(question.getDescription());
 			questionTO.setType(fi.arcusys.koku.kv.soa.QuestionType.valueOf(question.getType()));
-			questions.add(questionTO);
+			questionTOs.add(questionTO);
 		}
-
-		result.setQuestions(questions);
-
-		return result;
-	}
+        return questionTOs;
+    }
 
 	private void fillRequestSummary(final RequestSummary result, final Request request,
 			final List<String> receipientsNotResponded,
@@ -397,29 +416,60 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 	 * @return
 	 */
 	@Override
-	public Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, final List<QuestionTO> questionTOs) {
-		Request request = new Request();
+	public Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, final List<QuestionTO> questionTOs, final List<MultipleChoiceTO> choices) {
+		final RequestTemplate template = doCreateRequestTemplate(fromUserId, subject, questionTOs, choices);
+
+		return doCreateRequest(fromUserId, subject, receipients, content, template).getId();
+	}
+
+    private Request doCreateRequest(final String fromUserId,
+            final String subject, final List<String> receipients,
+            final String content, final RequestTemplate template) {
+        Request request = new Request();
+        request.setTemplate(template);
 		final User fromUser = getUserByUid(fromUserId);
 		
 		fillMessage(request, fromUser, subject, receipients, content);
-		final List<Question> questions = new ArrayList<Question>();
-		for (final QuestionTO questionTO : questionTOs) {
-			final Question question = new Question();
-			question.setIndex(questionTO.getNumber());
-			question.setDescription(questionTO.getDescription());
-			question.setType(getQuestionType(questionTO));
-			questions.add(question);
-		}
-		request.setQuestions(questions);
 		
 		request = requestDAO.create(request);
 		
 		final MessageRef storedMessage = folderDAO.storeMessage(fromUser, FolderType.Outbox, request);
 		storedMessage.setRead(true);
 		messageRefDao.update(storedMessage);
+        return request;
+    }
 
-		return request.getId();
-	}
+    /**
+     * @param fromUserId
+     * @param subject
+     * @param questionTOs
+     * @return
+     */
+    private RequestTemplate doCreateRequestTemplate(String fromUserId, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choiceTOs) {
+        final RequestTemplate requestTemplate = new RequestTemplate();
+        requestTemplate.setCreator(getUserByUid(fromUserId));
+        requestTemplate.setSubject(subject);
+        final Map<Integer, Question> numberToQuestion = new HashMap<Integer, Question>();
+        for (final QuestionTO questionTO : questionTOs) {
+            final Question question = new Question();
+            question.setIndex(questionTO.getNumber());
+            question.setDescription(questionTO.getDescription());
+            question.setType(getQuestionType(questionTO));
+            numberToQuestion.put(questionTO.getNumber(), question);
+        }
+        for (final MultipleChoiceTO choiceTO : choiceTOs) {
+            final Question question = numberToQuestion.get(choiceTO.getQuestionNumber());
+            if (question.getChoices() == null) {
+                question.setChoices(new HashSet<MultipleChoice>());
+            }
+            final MultipleChoice multipleChoice = new MultipleChoice();
+            multipleChoice.setNumber(choiceTO.getNumber());
+            multipleChoice.setDescription(choiceTO.getDescription());
+            question.getChoices().add(multipleChoice);
+        }
+        requestTemplate.setQuestions(new HashSet<Question>(numberToQuestion.values()));
+        return requestTemplateDAO.create(requestTemplate);
+    }
 
 	private QuestionType getQuestionType(final QuestionTO questionTO) {
 		return questionTO.getType().getDMQuestionType();
@@ -507,4 +557,105 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 		}
 		return result;
 	}
+
+    /**
+     * @param fromUserUid
+     * @param subject
+     * @param receipients
+     * @param content
+     */
+    @Override
+    public void sendNotification(String subject, List<String> receipients, String content) {
+        final Long messageId = sendNewMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, subject, receipients, content);
+        for (final String receipient : receipients) {
+            receiveMessage(receipient, messageId);
+        }
+    }
+
+    /**
+     * @param userUid
+     * @param subject
+     * @param questionTOs
+     */
+    @Override
+    public void createRequestTemplate(String userUid, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choices) {
+        doCreateRequestTemplate(userUid, subject, questionTOs, choices);
+    }
+
+    /**
+     * @param subjectPrefix
+     * @param limit
+     * @return
+     */
+    @Override
+    public List<RequestTemplateSummary> getRequestTemplateSummary(String subjectPrefix, int limit) {
+        final List<RequestTemplateSummary> result = new ArrayList<RequestTemplateSummary>();
+        for (final RequestTemplate template : requestTemplateDAO.searchTemplates(subjectPrefix, limit)) {
+            final RequestTemplateSummary summaryTO = new RequestTemplateSummary();
+            convertTemplateToDTO(template, summaryTO);
+            result.add(summaryTO);
+        }
+        return result;
+    }
+
+    private <RTS extends RequestTemplateSummary> void convertTemplateToDTO(final RequestTemplate template,
+            final RTS summaryTO) {
+        summaryTO.setRequestTemplateId(template.getId());
+        summaryTO.setSubject(template.getSubject());
+    }
+
+    /**
+     * @param requestTemplateId
+     * @return
+     */
+    @Override
+    public RequestTemplateTO getRequestTemplateById(long requestTemplateId) {
+        final RequestTemplate template = loadRequestTemplate(requestTemplateId);
+
+        final RequestTemplateTO templateTO = new RequestTemplateTO();
+        convertTemplateToDTO(template, templateTO);
+        templateTO.setQuestions(getQuestionsTObyDTO(template.getQuestions()));
+        templateTO.setChoices(getChoicesTO(template.getQuestions()));
+        return templateTO;
+    }
+
+    /**
+     * @param questions
+     * @return
+     */
+    private List<MultipleChoiceTO> getChoicesTO(Set<Question> questions) {
+        final List<MultipleChoiceTO> result = new ArrayList<MultipleChoiceTO>();
+        for (final Question question : questions) {
+            for (final MultipleChoice choice : question.getChoices()) {
+                final MultipleChoiceTO choiceTO = new MultipleChoiceTO();
+                choiceTO.setQuestionNumber(question.getIndex());
+                choiceTO.setNumber(choice.getNumber());
+                choiceTO.setDescription(choice.getDescription());
+                result.add(choiceTO);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @param fromUserUid
+     * @param requestTemplateId
+     * @param receipients
+     * @param content
+     * @return
+     */
+    @Override
+    public Long sendRequestWithTemplate(String fromUserUid, long requestTemplateId, final String subject, List<String> receipients, String content) {
+        final RequestTemplate template = loadRequestTemplate(requestTemplateId);
+        
+        return doCreateRequest(fromUserUid, subject, receipients, content, template).getId();
+    }
+
+    private RequestTemplate loadRequestTemplate(long requestTemplateId) {
+        final RequestTemplate template = requestTemplateDAO.getById(requestTemplateId);
+        if (template == null) {
+            throw new IllegalArgumentException("Request template not found: ID = " + requestTemplateId );
+        }
+        return template;
+    }
 }

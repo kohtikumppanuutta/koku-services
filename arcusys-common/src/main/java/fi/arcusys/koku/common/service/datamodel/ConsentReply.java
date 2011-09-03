@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -22,6 +24,7 @@ import javax.persistence.OneToMany;
     @NamedQuery(name = "countRepliedConsentsByUser", query = "SELECT COUNT(DISTINCT rp) FROM ConsentReply rp WHERE rp.replier = :user"),
     @NamedQuery(name = "findRepliesByConsent", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.consent = :consent ORDER BY rp.id DESC")
 })
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"consent_id", "replier_id"}))
 public class ConsentReply extends AbstractEntity {
     private Date validTill;
     private String comment;

@@ -1,12 +1,10 @@
-package fi.arcusys.koku.tiva.soa;
-
-import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
+package fi.arcusys.koku.common.service.dto;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
- * Aug 11, 2011
+ * Sep 3, 2011
  */
-public class ConsentCriteria {
+public class ConsentDTOCriteria {
     private Long consentTemplateId;
     private String receipientUid;
     /**
@@ -33,15 +31,8 @@ public class ConsentCriteria {
     public void setReceipientUid(String receipientUid) {
         this.receipientUid = receipientUid;
     }
-    /**
-     * @return
-     */
-    public ConsentDTOCriteria toDtoCriteria() {
-        final ConsentDTOCriteria dtoCriteria = new ConsentDTOCriteria();
-        dtoCriteria.setConsentTemplateId(consentTemplateId);
-        dtoCriteria.setReceipientUid(receipientUid);
-        return dtoCriteria;
+    
+    public boolean isEmpty() {
+        return consentTemplateId == null && (receipientUid == null || "".equals(receipientUid.trim()));
     }
-    
-    
 }

@@ -119,7 +119,7 @@ public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentServ
         appointment.setTargetPerson("Lassi Lapsi");
         appointment.setReplier("Kalle Kuntalainen");
         if (appointmentId == 1) {
-            appointment.setStatus("Approved");
+            appointment.setStatus(AppointmentSummaryStatus.Approved);
             appointment.setReplierComment("Will come");
             appointment.setDescription("Approved appointment");
             final GregorianCalendar calendar = (GregorianCalendar)GregorianCalendar.getInstance();
@@ -142,13 +142,22 @@ public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentServ
             slotTO.setLocation("Office");
             appointment.setApprovedSlot(slotTO);
         } else if (appointmentId == 3) {
-            appointment.setStatus("Rejected");
+            appointment.setStatus(AppointmentSummaryStatus.Cancelled);
             appointment.setDescription("Rejected appointment");
             appointment.setReplierComment("Will not come");
         } else {
             throw new IllegalArgumentException("Appointment id=" + appointmentId + " is not found");
         }
         return appointment;
+    }
+
+    /**
+     * @param appointmentId
+     * @param targetUser
+     */
+    @Override
+    public void cancelRespondedAppointment(long appointmentId, String targetUser, final String user, final String comment) {
+        serviceFacade.cancelAppointment(targetUser, user, appointmentId, comment);
     }
 
 }

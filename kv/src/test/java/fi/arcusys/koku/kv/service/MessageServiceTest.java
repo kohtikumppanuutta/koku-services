@@ -23,6 +23,7 @@ import fi.arcusys.koku.kv.service.dto.MessageTO;
 import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
+import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.QuestionType;
 import fi.arcusys.koku.kv.soa.RequestSummary;
@@ -181,7 +182,7 @@ public class MessageServiceTest {
 		
 		final List<QuestionTO> questions = createTestQuestions();
 		
-		final long requestId = serviceFacade.sendRequest(fromUserId, "test request", Collections.singletonList(toUserId), "read-only form of request", questions);
+		final long requestId = serviceFacade.sendRequest(fromUserId, "test request", Collections.singletonList(toUserId), "read-only form of request", questions, new ArrayList<MultipleChoiceTO>());
 		
 		final RequestTO request = serviceFacade.getRequestById(requestId);
 		assertNotNull(request);
@@ -207,7 +208,7 @@ public class MessageServiceTest {
 		
 		final List<QuestionTO> questions = createTestQuestions();
 		
-		final Long requestId = serviceFacade.sendRequest(fromUserId, "test request", toUsers, "read-only form of request", questions);
+		final Long requestId = serviceFacade.sendRequest(fromUserId, "test request", toUsers, "read-only form of request", questions, new ArrayList<MultipleChoiceTO>());
 		assertEquals("No replies yet: ", 0, serviceFacade.getRequestById(requestId).getRespondedAmount());
 		
 		final List<Answer> answers = new ArrayList<Answer>();

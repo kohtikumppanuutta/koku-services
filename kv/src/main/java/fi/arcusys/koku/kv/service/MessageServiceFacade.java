@@ -2,8 +2,10 @@ package fi.arcusys.koku.kv.service;
 
 import java.util.List;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
+import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
@@ -11,9 +13,14 @@ import fi.arcusys.koku.common.service.exception.UserNotFoundException;
 import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
+import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
+import fi.arcusys.koku.kv.soa.Questions;
+import fi.arcusys.koku.kv.soa.Receipients;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
+import fi.arcusys.koku.kv.soa.RequestTemplateSummary;
+import fi.arcusys.koku.kv.soa.RequestTemplateTO;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 
 /**
@@ -43,7 +50,8 @@ public interface MessageServiceFacade {
 
 	int getUnreadMessagesCount(final String userId, final FolderType folderType);
 
-	Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, final List<QuestionTO> questions);
+	Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, 
+	        final List<QuestionTO> questions, final List<MultipleChoiceTO> choices);
 	
 	RequestTO getRequestById(final Long requestId);
 
@@ -66,4 +74,23 @@ public interface MessageServiceFacade {
 	 * @return
 	 */
 	List<MessageSummary> getMessages(final String userId, final FolderType folderType, final MessageQuery query);
+	
+    void createRequestTemplate(final String userUid, 
+            final String subject, 
+            final List<QuestionTO> questions,
+            final List<MultipleChoiceTO> choices);
+    
+    List<RequestTemplateSummary> getRequestTemplateSummary(
+            final String subjectPrefix, 
+            final int limit);
+    
+    RequestTemplateTO getRequestTemplateById(
+            final long requestTemplateId);
+    
+    Long sendRequestWithTemplate(
+            final String fromUserUid, 
+            final long requestTemplateId, 
+            final String subject,
+            final List<String> receipients,
+            final String content);
 }

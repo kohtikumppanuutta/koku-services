@@ -86,13 +86,8 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public Long requestForConsent(long consentTemplateId, String senderUid, final String targetPersonUid,
-            List<String> receivers) {
-        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers);
-//        logger.info("requestForConsent: " + consentTemplateId + ", senderUid = " + senderUid + ", receivers = " + receivers);
-//        if (consentTemplateId != 1) {
-//            throw new IllegalArgumentException("There is no template with ID " + consentTemplateId);
-//        }
-//        return 123L;
+            List<String> receivers, final XMLGregorianCalendar endDate, final Boolean isMandatory) {
+        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers, endDate, isMandatory);
     }
 
     /**
@@ -179,9 +174,9 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public Long writeConsentOnBehalf(long consentTemplateId, String senderUid,
-            String consentType, String targetPersonUid, List<String> receivers) {
+            String consentType, String targetPersonUid, List<String> receivers, final XMLGregorianCalendar endDate) {
         // TODO Auto-generated method stub
-        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers);
+        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers, endDate, Boolean.FALSE);
     }
 
     /**

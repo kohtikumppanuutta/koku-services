@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
  * Jul 22, 2011
  */
 @XmlType (name = "appointmentSummary", namespace = "http://soa.av.koku.arcusys.fi/",
-propOrder={"appointmentId", "sender" , "subject", "description"})
+propOrder={"appointmentId", "status", "sender" , "subject", "description"})
 public class AppointmentSummary {
 
 
@@ -16,6 +16,7 @@ public class AppointmentSummary {
     private String sender;
     private String subject;
     private String description;
+    private AppointmentSummaryStatus status;
 
     /**
      * @return the appointmentId
@@ -71,5 +72,19 @@ public class AppointmentSummary {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * @return the status
+     */
+    public AppointmentSummaryStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(AppointmentSummaryStatus status) {
+        this.status = status;
     }
 }

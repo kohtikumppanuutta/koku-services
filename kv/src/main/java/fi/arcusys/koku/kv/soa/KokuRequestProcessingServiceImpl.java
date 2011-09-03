@@ -1,9 +1,12 @@
 package fi.arcusys.koku.kv.soa;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.slf4j.Logger;
@@ -61,7 +64,8 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 	 * @return
 	 */
 	@Override
-	public Long sendRequest(final String fromUserUid, final String subject, final Receipients receipients, final Questions questions, final String content) {
+	public Long sendRequest(final String fromUserUid, final String subject, final Receipients receipients, 
+	        final Questions questions, final MultipleChoices choices, final String content) {
 		logger.debug("sendRequest: [fromUserUid, subject, receipients, questions, content] = " +
 				"[" + fromUserUid
 				+ "," + subject 
@@ -69,8 +73,53 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 				+ "," + questions.getQuestions()
 				+ ", contentLength=" + content.length()
 				+ "]");
-		final Long requestId = kvFacade.sendRequest(fromUserUid, subject, receipients.getReceipients(), content, questions.getQuestions());
+		final Long requestId = kvFacade.sendRequest(fromUserUid, subject, receipients.getReceipients(), content, 
+		        questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
+		        choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>());
 		logger.debug("Request sent: " + requestId);
 		return requestId;
 	}
+
+    /**
+     * @param userUid
+     * @param subject
+     * @param questions
+     */
+    @Override
+    public void createRequestTemplate(String userUid, String subject, Questions questions, final MultipleChoices choices) {
+        kvFacade.createRequestTemplate(userUid, subject, 
+                questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
+                choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>());
+    }
+
+    /**
+     * @param subjectPrefix
+     * @param limit
+     * @return
+     */
+    @Override
+    public List<RequestTemplateSummary> getRequestTemplateSummary(String subjectPrefix, int limit) {
+        return kvFacade.getRequestTemplateSummary(subjectPrefix, limit);
+    }
+
+    /**
+     * @param requestTemplateId
+     * @return
+     */
+    @Override
+    public RequestTemplateTO getRequestTemplateById(long requestTemplateId) {
+        return kvFacade.getRequestTemplateById(requestTemplateId);
+    }
+
+    /**
+     * @param fromUserUid
+     * @param requestTemplateId
+     * @param receipients
+     * @param content
+     * @return
+     */
+    @Override
+    public Long sendRequestWithTemplate(String fromUserUid, long requestTemplateId, String subject, Receipients receipients, String content) {
+        return kvFacade.sendRequestWithTemplate(fromUserUid, requestTemplateId, subject, receipients.getReceipients(), content);
+    }
 }

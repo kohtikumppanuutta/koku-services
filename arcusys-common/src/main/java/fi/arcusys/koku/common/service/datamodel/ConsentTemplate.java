@@ -1,6 +1,7 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,8 @@ import javax.persistence.OneToMany;
 public class ConsentTemplate extends AbstractEntity {
     private String title;
     private String description;
+    private Date endDate;
+    private Boolean endDateMandatory;
     
     @ManyToOne
     private User creator;
@@ -32,6 +35,30 @@ public class ConsentTemplate extends AbstractEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<ConsentActionRequest> actions;
     
+    /**
+     * @return the endDate
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+    /**
+     * @param endDate the endDate to set
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+    /**
+     * @return the endDateMandatory
+     */
+    public Boolean getEndDateMandatory() {
+        return endDateMandatory;
+    }
+    /**
+     * @param endDateMandatory the endDateMandatory to set
+     */
+    public void setEndDateMandatory(Boolean endDateMandatory) {
+        this.endDateMandatory = endDateMandatory;
+    }
     /**
      * @return the title
      */

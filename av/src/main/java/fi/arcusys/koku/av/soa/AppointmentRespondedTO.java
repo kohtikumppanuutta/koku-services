@@ -6,7 +6,6 @@ package fi.arcusys.koku.av.soa;
  */
 public class AppointmentRespondedTO extends AppointmentSummary {
     private String targetPerson;
-    private String status;
     private String replier;
     private String replierComment;
     private AppointmentSlotTO approvedSlot;
@@ -21,18 +20,6 @@ public class AppointmentRespondedTO extends AppointmentSummary {
      */
     public void setTargetPerson(String targetPerson) {
         this.targetPerson = targetPerson;
-    }
-    /**
-     * @return the status
-     */
-    public String getStatus() {
-        return status;
-    }
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(String status) {
-        this.status = status;
     }
     /**
      * @return the replier

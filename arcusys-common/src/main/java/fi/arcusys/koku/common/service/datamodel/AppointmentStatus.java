@@ -5,5 +5,5 @@ package fi.arcusys.koku.common.service.datamodel;
  * Jul 21, 2011
  */
 public enum AppointmentStatus {
-	Created, Approved, Declined, Deleted;
+	Created, Approved, Cancelled;
 }

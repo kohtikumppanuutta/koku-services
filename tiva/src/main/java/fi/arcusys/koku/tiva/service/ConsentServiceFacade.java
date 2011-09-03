@@ -7,6 +7,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
+import fi.arcusys.koku.tiva.soa.ConsentQuery;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
 import fi.arcusys.koku.tiva.soa.ConsentSummary;
 import fi.arcusys.koku.tiva.soa.ConsentTO;
@@ -40,12 +41,14 @@ public interface ConsentServiceFacade {
 
     /**
      * @param templateId
+     * @param isMandatory 
+     * @param endDate 
      * @param string
      * @param string2
      * @param asList
      * @return
      */
-    Long requestForConsent(final Long templateId, String senderUid, String targetPersonUid, List<String> receipients);
+    Long requestForConsent(final Long templateId, String senderUid, String targetPersonUid, List<String> receipients, XMLGregorianCalendar endDate, Boolean isMandatory);
 
     
     /**
@@ -133,7 +136,7 @@ public interface ConsentServiceFacade {
      * @param employeeUid
      * @return
      */
-    List<ConsentSummary> getProcessedConsents(final String employeeUid, final int startNum, final int maxNum);
+    List<ConsentSummary> getProcessedConsents(final String employeeUid, final ConsentQuery query);
 
     /**
      * @param employee

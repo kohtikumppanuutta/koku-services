@@ -52,7 +52,7 @@ import javax.persistence.PrePersist;
             " WHERE NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender "),
     @NamedQuery(name = "findAppointmentResponsesByUser", query = "SELECT DISTINCT ar FROM AppointmentResponse ar " +
-            " WHERE replier = :user  ORDER BY ap.id DESC"),
+            " WHERE replier = :user  ORDER BY ar.id DESC"),
     @NamedQuery(name = "countAppointmentResponsesByUser", query = "SELECT COUNT(DISTINCT ar) FROM AppointmentResponse ar " +
             " WHERE replier = :user ")
 				

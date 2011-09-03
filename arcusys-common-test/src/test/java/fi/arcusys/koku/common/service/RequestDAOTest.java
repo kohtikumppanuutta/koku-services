@@ -4,7 +4,9 @@ import static junit.framework.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +18,7 @@ import fi.arcusys.koku.common.service.RequestDAO;
 import fi.arcusys.koku.common.service.datamodel.Question;
 import fi.arcusys.koku.common.service.datamodel.QuestionType;
 import fi.arcusys.koku.common.service.datamodel.Request;
+import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -25,8 +28,11 @@ import fi.arcusys.koku.common.service.datamodel.Request;
 @ContextConfiguration(locations={"/test-common-context.xml"})
 public class RequestDAOTest {
 	
-	@Autowired
-	private RequestDAO service;
+    @Autowired
+    private RequestDAO service;
+
+    @Autowired
+	private RequestTemplateDAO templateService;
 	
 	@Autowired
 	private CommonTestUtil testUtil;
@@ -51,27 +57,30 @@ public class RequestDAOTest {
 	
 	@Test
 	public void createRequestWithQuestions() {
-		final Request newRequest = new Request();
-		final List<Question> questions = new ArrayList<Question>();
-		final Question questionYesNo = new Question();
-		questionYesNo.setIndex(1);
-		questionYesNo.setDescription("provide 'yes or no' answer");
-		questionYesNo.setType(QuestionType.YES_NO_QUESTION);
-		
-		final Question questionText = new Question();
-		questionText.setIndex(2);
-		questionText.setDescription("provide text answer");
-		questionText.setType(QuestionType.FREE_TEXT_QUESTION);
+	    final RequestTemplate template = new RequestTemplate();
+        final Set<Question> questions = new HashSet<Question>();
+        final Question questionYesNo = new Question();
+        questionYesNo.setIndex(1);
+        questionYesNo.setDescription("provide 'yes or no' answer");
+        questionYesNo.setType(QuestionType.YES_NO_QUESTION);
+        
+        final Question questionText = new Question();
+        questionText.setIndex(2);
+        questionText.setDescription("provide text answer");
+        questionText.setType(QuestionType.FREE_TEXT_QUESTION);
 
-		questions.add(questionYesNo);
-		questions.add(questionText);
-		newRequest.setQuestions(questions);
+        questions.add(questionYesNo);
+        questions.add(questionText);
+	    template.setQuestions(questions);
+	    
+		final Request newRequest = new Request();
+		newRequest.setTemplate(templateService.create(template));
 		
 		final Request request = service.create(newRequest);
 		final Request fromService = service.getById(request.getId());
 		
-		assertEquals("Questions persisted: ", 2, fromService.getQuestions().size());
-		for (final Question question : fromService.getQuestions()) {
+		assertEquals("Questions persisted: ", 2, fromService.getTemplate().getQuestions().size());
+		for (final Question question : fromService.getTemplate().getQuestions()) {
 			if (question.getIndex() == 1) {
 				assertSame("QuestionType for #1", QuestionType.YES_NO_QUESTION, question.getType());
 			} else if (question.getIndex() == 2) {

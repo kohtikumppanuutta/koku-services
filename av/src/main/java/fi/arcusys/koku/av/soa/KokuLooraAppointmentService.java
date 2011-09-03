@@ -27,4 +27,8 @@ public interface KokuLooraAppointmentService {
             @WebParam(name = "maxNum") int maxNum);
 
     public AppointmentTO getAppointmentById(@WebParam(name = "appointmentId") final long appointmentId);
+
+    public void cancelAppointment(
+            @WebParam(name = "appointmentId") final long appointmentId, 
+            @WebParam(name = "comment") final String comment);
 }

@@ -11,12 +11,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Jul 21, 2011
  */
 @XmlType (name = "appointment", namespace = "http://soa.av.koku.arcusys.fi/",
-		  propOrder={"slots", "status", "recipients", "acceptedSlots", "usersRejected" })
+		  propOrder={"slots", "recipients", "acceptedSlots", "usersRejected" })
 public class AppointmentTO extends AppointmentSummary {
 	private List<AppointmentSlotTO> slots;
 
-	private String status;
-    private List<AppointmentReceipientTO> recipients;
+	private List<AppointmentReceipientTO> recipients;
     private Map<Integer, String> acceptedSlots;
     private List<String> usersRejected;
 	
@@ -55,18 +54,6 @@ public class AppointmentTO extends AppointmentSummary {
 	 */
 	public void setSlots(List<AppointmentSlotTO> slots) {
 		this.slots = slots;
-	}
-	/**
-	 * @return the status
-	 */
-	public String getStatus() {
-		return status;
-	}
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(String status) {
-		this.status = status;
 	}
     /**
      * @return the recipients

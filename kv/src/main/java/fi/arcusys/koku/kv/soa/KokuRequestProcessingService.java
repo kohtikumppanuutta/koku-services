@@ -1,5 +1,7 @@
 package fi.arcusys.koku.kv.soa;
 
+import java.util.List;
+
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
@@ -15,6 +17,7 @@ public interface KokuRequestProcessingService {
 					 @WebParam(name = "subject") final String subject, 
 					 @WebParam(name = "receipients") final Receipients receipients,
 					 @WebParam(name = "questions") final Questions questions, 
+					 @WebParam(name = "choices") final MultipleChoices choices,
 					 @WebParam(name = "requestContent") final String content);
 	
 	void receiveRequest(@WebParam(name = "toUser") final String toUserUid, 
@@ -23,4 +26,24 @@ public interface KokuRequestProcessingService {
 	void replyToRequest(@WebParam(name = "user") final String userUid, 
 						@WebParam(name = "requestId") final Long requestId,
 						@WebParam(name = "answers") final Answers answers);
+	
+	void createRequestTemplate(
+	        @WebParam(name = "creator") final String userUid, 
+            @WebParam(name = "subject") final String subject, 
+            @WebParam(name = "questions") final Questions questions,
+            @WebParam(name = "choices") final MultipleChoices choices);
+	
+	List<RequestTemplateSummary> getRequestTemplateSummary(
+	        @WebParam(name = "subjectPrefix") final String subjectPrefix, 
+	        @WebParam(name = "limit") final int limit);
+	
+	RequestTemplateTO getRequestTemplateById(
+	        @WebParam(name = "requestTemplateId") final long requestTemplateId);
+	
+	Long sendRequestWithTemplate(
+	        @WebParam(name = "fromUser") final String fromUserUid, 
+            @WebParam(name = "requestTemplateId") final long requestTemplateId, 
+            @WebParam(name = "subject") final String subject, 
+            @WebParam(name = "receipients") final Receipients receipients,
+            @WebParam(name = "requestContent") final String content);
 }

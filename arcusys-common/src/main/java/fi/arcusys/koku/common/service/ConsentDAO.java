@@ -4,6 +4,7 @@ import java.util.List;
 
 import fi.arcusys.koku.common.service.datamodel.Consent;
 import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -31,7 +32,7 @@ public interface ConsentDAO extends AbstractEntityDAO<Consent> {
      * @param i
      * @return
      */
-    List<Consent> getProcessedConsents(User user, int startNum, int maxNum);
+    List<Consent> getProcessedConsents(User user, ConsentDTOCriteria criteria, int startNum, int maxNum);
 
     /**
      * @param orCreateUser

@@ -1,8 +1,13 @@
 package fi.arcusys.koku.common.service.datamodel;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 
 
 /**
@@ -18,7 +23,22 @@ public class Question extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	private QuestionType type;
 	
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<MultipleChoice> choices;
+	
 	/**
+     * @return the choices
+     */
+    public Set<MultipleChoice> getChoices() {
+        return choices;
+    }
+    /**
+     * @param choices the choices to set
+     */
+    public void setChoices(Set<MultipleChoice> choices) {
+        this.choices = choices;
+    }
+    /**
 	 * @return the index
 	 */
 	public int getIndex() {
