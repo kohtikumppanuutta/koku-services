@@ -7,7 +7,7 @@ import javax.jws.WebService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.koku.services.common.v1.AuditInfoType;
+import fi.koku.services.entity.community.v1.AuditInfoType;
 import fi.koku.services.entity.community.v1.CommunitiesType;
 import fi.koku.services.entity.community.v1.CommunityQueryCriteriaType;
 import fi.koku.services.entity.community.v1.CommunityServicePortType;

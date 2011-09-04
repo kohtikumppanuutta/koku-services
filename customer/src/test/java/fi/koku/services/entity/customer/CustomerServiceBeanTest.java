@@ -13,11 +13,11 @@ import java.util.GregorianCalendar;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import fi.koku.services.common.v1.AuditInfoType;
 import fi.koku.services.entity.customer.impl.Customer;
 import fi.koku.services.entity.customer.impl.CustomerQueryCriteria;
 import fi.koku.services.entity.customer.impl.CustomerService;
 import fi.koku.services.entity.customer.impl.CustomerServiceBean;
+import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 
 /**

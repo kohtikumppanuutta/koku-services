@@ -21,8 +21,8 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.koku.services.common.v1.AuditInfoType;
 import fi.koku.services.entity.customer.impl.Constants;
+import fi.koku.services.entity.customer.v1.AuditInfoType;
 
 /**
  * Parse and process SOAP header and pass a message to the service endpoint implementation.
@@ -39,7 +39,7 @@ public class AuditInfoHandler implements SOAPHandler<SOAPMessageContext> {
   @PostConstruct
   public void init() {
     try {
-      jaxbContext = JAXBContext.newInstance(fi.koku.services.common.v1.AuditInfoType.class);
+      jaxbContext = JAXBContext.newInstance(AuditInfoType.class);
     } catch (JAXBException e) {
       logger.error("error: "+e.getMessage(), e);
       throw new RuntimeException("failed to create JAXBContext", e);

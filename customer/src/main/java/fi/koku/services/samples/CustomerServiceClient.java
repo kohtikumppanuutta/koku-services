@@ -1,12 +1,11 @@
 package fi.koku.services.samples;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
-import fi.koku.services.common.v1.AuditInfoType;
+import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerService;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
@@ -17,7 +16,7 @@ import fi.koku.services.entity.customer.v1.CustomerType;
  * @author aspluma
  */
 public class CustomerServiceClient {
-	public static void main(String ... args) throws MalformedURLException {
+	public static void main(String ... args) throws Exception {
 	  String ep = "http://localhost:8080/customer-service-0.0.1-SNAPSHOT/CustomerServiceBean?wsdl";
 //	  ep = "http://localhost:8088/mockcustomerService-soap11-binding?wsdl";
 		URL wsdlLocation = new URL(ep);
