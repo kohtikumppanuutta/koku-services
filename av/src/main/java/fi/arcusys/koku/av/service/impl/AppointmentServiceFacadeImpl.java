@@ -2,6 +2,7 @@ package fi.arcusys.koku.av.service.impl;
 
 import static fi.arcusys.koku.common.service.AbstractEntityDAO.*;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,6 +49,10 @@ import fi.arcusys.koku.common.service.datamodel.User;
  */
 @Stateless
 public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
+
+    private static final String APPOINTMENT_CANCELLED_FOR_TARGET_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on peruuttu käyttäjän {2} toimesta";
+    private static final String APPOINTMENT_CANCELLED_WHOLE_BODY = "Tapaaminen '{0}' on peruutettu";
+    private static final String APPOINTMENT_CANCELLED_SUBJECT = "Tapaaminen on peruutettu";
 
     private final static Logger logger = LoggerFactory.getLogger(AppointmentServiceFacadeImpl.class);
     
@@ -546,9 +551,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         response.setStatus(AppointmentResponseStatus.Rejected);
         response.setComment(comment);
         appointmentDAO.update(response.getAppointment());
-        notificationService.sendNotification("Appointment cancelled", 
+        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_SUBJECT, 
                 Collections.singletonList(response.getAppointment().getSender().getUid()), 
-                "Appointment " + response.getAppointment().getSubject() + " for person " + targetUser + " cancelled by user " + user);
+                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_FOR_TARGET_BODY, response.getAppointment().getSubject(), targetUser, user));
     }
 
     /**
@@ -573,8 +578,8 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
                 }
             }
         }
-        notificationService.sendNotification("Appointment cancelled", 
+        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_SUBJECT, 
                 new ArrayList<String>(notificationReceivers), 
-                "Appointment " + appointment.getSubject() + " cancelled by user " + appointment.getSender().getUid());
+                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_WHOLE_BODY, appointment.getSubject()));
     }
 }
