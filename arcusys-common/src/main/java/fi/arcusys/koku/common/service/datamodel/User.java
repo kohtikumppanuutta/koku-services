@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 
 /**
@@ -13,10 +15,12 @@ import javax.persistence.NamedQuery;
  * May 18, 2011
  */
 @Entity(name = "User_")
-//@Entity
 @NamedQueries({
 	@NamedQuery(name = "findUserByUid", query = "SELECT DISTINCT u FROM User_ u WHERE u.uid = :uid")
 }) 
+@Table(uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"uid"})
+})
 public class User extends AbstractEntity {
 	/**
 	 * Natural ID, e.g. in LDAP (uid=user,cn=people,dn=example,dn=com)
