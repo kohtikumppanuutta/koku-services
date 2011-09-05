@@ -19,6 +19,7 @@ import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.ConsentDAO;
 import fi.arcusys.koku.common.service.ConsentReplyDAO;
 import fi.arcusys.koku.common.service.ConsentTemplateDAO;
+import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.Consent;
 import fi.arcusys.koku.common.service.datamodel.ConsentActionReply;
@@ -51,6 +52,9 @@ import fi.arcusys.koku.tiva.soa.ConsentTemplateTO;
 @Stateless
 public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     
+    private static final String NEW_CONSENT_REQUEST_BODY = "Sinulle on toimenpidepyyntö '{0}'.";
+    private static final String NEW_CONSENT_REQUEST_SUBJECT = "Uusi toimenpidepyyntö";
+
     private static final Logger logger = LoggerFactory.getLogger(ConsentServiceFacadeImpl.class); 
 
     @EJB
@@ -64,6 +68,9 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
 
     @EJB
     private UserDAO userDao;
+
+    @EJB
+    private KokuSystemNotificationsService notificationService;
 
     /**
      * @param template
@@ -205,7 +212,10 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             receipients.add(userDao.getOrCreateUser(userUid));
         }
         consent.setReceipients(receipients);
-        return consentDao.create(consent).getId();
+        final Long consentId = consentDao.create(consent).getId();
+        notificationService.sendNotification(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_SUBJECT, receipientUids, 
+                String.format(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_BODY, consent.getTemplate().getTitle()));
+        return consentId;
     }
 
     /**
@@ -372,6 +382,10 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         consentSummary.setApprovalStatus(ConsentApprovalStatus.valueOf(reply.getStatus()));
         consentSummary.setGivenAt(CalendarUtil.getXmlDate(reply.getCreatedDate()));
         consentSummary.setValidTill(CalendarUtil.getXmlDate(reply.getValidTill()));
+        updateStatusByReply(consentSummary, reply);
+        if (consentSummary.getStatus() == null) {
+            consentSummary.setStatus(ConsentStatus.Open);
+        }
     }
 
     private List<String> convertUsersToUids(final Set<User> users) {
@@ -506,6 +520,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         consentTO.setReceipients(convertUsersToUids(consent.getReceipients()));
 
         // default values
+        consentTO.setApprovalStatus(ConsentApprovalStatus.Approved);
         consentTO.setStatus(ConsentStatus.Open);
         consentTO.setValidTill(CalendarUtil.getXmlDate(consent.getValidTill()));
         
@@ -524,6 +539,10 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
 
         if (consent.getReceipients().size() > replies.size() && consentTO.getStatus() == ConsentStatus.Valid) {
             consentTO.setStatus(ConsentStatus.PartiallyGiven);
+        }
+        
+        if (consentTO.getStatus() == ConsentStatus.Declined) {
+            consentTO.setApprovalStatus(ConsentApprovalStatus.Declined);
         }
     }
 
@@ -575,9 +594,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             } else {
                 consentTO.setStatus(ConsentStatus.Valid);
             }
-        } else {
-            // no need for update
-        }
+        } // otherwise no need for update
     }
 
     /**
