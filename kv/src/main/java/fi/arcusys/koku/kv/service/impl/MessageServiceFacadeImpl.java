@@ -2,6 +2,7 @@ package fi.arcusys.koku.kv.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -98,9 +99,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	private ResponseDAO responseDAO;
 
 	public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content) {
-		Message msg = new Message();
 		final User fromUser = getUserByUid(fromUserUid);
 		
+        Message msg = new Message();
 		fillMessage(msg, fromUser, subject, receipientUids, content);
 		
 		msg = messageDao.create(msg);
@@ -375,6 +376,12 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 			questionTO.setType(fi.arcusys.koku.kv.soa.QuestionType.valueOf(question.getType()));
 			questionTOs.add(questionTO);
 		}
+		Collections.sort(questionTOs, new Comparator<QuestionTO>() {
+            @Override
+            public int compare(QuestionTO o1, QuestionTO o2) {
+                return o1.getNumber() - o2.getNumber();
+            }
+        });
         return questionTOs;
     }
 
@@ -457,15 +464,17 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             question.setType(getQuestionType(questionTO));
             numberToQuestion.put(questionTO.getNumber(), question);
         }
-        for (final MultipleChoiceTO choiceTO : choiceTOs) {
-            final Question question = numberToQuestion.get(choiceTO.getQuestionNumber());
-            if (question.getChoices() == null) {
-                question.setChoices(new HashSet<MultipleChoice>());
+        if (choiceTOs != null) {
+            for (final MultipleChoiceTO choiceTO : choiceTOs) {
+                final Question question = numberToQuestion.get(choiceTO.getQuestionNumber());
+                if (question.getChoices() == null) {
+                    question.setChoices(new HashSet<MultipleChoice>());
+                }
+                final MultipleChoice multipleChoice = new MultipleChoice();
+                multipleChoice.setNumber(choiceTO.getNumber());
+                multipleChoice.setDescription(choiceTO.getDescription());
+                question.getChoices().add(multipleChoice);
             }
-            final MultipleChoice multipleChoice = new MultipleChoice();
-            multipleChoice.setNumber(choiceTO.getNumber());
-            multipleChoice.setDescription(choiceTO.getDescription());
-            question.getChoices().add(multipleChoice);
         }
         requestTemplate.setQuestions(new HashSet<Question>(numberToQuestion.values()));
         return requestTemplateDAO.create(requestTemplate);
@@ -634,6 +643,17 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
                 result.add(choiceTO);
             }
         }
+        Collections.sort(result, new Comparator<MultipleChoiceTO>() {
+            @Override
+            public int compare(MultipleChoiceTO o1, MultipleChoiceTO o2) {
+                final int questionComparation = o1.getQuestionNumber() - o2.getQuestionNumber();
+                if (questionComparation != 0) {
+                    return questionComparation;
+                } else {
+                    return o1.getNumber() - o2.getNumber();
+                }
+            }
+        });
         return result;
     }
 
@@ -657,5 +677,20 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             throw new IllegalArgumentException("Request template not found: ID = " + requestTemplateId );
         }
         return template;
+    }
+
+    /**
+     * @param fromUserUid
+     * @param subject
+     * @param toUserUid
+     * @param content
+     */
+    @Override
+    public void receiveNewMessage(final String fromUserUid, final String subject, final String toUserUid, final String content) {
+        Message msg = new Message();
+        fillMessage(msg, getUserByUid(fromUserUid), subject, Collections.singletonList(toUserUid), content);
+        msg = messageDao.create(msg);
+        
+        receiveMessage(toUserUid, msg.getId());
     }
 }

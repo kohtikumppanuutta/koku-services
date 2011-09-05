@@ -145,12 +145,13 @@ public class ConsentServiceTest {
         assertNotNull(getById(consentId, service.getOwnConsents(parentForApprove, 1, 10)));
         service.revokeConsent(consentId, parentForApprove, "revoked consent");
         final ConsentTO revoked = service.getConsentById(consentId, parentForApprove);
-        assertEquals(ConsentApprovalStatus.Revoked, revoked.getApprovalStatus());
+        assertEquals(ConsentApprovalStatus.Declined, revoked.getApprovalStatus());
+        assertEquals(ConsentStatus.Revoked, revoked.getStatus());
     }
     
     @Test
     public void testTotals() {
-        final Long templateId = service.createConsentTemplate(createTestTemplate("templateForApproveAndDecline"));
+        final Long templateId = service.createConsentTemplate(createTestTemplate("templateForCountingTotals"));
         final String parent = "testTotalsParent";
         final String employee = "testTotalsEmployee";
         
@@ -172,8 +173,8 @@ public class ConsentServiceTest {
     public void searchByTemplateAndUserUid() {
         // new consent
         final Long templateId = service.createConsentTemplate(createTestTemplate("templateForSearchTesting"));
-        final String parent1 = "Kalle Kuntalainen";
-        final String parent2 = "Kirsi Kuntalainen";
+        final String parent1 = "searchByTemplateParent1";
+        final String parent2 = "searchByTemplateParent2";
         
         final String employeeUid = "Ville Virkamies";
         final Long consentId = service.requestForConsent(templateId, employeeUid, 

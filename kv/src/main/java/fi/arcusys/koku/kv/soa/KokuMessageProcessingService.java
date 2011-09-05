@@ -21,4 +21,10 @@ public interface KokuMessageProcessingService {
 	
 	void receiveMessage(@WebParam(name = "toUser") final String toUserUid, 
 						@WebParam(name = "messageId") final Long messageId);
+
+    void receiveNewMessage(
+            @WebParam(name = "fromUser") final String fromUserUid, 
+            @WebParam(name = "subject") final String subject,
+            @WebParam(name = "toUser") final String toUserUid, 
+            @WebParam(name = "messageContent") final String content);
 }

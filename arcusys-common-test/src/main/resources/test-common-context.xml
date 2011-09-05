@@ -67,8 +67,7 @@
     </bean>
 
     <aop:config>
-        <aop:pointcut id="kvDaoMethods"
-            expression="execution(* fi.arcusys.koku.common.service.impl.*DAOImpl.*(..))" />
+        <aop:pointcut id="kvDaoMethods" expression="execution(* fi.arcusys.koku.common.service.impl.*DAOImpl.*(..))" />
         <aop:advisor advice-ref="txAdvice" pointcut-ref="kvDaoMethods" />
     </aop:config>
 
@@ -77,6 +76,7 @@
             <tx:method name="create*" propagation="REQUIRED" />
             <tx:method name="delete*" propagation="REQUIRED" />
             <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="store*" propagation="REQUIRED" />
             <tx:method name="*OrCreate*" propagation="REQUIRED" />
             <tx:method name="*" propagation="SUPPORTS" read-only="true" />
         </tx:attributes>

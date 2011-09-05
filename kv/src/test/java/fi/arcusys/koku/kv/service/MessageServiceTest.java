@@ -96,7 +96,7 @@ public class MessageServiceTest {
 		assertNull("Message deleted from sender's Outbox folder: ", serviceFacade.getMessageById(messageId));
 	}
 
-//	@Test
+	@Test
 	public void testOpenJPAFailure() {
 		final String fromUserId = "testOpenJPA";
 		final String toUserId = "testOpenJPA2";

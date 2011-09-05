@@ -10,21 +10,23 @@ import fi.arcusys.koku.common.service.datamodel.ConsentReplyStatus;
  * Aug 16, 2011
  */
 public enum ConsentApprovalStatus {
-    Approved(ConsentReplyStatus.Given), Declined(ConsentReplyStatus.Declined), Revoked(ConsentReplyStatus.Revoked);
+    Approved(ConsentReplyStatus.Given), Declined(ConsentReplyStatus.Declined, ConsentReplyStatus.Revoked);
 
     private final static Map<ConsentReplyStatus, ConsentApprovalStatus> dmToSoaMapping = new HashMap<ConsentReplyStatus, ConsentApprovalStatus>();
     
-    private final ConsentReplyStatus dmStatus;
+    private final ConsentReplyStatus[] dmStatus;
     
-    private ConsentApprovalStatus(final ConsentReplyStatus datamodelStatus) {
+    private ConsentApprovalStatus(final ConsentReplyStatus ... datamodelStatus) {
         dmStatus = datamodelStatus;
     }
     
     public static ConsentApprovalStatus valueOf(final ConsentReplyStatus datamodelStatus) {
         if (!dmToSoaMapping.containsKey(datamodelStatus) ) {
             for (final ConsentApprovalStatus soaStatus : values()) {
-                if (soaStatus.dmStatus == datamodelStatus) {
-                    dmToSoaMapping.put(datamodelStatus, soaStatus);
+                for (final ConsentReplyStatus dmStatus : soaStatus.dmStatus) {
+                    if (dmStatus == datamodelStatus) {
+                        dmToSoaMapping.put(datamodelStatus, soaStatus);
+                    }
                 }
             }
 

@@ -15,5 +15,16 @@
     <import resource="classpath:test-common-context.xml"/>
 
 	<bean id="messageServiceFacade" class="fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl" />
+<!--     <aop:config> -->
+<!--         <aop:pointcut id="kvMessageMethods" expression="execution(* fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl.*(..))" /> -->
+<!--         <aop:advisor advice-ref="txKvAdvice" pointcut-ref="kvMessageMethods" /> -->
+<!--     </aop:config> -->
+
+<!--     <tx:advice id="txKvAdvice" transaction-manager="transactionManager"> -->
+<!--         <tx:attributes> -->
+<!--             <tx:method name="*" propagation="REQUIRED"/> -->
+<!--         </tx:attributes> -->
+<!--     </tx:advice> -->
+
 
 </beans>

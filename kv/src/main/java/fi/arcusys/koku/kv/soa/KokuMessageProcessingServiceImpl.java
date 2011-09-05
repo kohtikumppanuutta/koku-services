@@ -48,4 +48,15 @@ public class KokuMessageProcessingServiceImpl implements KokuMessageProcessingSe
 		return kvFacade.sendNewMessage(fromUserUid, subject, receipients.getReceipients(), content);
 	}
 
+    /**
+     * @param fromUserUid
+     * @param subject
+     * @param toUserUid
+     * @param content
+     */
+    @Override
+    public void receiveNewMessage(String fromUserUid, String subject, String toUserUid, String content) {
+        kvFacade.receiveNewMessage(fromUserUid, subject, toUserUid, content);
+    }
+
 }

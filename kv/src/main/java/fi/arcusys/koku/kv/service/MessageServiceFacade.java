@@ -93,4 +93,13 @@ public interface MessageServiceFacade {
             final String subject,
             final List<String> receipients,
             final String content);
+
+    /**
+     * @param fromUserUid
+     * @param subject
+     * @param toUserUid
+     * @param content
+     * @return
+     */
+    void receiveNewMessage(final String fromUserUid, final String subject, final String toUserUid, final String content);
 }
