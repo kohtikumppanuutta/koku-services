@@ -202,21 +202,27 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	 */
 	@Override
 	public Long receiveMessage(final String toUserUid, final  Long messageId) {
-		final User toUser = getUserByUid(toUserUid);
-		
-		final MessageRef msgRef = new MessageRef();
-		Folder folder = getOrCreateFolder(toUser, FolderType.Inbox);
-
 		final MessageRef sentMessage = messageRefDao.getById(messageId);
 		if (sentMessage == null) {
 			throw new IllegalArgumentException("Message with ID " + messageId + " not found.");
 		}
 
-		msgRef.setFolder(folder);
-		msgRef.setMessage(sentMessage.getMessage());
-		messageRefDao.create(msgRef);
-		return msgRef.getId();
+        final User toUser = getUserByUid(toUserUid);
+        final Message message = sentMessage.getMessage();
+        
+        return doReceiveNewMessage(toUser, message).getId();
 	}
+
+    private MessageRef doReceiveNewMessage(final User toUser,
+            final Message message) {
+        final MessageRef msgRef = new MessageRef();
+        Folder folder = getOrCreateFolder(toUser, FolderType.Inbox);
+
+		msgRef.setFolder(folder);
+        msgRef.setMessage(message);
+		messageRefDao.create(msgRef);
+        return msgRef;
+    }
 
 	private Folder getOrCreateFolder(final User toUser, FolderType folderType) {
 		Folder folder = folderDAO.getFolderByUserAndType(toUser, folderType);
@@ -691,6 +697,6 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         fillMessage(msg, getUserByUid(fromUserUid), subject, Collections.singletonList(toUserUid), content);
         msg = messageDao.create(msg);
         
-        receiveMessage(toUserUid, msg.getId());
+        doReceiveNewMessage(getUserByUid(toUserUid), msg);
     }
 }
