@@ -103,6 +103,23 @@ public class AppointmentServiceTest {
         serviceFacade.cancelAppointment(targetPerson, receipient, appointmentForApprove.getAppointmentId(), "cancelled");
         assertEquals(AppointmentSummaryStatus.Cancelled, serviceFacade.getAppointmentRespondedById(appointmentForApprove.getAppointmentId(), targetPerson).getStatus());
 	}
+	
+	@Test
+	public void countTotals() {
+        final AppointmentForEditTO newAppointment = createTestAppointment("new appointment for counts", "appointment description", 1);
+
+        final AppointmentReceipientTO appointmentReceipient = newAppointment.getReceipients().get(0);
+        final String uniqReceipient = appointmentReceipient.getReceipients().get(1);
+        final String targetPerson = appointmentReceipient.getTargetPerson();
+        final int oldAssignedTotal = serviceFacade.getTotalAssignedAppointments(uniqReceipient);
+        
+        final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
+        
+        assertEquals(oldAssignedTotal + 1, serviceFacade.getTotalAssignedAppointments(uniqReceipient));
+
+        serviceFacade.approveAppointment(targetPerson, uniqReceipient, appointmentId, 1, "approved");
+        assertEquals(oldAssignedTotal, serviceFacade.getTotalAssignedAppointments(uniqReceipient));
+	}
 
 	private <AS extends AppointmentSummary> AS getById(final List<AS> appointments, final Long appointmentId) {
 		for (final AS appointment : appointments) {
@@ -123,7 +140,7 @@ public class AppointmentServiceTest {
 		receipientTO.setReceipients(Arrays.asList("testGuardian1", "testGuardian2"));
         final AppointmentReceipientTO receipientTO2 = new AppointmentReceipientTO();
         receipientTO2.setTargetPerson("testAppReceiver2");
-        receipientTO2.setReceipients(Arrays.asList("testGuardian1", "testGuardian2"));
+        receipientTO2.setReceipients(Arrays.asList("testGuardian1", "testGuardian3"));
         appointment.setReceipients(
 		        Arrays.asList(receipientTO, receipientTO2));
 		appointment.setSlots(createTestSlots(numberOfSlots));

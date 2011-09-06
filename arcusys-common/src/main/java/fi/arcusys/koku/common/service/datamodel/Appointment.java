@@ -38,7 +38,11 @@ import javax.persistence.PrePersist;
 			"    AND ap.status in (:statuses) " +
 			" ORDER BY ap.id DESC"),
 	@NamedQuery(name = "countAssignedAppointments", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap LEFT OUTER JOIN ap.recipients as tp " +
-			"WHERE :user MEMBER OF tp.guardians AND ap.status in (:statuses)"),
+            " WHERE tp.id not in ( SELECT ar.target.id FROM AppointmentResponse ar WHERE " +
+            " ar.appointment = ap " +
+            ")" +
+            "    AND :user MEMBER OF tp.guardians " +
+            "    AND ap.status in (:statuses) "),
     @NamedQuery(name = "findProcessedAppointmentsBySender", query = "SELECT DISTINCT ap FROM Appointment ap " +
             " WHERE EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender  ORDER BY ap.id DESC"),
