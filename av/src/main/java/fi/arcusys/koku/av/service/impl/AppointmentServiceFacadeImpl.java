@@ -6,6 +6,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -189,6 +190,18 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		for (final AppointmentSlot slot : appointment.getSlots()) {
 			result.add(getSlotTOBySlot(slot));
 		}
+		Collections.sort(result, new Comparator<AppointmentSlotTO>() {
+
+            @Override
+            public int compare(AppointmentSlotTO o1, AppointmentSlotTO o2) {
+                final int datesCompare = o1.getAppointmentDate().compare(o2.getAppointmentDate());
+                if (datesCompare != 0) {
+                    return datesCompare;
+                } else {
+                    return o1.getStartTime().compare(o2.getStartTime());
+                }
+            }
+        });
 		return result;
 	}
 
