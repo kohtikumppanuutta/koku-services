@@ -9,10 +9,11 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
-import fi.koku.services.common.v1.AuditInfoType;
+import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerService;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
+import fi.koku.services.entity.customer.v1.OperationException;
 import fi.koku.services.test.util.TestDbUtils;
 import fi.koku.services.test.util.TestPropertiesUtil;
 
@@ -45,7 +46,12 @@ public class CustomerServiceBeanIT {
     assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM CUSTOMER"), is(2));
     
     // Call the web service
-    CustomerType customer = customerServicePort.opGetCustomer("12346", audit);
+    CustomerType customer;
+    try {
+      customer = customerServicePort.opGetCustomer("12346", audit);
+    } catch (OperationException e) {
+      throw new RuntimeException(e);
+    }
     
     // Verify the returned result or DB state
     assertThat(customer.getId(), is("12346"));
