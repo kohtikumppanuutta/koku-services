@@ -12,6 +12,7 @@ import fi.koku.services.entity.community.v1.CommunitiesType;
 import fi.koku.services.entity.community.v1.CommunityQueryCriteriaType;
 import fi.koku.services.entity.community.v1.CommunityServicePortType;
 import fi.koku.services.entity.community.v1.CommunityType;
+import fi.koku.services.entity.community.v1.VoidType;
 
 
 /**
@@ -44,11 +45,13 @@ public class CommunityServiceBean implements CommunityServicePortType {
   }
 
   @Override
-  public void opUpdateCommunity(CommunityType community, AuditInfoType auditHeader) {
+  public VoidType opUpdateCommunity(CommunityType community, AuditInfoType auditHeader) {
+    return new VoidType();
   }
 
   @Override
-  public void opDeleteCommunity(String communityId, AuditInfoType auditHeader) {
+  public VoidType opDeleteCommunity(String communityId, AuditInfoType auditHeader) {
+    return new VoidType();
   }
 
   @Override

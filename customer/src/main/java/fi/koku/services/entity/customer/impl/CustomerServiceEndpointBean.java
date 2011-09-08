@@ -17,6 +17,7 @@ import javax.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.services.entity.customer.v1.VoidType;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerQueryCriteriaType;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
@@ -94,15 +95,17 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	}
 
 	@Override
-	public void opUpdateCustomer(CustomerType customer, AuditInfoType auditHeader) {
+	public VoidType opUpdateCustomer(CustomerType customer, AuditInfoType auditHeader) {
 		logger.debug("opUpdateCustomer: "+customer);
 		customerService.update(customerConverter.fromWsType(customer));
+    return new VoidType();
 	}
 
 	@Override
-	public void opDeleteCustomer(String pic, AuditInfoType auditHeader) {
+	public VoidType opDeleteCustomer(String pic, AuditInfoType auditHeader) {
 		logger.debug("opDeleteCustomer: "+pic);
 		customerService.delete(pic);
+    return new VoidType();
 	}
 
 	@Override
