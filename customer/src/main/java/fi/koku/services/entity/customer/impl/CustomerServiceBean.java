@@ -17,15 +17,15 @@ import org.slf4j.LoggerFactory;
  * @author laukksa
  */
 @Stateless
-public class CustomerServiceImpl implements CustomerService {
+public class CustomerServiceBean implements CustomerService {
   
   @EJB
   CustomerDAO customerDAO;
   
   @SuppressWarnings("unused")
-  private Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
+  private Logger logger = LoggerFactory.getLogger(CustomerServiceBean.class);
 
-  public CustomerServiceImpl() {
+  public CustomerServiceBean() {
   }
 
   @Override
