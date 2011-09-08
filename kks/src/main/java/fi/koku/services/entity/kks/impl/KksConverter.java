@@ -116,7 +116,7 @@ public class KksConverter {
     Date created = collection.getCreated();
     Calendar c = new GregorianCalendar();
     c.setTime(created);
-    kksCollectionType.setCreated(c);
+    // kksCollectionType.setCreated(c);
     kksCollectionType.setDescription(collection.getDescription());
     kksCollectionType.setId("" + collection.getId());
     kksCollectionType.setName(collection.getName());
@@ -145,7 +145,7 @@ public class KksConverter {
 
     Calendar c = new GregorianCalendar();
     c.setTime(entry.getModified());
-    kksEntryType.setModified(c);
+    // kksEntryType.setModified(c);
     kksEntryType.setVersion(new BigInteger(entry.getVersion()));
 
     EntryValuesType entryValuesType = new EntryValuesType();
@@ -165,7 +165,7 @@ public class KksConverter {
 
     /** todo: add customer to kks collection */
     // kksCollectionType.setCustomer(collection.get)
-    kksCollection.setCreated(collection.getCreated().getTime());
+    // kksCollection.setCreated(collection.getCreated().getTime());
 
     kksCollection.setDescription(collection.getDescription());
     kksCollection.setId(Integer.parseInt(collection.getId()));
