@@ -13,7 +13,7 @@ import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerService;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
-import fi.koku.services.entity.customer.v1.OperationException;
+import fi.koku.services.entity.customer.v1.ServiceFault;
 import fi.koku.services.test.util.TestDbUtils;
 import fi.koku.services.test.util.TestPropertiesUtil;
 
@@ -49,7 +49,7 @@ public class CustomerServiceBeanIT {
     CustomerType customer;
     try {
       customer = customerServicePort.opGetCustomer("12346", audit);
-    } catch (OperationException e) {
+    } catch (ServiceFault e) {
       throw new RuntimeException(e);
     }
     
