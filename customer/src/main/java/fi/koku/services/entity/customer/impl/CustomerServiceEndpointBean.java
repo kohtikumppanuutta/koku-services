@@ -44,7 +44,7 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 //@HandlerChain(file="auditInfoHandler.xml")
 @RolesAllowed("koku-role")
 
-public class CustomerServiceBean implements CustomerServicePortType {
+public class CustomerServiceEndpointBean implements CustomerServicePortType {
   private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
   
   @PersistenceContext
@@ -56,7 +56,7 @@ public class CustomerServiceBean implements CustomerServicePortType {
 	private CustomerService customerService;
 	private CustomerConverter customerConverter;
 	
-	public CustomerServiceBean() {
+	public CustomerServiceEndpointBean() {
 	  customerConverter = new CustomerConverter();
 	}
 	

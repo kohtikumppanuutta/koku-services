@@ -16,7 +16,7 @@ import org.junit.Test;
 import fi.koku.services.entity.customer.impl.Customer;
 import fi.koku.services.entity.customer.impl.CustomerQueryCriteria;
 import fi.koku.services.entity.customer.impl.CustomerService;
-import fi.koku.services.entity.customer.impl.CustomerServiceBean;
+import fi.koku.services.entity.customer.impl.CustomerServiceEndpointBean;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 
@@ -26,13 +26,13 @@ import fi.koku.services.entity.customer.v1.CustomerType;
  * @author Ixonos / laukksa
  *
  */
-public class CustomerServiceBeanTest {
-  private static CustomerServiceBean customerServiceBean;
+public class CustomerServiceEndpointBeanTest {
+  private static CustomerServiceEndpointBean CustomerServiceEndpointBean;
 
   @BeforeClass
   public static void initialize() {
-    customerServiceBean = new CustomerServiceBean();
-    customerServiceBean.setCustomerService(new CustomerServiceImplTest());
+    CustomerServiceEndpointBean = new CustomerServiceEndpointBean();
+    CustomerServiceEndpointBean.setCustomerService(new CustomerServiceImplTest());
   }
   
   @Test
@@ -50,7 +50,7 @@ public class CustomerServiceBeanTest {
     AuditInfoType audit = new AuditInfoType();
     audit.setComponent("kks");
     audit.setUserId("erkki");
-    CustomerType cust = customerServiceBean.opGetCustomer("abc", audit);
+    CustomerType cust = CustomerServiceEndpointBean.opGetCustomer("abc", audit);
     assertEquals("asiakas", cust.getSukuNimi());
   }
   
