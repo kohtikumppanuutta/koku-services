@@ -5,13 +5,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.xml.ws.WebServiceContext;
 
 import org.slf4j.Logger;
@@ -25,13 +23,14 @@ import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.CustomersType;
 
 /**
- * KoKu Customer service implementation class.
+ * KoKu Customer service endpoint implementation class.
  * 
  * TODO
  * - logging (fix log level)
  * - exception handling (establish fault barrier)
  * 
  * @author Ixonos / aspluma
+ * @author laukksa
  */
 @Stateless
 @WebService(wsdlLocation="META-INF/wsdl/customerService.wsdl",
@@ -46,24 +45,18 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 @RolesAllowed("koku-role")
 
 public class CustomerServiceEndpointBean implements CustomerServicePortType {
-  private Logger logger = LoggerFactory.getLogger(CustomerServicePortType.class);
-  
-  @PersistenceContext
-  private EntityManager em;
+  private Logger logger = LoggerFactory.getLogger(CustomerServiceEndpointBean.class);
   
 	@Resource
 	private WebServiceContext wsCtx;
 	
+	@EJB
 	private CustomerService customerService;
+	
 	private CustomerConverter customerConverter;
 	
 	public CustomerServiceEndpointBean() {
 	  customerConverter = new CustomerConverter();
-	}
-	
-	@PostConstruct
-	public void initialize() {
-	  customerService = new CustomerServiceImpl(em);
 	}
 
   @Override

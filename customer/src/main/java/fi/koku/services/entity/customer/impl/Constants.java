@@ -8,6 +8,10 @@ import javax.xml.namespace.QName;
  *  @author Ixonos / aspluma
  */
 public class Constants {
+  
+  private Constants() {
+  }
+  
   // namespaces
   public static final String NS_KOKU_COMMON = "http://services.koku.fi/common/v1";
   public static final String NS_CUSTOMER = "http://services.koku.fi/entity/customer/v1";
