@@ -26,7 +26,7 @@ import fi.arcusys.tampere.hrsoa.ws.ldap.LdapService;
 @Stateless
 @WebService(wsdlLocation="META-INF/wsdl/ldapService.wsdl",
     endpointInterface="fi.arcusys.tampere.hrsoa.ws.ldap.LdapService",
-    targetNamespace="http://www.arcusys.fi/tampere/hrsoa/ws/ldap",
+    targetNamespace="http://www.arcusys.fi/tampere/hrsoa/ws/ldap/",    
     portName="ldapServiceSOAP",
     serviceName="ldapService"
 )
