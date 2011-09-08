@@ -64,7 +64,7 @@ public class CustomerServiceBeanIT {
         "http://services.koku.fi/entity/customer/v1", "customerService"));
     CustomerServicePortType customerServicePort = service.getCustomerServiceSoap11Port();
     String endpointAddress = TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_ENDPOINT_ADDRESS)
-        + "/customer-service-0.0.1-SNAPSHOT/CustomerServiceBean";
+        + "/customer-service-0.0.1-SNAPSHOT/CustomerServiceEndpointBean";
 
     ((BindingProvider) customerServicePort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
         endpointAddress);
