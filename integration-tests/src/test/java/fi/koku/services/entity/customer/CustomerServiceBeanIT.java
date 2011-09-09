@@ -1,8 +1,7 @@
 package fi.koku.services.entity.customer;
 
 import java.net.URL;
-
-import javax.xml.ws.BindingProvider;
+import java.util.Calendar;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,14 +9,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
-import fi.koku.services.entity.customer.v1.CustomerService;
+import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.ServiceFault;
 import fi.koku.services.test.util.TestDbUtils;
 import fi.koku.services.test.util.TestPropertiesUtil;
-
-import javax.xml.namespace.QName;
 
 /**
  * Integration tests for CustomerService.
@@ -26,9 +23,7 @@ import javax.xml.namespace.QName;
  *
  */
 public class CustomerServiceBeanIT {
-
-  private final URL CUSTOMER_WSDL_LOCATION = getClass().getClassLoader().getResource("/wsdl/customerService.wsdl");
-  
+ 
   JdbcTemplate jdbcTemplate = TestDbUtils.getJdbcTemplateInstance();
   
   @Before
@@ -59,20 +54,35 @@ public class CustomerServiceBeanIT {
     assertThat(customer.getSukuNimi(), is("Virtanen"));
   }
   
-  private CustomerServicePortType getCustomerServicePort() {
-    CustomerService service = new CustomerService(CUSTOMER_WSDL_LOCATION, new QName(
-        "http://services.koku.fi/entity/customer/v1", "customerService"));
-    CustomerServicePortType customerServicePort = service.getCustomerServiceSoap11Port();
-    String endpointAddress = TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_ENDPOINT_ADDRESS)
-        + "/customer-service-0.0.1-SNAPSHOT/CustomerServiceEndpointBean";
+  @Test
+  public void testInsertAndUpdateCustomer() {
+    // in progress
+    CustomerServicePortType customerServicePort = getCustomerServicePort();
+    AuditInfoType audit = getAudit();
+    
+    CustomerType customer = new CustomerType();
+    customer.setEtuNimi("Matti");
+    customer.setSukuNimi("Virtanen");
+    customer.setHenkiloTunnus("150790-123A");
+    customer.setKieliKoodi("FI");
+    customer.setSyntymaPvm(Calendar.getInstance());
+    customer.setStatusDate(Calendar.getInstance());
+    customer.setTurvakieltoKytkin(false);
+    customer.setAddresses(null);
 
-    ((BindingProvider) customerServicePort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-        endpointAddress);
-    ((BindingProvider) customerServicePort).getRequestContext().put(BindingProvider.USERNAME_PROPERTY,
-        TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_USERNAME));
-    ((BindingProvider) customerServicePort).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, 
-        TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_PWD));
-    return customerServicePort;
+    try {
+      customerServicePort.opAddCustomer(customer, audit);
+    } catch (ServiceFault e) {
+      throw new RuntimeException(e);
+    }
+    
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM CUSTOMER"), is(1));
+  }  
+  
+  private CustomerServicePortType getCustomerServicePort() {
+    return new CustomerServiceFactory(TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_USERNAME),
+        TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_PWD),
+        TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_ENDPOINT_ADDRESS)).getCustomerService();
   }
   
   private AuditInfoType getAudit() {

@@ -14,7 +14,7 @@
 
   <properties>
     <failsafe.plugin.version>2.9</failsafe.plugin.version>
-    <koku.customer.service.version>0.0.1-SNAPSHOT</koku.customer.service.version>
+    <customerservice.api.version>0.0.6</customerservice.api.version>
     <ant.run.plugin.version>1.6</ant.run.plugin.version>
     <wagon.plugin.version>1.0-beta-3</wagon.plugin.version>
     <wagon.ssh.extension.version>1.0-beta-6</wagon.ssh.extension.version>
@@ -67,7 +67,7 @@
         </executions>
       </plugin>
 
-      <!-- Wait for JBoss for deploy complete -->
+      <!-- Wait for JBoss for deploy complete --> 
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>${ant.run.plugin.version}</version>
@@ -93,9 +93,9 @@
   <dependencies>
     <dependency>
       <groupId>kohti-kumppanuutta</groupId>
-      <artifactId>customer-service</artifactId>
-      <version>${koku.customer.service.version}</version>
-      <scope>test</scope>
+      <artifactId>customerservice-api</artifactId>
+      <version>${customerservice.api.version}</version>
+      <scope>test</scope>      
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
