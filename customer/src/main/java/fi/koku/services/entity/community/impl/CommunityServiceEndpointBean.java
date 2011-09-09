@@ -29,8 +29,8 @@ import fi.koku.services.entity.community.v1.VoidType;
 )
 @RolesAllowed("koku-role")
 
-public class CommunityServiceBean implements CommunityServicePortType {
-  private Logger logger = LoggerFactory.getLogger(CommunityServiceBean.class);
+public class CommunityServiceEndpointBean implements CommunityServicePortType {
+  private Logger logger = LoggerFactory.getLogger(CommunityServiceEndpointBean.class);
 
   @Override
   public String opAddCommunity(CommunityType community, AuditInfoType auditHeader) {
