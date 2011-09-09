@@ -1,13 +1,9 @@
 package fi.koku.services.entity.kahva.impl;
 
 import java.util.List;
-import java.util.Properties;
 
-import javax.annotation.Resource;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +30,11 @@ import fi.arcusys.tampere.hrsoa.ws.ldap.LdapService;
 public class KahvaServiceEndpointBean implements LdapService {
   private final Logger log = LoggerFactory.getLogger(KahvaServiceEndpointBean.class);
 
-  @Resource
-  private WebServiceContext wsCtx;
+  //@Resource
+  //private WebServiceContext wsCtx;
   
   public KahvaServiceEndpointBean(){
-    Properties useridAndHetuMockData = new Properties();
-    //useridAndHetuMockData.
+
   }
   
   @Override
@@ -110,9 +105,10 @@ public class KahvaServiceEndpointBean implements LdapService {
 
   @Override
   public User getUserById(String userId) {
-    log.info("HALOOOOO: GetUserByID called with userid="+userId);
-    User u = new User();
-    u.setSsn("123456-1234");
+    log.info("GetUserByID called with userid="+userId);
+    User u = null;
+    KahvaServiceMockImpl m = new KahvaServiceMockImpl();
+    u = m.getUserById(userId);
     return u;
   }
 
