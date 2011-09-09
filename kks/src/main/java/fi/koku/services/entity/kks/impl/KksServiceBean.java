@@ -1,130 +1,149 @@
 package fi.koku.services.entity.kks.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.jws.WebService;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fi.koku.services.entity.kks.v1.AuditInfoType;
-import fi.koku.services.entity.kks.v1.KksCollectionClassesType;
-import fi.koku.services.entity.kks.v1.KksCollectionType;
-import fi.koku.services.entity.kks.v1.KksCollectionsCriteriaType;
-import fi.koku.services.entity.kks.v1.KksCollectionsType;
-import fi.koku.services.entity.kks.v1.KksQueryCriteriaType;
-import fi.koku.services.entity.kks.v1.KksServicePortType;
-import fi.koku.services.entity.kks.v1.KksTagIdsType;
-import fi.koku.services.entity.kks.v1.KksTagsType;
-import fi.koku.services.entity.kks.v1.KksType;
 
 /**
- * KoKu KKS service implementation class.
+ * KKS service implementation class
  * 
  * @author Ixonos / tuomape
  * 
  */
 @Stateless
-@WebService(wsdlLocation = "META-INF/wsdl/kksService.wsdl", endpointInterface = "fi.koku.services.entity.kks.v1.KksServicePortType", targetNamespace = "http://services.koku.fi/entity/kks/v1", portName = "kksService-soap11-port", serviceName = "kksService")
-@RolesAllowed("koku-role")
-public class KksServiceBean implements KksServicePortType {
+public class KksServiceBean implements KksService {
 
-  private static final Logger LOG = LoggerFactory.getLogger(KksServiceBean.class);
+  @EJB
+  KksServiceDAO serviceDAO;
 
-  @PersistenceContext
-  private EntityManager em;
+  @Override
+  public List<KksTag> getTags() {
+    List<KksTag> tmp = new ArrayList<KksTag>();
+    KksTag kt = new KksTag();
+    kt.setDescription("Tagin kuvaus");
+    kt.setId(1);
+    kt.setName("Tagin nimi");
+    tmp.add(kt);
+    return tmp;
+  }
 
-  private KksService kksService;
-
-  @PostConstruct
-  public void initialize() {
-    kksService = new KksServiceImpl(em);
+  private KksEntryClass createEntryClass(int id, String name, String desc, String type, KksGroup group) {
+    KksEntryClass ec = new KksEntryClass();
+    ec.setId(1);
+    ec.setMultiValue(false);
+    ec.setDescription(desc);
+    ec.setGroup(group);
+    ec.setDataType(type);
+    return ec;
   }
 
   @Override
-  public KksTagsType opGetKksTags(KksTagIdsType kksTagIds, AuditInfoType auditHeader) {
+  public List<KksCollectionClass> getCollectionClasses() {
+    KksCollectionClass tmp = createCollectionClass();
 
-    LOG.debug("opGetKksTags");
-    List<KksTag> tags = kksService.getTags();
+    List<KksCollectionClass> cList = new ArrayList<KksCollectionClass>();
+    cList.add(tmp);
+    return cList;
+  }
 
-    KksTagsType kksTagsType = new KksTagsType();
-    for (KksTag t : tags) {
-      kksTagsType.getKksTag().add(KksConverter.toWsType(t));
-    }
+  private KksCollectionClass createCollectionClass() {
+    KksCollectionClass tmp = new KksCollectionClass();
+    tmp.setId(1);
+    tmp.setDescription("Kuvaus");
+    tmp.setName("Nimi");
 
-    return kksTagsType;
+    KksGroup group = new KksGroup();
+    group.setId(1);
+    group.setName("Ryhma");
+    group.setRegister("Rekisteri");
+    group.setSortOrder(1);
+    group.setDescription("Ryhmäkuvaus");
+
+    List<KksEntryClass> ecList = new ArrayList<KksEntryClass>();
+    ecList.add(createEntryClass(1, "Entry1", "Desc1", "FREE_TEXT", group));
+    ecList.add(createEntryClass(2, "Entry2", "Desc2", "FREE_TEXT", group));
+    ecList.add(createEntryClass(2, "Entry3", "Desc3", "FREE_TEXT", group));
+
+    KksGroup subgroup = new KksGroup();
+    subgroup.setId(1);
+    subgroup.setName("Aliryhma");
+    subgroup.setRegister("Rekisteri");
+    subgroup.setSortOrder(1);
+    subgroup.setDescription("Aliryhmäkuvaus");
+
+    List<KksEntryClass> ecList2 = new ArrayList<KksEntryClass>();
+    ecList2.add(createEntryClass(1, "SUB Entry1", "Desc1", "FREE_TEXT", group));
+    ecList2.add(createEntryClass(2, "SUB Entry2", "Desc2", "FREE_TEXT", group));
+    ecList2.add(createEntryClass(2, "SUB Entry3", "Desc3", "FREE_TEXT", group));
+
+    List<KksGroup> tmp1 = new ArrayList<KksGroup>();
+    tmp1.add(group);
+
+    List<KksGroup> tmp2 = new ArrayList<KksGroup>();
+    tmp2.add(subgroup);
+
+    group.setEntryClasses(ecList);
+    subgroup.setEntryClasses(ecList2);
+    group.setSubGroups(tmp2);
+    tmp.setGroups(tmp1);
+    return tmp;
   }
 
   @Override
-  public KksCollectionClassesType opGetKksCollectionClasses(String kksScope, AuditInfoType auditHeader) {
-    LOG.debug("opGetKksCollectionClasses");
-    List<KksCollectionClass> tmp = kksService.getCollectionClasses();
-    KksCollectionClassesType c = new KksCollectionClassesType();
+  public List<KksCollection> getCollections(String customer, String scope) {
 
-    for (KksCollectionClass kc : tmp) {
-      c.getKksCollectionClass().add(KksConverter.toWsType(kc));
-    }
+    List<KksCollection> cList = new ArrayList<KksCollection>();
+    cList.add(createCollection(customer));
+    return cList;
+  }
+
+  private KksCollection createCollection(String customer) {
+    KksCollection c = new KksCollection();
+    c.setCollectionClass(createCollectionClass());
+    c.setCreated(new Date());
+    c.setCustomer(customer);
+    c.setDescription("DESC");
+    c.setEntries(new ArrayList<KksEntry>());
+    c.setId(1);
+    c.setName("NAME");
+    c.setNextVersion(null);
+    c.setPrevVersion(null);
+    c.setStatus("Active");
+    c.setVersion("1.0");
     return c;
   }
 
   @Override
-  public KksType opGetKks(KksCollectionsCriteriaType kksCollectionCriteria, AuditInfoType auditHeader) {
-    LOG.debug("opGetKks");
-    KksType k = new KksType();
-    KksCollectionsType kksCollectionsType = new KksCollectionsType();
+  public boolean update(KksCollection collection) {
 
-    List<KksCollection> tmp = kksService.getCollections(kksCollectionCriteria.getPic(),
-        kksCollectionCriteria.getKksScope());
-
-    for (KksCollection c : tmp) {
-      kksCollectionsType.getKksCollection().add(KksConverter.toWsType(c));
-    }
-
-    k.setKksCollections(kksCollectionsType);
-    return k;
+    return true;
   }
 
   @Override
-  public KksCollectionType opAddKksCollection(String kksCollectionClassName, AuditInfoType auditHeader) {
-    LOG.debug("opAddKksCollection");
+  public KksCollection get(String collectionId) {
 
-    /** todo muuta rajapintaa, tarvii nimen ja tyypin **/
-
-    return null;
+    return createCollection(collectionId);
   }
 
   @Override
-  public KksCollectionType opGetKksCollection(String kksCollectionId, AuditInfoType auditHeader) {
-    LOG.debug("opGetKksCollection");
-    return KksConverter.toWsType(kksService.get(kksCollectionId));
+  public List<KksCollection> getCollections(String customer, List<String> tagIds) {
+    return getCollections(customer, "");
   }
 
   @Override
-  public boolean opUpdateKksCollection(KksCollectionType kksCollection, AuditInfoType auditHeader) {
-    LOG.debug("opUpdateKksCollection");
-    return false;
+  public KksCollection add(String customer, String collectionClassId, String name) {
+
+    return createCollection(customer);
   }
 
   @Override
-  public KksCollectionsType opQueryKks(KksQueryCriteriaType kksQueryCriteria, AuditInfoType auditHeader) {
-    LOG.debug("opQueryKks");
+  public void injectMetadata(KksCollection collection, String collectionClassId) {
 
-    KksCollectionsType kksCollectionsType = new KksCollectionsType();
+    collection.setCollectionClass(serviceDAO.getCollectionClass(collectionClassId));
 
-    List<String> tagIds = kksQueryCriteria.getKksTagIds().getKksTagId();
-
-    List<KksCollection> tmp = kksService.getCollections(kksQueryCriteria.getPic(), tagIds);
-
-    for (KksCollection c : tmp) {
-      kksCollectionsType.getKksCollection().add(KksConverter.toWsType(c));
-    }
-
-    return kksCollectionsType;
   }
 
 }

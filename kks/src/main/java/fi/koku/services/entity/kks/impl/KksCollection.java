@@ -3,6 +3,12 @@ package fi.koku.services.entity.kks.impl;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Entity for kks collection
+ * 
+ * @author Ixonos / tuomape
+ * 
+ */
 public class KksCollection {
 
   private int id;

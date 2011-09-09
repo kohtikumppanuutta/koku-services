@@ -18,7 +18,7 @@ public class KksEntryClass {
   private String dataType;
   private String valueSpaces;
   private KksCollectionClass collectionClass;
-  private KksGroup croup;
+  private KksGroup group;
   private List<KksTag> tags;
 
   public int getId() {
@@ -85,12 +85,12 @@ public class KksEntryClass {
     this.collectionClass = collectionClass;
   }
 
-  public KksGroup getCroup() {
-    return croup;
+  public KksGroup getGroup() {
+    return group;
   }
 
-  public void setCroup(KksGroup croup) {
-    this.croup = croup;
+  public void setGroup(KksGroup croup) {
+    this.group = croup;
   }
 
   public List<KksTag> getTags() {

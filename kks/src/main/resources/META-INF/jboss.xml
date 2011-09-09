@@ -7,7 +7,7 @@
   
   <enterprise-beans>
     <session>
-      <ejb-name>KksServiceBean</ejb-name>
+      <ejb-name>KksServiceEndpointBean</ejb-name>
       <port-component>
         <auth-method>BASIC</auth-method>
       </port-component>

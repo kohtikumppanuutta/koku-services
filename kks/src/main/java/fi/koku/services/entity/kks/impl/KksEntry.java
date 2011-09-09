@@ -15,8 +15,8 @@ public class KksEntry {
   private Date modified;
   private String creator;
   private String version;
-  private KksEntryClass entryClass;
-  private List<KksTag> tags;
+  private Integer entryClassId;
+  private List<Integer> tagIds;
   private List<KksValue> values;
   private String customer;
 
@@ -44,20 +44,20 @@ public class KksEntry {
     this.version = version;
   }
 
-  public KksEntryClass getEntryClass() {
-    return entryClass;
+  public Integer getEntryClassId() {
+    return entryClassId;
   }
 
-  public void setEntryClass(KksEntryClass entryClass) {
-    this.entryClass = entryClass;
+  public void setEntryClassId(Integer entryClassId) {
+    this.entryClassId = entryClassId;
   }
 
-  public List<KksTag> getTags() {
-    return tags;
+  public List<Integer> getTagIds() {
+    return tagIds;
   }
 
-  public void setTags(List<KksTag> tags) {
-    this.tags = tags;
+  public void setTagIds(List<Integer> tagIds) {
+    this.tagIds = tagIds;
   }
 
   public List<KksValue> getValues() {

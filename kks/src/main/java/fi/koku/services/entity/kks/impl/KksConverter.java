@@ -21,12 +21,16 @@ import fi.koku.services.entity.kks.v1.KksTagType;
 import fi.koku.services.entity.kks.v1.ValueSpacesType;
 
 /**
- * Converts classes from & to WS types
+ * Converts classes from and to WS types
  * 
  * @author Ixonos / tuomape
  * 
  */
 public class KksConverter {
+
+  private KksConverter() {
+
+  }
 
   public static KksTagType toWsType(KksTag tag) {
     KksTagType tmp = new KksTagType();
@@ -64,7 +68,7 @@ public class KksConverter {
     kksEntryClassType.setId("" + entryClass.getId());
     kksEntryClassType.setDescription(entryClass.getDescription());
     kksEntryClassType.setDataType(entryClass.getDataType());
-    kksEntryClassType.setGroupId("" + entryClass.getCroup().getId());
+    kksEntryClassType.setGroupId("" + entryClass.getGroup().getId());
     kksEntryClassType.setMultiValue(entryClass.isMultiValue());
     kksEntryClassType.setName(entryClass.getName());
     kksEntryClassType.setSortOrder(new BigInteger("" + entryClass.getSortOrder()));
@@ -116,7 +120,8 @@ public class KksConverter {
     Date created = collection.getCreated();
     Calendar c = new GregorianCalendar();
     c.setTime(created);
-    // kksCollectionType.setCreated(c);
+    kksCollectionType.setCreated(c);
+    kksCollectionType.setCustomerId(collection.getCustomer());
     kksCollectionType.setDescription(collection.getDescription());
     kksCollectionType.setId("" + collection.getId());
     kksCollectionType.setName(collection.getName());
@@ -139,14 +144,22 @@ public class KksConverter {
 
   public static KksEntryType toWsType(KksEntry entry) {
     KksEntryType kksEntryType = new KksEntryType();
-    kksEntryType.setEntryClassId("" + entry.getEntryClass().getId());
+    kksEntryType.setEntryClassId("" + entry.getEntryClassId());
     kksEntryType.setCreator(entry.getCreator());
     kksEntryType.setId("" + entry.getId());
 
     Calendar c = new GregorianCalendar();
     c.setTime(entry.getModified());
-    // kksEntryType.setModified(c);
+    kksEntryType.setModified(c);
     kksEntryType.setVersion(new BigInteger(entry.getVersion()));
+
+    KksTagIdsType kksTagIdsType = new KksTagIdsType();
+
+    for (Integer tagId : entry.getTagIds()) {
+      kksTagIdsType.getKksTagId().add("" + tagId);
+    }
+
+    kksEntryType.setKksTagIds(kksTagIdsType);
 
     EntryValuesType entryValuesType = new EntryValuesType();
 
@@ -159,13 +172,11 @@ public class KksConverter {
 
   }
 
-  public static KksCollection fromWsType(KksCollectionType collection, KksCollectionClass collectionClass) {
+  public static KksCollection fromWsType(KksCollectionType collection) {
     KksCollection kksCollection = new KksCollection();
-    kksCollection.setCollectionClass(collectionClass);
 
-    /** todo: add customer to kks collection */
-    // kksCollectionType.setCustomer(collection.get)
-    // kksCollection.setCreated(collection.getCreated().getTime());
+    kksCollection.setCustomer(collection.getCustomerId());
+    kksCollection.setCreated(collection.getCreated().getTime());
 
     kksCollection.setDescription(collection.getDescription());
     kksCollection.setId(Integer.parseInt(collection.getId()));
@@ -187,12 +198,30 @@ public class KksConverter {
     KksEntry entry = new KksEntry();
     entry.setCreator(entryType.getCreator());
 
-    /** todo: add collection */
-    // entry.setCustomer(entryType.getCustomer());
+    entry.setCustomer(entryType.getCustomerId());
     if (entryType.getId() != null) {
       entry.setId(Integer.parseInt(entryType.getId()));
     }
-    // entry.set
+
+    entry.setEntryClassId(Integer.parseInt(entryType.getEntryClassId()));
+    entry.setId(Integer.parseInt(entryType.getId()));
+    entry.setModified(entryType.getModified().getTime());
+    entry.setVersion(entryType.getVersion().toString());
+
+    List<KksValue> tmp = new ArrayList<KksValue>();
+
+    for (String value : entryType.getEntryValues().getEntryValue()) {
+      KksValue v = new KksValue();
+      v.setValue(value);
+      tmp.add(v);
+    }
+
+    List<Integer> tagIds = new ArrayList<Integer>();
+    for (String tagId : entryType.getKksTagIds().getKksTagId()) {
+      tagIds.add(Integer.parseInt(tagId));
+    }
+    entry.setTagIds(tagIds);
+    entry.setValues(tmp);
     return entry;
   }
 }
