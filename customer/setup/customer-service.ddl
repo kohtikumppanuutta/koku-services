@@ -1,4 +1,7 @@
 
+--
+-- customer service
+--
 CREATE TABLE customer (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   status VARCHAR(30) NOT NULL,
@@ -14,3 +17,21 @@ CREATE TABLE customer (
   version INT NOT NULL
 );
 
+--
+-- community service
+--
+CREATE TABLE community (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  type VARCHAR(30) NOT NULL,
+  name VARCHAR(30),
+  version INT NOT NULL
+);
+
+CREATE TABLE community_member (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  community_id BIGINT UNSIGNED NOT NULL,
+  member_id BIGINT UNSIGNED NOT NULL,
+  role VARCHAR(30) NOT NULL,
+  CONSTRAINT UNIQUE (community_id, member_id),
+  FOREIGN KEY (community_id) REFERENCES community(id)
+);

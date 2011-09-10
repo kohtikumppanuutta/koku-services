@@ -26,7 +26,6 @@ import fi.koku.services.entity.customer.v1.CustomersType;
  * KoKu Customer service endpoint implementation class.
  * 
  * TODO
- * - logging (fix log level)
  * - exception handling (establish fault barrier)
  * 
  * @author Ixonos / aspluma
