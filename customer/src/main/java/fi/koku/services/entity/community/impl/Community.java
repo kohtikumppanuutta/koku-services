@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.persistence.CascadeType;
+import static javax.persistence.CascadeType.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -28,7 +28,7 @@ public class Community implements Serializable {
   
   private String name;
 
-  @OneToMany(mappedBy="community", cascade=CascadeType.PERSIST)
+  @OneToMany(mappedBy="community", cascade={PERSIST, REMOVE})
   private Collection<CommunityMember> communityMembers = new ArrayList<CommunityMember>();
   
   

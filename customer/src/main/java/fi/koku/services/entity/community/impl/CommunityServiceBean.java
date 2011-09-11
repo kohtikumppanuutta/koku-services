@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
  * 
  * TODO:
  * - use DAO
+ * - implement query
  * 
  * @author aspluma
 */
@@ -41,24 +42,27 @@ public class CommunityServiceBean implements CommunityService {
   @Override
   public void update(Community c2) {
     Community c1 = get(c2.getId().toString());
+    c1.setName(c2.getName());
+    c1.setType(c2.getType());
 
     // remove deleted members
     Set<CommunityMember> m2 = new HashSet<CommunityMember>();
     m2.addAll(c2.getCommunityMembers());
     for(Iterator<CommunityMember> i = c1.getCommunityMembers().iterator(); i.hasNext() ; ) {
-      if(!m2.contains(i.next()))
+      CommunityMember cm = i.next();
+      if(!m2.contains(cm)) {
         i.remove();
+        em.remove(cm);
+      }
     }
     
     // add new members
-    Set<CommunityMember> m1 = new HashSet<CommunityMember>();
-    m1.addAll(c1.getCommunityMembers());
-    if(m2.removeAll(m1)) {
-      for(Iterator<CommunityMember> i = m2.iterator(); i.hasNext() ; ) {
-        c1.getCommunityMembers().add(i.next());
-      }
-    }    
-   
+    m2.removeAll(c1.getCommunityMembers());
+    for(Iterator<CommunityMember> i = m2.iterator(); i.hasNext() ; ) {
+      CommunityMember cm = i.next();
+      c1.getCommunityMembers().add(cm);
+      cm.setCommunity(c1);
+    }
   }
 
   @Override
