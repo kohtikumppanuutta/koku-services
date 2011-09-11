@@ -1,4 +1,6 @@
 
+SET storage_engine = innodb;
+
 --
 -- customer service
 --

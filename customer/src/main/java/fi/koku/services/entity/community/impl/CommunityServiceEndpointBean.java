@@ -1,10 +1,13 @@
 package fi.koku.services.entity.community.impl;
 
+import java.util.Collection;
+
+import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.xml.ws.WebServiceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +26,7 @@ import fi.koku.services.entity.community.v1.VoidType;
  * KoKu Community service implementation class.
  * 
  * TODO
- * - move data access code to server + dao layers
+ * - ID handling: which ID to use for customers; ID data types
  * 
  * @author Ixonos / aspluma
  */
@@ -39,10 +42,16 @@ import fi.koku.services.entity.community.v1.VoidType;
 public class CommunityServiceEndpointBean implements CommunityServicePortType {
   private Logger logger = LoggerFactory.getLogger(CommunityServiceEndpointBean.class);
 
+  @SuppressWarnings("unused")
+  @Resource
+  private WebServiceContext wsCtx;
+  
+  @EJB
+  private CommunityService communityService;
+
+  
   private CommunityConverter communityConverter;
   
-  @PersistenceContext
-  private EntityManager em;
   
   public CommunityServiceEndpointBean() {
     communityConverter = new CommunityConverter();
@@ -51,39 +60,55 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
   @Override
   public String opAddCommunity(CommunityType community, AuditInfoType auditHeader) {
     logger.debug("opAddCommunity");
-    return "12345";
+    Long id = communityService.add(communityConverter.fromWsType(community));
+    return id != null ? id.toString() : "null";
   }
 
   @Override
   public CommunityType opGetCommunity(String communityId, AuditInfoType auditHeader) {
-    Long id = Long.valueOf(communityId);
-    Community c = em.find(Community.class, id);
-    
-    return communityConverter.toWsType(c);
+    return communityConverter.toWsType(communityService.get(communityId));
   }
 
   @Override
   public VoidType opUpdateCommunity(CommunityType community, AuditInfoType auditHeader) {
+    communityService.update(communityConverter.fromWsType(community));
     return new VoidType();
   }
 
   @Override
   public VoidType opDeleteCommunity(String communityId, AuditInfoType auditHeader) {
+    communityService.delete(communityId);
     return new VoidType();
   }
 
   @Override
-  public CommunitiesType opQueryCommunities(CommunityQueryCriteriaType communityQueryCriteria, AuditInfoType auditHeader) {
-    CommunitiesType c = new CommunitiesType();
-    c.getCommunity().add(new CommunityType());
-    c.getCommunity().add(new CommunityType());
-    return c;
+  public CommunitiesType opQueryCommunities(CommunityQueryCriteriaType query, AuditInfoType auditHeader) {
+    CommunityQueryCriteria qc = new CommunityQueryCriteria(query.getCommunityType(), query.getMemberPic());
+    Collection<Community> comms = communityService.query(qc);
+    CommunitiesType ret = new CommunitiesType();
+    for(Community c : comms) {
+      ret.getCommunity().add(communityConverter.toWsType(c));
+    }
+    return ret;
   }
 
   
   private static class CommunityConverter {
     
     public CommunityConverter() {
+    }
+
+    public Community fromWsType(CommunityType from) {
+      Community to = new Community();
+      to.setId(Long.valueOf(from.getId()));
+      to.setType(from.getType());
+      to.setName(from.getName());
+      MembersType mt = from.getMembers();
+      for(MemberType m : mt.getMember()) {
+        to.getCommunityMembers().add(new CommunityMember(to, m.getPic(), m.getRole()));
+      }
+      
+      return  to;
     }
 
     public CommunityType toWsType(Community from) {

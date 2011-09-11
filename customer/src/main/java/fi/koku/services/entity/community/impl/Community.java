@@ -1,12 +1,13 @@
 package fi.koku.services.entity.community.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Version;
 
@@ -16,7 +17,9 @@ import javax.persistence.Version;
  * @author Ixonos / aspluma
  */
 @Entity
-public class Community {
+public class Community implements Serializable {
+  private static final long serialVersionUID = -6318987012290421231L;
+
   @Id
   @GeneratedValue
   private Long id;
@@ -25,8 +28,7 @@ public class Community {
   
   private String name;
 
-  @OneToMany
-  @JoinColumn(name="community_id")
+  @OneToMany(mappedBy="community", cascade=CascadeType.PERSIST)
   private Collection<CommunityMember> communityMembers = new ArrayList<CommunityMember>();
   
   
@@ -60,12 +62,12 @@ public class Community {
     return id;
   }
 
+  protected void setId(Long id) {
+    this.id = id;
+  }
+
   public Collection<CommunityMember> getCommunityMembers() {
     return communityMembers;
   }
 
-  public void setCommunityMembers(Collection<CommunityMember> communityMembers) {
-    this.communityMembers = communityMembers;
-  }
-  
 }
