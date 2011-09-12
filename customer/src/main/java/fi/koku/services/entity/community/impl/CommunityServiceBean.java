@@ -94,7 +94,6 @@ public class CommunityServiceBean implements CommunityService {
     @SuppressWarnings("unchecked")
     List<Community> communities = q.getResultList();
     for(Community c : communities) {
-      c.getMembers();
       r.add(c);
     }
     return r;
