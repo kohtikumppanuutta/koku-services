@@ -1,15 +1,18 @@
 package fi.koku.services.entity.community.impl;
 
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REMOVE;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static javax.persistence.CascadeType.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Version;
+
 
 /**
  * Community entity.
@@ -29,7 +32,7 @@ public class Community implements Serializable {
   private String name;
 
   @OneToMany(mappedBy="community", cascade={PERSIST, REMOVE})
-  private Collection<CommunityMember> communityMembers = new ArrayList<CommunityMember>();
+  private Collection<CommunityMember> members = new ArrayList<CommunityMember>();
   
   
   @Version
@@ -66,8 +69,33 @@ public class Community implements Serializable {
     this.id = id;
   }
 
-  public Collection<CommunityMember> getCommunityMembers() {
-    return communityMembers;
+  public Collection<CommunityMember> getMembers() {
+    return members;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Community other = (Community) obj;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
   }
 
 }

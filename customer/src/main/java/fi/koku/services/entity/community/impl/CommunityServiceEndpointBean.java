@@ -83,7 +83,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
 
   @Override
   public CommunitiesType opQueryCommunities(CommunityQueryCriteriaType query, AuditInfoType auditHeader) {
-    CommunityQueryCriteria qc = new CommunityQueryCriteria(query.getCommunityType(), query.getMemberPic());
+    CommunityQueryCriteria qc = new CommunityQueryCriteria(query.getMemberPic(), query.getCommunityType());
     Collection<Community> comms = communityService.query(qc);
     CommunitiesType ret = new CommunitiesType();
     for(Community c : comms) {
@@ -105,7 +105,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       to.setName(from.getName());
       MembersType mt = from.getMembers();
       for(MemberType m : mt.getMember()) {
-        to.getCommunityMembers().add(new CommunityMember(to, m.getPic(), m.getRole()));
+        to.getMembers().add(new CommunityMember(to, m.getPic(), m.getRole()));
       }
       
       return  to;
@@ -117,7 +117,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       to.setType(from.getType());
       to.setName(from.getName());
       to.setMembers(new MembersType());
-      for(CommunityMember m : from.getCommunityMembers()) {
+      for(CommunityMember m : from.getMembers()) {
         MemberType mt = new MemberType();
         mt.setPic(m.getMemberId()); //FIXME
         mt.setRole(m.getRole());
