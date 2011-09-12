@@ -16,7 +16,6 @@ import javax.persistence.Query;
  * 
  * TODO:
  * - use DAO
- * - implement query
  * 
  * @author aspluma
 */
@@ -75,18 +74,20 @@ public class CommunityServiceBean implements CommunityService {
 
   @Override
   public Collection<Community> query(CommunityQueryCriteria qc) {
-    // TODO: results in suboptimal N+1 SQL queries!!
-    // use JPQL + fetch join
-    String sql = "SELECT c.*,m.id m_id,m.community_id m_cid,m.member_id m_mid,m.role m_role FROM community c " +
-    		"INNER JOIN community_member m " +
-    		"WHERE c.id = m.community_id AND community_id IN (" +
-    		"SELECT community_id FROM community_member WHERE member_id = :memberId" +
-    		")";
-    Query q = em.createNativeQuery(sql, Community.class);
-    q.setParameter("memberId", qc.getMemberPic());
-
+    // JPQL generates an unnecessary join in the SQL subquery.
+    StringBuilder jpql = new StringBuilder("SELECT c FROM Community c " +
+    		"JOIN FETCH c.members " +
+    		"WHERE c IN (" +
+    		"SELECT cm.community FROM CommunityMember cm WHERE cm.memberId = :memberId" +
+    		")"
+        );
     if(qc.getCommunityType() != null) {
-      // TODO: add optional query criteria
+      jpql.append(" AND c.type = :type");
+    }
+    Query q = em.createQuery(jpql.toString());
+    q.setParameter("memberId", qc.getMemberPic());
+    if(qc.getCommunityType() != null) {
+      q.setParameter("type", qc.getCommunityType());
     }
     
     Set<Community> r = new HashSet<Community>();
