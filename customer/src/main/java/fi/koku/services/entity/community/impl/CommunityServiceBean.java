@@ -90,9 +90,10 @@ public class CommunityServiceBean implements CommunityService {
       q.setParameter("type", qc.getCommunityType());
     }
     
-    Set<Community> r = new HashSet<Community>();
     @SuppressWarnings("unchecked")
     List<Community> communities = q.getResultList();
+    // remove duplicate communities.
+    Set<Community> r = new HashSet<Community>();
     for(Community c : communities) {
       r.add(c);
     }
