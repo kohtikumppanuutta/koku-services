@@ -19,6 +19,42 @@ CREATE TABLE customer (
   version INT NOT NULL
 );
 
+CREATE TABLE address (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  customer_id BIGINT UNSIGNED NOT NULL,
+  type VARCHAR(30) NOT NULL,
+  street_address VARCHAR(30),
+  postal_district VARCHAR(30),
+  postal_code VARCHAR(5),
+  po_box VARCHAR(30),
+  country_code VARCHAR(5),
+  valid_from DATE,
+  valid_to DATE,
+  CONSTRAINT UNIQUE (customer_id, type),
+  FOREIGN KEY (customer_id) REFERENCES customer(id)
+);
+
+CREATE TABLE phone_number (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  customer_id BIGINT UNSIGNED NOT NULL,
+  type VARCHAR(30) NOT NULL,
+  class VARCHAR(30) NOT NULL,
+  number VARCHAR(50) NOT NULL ,
+  CONSTRAINT UNIQUE (customer_id, type),
+  FOREIGN KEY (customer_id) REFERENCES customer(id)
+);
+
+CREATE TABLE electronic_contact_info (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  customer_id BIGINT UNSIGNED NOT NULL,
+  type VARCHAR(30) NOT NULL,
+  contact VARCHAR(100) NOT NULL,
+  CONSTRAINT UNIQUE (customer_id, type),
+  FOREIGN KEY (customer_id) REFERENCES customer(id)
+);
+
+-- ===============================================================
+
 --
 -- community service
 --
