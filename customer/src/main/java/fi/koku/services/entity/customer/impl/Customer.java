@@ -1,5 +1,10 @@
 package fi.koku.services.entity.customer.impl;
 
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REMOVE;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -7,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -52,6 +58,16 @@ public class Customer {
   private String municipality;
   
   private boolean turvakielto;
+  
+  @OneToMany(mappedBy="customer", cascade={PERSIST, REMOVE})
+  private Collection<Address> addresses = new ArrayList<Address>();
+  
+  @OneToMany(mappedBy="customer", cascade={PERSIST, REMOVE})
+  private Collection<PhoneNumber> phones = new ArrayList<PhoneNumber>();
+  
+  @OneToMany(mappedBy="customer", cascade={PERSIST, REMOVE})
+  private Collection<ElectronicContactInfo> electronicContacts = new ArrayList<ElectronicContactInfo>();
+
   
   @Version
   private int version;
@@ -145,6 +161,18 @@ public class Customer {
 
   public void setTurvakielto(boolean turvakielto) {
     this.turvakielto = turvakielto;
+  }
+
+  public Collection<Address> getAddresses() {
+    return addresses;
+  }
+
+  public Collection<PhoneNumber> getPhones() {
+    return phones;
+  }
+
+  public Collection<ElectronicContactInfo> getElectronicContacts() {
+    return electronicContacts;
   }
 
   public int getVersion() {

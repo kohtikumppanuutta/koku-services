@@ -1,19 +1,49 @@
 package fi.koku.services.entity.customer.impl;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 
 /**
  * Phone number entity.
  * 
  * @author Ixonos / aspluma
  */
+@Entity
+@Table(name = "phone_number")
 public class PhoneNumber {
-  private String numberClass;
+  @Id
+  @GeneratedValue
+  private Long id;
+
   private String type;
+
+  @Column(name="class")
+  private String numberClass;
+
   private String number;
 
+  @ManyToOne
+  @JoinColumn(name="customer_id")
+  private Customer customer;
+
+  
   public PhoneNumber() {
   }
   
+  public Long getId() {
+    return id;
+  }
+
+  protected void setId(Long id) {
+    this.id = id;
+  }
+
   public String getNumberClass() {
     return numberClass;
   }
@@ -33,6 +63,14 @@ public class PhoneNumber {
   }
   public void setNumber(String number) {
     this.number = number;
+  }
+
+  public Customer getCustomer() {
+    return customer;
+  }
+
+  public void setCustomer(Customer customer) {
+    this.customer = customer;
   }
 
 }

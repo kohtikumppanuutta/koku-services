@@ -2,22 +2,65 @@ package fi.koku.services.entity.customer.impl;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 /**
  * Address entity.
  * 
  * @author Ixonos / aspluma
  */
+@Entity
 public class Address {
+  @Id
+  @GeneratedValue
+  private Long id;
+
   private String type;
+  
+  @Column(name="street_address")
   private String streetAddress;
+
+  @Column(name="postal_district")
   private String postalDistrict;
+
+  @Column(name="postal_code")
   private String postalCode;
+
+  @Column(name="po_box")
   private String poBox;
+
+  @Column(name="country_code")
   private String countryCode;
+
+  @Column(name="valid_from")
+  @Temporal(TemporalType.DATE)
   private Date validFrom;
+
+  @Column(name="valid_to")
+  @Temporal(TemporalType.DATE)
   private Date validTo;
+
+  @ManyToOne
+  @JoinColumn(name="customer_id")
+  private Customer customer;
+
   
   public Address() {
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  protected void setId(Long id) {
+    this.id = id;
   }
 
   public String getType() {
@@ -82,6 +125,14 @@ public class Address {
 
   public void setValidTo(Date validTo) {
     this.validTo = validTo;
+  }
+
+  public Customer getCustomer() {
+    return customer;
+  }
+
+  public void setCustomer(Customer customer) {
+    this.customer = customer;
   }
 
 }
