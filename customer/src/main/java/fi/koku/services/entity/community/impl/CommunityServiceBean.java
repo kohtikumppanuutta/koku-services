@@ -36,13 +36,17 @@ public class CommunityServiceBean implements CommunityService {
   @Override
   public Community get(String communityId) {
     Long id = Long.valueOf(communityId);
-    Community c = em.find(Community.class, id);
+    
+    Query q = em.createQuery("SELECT c FROM Community c JOIN FETCH c.members WHERE c.id = :id");
+    q.setParameter("id", id);
+    Community c = (Community)q.getSingleResult();
+
     return c;
   }
 
   @Override
   public void update(Community c2) {
-    Community c1 = get(c2.getId().toString());
+    Community c1 = em.find(Community.class, c2.getId().toString());
     c1.setName(c2.getName());
     c1.setType(c2.getType());
 
