@@ -70,37 +70,6 @@ public class CommunityMember implements Serializable {
   public void setCommunity(Community c) {
     this.community = c;
   }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
-    result = prime * result + ((role == null) ? 0 : role.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    CommunityMember other = (CommunityMember) obj;
-    if (memberId == null) {
-      if (other.memberId != null)
-        return false;
-    } else if (!memberId.equals(other.memberId))
-      return false;
-    if (role == null) {
-      if (other.role != null)
-        return false;
-    } else if (!role.equals(other.role))
-      return false;
-    return true;
-  }
   
   
 }
