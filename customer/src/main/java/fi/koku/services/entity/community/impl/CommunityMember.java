@@ -27,6 +27,9 @@ public class CommunityMember implements Serializable {
   @Column(name="member_id")
   private String memberId;
   
+  @Column(name="member_pic")
+  private String memberPic;
+  
   private String role;
   
   @ManyToOne
@@ -37,9 +40,10 @@ public class CommunityMember implements Serializable {
   public CommunityMember() {
   }
   
-  public CommunityMember(Community c, String memberId, String role) {
+  public CommunityMember(Community c, String memberId, String memberPic, String role) {
     this.community = c;
     this.memberId = memberId;
+    this.memberPic = memberPic;
     this.role = role;
   }
 
@@ -53,6 +57,14 @@ public class CommunityMember implements Serializable {
 
   public void setMemberId(String memberId) {
     this.memberId = memberId;
+  }
+
+  public String getMemberPic() {
+    return memberPic;
+  }
+
+  public void setMemberPic(String memberPic) {
+    this.memberPic = memberPic;
   }
 
   public String getRole() {

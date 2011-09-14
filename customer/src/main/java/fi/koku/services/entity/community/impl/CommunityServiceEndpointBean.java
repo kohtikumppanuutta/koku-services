@@ -105,7 +105,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       to.setName(from.getName());
       MembersType mt = from.getMembers();
       for(MemberType m : mt.getMember()) {
-        to.getMembers().add(new CommunityMember(to, m.getPic(), m.getRole()));
+        to.getMembers().add(new CommunityMember(to, m.getId(), m.getPic(), m.getRole()));
       }
       
       return  to;
@@ -119,7 +119,8 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       to.setMembers(new MembersType());
       for(CommunityMember m : from.getMembers()) {
         MemberType mt = new MemberType();
-        mt.setPic(m.getMemberId()); //FIXME
+        mt.setId(m.getMemberId());
+        mt.setPic(m.getMemberPic());
         mt.setRole(m.getRole());
         to.getMembers().getMember().add(mt);
       }
