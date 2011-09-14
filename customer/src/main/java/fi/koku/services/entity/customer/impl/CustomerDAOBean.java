@@ -40,9 +40,10 @@ public class CustomerDAOBean implements CustomerDAO {
 
   @Override
   public void updateCustomer(Customer c) {
-    Customer customer = em.find(Customer.class, c.getId());
-    customer.setCustomer(c);
-    em.merge(c);
+    throw new RuntimeException("Operation not implemented"); // TODO: implement
+//    Customer customer = em.find(Customer.class, c.getId());
+//    customer.setCustomer(c);
+//    em.merge(c);
   }
 
   @Override
@@ -51,7 +52,6 @@ public class CustomerDAOBean implements CustomerDAO {
     em.remove(c.getId());
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public Collection<Customer> queryCustomers(CustomerQueryCriteria qc) {
     StringBuilder qs = new StringBuilder("FROM Customer c ");
@@ -78,6 +78,7 @@ public class CustomerDAOBean implements CustomerDAO {
     for(int i = 0; i<params.size(); i++)
       q.setParameter((String)params.get(i)[0], params.get(i)[1]);
     
+    @SuppressWarnings("unchecked")
     List<Customer> customers = q.getResultList();
     if("full".equals(qc.getSelection())) {
       for(Customer c : customers) {
