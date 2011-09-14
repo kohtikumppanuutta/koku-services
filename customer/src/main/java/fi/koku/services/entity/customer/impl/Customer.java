@@ -57,6 +57,8 @@ public class Customer {
   
   private String municipality;
   
+  private String language;
+  
   private boolean turvakielto;
   
   @OneToMany(mappedBy="customer", cascade={PERSIST, REMOVE})
@@ -155,6 +157,14 @@ public class Customer {
     this.municipality = municipality;
   }
 
+  public String getLanguage() {
+    return language;
+  }
+
+  public void setLanguage(String language) {
+    this.language = language;
+  }
+
   public boolean isTurvakielto() {
     return turvakielto;
   }
@@ -189,6 +199,7 @@ public class Customer {
     setFirstNames(c.getFirstNames());
     setNationality(c.getNationality());
     setMunicipality(c.getMunicipality());
+    setLanguage(c.getLanguage());
     setTurvakielto(c.isTurvakielto());
   }
 
