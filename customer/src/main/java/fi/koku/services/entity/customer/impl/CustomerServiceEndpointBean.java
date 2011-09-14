@@ -90,7 +90,7 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	@Override
 	public CustomerType opGetCustomer(String pic, AuditInfoType auditHeader) {
 		logger.debug("opGetCustomer");
-		return customerConverter.toWsType(customerService.get(pic));
+		return customerConverter.toWsType(customerService.get(pic), "basic");
 	}
 
 	@Override
@@ -111,12 +111,14 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	public CustomersType opQueryCustomers(CustomerQueryCriteriaType criteria, AuditInfoType auditHeader) {
 		logger.debug("opQueryCustomers");
 		
-		CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(Long.valueOf(criteria.getId()), criteria.getPic(), criteria.getSelection());
+		Long id = criteria.getId() != null ? Long.valueOf(criteria.getId()) : null;
+		CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(id, criteria.getPic(), criteria.getSelection());
 		Collection<Customer> customers = customerService.query(customerQueryCriteria);
 		CustomersType r = new CustomersType();
-		for(Customer c : customers)
-		  r.getCustomer().add(customerConverter.toWsType(c));
-		
+		for(Customer c : customers) {
+		  r.getCustomer().add(customerConverter.toWsType(c, criteria.getSelection()));
+		}
+		  
 		return r;
 	}
 
@@ -134,7 +136,7 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	  public CustomerConverter() {
 	  }
 	  
-	  public CustomerType toWsType(Customer c) {
+	  public CustomerType toWsType(Customer c, String profileType) {
       CustomerType ct = new CustomerType();
       ct.setId(c.getId().toString());
       ct.setStatus(c.getStatus());
@@ -149,38 +151,40 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
       ct.setKieliKoodi(c.getLanguage());
 	    ct.setTurvakieltoKytkin(c.isTurvakielto());
 
-	    // addresses
-	    ct.setAddresses(new AddressesType());
-	    for(Address a : c.getAddresses()) {
-	      AddressType at = new AddressType();
-	      at.setAddressType(a.getType());
-	      at.setKatuNimi(a.getStreetAddress());
-	      at.setPostitoimipaikkaNimi(a.getPostalDistrict());
-	      at.setPostinumeroKoodi(a.getPostalCode());
-	      at.setPostilokeroTeksti(a.getPoBox());
-	      at.setMaatunnusKoodi(a.getCountryCode());
-	      at.setAlkuPvm(dateToCalendar(a.getValidFrom()));
-	      at.setLoppuPvm(dateToCalendar(a.getValidTo()));
-	      ct.getAddresses().getAddress().add(at);
-	    }
-	    
-	    // phones
-	    ct.setPhoneNumbers(new PhoneNumbersType());
-	    for(PhoneNumber n : c.getPhones()) {
-	      PhoneNumberType pt = new PhoneNumberType();
-	      pt.setNumberType(n.getType());
-	      pt.setNumberClass(n.getNumberClass());
-	      pt.setPuhelinnumeroTeksti(n.getNumber());
-	      ct.getPhoneNumbers().getPhone().add(pt);
-	    }
+	    if("full".equals(profileType)) {
+	      // addresses
+	      ct.setAddresses(new AddressesType());
+	      for(Address a : c.getAddresses()) {
+	        AddressType at = new AddressType();
+	        at.setAddressType(a.getType());
+	        at.setKatuNimi(a.getStreetAddress());
+	        at.setPostitoimipaikkaNimi(a.getPostalDistrict());
+	        at.setPostinumeroKoodi(a.getPostalCode());
+	        at.setPostilokeroTeksti(a.getPoBox());
+	        at.setMaatunnusKoodi(a.getCountryCode());
+	        at.setAlkuPvm(dateToCalendar(a.getValidFrom()));
+	        at.setLoppuPvm(dateToCalendar(a.getValidTo()));
+	        ct.getAddresses().getAddress().add(at);
+	      }
 
-	    // econtacts
-	    ct.setElectronicContactInfos(new ElectronicContactInfosType());
-	    for(ElectronicContactInfo e : c.getElectronicContacts()) {
-	      ElectronicContactInfoType ec = new ElectronicContactInfoType();
-	      ec.setContactInfoType(e.getType());
-	      ec.setContactInfo(e.getContact());
-	      ct.getElectronicContactInfos().getEContactInfo().add(ec);
+	      // phones
+	      ct.setPhoneNumbers(new PhoneNumbersType());
+	      for(PhoneNumber n : c.getPhones()) {
+	        PhoneNumberType pt = new PhoneNumberType();
+	        pt.setNumberType(n.getType());
+	        pt.setNumberClass(n.getNumberClass());
+	        pt.setPuhelinnumeroTeksti(n.getNumber());
+	        ct.getPhoneNumbers().getPhone().add(pt);
+	      }
+
+	      // econtacts
+	      ct.setElectronicContactInfos(new ElectronicContactInfosType());
+	      for(ElectronicContactInfo e : c.getElectronicContacts()) {
+	        ElectronicContactInfoType ec = new ElectronicContactInfoType();
+	        ec.setContactInfoType(e.getType());
+	        ec.setContactInfo(e.getContact());
+	        ct.getElectronicContactInfos().getEContactInfo().add(ec);
+	      }
 	    }
 	    
 	    return ct;

@@ -53,30 +53,40 @@ public class CustomerDAOBean implements CustomerDAO {
 
   @SuppressWarnings("unchecked")
   @Override
-  public Collection<Customer> queryCustomers(CustomerQueryCriteria c) {
-    StringBuilder qs = new StringBuilder();
-    List<Object[]> params = new ArrayList<Object[]>();
-    if(c.getPic() != null) {
-      qs.append("c.pic = :pic");
-      params.add(new Object[] {"pic", c.getPic()});
+  public Collection<Customer> queryCustomers(CustomerQueryCriteria qc) {
+    StringBuilder qs = new StringBuilder("FROM Customer c ");
+    if("full".equals(qc.getSelection())) {
+    		qs.append("LEFT JOIN FETCH c.addresses ");
     }
-    if(c.getId() != null) {
+    qs.append("WHERE ");
+    List<Object[]> params = new ArrayList<Object[]>();
+    if(qc.getPic() != null) {
+      qs.append("c.pic = :pic");
+      params.add(new Object[] {"pic", qc.getPic()});
+    }
+    if(qc.getId() != null) {
       if(params.size() > 0)
         qs.append(" OR ");
       qs.append("c.id = :id");
-      params.add(new Object[] {"id", c.getId()});
+      params.add(new Object[] {"id", qc.getId()});
     }
-    // TODO: selection determines which related objects to return.
 
     if(params.size() == 0)
       throw new RuntimeException("missing criteria");
-    qs.insert(0, "FROM Customer c WHERE ");
     Query q = em.createQuery(qs.toString());
 
     for(int i = 0; i<params.size(); i++)
       q.setParameter((String)params.get(i)[0], params.get(i)[1]);
-      
-    return q.getResultList();
+    
+    List<Customer> customers = q.getResultList();
+    if("full".equals(qc.getSelection())) {
+      for(Customer c : customers) {
+        c.getPhones();
+        c.getElectronicContacts();
+      }
+    }
+    
+    return customers;
   }
 
 }
