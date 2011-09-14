@@ -69,8 +69,9 @@ CREATE TABLE community (
 CREATE TABLE community_member (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   community_id BIGINT UNSIGNED NOT NULL,
-  member_id BIGINT UNSIGNED NOT NULL,
+  member_id BIGINT UNSIGNED,
+  member_pic BIGINT UNSIGNED NOT NULL,
   role VARCHAR(30) NOT NULL,
-  CONSTRAINT UNIQUE (community_id, member_id),
+  CONSTRAINT UNIQUE (community_id, member_pic),
   FOREIGN KEY (community_id) REFERENCES community(id)
 );
