@@ -35,7 +35,7 @@ public class CustomerDAOBean implements CustomerDAO {
   @Override
   public Long insertCustomer(Customer c) {
     em.persist(c);
-    return c.getId().longValue();
+    return c.getId();
   }
 
   @Override
