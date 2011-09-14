@@ -14,10 +14,12 @@ import fi.koku.services.entity.kks.v1.KksEntriesType;
 import fi.koku.services.entity.kks.v1.KksEntryClassType;
 import fi.koku.services.entity.kks.v1.KksEntryClassesType;
 import fi.koku.services.entity.kks.v1.KksEntryType;
+import fi.koku.services.entity.kks.v1.KksEntryValueType;
 import fi.koku.services.entity.kks.v1.KksGroupType;
 import fi.koku.services.entity.kks.v1.KksGroupsType;
 import fi.koku.services.entity.kks.v1.KksTagIdsType;
 import fi.koku.services.entity.kks.v1.KksTagType;
+import fi.koku.services.entity.kks.v1.KksTagsType;
 import fi.koku.services.entity.kks.v1.ValueSpacesType;
 
 /**
@@ -59,6 +61,7 @@ public class KksConverter {
     for (KksGroup g : collectionClass.getGroups()) {
       kksGroupsType.getKksGroup().add(toWsType(g));
     }
+    tmp.setKksGroups(kksGroupsType);
     return tmp;
 
   }
@@ -72,17 +75,23 @@ public class KksConverter {
     kksEntryClassType.setMultiValue(entryClass.isMultiValue());
     kksEntryClassType.setName(entryClass.getName());
     kksEntryClassType.setSortOrder(new BigInteger("" + entryClass.getSortOrder()));
-    KksTagIdsType kksTagIdsType = new KksTagIdsType();
+    KksTagsType kksTagsType = new KksTagsType();
 
-    for (KksTag tag : entryClass.getTags()) {
-      kksTagIdsType.getKksTagId().add("" + tag.getId());
+    if (entryClass.getTags() != null) {
+      for (KksTag tag : entryClass.getTags()) {
+        KksTagType t = new KksTagType();
+        t.setId("" + tag.getId());
+        t.setName(tag.getName());
+        t.setDescription(tag.getDescription());
+        kksTagsType.getKksTag().add(t);
+      }
     }
 
-    kksEntryClassType.setKksTagIds(kksTagIdsType);
+    kksEntryClassType.setKksTags(kksTagsType);
 
     ValueSpacesType valueSpacesType = new ValueSpacesType();
 
-    if (entryClass.isMultiValue()) {
+    if (entryClass.getValueSpaces() != null) {
       String tmp[] = entryClass.getValueSpaces().split(",");
       for (String s : tmp) {
         valueSpacesType.getValueSpace().add(s);
@@ -111,6 +120,16 @@ public class KksConverter {
 
     kksGroupType.setKksEntryClasses(kksEntryClassesType);
 
+    if (group.getSubGroups() != null) {
+      KksGroupsType subGroups = new KksGroupsType();
+
+      for (KksGroup sb : group.getSubGroups()) {
+        subGroups.getKksGroup().add(toWsType(sb));
+      }
+
+      kksGroupType.setSubGroups(subGroups);
+    }
+
     return kksGroupType;
   }
 
@@ -121,6 +140,7 @@ public class KksConverter {
     Calendar c = new GregorianCalendar();
     c.setTime(created);
     kksCollectionType.setCreated(c);
+    kksCollectionType.setCreator(collection.getCreator());
     kksCollectionType.setCustomerId(collection.getCustomer());
     kksCollectionType.setDescription(collection.getDescription());
     kksCollectionType.setId("" + collection.getId());
@@ -134,8 +154,10 @@ public class KksConverter {
 
     KksEntriesType kksEntriesType = new KksEntriesType();
 
-    for (KksEntry e : collection.getEntries()) {
-      kksEntriesType.getEntries().add(toWsType(e));
+    if (collection.getEntries() != null) {
+      for (KksEntry e : collection.getEntries()) {
+        kksEntriesType.getEntries().add(toWsType(e));
+      }
     }
 
     kksCollectionType.setKksEntries(kksEntriesType);
@@ -164,7 +186,10 @@ public class KksConverter {
     EntryValuesType entryValuesType = new EntryValuesType();
 
     for (KksValue v : entry.getValues()) {
-      entryValuesType.getEntryValue().add(v.getValue());
+      KksEntryValueType kksEv = new KksEntryValueType();
+      kksEv.setId("" + v.getId());
+      kksEv.setValue(v.getValue());
+      entryValuesType.getEntryValue().add(kksEv);
     }
 
     kksEntryType.setEntryValues(entryValuesType);
@@ -204,24 +229,38 @@ public class KksConverter {
     }
 
     entry.setEntryClassId(Integer.parseInt(entryType.getEntryClassId()));
-    entry.setId(Integer.parseInt(entryType.getId()));
+
+    entry.setId(parseNullableInt(entryType.getId()));
     entry.setModified(entryType.getModified().getTime());
     entry.setVersion(entryType.getVersion().toString());
 
     List<KksValue> tmp = new ArrayList<KksValue>();
 
-    for (String value : entryType.getEntryValues().getEntryValue()) {
+    for (KksEntryValueType value : entryType.getEntryValues().getEntryValue()) {
       KksValue v = new KksValue();
-      v.setValue(value);
+      v.setId(parseNullableInt(value.getId()));
+      v.setValue(value.getValue());
       tmp.add(v);
     }
 
     List<Integer> tagIds = new ArrayList<Integer>();
-    for (String tagId : entryType.getKksTagIds().getKksTagId()) {
-      tagIds.add(Integer.parseInt(tagId));
+
+    if (entryType.getKksTagIds() != null) {
+      for (String tagId : entryType.getKksTagIds().getKksTagId()) {
+        tagIds.add(Integer.parseInt(tagId));
+      }
+      entry.setTagIds(tagIds);
     }
-    entry.setTagIds(tagIds);
     entry.setValues(tmp);
     return entry;
+  }
+
+  public static Integer parseNullableInt(String strInt) {
+    if (strInt == null) {
+      return null;
+    } else if (strInt.equals("")) {
+      return null;
+    }
+    return new Integer(strInt);
   }
 }

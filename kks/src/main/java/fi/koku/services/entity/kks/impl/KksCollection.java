@@ -16,6 +16,7 @@ public class KksCollection {
   private String description;
   private String status;
   private Date created;
+  private String creator;
   private String version;
   private KksCollectionClass collectionClass;
   private List<KksEntry> entries;
@@ -109,6 +110,14 @@ public class KksCollection {
 
   public void setCustomer(String customer) {
     this.customer = customer;
+  }
+
+  public String getCreator() {
+    return creator;
+  }
+
+  public void setCreator(String creator) {
+    this.creator = creator;
   }
 
 }

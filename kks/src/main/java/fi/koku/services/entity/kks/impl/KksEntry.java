@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class KksEntry {
 
-  private int id;
+  private Integer id;
   private Date modified;
   private String creator;
   private String version;
@@ -20,11 +20,11 @@ public class KksEntry {
   private List<KksValue> values;
   private String customer;
 
-  public int getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 

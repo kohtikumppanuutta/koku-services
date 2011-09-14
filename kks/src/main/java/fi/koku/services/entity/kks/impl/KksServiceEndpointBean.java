@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory;
 import fi.koku.services.entity.kks.v1.AuditInfoType;
 import fi.koku.services.entity.kks.v1.KksCollectionClassesType;
 import fi.koku.services.entity.kks.v1.KksCollectionCreationCriteriaType;
+import fi.koku.services.entity.kks.v1.KksCollectionStateCriteriaType;
 import fi.koku.services.entity.kks.v1.KksCollectionType;
 import fi.koku.services.entity.kks.v1.KksCollectionsCriteriaType;
 import fi.koku.services.entity.kks.v1.KksCollectionsType;
+import fi.koku.services.entity.kks.v1.KksEntryCriteriaType;
 import fi.koku.services.entity.kks.v1.KksQueryCriteriaType;
 import fi.koku.services.entity.kks.v1.KksServicePortType;
 import fi.koku.services.entity.kks.v1.KksTagIdsType;
@@ -93,7 +95,8 @@ public class KksServiceEndpointBean implements KksServicePortType {
   @Override
   public boolean opUpdateKksCollection(KksCollectionType kksCollection, AuditInfoType auditHeader) throws ServiceFault {
     LOG.debug("opUpdateKksCollection");
-    return kksService.update(KksConverter.fromWsType(kksCollection));
+    kksService.update(KksConverter.fromWsType(kksCollection));
+    return true;
   }
 
   @Override
@@ -103,9 +106,9 @@ public class KksServiceEndpointBean implements KksServicePortType {
 
     KksCollectionsType kksCollectionsType = new KksCollectionsType();
 
-    List<String> tagIds = kksQueryCriteria.getKksTagIds().getKksTagId();
+    List<String> tagNames = kksQueryCriteria.getKksTagNames().getKksTagName();
 
-    List<KksCollection> tmp = kksService.getCollections(kksQueryCriteria.getPic(), tagIds);
+    List<KksCollection> tmp = kksService.getCollections(kksQueryCriteria.getPic(), tagNames);
 
     for (KksCollection c : tmp) {
       kksCollectionsType.getKksCollection().add(KksConverter.toWsType(c));
@@ -121,5 +124,24 @@ public class KksServiceEndpointBean implements KksServicePortType {
 
     return KksConverter.toWsType(kksService.add(kksCollectionCreationCriteria.getPic(),
         kksCollectionCreationCriteria.getCollectionTypeId(), kksCollectionCreationCriteria.getCollectionName()));
+  }
+
+  @Override
+  public boolean opAddEntry(KksEntryCriteriaType kksEntryAddType, AuditInfoType auditHeader) throws ServiceFault {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean opDeleteEntry(KksEntryCriteriaType kksEntryDeleteType, AuditInfoType auditHeader) throws ServiceFault {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean opUpdateKksCollectionStatus(KksCollectionStateCriteriaType kksCollectionStateCriteriaType,
+      AuditInfoType auditHeader) throws ServiceFault {
+    // TODO Auto-generated method stub
+    return false;
   }
 }

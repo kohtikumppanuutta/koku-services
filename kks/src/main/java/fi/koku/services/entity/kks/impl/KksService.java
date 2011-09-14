@@ -25,7 +25,7 @@ public interface KksService {
 
   KksCollection get(String collectionId);
 
-  List<KksCollection> getCollections(String pic, List<String> tagIds);
+  List<KksCollection> getCollections(String pic, List<String> tagNames);
 
   void injectMetadata(KksCollection collection, String collectionClassId);
 
