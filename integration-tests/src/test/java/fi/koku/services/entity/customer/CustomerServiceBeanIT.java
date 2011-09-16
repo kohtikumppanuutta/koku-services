@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.*;
 import fi.koku.services.entity.customer.v1.AddressType;
 import fi.koku.services.entity.customer.v1.AddressesType;
@@ -43,11 +44,11 @@ public class CustomerServiceBeanIT {
     assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM CUSTOMER"), is(2));
     
     // Call the web service
-    CustomerType customer;
+    CustomerType customer = null;
     try {
       customer = customerServicePort.opGetCustomer("12346", audit);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      fail(e.toString());
     }
     
     // Verify the returned result or DB state
@@ -96,12 +97,10 @@ public class CustomerServiceBeanIT {
     phoneNumbers.getPhone().add(phoneNumber);
     customer.setPhoneNumbers(phoneNumbers);
     
-    
-    
     try {
       customerServicePort.opAddCustomer(customer, audit);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      fail(e.toString());
     }
     
     assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM CUSTOMER"), is(1));
