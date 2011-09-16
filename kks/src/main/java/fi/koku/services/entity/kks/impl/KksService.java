@@ -13,15 +13,19 @@ import javax.ejb.Local;
 @Local
 public interface KksService {
 
-  List<KksTag> getTags();
+  List<KksTag> getTags(List<String> tagIds);
 
   List<KksCollectionClass> getCollectionClasses();
 
   List<KksCollection> getCollections(String pic, String scope);
 
-  KksCollection add(String customer, String collectionClassId, String name);
+  KksCollection add(String creator, String customer, String collectionClassId, String name);
+
+  void removeEntry(Long id);
 
   boolean update(KksCollection collection);
+
+  void updateCollectionStatus(String collection, String status);
 
   KksCollection get(String collectionId);
 

@@ -1,21 +1,43 @@
 package fi.koku.services.entity.kks.impl;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 /**
  * Entity for kks entity value
  * 
  * @author Ixonos / tuomape
  * 
  */
-public class KksValue {
+@Entity
+@Table(name = "kks_value")
+public class KksValue implements Serializable {
 
-  private Integer id;
+  private static final long serialVersionUID = -6283807100612085012L;
+
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  @Column(nullable = false)
   private String value;
 
-  public Integer getId() {
+  @ManyToOne
+  @JoinColumn(name = "entry_id")
+  private KksEntry entry;
+
+  public Long getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -25,6 +47,14 @@ public class KksValue {
 
   public void setValue(String value) {
     this.value = value;
+  }
+
+  public KksEntry getEntry() {
+    return entry;
+  }
+
+  public void setEntry(KksEntry entry) {
+    this.entry = entry;
   }
 
 }

@@ -1,6 +1,19 @@
 package fi.koku.services.entity.kks.impl;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Entity for entry class (entry metadata)
@@ -8,24 +21,54 @@ import java.util.List;
  * @author Ixonos / tuomape
  * 
  */
-public class KksEntryClass {
+@Entity
+@Table(name = "kks_entry_class")
+public class KksEntryClass implements Serializable {
 
-  private int id;
+  private static final long serialVersionUID = 4568034252182971307L;
+
+  @Id
+  @GeneratedValue
+  private Integer id;
+
+  @Column(name = "entry_class_id")
+  private int entryClassId;
+
+  @Column(name = "sort_order", nullable = false)
   private int sortOrder;
+
+  @Column(nullable = false)
   private String name;
+
+  @Column
   private String description;
+
+  @Column(name = "multi_value", nullable = false)
   private boolean multiValue;
+
+  @Column(name = "data_type", nullable = false)
   private String dataType;
+
+  @Column(name = "value_spaces")
   private String valueSpaces;
-  private KksCollectionClass collectionClass;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "entry_group")
   private KksGroup group;
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "kks_entry_class_tags", joinColumns = @JoinColumn(name = "entry_class_id", referencedColumnName = "entry_class_id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tag_id"))
   private List<KksTag> tags;
 
-  public int getId() {
+  public KksEntryClass() {
+    tags = new ArrayList<KksTag>();
+  }
+
+  public Integer getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
@@ -77,14 +120,6 @@ public class KksEntryClass {
     this.valueSpaces = valueSpaces;
   }
 
-  public KksCollectionClass getCollectionClass() {
-    return collectionClass;
-  }
-
-  public void setCollectionClass(KksCollectionClass collectionClass) {
-    this.collectionClass = collectionClass;
-  }
-
   public KksGroup getGroup() {
     return group;
   }
@@ -99,6 +134,14 @@ public class KksEntryClass {
 
   public void setTags(List<KksTag> tags) {
     this.tags = tags;
+  }
+
+  public int getEntryClassId() {
+    return entryClassId;
+  }
+
+  public void setEntryClassId(int entryClassId) {
+    this.entryClassId = entryClassId;
   }
 
 }

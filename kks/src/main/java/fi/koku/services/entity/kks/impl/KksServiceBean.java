@@ -20,14 +20,8 @@ public class KksServiceBean implements KksService {
   KksServiceDAO serviceDAO;
 
   @Override
-  public List<KksTag> getTags() {
-    List<KksTag> tmp = new ArrayList<KksTag>();
-    KksTag kt = new KksTag();
-    kt.setDescription("Tagin kuvaus");
-    kt.setId(1);
-    kt.setName("Tagin nimi");
-    tmp.add(kt);
-    return tmp;
+  public List<KksTag> getTags(List<String> tagIds) {
+    return serviceDAO.getTags(tagIds);
   }
 
   private KksEntryClass createEntryClass(int id, String name, String desc, String type, KksGroup group) {
@@ -56,11 +50,7 @@ public class KksServiceBean implements KksService {
 
   @Override
   public List<KksCollectionClass> getCollectionClasses() {
-    KksCollectionClass tmp = createCollectionClass();
-
-    List<KksCollectionClass> cList = new ArrayList<KksCollectionClass>();
-    cList.add(tmp);
-    return cList;
+    return serviceDAO.getCollectionClasses();
   }
 
   private KksCollectionClass createCollectionClass() {
@@ -86,8 +76,8 @@ public class KksServiceBean implements KksService {
     List<KksGroup> tmp3 = new ArrayList<KksGroup>();
     tmp3.add(subgroup2);
 
-    group2.setSubGroups(tmp3);
-    group.setSubGroups(tmp2);
+    // group2.setSubGroups(tmp3);
+    // group.setSubGroups(tmp2);
     tmp.setGroups(tmp1);
     return tmp;
   }
@@ -117,16 +107,13 @@ public class KksServiceBean implements KksService {
   @Override
   public List<KksCollection> getCollections(String customer, String scope) {
 
-    List<KksCollection> cList = new ArrayList<KksCollection>();
-    cList.add(createCollection(1, "Kokoelman nimi", customer));
-    cList.add(createCollection(2, "Kokoelman nimi 2", customer));
-    cList.add(createCollection(3, "Kokoelman nimi 3", customer));
-    return cList;
+    // TODO: Scope mukaan, ehkä lazy init kirjausten hakemiselle
+    return serviceDAO.getCollections(customer);
   }
 
-  private KksCollection createCollection(int id, String name, String customer) {
+  private KksCollection createCollection(Long id, String name, String customer) {
     KksCollection c = new KksCollection();
-    c.setCollectionClass(createCollectionClass());
+    c.setCollectionClass(1);
     c.setCreated(new Date());
     c.setCustomer(customer);
     c.setDescription("DESC");
@@ -137,19 +124,19 @@ public class KksServiceBean implements KksService {
 
     if (id == 2) {
       c.setStatus("LOCKED");
-      c.setVersion("1");
+      c.setVersion(1);
 
     } else {
       c.setStatus("ACTIVE");
-      c.setVersion("1");
+      c.setVersion(1);
 
     }
     List<KksEntry> tmp = new ArrayList<KksEntry>();
-    KksEntry e = createEntry(1, 1, "value1");
-    KksEntry e1 = createEntry(6, 6, "value6");
-    KksEntry e2 = createEntry(7, 7, "value1");
-    KksEntry e3 = createEntry(8, 8, "value");
-    KksEntry e4 = createMultiEntry(9, 9, "value", "value 2", "Value 3");
+    KksEntry e = createEntry(1L, 1, "value1");
+    KksEntry e1 = createEntry(6L, 6, "value6");
+    KksEntry e2 = createEntry(7L, 7, "value1");
+    KksEntry e3 = createEntry(8L, 8, "value");
+    KksEntry e4 = createMultiEntry(9L, 9, "value", "value 2", "Value 3");
 
     tmp.add(e);
     tmp.add(e1);
@@ -161,7 +148,7 @@ public class KksServiceBean implements KksService {
     return c;
   }
 
-  private KksEntry createEntry(int id, int entryId, String value) {
+  private KksEntry createEntry(Long id, int entryId, String value) {
     KksEntry e = new KksEntry();
     e.setCreator("Luoja");
     e.setCustomer("Customer");
@@ -171,20 +158,20 @@ public class KksServiceBean implements KksService {
 
     List<KksValue> values = new ArrayList<KksValue>();
     KksValue v = new KksValue();
-    v.setId(1);
+    v.setId(1L);
     v.setValue(value);
     values.add(v);
     e.setValues(values);
-    e.setVersion("1");
+    e.setVersion(1);
 
     List<Integer> tagIds = new ArrayList<Integer>();
     tagIds.add(1);
     tagIds.add(2);
-    e.setTagIds(tagIds);
+
     return e;
   }
 
-  private KksEntry createMultiEntry(int id, int entryId, String... value) {
+  private KksEntry createMultiEntry(long id, int entryId, String... value) {
     KksEntry e = new KksEntry();
     e.setCreator("Luoja");
     e.setCustomer("Customer");
@@ -196,17 +183,17 @@ public class KksServiceBean implements KksService {
 
     for (String sv : value) {
       KksValue v = new KksValue();
-      v.setId(1);
+      v.setId(1L);
       v.setValue(sv);
       values.add(v);
     }
     e.setValues(values);
-    e.setVersion("1");
+    e.setVersion(1);
 
     List<Integer> tagIds = new ArrayList<Integer>();
     tagIds.add(1);
     tagIds.add(2);
-    e.setTagIds(tagIds);
+    // e.setTagIds(tagIds);
     return e;
   }
 
@@ -219,7 +206,7 @@ public class KksServiceBean implements KksService {
   @Override
   public KksCollection get(String collectionId) {
 
-    return createCollection(Integer.parseInt(collectionId), "Kokoelman nimi", "");
+    return serviceDAO.getCollection(collectionId);
   }
 
   @Override
@@ -228,16 +215,26 @@ public class KksServiceBean implements KksService {
   }
 
   @Override
-  public KksCollection add(String customer, String collectionClassId, String name) {
+  public KksCollection add(String creator, String customer, String collectionClassId, String name) {
 
-    return createCollection(100, name, customer);
+    return serviceDAO.insertCollection(name, collectionClassId, customer, creator);
   }
 
   @Override
   public void injectMetadata(KksCollection collection, String collectionClassId) {
 
-    collection.setCollectionClass(serviceDAO.getCollectionClass(collectionClassId));
+    collection.setCollectionClass(Integer.parseInt(collectionClassId));
 
+  }
+
+  @Override
+  public void removeEntry(Long id) {
+    serviceDAO.deleteEntry(id);
+  }
+
+  @Override
+  public void updateCollectionStatus(String collection, String status) {
+    serviceDAO.updateCollectionStatus(collection, status);
   }
 
 }

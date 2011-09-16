@@ -135,7 +135,7 @@ public class KksConverter {
 
   public static KksCollectionType toWsType(KksCollection collection) {
     KksCollectionType kksCollectionType = new KksCollectionType();
-    kksCollectionType.setCollectionClassId("" + collection.getCollectionClass().getId());
+    kksCollectionType.setCollectionClassId("" + collection.getCollectionClass());
     Date created = collection.getCreated();
     Calendar c = new GregorianCalendar();
     c.setTime(created);
@@ -149,7 +149,7 @@ public class KksConverter {
     kksCollectionType.setNextVersion(collection.getNextVersion());
     kksCollectionType.setPrevVersion(collection.getPrevVersion());
     kksCollectionType.setStatus(collection.getStatus());
-    kksCollectionType.setVersion(new BigInteger(collection.getVersion()));
+    kksCollectionType.setVersion(new BigInteger("" + collection.getVersion()));
     kksCollectionType.setVersioned(collection.getNextVersion() != null);
 
     KksEntriesType kksEntriesType = new KksEntriesType();
@@ -173,13 +173,13 @@ public class KksConverter {
     Calendar c = new GregorianCalendar();
     c.setTime(entry.getModified());
     kksEntryType.setModified(c);
-    kksEntryType.setVersion(new BigInteger(entry.getVersion()));
+    kksEntryType.setVersion(new BigInteger("" + entry.getVersion()));
 
     KksTagIdsType kksTagIdsType = new KksTagIdsType();
 
-    for (Integer tagId : entry.getTagIds()) {
-      kksTagIdsType.getKksTagId().add("" + tagId);
-    }
+    // for (Integer tagId : entry.getTagIds()) {
+    // kksTagIdsType.getKksTagId().add("" + tagId);
+    // }
 
     kksEntryType.setKksTagIds(kksTagIdsType);
 
@@ -204,12 +204,12 @@ public class KksConverter {
     kksCollection.setCreated(collection.getCreated().getTime());
 
     kksCollection.setDescription(collection.getDescription());
-    kksCollection.setId(Integer.parseInt(collection.getId()));
+    kksCollection.setId(Long.parseLong(collection.getId()));
     kksCollection.setName(collection.getName());
     kksCollection.setNextVersion(collection.getNextVersion());
     kksCollection.setPrevVersion(collection.getPrevVersion());
     kksCollection.setStatus(collection.getStatus());
-    kksCollection.setVersion(collection.getVersion().toString());
+    kksCollection.setVersion(collection.getVersion().intValue());
 
     List<KksEntry> tmp = new ArrayList<KksEntry>();
     for (KksEntryType et : collection.getKksEntries().getEntries()) {
@@ -225,20 +225,20 @@ public class KksConverter {
 
     entry.setCustomer(entryType.getCustomerId());
     if (entryType.getId() != null) {
-      entry.setId(Integer.parseInt(entryType.getId()));
+      entry.setId(Long.parseLong(entryType.getId()));
     }
 
     entry.setEntryClassId(Integer.parseInt(entryType.getEntryClassId()));
 
-    entry.setId(parseNullableInt(entryType.getId()));
+    entry.setId(parseNullableLong(entryType.getId()));
     entry.setModified(entryType.getModified().getTime());
-    entry.setVersion(entryType.getVersion().toString());
+    entry.setVersion(entryType.getVersion().intValue());
 
     List<KksValue> tmp = new ArrayList<KksValue>();
 
     for (KksEntryValueType value : entryType.getEntryValues().getEntryValue()) {
       KksValue v = new KksValue();
-      v.setId(parseNullableInt(value.getId()));
+      v.setId(parseNullableLong(value.getId()));
       v.setValue(value.getValue());
       tmp.add(v);
     }
@@ -249,7 +249,7 @@ public class KksConverter {
       for (String tagId : entryType.getKksTagIds().getKksTagId()) {
         tagIds.add(Integer.parseInt(tagId));
       }
-      entry.setTagIds(tagIds);
+      // entry.setTagIds(tagIds);
     }
     entry.setValues(tmp);
     return entry;
@@ -262,5 +262,14 @@ public class KksConverter {
       return null;
     }
     return new Integer(strInt);
+  }
+
+  public static Long parseNullableLong(String strInt) {
+    if (strInt == null) {
+      return null;
+    } else if (strInt.equals("")) {
+      return null;
+    }
+    return new Long(strInt);
   }
 }

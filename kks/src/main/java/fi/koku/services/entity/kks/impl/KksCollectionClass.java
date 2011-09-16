@@ -1,6 +1,16 @@
 package fi.koku.services.entity.kks.impl;
 
+import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Entity for collection class (collection metadata)
@@ -8,18 +18,36 @@ import java.util.List;
  * @author Ixonos / tuomape
  * 
  */
-public class KksCollectionClass {
+@Entity
+@NamedQueries({ @NamedQuery(name = KksCollectionClass.NAMED_QUERY_GET_ALL_COLLECTION_CLASSES, query = "FROM KksCollectionClass k") })
+@Table(name = "kks_collection_class")
+public class KksCollectionClass implements Serializable {
 
-  private int id;
+  private static final long serialVersionUID = -465916799624311938L;
+
+  public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASSES = "getAllCollectionClasses";
+
+  @Id
+  @GeneratedValue
+  private Integer id;
+
+  @Column(name = "collection_class_id")
+  private int collectionClassId;
+
+  @Column
   private String name;
+
+  @Column
   private String description;
+
+  @Transient
   private List<KksGroup> groups;
 
-  public int getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
@@ -47,4 +75,11 @@ public class KksCollectionClass {
     this.groups = groups;
   }
 
+  public int getCollectionClassId() {
+    return collectionClassId;
+  }
+
+  public void setCollectionClassId(int collectionClassId) {
+    this.collectionClassId = collectionClassId;
+  }
 }

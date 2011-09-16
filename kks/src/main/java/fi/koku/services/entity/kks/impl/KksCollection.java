@@ -1,7 +1,25 @@
 package fi.koku.services.entity.kks.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 /**
  * Entity for kks collection
@@ -9,26 +27,62 @@ import java.util.List;
  * @author Ixonos / tuomape
  * 
  */
-public class KksCollection {
+@Entity
+@NamedQueries({ @NamedQuery(name = KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_PIC, query = "FROM KksCollection k WHERE k.customer =:pic") })
+@Table(name = "kks_collection")
+public class KksCollection implements Serializable {
 
-  private int id;
+  public static final String NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_PIC = "getAllCollectionsByPic";
+
+  private static final long serialVersionUID = 8064946506296337381L;
+
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  @Column(nullable = false)
   private String name;
+
+  @Column
   private String description;
+
+  @Column(nullable = false)
   private String status;
+
+  @Column(nullable = false)
+  @Temporal(TemporalType.DATE)
   private Date created;
+
+  @Column(nullable = false)
   private String creator;
-  private String version;
-  private KksCollectionClass collectionClass;
-  private List<KksEntry> entries;
+
+  @Version
+  private int version;
+
+  @Column(name = "next_version")
   private String nextVersion;
+
+  @Column(name = "prev_version")
   private String prevVersion;
+
+  @Column(nullable = false)
   private String customer;
 
-  public int getId() {
+  @Column(name = "collection_class_id")
+  private int collectionClass;
+
+  @OneToMany(mappedBy = "kksCollection", cascade = CascadeType.ALL)
+  private List<KksEntry> entries;
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "kks_collection_tags", joinColumns = @JoinColumn(name = "collection_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tag_id"))
+  private List<KksTag> tags;
+
+  public Long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -64,19 +118,19 @@ public class KksCollection {
     this.created = created;
   }
 
-  public String getVersion() {
+  public int getVersion() {
     return version;
   }
 
-  public void setVersion(String version) {
+  public void setVersion(int version) {
     this.version = version;
   }
 
-  public KksCollectionClass getCollectionClass() {
+  public int getCollectionClass() {
     return collectionClass;
   }
 
-  public void setCollectionClass(KksCollectionClass collectionClass) {
+  public void setCollectionClass(int collectionClass) {
     this.collectionClass = collectionClass;
   }
 
@@ -118,6 +172,14 @@ public class KksCollection {
 
   public void setCreator(String creator) {
     this.creator = creator;
+  }
+
+  public List<KksTag> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<KksTag> tags) {
+    this.tags = tags;
   }
 
 }
