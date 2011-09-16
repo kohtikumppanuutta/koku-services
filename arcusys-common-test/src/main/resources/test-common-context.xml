@@ -54,6 +54,9 @@
                 <prop key="openjpa.Log">DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=INFO</prop>
 <!--                    <prop key="openjpa.Log">DefaultLevel=WARN, Runtime=TRACE, Tool=TRACE, SQL=TRACE</prop> -->
                 <prop key="openjpa.TransactionMode">local</prop>
+<!--                 <prop key="openjpa.DetachState">fgs</prop> -->
+                
+<!--                 <prop key="openjpa.DetachState">fetch-groups</prop> -->
             </props>
         </property>
     </bean>
@@ -68,7 +71,9 @@
 
     <aop:config>
         <aop:pointcut id="kvDaoMethods" expression="execution(* fi.arcusys.koku.common.service.impl.*DAOImpl.*(..))" />
+<!--         <aop:pointcut id="testUtilMethods" expression="execution(* fi.arcusys.koku.common.service.CommonTestUtil.*(..))" /> -->
         <aop:advisor advice-ref="txAdvice" pointcut-ref="kvDaoMethods" />
+<!--         <aop:advisor advice-ref="txAdvice" pointcut-ref="testUtilMethods" /> -->
     </aop:config>
 
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
@@ -94,5 +99,7 @@
     <bean id="consentTemplateDao" class="fi.arcusys.koku.common.service.impl.ConsentTemplateDAOImpl" />
     <bean id="consentDao" class="fi.arcusys.koku.common.service.impl.ConsentDAOImpl" />
     <bean id="consentReplyDao" class="fi.arcusys.koku.common.service.impl.ConsentReplyDAOImpl" />
+    <bean id="authorizationTemplateDao" class="fi.arcusys.koku.common.service.impl.AuthorizationTemplateDAOImpl" />
+    <bean id="authorizationDao" class="fi.arcusys.koku.common.service.impl.AuthorizationDAOImpl" />
     
 </beans>

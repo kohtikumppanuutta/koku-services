@@ -17,5 +17,7 @@
     <bean id="notificationService" class="fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl" />
 
     <bean id="consentServiceFacade" class="fi.arcusys.koku.tiva.service.impl.ConsentServiceFacadeImpl" />
+    
+    <bean id="authorizationServiceFacade" class="fi.arcusys.koku.tiva.service.impl.AuthorizationServiceFacadeImpl" />
 
 </beans>

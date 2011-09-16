@@ -10,12 +10,13 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
+import fi.arcusys.koku.common.service.datamodel.AbstractEntity;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 18, 2011
  */
-public abstract class AbstractEntityDAOImpl<T> implements AbstractEntityDAO<T> {
+public abstract class AbstractEntityDAOImpl<T extends AbstractEntity> implements AbstractEntityDAO<T> {
 	public static final String IDS_PARAMETER_NAME = "ids";
 
 	protected EntityManager em;
@@ -43,9 +44,9 @@ public abstract class AbstractEntityDAOImpl<T> implements AbstractEntityDAO<T> {
 		return entity;
 	}
 
-	protected T getSingleResultOrNull(final String queryName, final Map<String, Object> params) {
+	protected T getSingleResultOrNull(final String queryName, final Map<String, ?> params) {
 		final Query query = em.createNamedQuery(queryName);
-		for (final Map.Entry<String, Object> entry : params.entrySet()) {
+		for (final Map.Entry<String, ?> entry : params.entrySet()) {
 			query.setParameter(entry.getKey(), entry.getValue());
 		}
 		final List<T> result = (List<T>)query.getResultList();

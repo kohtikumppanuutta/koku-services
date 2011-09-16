@@ -52,7 +52,7 @@ import fi.arcusys.koku.common.service.datamodel.User;
 public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 
     private static final String APPOINTMENT_CANCELLED_FOR_TARGET_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on peruuttu käyttäjän {2} toimesta";
-    private static final String APPOINTMENT_CANCELLED_WHOLE_BODY = "Tapaaminen '{0}' on peruutettu";
+    private static final String APPOINTMENT_CANCELLED_WHOLE_BODY = "Tapaaminen \"{0}\" on peruutettu";
     private static final String APPOINTMENT_CANCELLED_SUBJECT = "Tapaaminen on peruutettu";
 
     private final static Logger logger = LoggerFactory.getLogger(AppointmentServiceFacadeImpl.class);
@@ -566,7 +566,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         appointmentDAO.update(response.getAppointment());
         notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_SUBJECT, 
                 Collections.singletonList(response.getAppointment().getSender().getUid()), 
-                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_FOR_TARGET_BODY, response.getAppointment().getSubject(), targetUser, user));
+                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_FOR_TARGET_BODY, new Object[] {response.getAppointment().getSubject(), targetUser, user}));
     }
 
     /**
@@ -593,6 +593,6 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         }
         notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_SUBJECT, 
                 new ArrayList<String>(notificationReceivers), 
-                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_WHOLE_BODY, appointment.getSubject()));
+                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_WHOLE_BODY, new Object[] {appointment.getSubject()}));
     }
 }

@@ -56,7 +56,6 @@ public class ConsentDAOImpl extends AbstractEntityDAOImpl<Consent> implements Co
         if (criteria == null || criteria.isEmpty()) {
             return getResultList("findProcessedConsentsBySender", Collections.singletonMap("sender", user), startNum, maxNum);
         } else {
-            final Map<String, Object> params = new HashMap<String, Object>();
             /* "SELECT DISTINCT cn FROM Consent cn WHERE " +
              * "(EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn))" +
              * " AND cn.creator.uid = :senderUid ORDER BY cn.id DESC"
@@ -64,26 +63,33 @@ public class ConsentDAOImpl extends AbstractEntityDAOImpl<Consent> implements Co
             final StringBuilder query = new StringBuilder();
             // select
             query.append("SELECT DISTINCT cn FROM Consent cn ");
-            // where
-            query.append(" WHERE cn.creator = :sender ");
-            params.put("sender", user);
-            // criteria applied
-            final Long templateId = criteria.getConsentTemplateId();
-            if (templateId != null) {
-                query.append(" AND cn.template.id = :templateId" );
-                params.put("templateId", templateId);
-            }
-            final String receipientUid = criteria.getReceipientUid();
-            if (receipientUid != null && !"".equals(receipientUid.trim())) {
-                query.append(" AND (EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn and cr.replier.uid = :replierUid )) ");
-                params.put("replierUid", receipientUid);
-            } else {
-                query.append(" AND (EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn)) ");
-            }
+            final Map<String, Object> params = processCriteria(user, criteria, query);
             // order by
             query.append(" ORDER BY cn.id DESC");
             return executeQuery(query.toString(), params, startNum, maxNum);
         }
+    }
+
+    private Map<String, Object> processCriteria(User user,
+            ConsentDTOCriteria criteria, final StringBuilder query) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        // where
+        query.append(" WHERE cn.creator = :sender ");
+        params.put("sender", user);
+        // criteria applied
+        final Long templateId = criteria.getConsentTemplateId();
+        if (templateId != null) {
+            query.append(" AND cn.template.id = :templateId" );
+            params.put("templateId", templateId);
+        }
+        final String receipientUid = criteria.getReceipientUid();
+        if (receipientUid != null && !"".equals(receipientUid.trim())) {
+            query.append(" AND (EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn and cr.replier.uid = :replierUid )) ");
+            params.put("replierUid", receipientUid);
+        } else {
+            query.append(" AND (EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn)) ");
+        }
+        return params;
     }
 
     /**
@@ -91,7 +97,10 @@ public class ConsentDAOImpl extends AbstractEntityDAOImpl<Consent> implements Co
      * @return
      */
     @Override
-    public Long getTotalProcessedConsents(User user) {
-        return getSingleResult("countProcessedConsentsBySender", Collections.singletonMap("sender", user));
+    public Long getTotalProcessedConsents(User user, ConsentDTOCriteria criteria) {
+        final StringBuilder query = new StringBuilder();
+        query.append("SELECT COUNT (DISTINCT cn) FROM Consent cn ");
+        final Map<String, Object> params = processCriteria(user, criteria, query);
+        return executeQueryWithSingleResult(query.toString(), params);
     }
 }

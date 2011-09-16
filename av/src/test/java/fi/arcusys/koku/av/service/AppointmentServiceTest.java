@@ -2,6 +2,7 @@ package fi.arcusys.koku.av.service;
 
 import static junit.framework.Assert.*;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -49,6 +50,11 @@ public class AppointmentServiceTest {
 
 	@Autowired
 	private CommonTestUtil testUtil;
+	
+	@Test
+	public void testMessageTemplate() {
+	    assertEquals("Sinulle on tietopyynto \"ABC\"", MessageFormat.format("Sinulle on tietopyynto \"{0}\"", "ABC"));
+	}
 	
 	@Test
 	public void getUserAppointments() {

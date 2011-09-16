@@ -1,6 +1,7 @@
 package fi.arcusys.koku.tiva.soa;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -12,7 +13,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Aug 9, 2011
  */
 @XmlType (name = "suostumusForReply", namespace = "http://soa.tiva.koku.arcusys.fi/",
-propOrder={"consentId", "alreadyReplied", "template", "replierUid" , "endDate", "endDateMandatory", "replyComment"})
+propOrder={"consentId", "alreadyReplied", "template", "actionReplies", "replierUid" , "endDate", "endDateMandatory", "replyComment"})
 public class ConsentForReplyTO {
     private Long consentId;
     private ConsentTemplateTO template;
@@ -21,7 +22,20 @@ public class ConsentForReplyTO {
     private String replyComment;
     private Boolean endDateMandatory;
     private boolean alreadyReplied;
+    private List<ActionPermittedTO> actionReplies;
     
+    /**
+     * @return the actionReplies
+     */
+    public List<ActionPermittedTO> getActionReplies() {
+        return actionReplies;
+    }
+    /**
+     * @param actionReplies the actionReplies to set
+     */
+    public void setActionReplies(List<ActionPermittedTO> actionReplies) {
+        this.actionReplies = actionReplies;
+    }
     /**
      * @return the alreadyReplied
      */

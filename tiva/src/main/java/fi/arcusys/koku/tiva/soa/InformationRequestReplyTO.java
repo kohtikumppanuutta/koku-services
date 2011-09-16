@@ -14,11 +14,25 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class InformationRequestReplyTO {
     private Long requestId;
     private List<Long> categoryIds;
-    private String informationDetails;
     private XMLGregorianCalendar validTill;
     private String description;
+    private String informationDetails;
     private String additionalInfo;
     private String attachmentURL;
+    private InformationAccessType informationAccessType;
+    
+    /**
+     * @return the infoAccessType
+     */
+    public InformationAccessType getInformationAccessType() {
+        return informationAccessType;
+    }
+    /**
+     * @param infoAccessType the infoAccessType to set
+     */
+    public void setInformationAccessType(InformationAccessType infoAccessType) {
+        this.informationAccessType = infoAccessType;
+    }
     /**
      * @return the requestId
      */

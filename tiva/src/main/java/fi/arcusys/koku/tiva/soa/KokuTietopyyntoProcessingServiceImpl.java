@@ -47,9 +47,9 @@ public class KokuTietopyyntoProcessingServiceImpl implements KokuTietopyyntoProc
      * @param requestId
      */
     @Override
-    public void declineRequest(Long requestId) {
+    public void declineRequest(Long requestId, final String explanation) {
         // TODO Auto-generated method stub
-        logger.info("declineRequest: " + requestId);
+        logger.info("declineRequest: " + requestId + ", explanation: " + explanation);
     }
 
     /**

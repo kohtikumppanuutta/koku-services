@@ -160,13 +160,13 @@ public class ConsentServiceTest {
         
         assertEquals(1, service.getTotalAssignedConsents(parent));
         assertEquals(0, service.getTotalOwnConsents(parent));
-        assertEquals(0, service.getTotalProcessedConsents(employee));
+        assertEquals(0, service.getTotalProcessedConsents(employee, null));
         
         service.giveConsent(consentId, parent, Collections.<ActionPermittedTO>emptyList(), null, "");
 
         assertEquals(0, service.getTotalAssignedConsents(parent));
         assertEquals(1, service.getTotalOwnConsents(parent));
-        assertEquals(1, service.getTotalProcessedConsents(employee));
+        assertEquals(1, service.getTotalProcessedConsents(employee, null));
     }
     
     @Test

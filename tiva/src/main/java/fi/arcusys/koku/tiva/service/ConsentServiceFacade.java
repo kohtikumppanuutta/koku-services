@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
+import fi.arcusys.koku.tiva.soa.ConsentCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
 import fi.arcusys.koku.tiva.soa.ConsentQuery;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
@@ -139,10 +140,11 @@ public interface ConsentServiceFacade {
     List<ConsentSummary> getProcessedConsents(final String employeeUid, final ConsentQuery query);
 
     /**
+     * @param query 
      * @param employee
      * @return
      */
-    int getTotalProcessedConsents(final String userUid);
+    int getTotalProcessedConsents(final String userUid, ConsentCriteria query);
 
     /**
      * @param searchString

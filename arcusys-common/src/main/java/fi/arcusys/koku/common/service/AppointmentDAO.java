@@ -14,6 +14,9 @@ import fi.arcusys.koku.common.service.datamodel.User;
  */
 public interface AppointmentDAO extends AbstractEntityDAO<Appointment>{
 
+    @Override
+    Appointment create(final Appointment entity);
+    
 	/**
 	 * @param string
 	 * @param created

@@ -26,8 +26,7 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
 	 * @return
 	 */
 	public User getUserByUid(final String uid) {
-		final Map<String, Object> params = Collections.<String,Object>singletonMap("uid", uid);
-		return getSingleResultOrNull("findUserByUid", params);
+		return getSingleResultOrNull("findUserByUid", Collections.singletonMap("uid", uid));
 	}
 
 	/**
@@ -48,4 +47,24 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
 		}
 		return fromUser;
 	}
+
+    /**
+     * @param kunpoName
+     * @return
+     */
+    @Override
+    public User getOrCreateUserByKunpoName(String kunpoName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @param looraName
+     * @return
+     */
+    @Override
+    public User getOrCreateUserByLooraName(String looraName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

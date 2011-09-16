@@ -31,5 +31,7 @@
         <class>fi.arcusys.koku.common.service.datamodel.Consent</class>
         <class>fi.arcusys.koku.common.service.datamodel.ConsentReply</class>
         <class>fi.arcusys.koku.common.service.datamodel.ConsentActionReply</class>
+        <class>fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Authorization</class>
 	</persistence-unit>
 </persistence>

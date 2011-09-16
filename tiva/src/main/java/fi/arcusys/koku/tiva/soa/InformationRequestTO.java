@@ -2,6 +2,7 @@ package fi.arcusys.koku.tiva.soa;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -12,7 +13,8 @@ public class InformationRequestTO {
     private Long requestId;
     private String title;
     private String targetPersonUid;
-    private List<InformationCategoryTO> categories;
+    private List<Long> categories;
+    private String senderUid;
     private String receiverUid;
     private String description;
     private String requestPurpose;
@@ -20,7 +22,18 @@ public class InformationRequestTO {
     private String additionalInfo;
     private XMLGregorianCalendar validTill;
     
-    
+    /**
+     * @return the senderUid
+     */
+    public String getSenderUid() {
+        return senderUid;
+    }
+    /**
+     * @param senderUid the senderUid to set
+     */
+    public void setSenderUid(String senderUid) {
+        this.senderUid = senderUid;
+    }
     /**
      * @return the additionalInfo
      */
@@ -72,13 +85,14 @@ public class InformationRequestTO {
     /**
      * @return the categories
      */
-    public List<InformationCategoryTO> getCategories() {
+    @XmlElement (name = "category")
+    public List<Long> getCategories() {
         return categories;
     }
     /**
      * @param categories the categories to set
      */
-    public void setCategories(List<InformationCategoryTO> categories) {
+    public void setCategories(List<Long> categories) {
         this.categories = categories;
     }
     /**

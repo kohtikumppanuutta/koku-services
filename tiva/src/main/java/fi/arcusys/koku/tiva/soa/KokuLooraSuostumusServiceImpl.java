@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -31,8 +32,8 @@ public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService 
      * @return
      */
     @Override
-    public int getTotalConsents(String user) {
-        return serviceFacade.getTotalProcessedConsents(user);
+    public int getTotalConsents(String user, final ConsentCriteria query) {
+        return serviceFacade.getTotalProcessedConsents(user, query);
     }
 
     /**

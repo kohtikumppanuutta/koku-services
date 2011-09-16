@@ -18,5 +18,8 @@ public interface UserDAO extends AbstractEntityDAO<User>{
 	User getUserByUid(final String uid);
 	
 	User getOrCreateUser(final String uid);
-
+	
+    User getOrCreateUserByKunpoName(final String kunpoName);
+	
+    User getOrCreateUserByLooraName(final String looraName);
 }

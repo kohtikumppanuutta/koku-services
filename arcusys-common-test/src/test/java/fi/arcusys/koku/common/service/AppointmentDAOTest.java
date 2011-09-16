@@ -30,7 +30,17 @@ public class AppointmentDAOTest {
     @Autowired
     private AppointmentDAO service;
 
-	@Autowired CommonTestUtil testUtil;
+	@Autowired 
+	private CommonTestUtil testUtil;
+	
+	@Test
+	public void createTestAppointment_OpenJPAfailure() {
+        final String testSubject = "new appointment";
+        final String description = "appointment description";
+        final int numberOfSlots = 3;
+        
+        assertNotNull(createTestAppointment(testSubject, description, numberOfSlots));
+	}
 
 	@Test
 	public void testCreateRetrieveDeleteAppointment() {

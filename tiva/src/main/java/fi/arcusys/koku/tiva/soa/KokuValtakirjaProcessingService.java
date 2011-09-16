@@ -27,9 +27,11 @@ public interface KokuValtakirjaProcessingService {
     @WebMethod(operationName = "annaValtakirja")
     Long createAuthorization(
             @WebParam(name = "valtakirjapohjaId") final long authorizationTemplateId,
+            @WebParam(name = "vastausmennessa") final XMLGregorianCalendar replyTillDate,
             @WebParam(name = "maaraaika") final XMLGregorianCalendar endDate,
             @WebParam(name = "lahettaja") final String senderUid,
-            @WebParam(name = "vastaanottaja") final String receiverUid);
+            @WebParam(name = "vastaanottaja") final String receiverUid, 
+            @WebParam(name = "kohdehenkilo") final String targetPersonUid);
 
     @WebMethod(operationName = "hyvaksyValtakirja")
     void approveAuthorization(

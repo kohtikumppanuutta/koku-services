@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import fi.arcusys.koku.common.service.datamodel.Appointment;
 import fi.arcusys.koku.common.service.datamodel.AppointmentSlot;
+import fi.arcusys.koku.common.service.datamodel.AuthorizationArea;
+import fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate;
 import fi.arcusys.koku.common.service.datamodel.ConsentActionRequest;
 import fi.arcusys.koku.common.service.datamodel.ConsentTemplate;
 import fi.arcusys.koku.common.service.datamodel.TargetPerson;
@@ -95,5 +97,15 @@ public class CommonTestUtil {
         consentTemplate.setCreator(getUserByUid(senderUid));
         consentTemplate.setActions(actions);
         return consentTemplate;
+    }
+
+    public AuthorizationTemplate createAuthorization(final AuthorizationArea area) {
+        final String testName = "new authorization template for " + area.name();
+        final String description = "template description for " + area.name();
+        final AuthorizationTemplate template = new AuthorizationTemplate();
+        template.setName(testName);
+        template.setDescription(description);
+        template.setAuthorizationArea(area);
+        return template;
     }
 }

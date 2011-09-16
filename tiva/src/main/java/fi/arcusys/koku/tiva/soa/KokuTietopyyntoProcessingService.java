@@ -1,7 +1,5 @@
 package fi.arcusys.koku.tiva.soa;
 
-import java.util.List;
-
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -25,7 +23,8 @@ public interface KokuTietopyyntoProcessingService {
     
     @WebMethod(operationName = "hylkaTietopyynto")
     void declineRequest(
-            @WebParam(name = "tietopyyntoId") final Long requestId);
+            @WebParam(name = "tietopyyntoId") final Long requestId, 
+            @WebParam(name = "explanation") final String explanation);
     
     @WebResult(name = "tietoelementti")
     @WebMethod(operationName = "getTietoelementit")

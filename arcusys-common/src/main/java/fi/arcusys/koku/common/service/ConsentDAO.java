@@ -38,5 +38,5 @@ public interface ConsentDAO extends AbstractEntityDAO<Consent> {
      * @param orCreateUser
      * @return
      */
-    Long getTotalProcessedConsents(final User user);
+    Long getTotalProcessedConsents(final User user, ConsentDTOCriteria criteria);
 }

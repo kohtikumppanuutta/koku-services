@@ -2,6 +2,7 @@ package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +14,7 @@ import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.datamodel.Appointment;
 import fi.arcusys.koku.common.service.datamodel.AppointmentResponse;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
+import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
@@ -26,6 +28,16 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
 	 */
 	public AppointmentDAOImpl() {
 		super(Appointment.class);
+	}
+	
+	@Override
+	public Appointment create(Appointment entity) {
+	    final Set<TargetPerson> receipients = new HashSet<TargetPerson>(); 
+	    for (final TargetPerson receipient : entity.getRecipients()) {
+	        receipients.add(em.merge(receipient));
+	    } 
+	    entity.setRecipients(receipients);
+	    return super.create(entity);
 	}
 	
 	public List<Appointment> getUserAppointments(final User user, final Set<AppointmentStatus> statuses) {

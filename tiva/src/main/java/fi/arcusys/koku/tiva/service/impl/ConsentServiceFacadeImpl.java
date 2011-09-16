@@ -1,5 +1,6 @@
 package fi.arcusys.koku.tiva.service.impl;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import fi.arcusys.koku.common.service.datamodel.ConsentReplyStatus;
 import fi.arcusys.koku.common.service.datamodel.ConsentTemplate;
 import fi.arcusys.koku.common.service.datamodel.ConsentType;
 import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
 import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
 import fi.arcusys.koku.tiva.soa.ActionRequestStatus;
@@ -36,6 +38,7 @@ import fi.arcusys.koku.tiva.soa.ActionRequestSummary;
 import fi.arcusys.koku.tiva.soa.ActionRequestTO;
 import fi.arcusys.koku.tiva.soa.ConsentApprovalStatus;
 import fi.arcusys.koku.tiva.soa.ConsentCreateType;
+import fi.arcusys.koku.tiva.soa.ConsentCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
 import fi.arcusys.koku.tiva.soa.ConsentQuery;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
@@ -52,7 +55,7 @@ import fi.arcusys.koku.tiva.soa.ConsentTemplateTO;
 @Stateless
 public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     
-    private static final String NEW_CONSENT_REQUEST_BODY = "Sinulle on toimenpidepyyntö '{0}'.";
+    private static final String NEW_CONSENT_REQUEST_BODY = "Sinulle on toimenpidepyyntö \"{0}\".";
     private static final String NEW_CONSENT_REQUEST_SUBJECT = "Uusi toimenpidepyyntö";
 
     private static final Logger logger = LoggerFactory.getLogger(ConsentServiceFacadeImpl.class); 
@@ -214,7 +217,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         consent.setReceipients(receipients);
         final Long consentId = consentDao.create(consent).getId();
         notificationService.sendNotification(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_SUBJECT, receipientUids, 
-                String.format(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_BODY, consent.getTemplate().getTitle()));
+                MessageFormat.format(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_BODY, new Object[] {consent.getTemplate().getTitle()}));
         return consentId;
     }
 
@@ -228,19 +231,33 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         final ConsentForReplyTO consentTO = new ConsentForReplyTO();
         consentTO.setConsentId(consent.getId());
         consentTO.setReplierUid(replierUid);
+        consentTO.setTemplate(convertConsentTemplateToDTO(consent.getTemplate()));
+        consentTO.setEndDateMandatory(consent.getEndDateMandatory());
 
         final ConsentReply reply = consentReplyDao.getReplyByConsentAndUser(consent, userDao.getOrCreateUser(replierUid));
         if (reply != null) {
             consentTO.setReplyComment(reply.getComment());
             consentTO.setEndDate(CalendarUtil.getXmlDate(reply.getValidTill()));
             consentTO.setAlreadyReplied(true);
+            final Set<Integer> approvedActions = new HashSet<Integer>();
+            for (final ConsentActionReply action : reply.getActions()) {
+                if (action.isPermitted()) {
+                    approvedActions.add(action.getActionRequestNumber());
+                }
+            }
+            final List<ActionPermittedTO> actionReplies = new ArrayList<ActionPermittedTO>();
+            for (final ActionRequestTO action : consentTO.getTemplate().getActions()) {
+                final ActionPermittedTO actionPermittedTO = new ActionPermittedTO();
+                actionPermittedTO.setActionRequestNumber(action.getNumber());
+                actionPermittedTO.setPermitted(approvedActions.contains(action.getNumber()));
+                actionReplies.add(actionPermittedTO);
+            }
+            consentTO.setActionReplies(actionReplies);
         } else {
             consentTO.setEndDate(CalendarUtil.getXmlDate(consent.getValidTill()));
             consentTO.setAlreadyReplied(false);
         }
-        consentTO.setEndDateMandatory(consent.getEndDateMandatory());
         
-        consentTO.setTemplate(convertConsentTemplateToDTO(consent.getTemplate()));
         return consentTO;
     }
 
@@ -337,13 +354,21 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         
         final User replier = userDao.getOrCreateUser(userUid);
         
-        final ConsentReply reply = new ConsentReply();
-        reply.setConsent(consent);
-        reply.setReplier(replier);
-        reply.setComment(comment);
-        reply.setStatus(ConsentReplyStatus.Declined);
+        final ConsentReply oldReply = consentReplyDao.getReplyByConsentAndUser(consent, replier);
+        if (oldReply != null) {
+            oldReply.setComment(comment);
+            oldReply.setStatus(ConsentReplyStatus.Declined);
 
-        consentReplyDao.create(reply);
+            consentReplyDao.update(oldReply);
+        } else {
+            final ConsentReply reply = new ConsentReply();
+            reply.setConsent(consent);
+            reply.setReplier(replier);
+            reply.setComment(comment);
+            reply.setStatus(ConsentReplyStatus.Declined);
+
+            consentReplyDao.create(reply);
+        }
     }
 
     private Consent loadConsent(Long consentId) {
@@ -607,7 +632,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
 
         final List<ConsentSummary> consents = new ArrayList<ConsentSummary>();
         for (final Consent consent : consentDao.getProcessedConsents(replier,
-                query.getCriteria() != null ? query.getCriteria().toDtoCriteria() : null, 
+                query.getCriteria() != null ? query.getCriteria().toDtoCriteria() : new ConsentDTOCriteria(), 
                 query.getStartNum(), query.getMaxNum() - query.getStartNum() + 1)) {
             final ConsentSummary consentSummary = new ConsentSummary();
             fillConsentSummaryCombined(consent, consentReplyDao.getReplies(consent), consentSummary);
@@ -622,7 +647,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
      * @return
      */
     @Override
-    public int getTotalProcessedConsents(String userUid) {
-        return getIntValue(consentDao.getTotalProcessedConsents(userDao.getOrCreateUser(userUid)));
+    public int getTotalProcessedConsents(String userUid, ConsentCriteria criteria) {
+        return getIntValue(consentDao.getTotalProcessedConsents(userDao.getOrCreateUser(userUid), criteria != null ? criteria.toDtoCriteria() : new ConsentDTOCriteria()));
     }
 }
