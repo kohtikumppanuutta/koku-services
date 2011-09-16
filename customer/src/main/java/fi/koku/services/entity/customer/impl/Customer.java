@@ -26,7 +26,7 @@ import javax.persistence.Version;
  */
 @Entity
 @NamedQuery(name="getCustomerByPic", query="FROM Customer c WHERE c.pic = :pic")
-@Table(name = "CUSTOMER")
+@Table(name = "customer")
 public class Customer {
   @Id
   @GeneratedValue
