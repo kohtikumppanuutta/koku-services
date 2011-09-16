@@ -210,29 +210,33 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	    c.setLanguage(ct.getKieliKoodi());
 	    c.setTurvakielto(ct.isTurvakieltoKytkin());
 
-	    for(AddressType at : ct.getAddresses().getAddress()) {
-	      Address a = new Address();
-	      a.setType(at.getAddressType());
-	      a.setStreetAddress(at.getKatuNimi());
-	      a.setPostalDistrict(at.getPostitoimipaikkaNimi());
-	      a.setPostalCode(at.getPostinumeroKoodi());
-	      a.setPoBox(at.getPostilokeroTeksti());
-	      a.setCountryCode(at.getMaatunnusKoodi());
-	      a.setValidFrom(at.getAlkuPvm().getTime());
-	      a.setValidTo(at.getLoppuPvm().getTime());
-	      c.getAddresses().add(a);
-	      a.setCustomer(c);
-	    }
+      if (ct.getAddresses() != null) {
+        for (AddressType at : ct.getAddresses().getAddress()) {
+          Address a = new Address();
+          a.setType(at.getAddressType());
+          a.setStreetAddress(at.getKatuNimi());
+          a.setPostalDistrict(at.getPostitoimipaikkaNimi());
+          a.setPostalCode(at.getPostinumeroKoodi());
+          a.setPoBox(at.getPostilokeroTeksti());
+          a.setCountryCode(at.getMaatunnusKoodi());
+          a.setValidFrom(at.getAlkuPvm().getTime());
+          a.setValidTo(at.getLoppuPvm().getTime());
+          c.getAddresses().add(a);
+          a.setCustomer(c);
+        }
+      }
 
-	    for(PhoneNumberType pt : ct.getPhoneNumbers().getPhone()) {
-	      PhoneNumber n = new PhoneNumber();
-	      n.setType(pt.getNumberType());
-	      n.setNumberClass(pt.getNumberClass());
-	      n.setNumber(pt.getPuhelinnumeroTeksti());
-	      c.getPhones().add(n);
-	      n.setCustomer(c);
-	    }
-	    
+      if (ct.getPhoneNumbers() != null) {
+        for (PhoneNumberType pt : ct.getPhoneNumbers().getPhone()) {
+          PhoneNumber n = new PhoneNumber();
+          n.setType(pt.getNumberType());
+          n.setNumberClass(pt.getNumberClass());
+          n.setNumber(pt.getPuhelinnumeroTeksti());
+          c.getPhones().add(n);
+          n.setCustomer(c);
+        }
+      }
+      
       if (ct.getElectronicContactInfos() != null) {
         for (ElectronicContactInfoType ec : ct.getElectronicContactInfos().getEContactInfo()) {
           ElectronicContactInfo e = new ElectronicContactInfo();
