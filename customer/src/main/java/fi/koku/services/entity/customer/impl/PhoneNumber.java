@@ -21,15 +21,17 @@ public class PhoneNumber {
   @GeneratedValue
   private Long id;
 
+  @Column(nullable=false)
   private String type;
 
-  @Column(name="class")
+  @Column(name="class", nullable=false)
   private String numberClass;
 
+  @Column(nullable=false)
   private String number;
 
   @ManyToOne
-  @JoinColumn(name="customer_id")
+  @JoinColumn(name="customer_id", nullable=false)
   private Customer customer;
 
   

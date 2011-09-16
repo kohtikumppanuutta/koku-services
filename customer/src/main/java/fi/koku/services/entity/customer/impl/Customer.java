@@ -32,33 +32,39 @@ public class Customer {
   @GeneratedValue
   private Long id;
   
+  @Column(nullable=false)
   private String status;
   
-  @Column(name="status_date")
+  @Column(name="status_date", nullable=false)
   @Temporal(TemporalType.DATE)
   private Date statusDate;
 
   @Column(unique=true, nullable=false)
   private String pic;
   
-  @Column(name="birth_date")
+  @Column(name="birth_date", nullable=false)
   @Temporal(TemporalType.DATE)
   private Date birthDate;
   
+  @Column(nullable=false)
   private String lastName;
   
-  @Column(name="first_name")
+  @Column(name="first_name", nullable=false)
   private String firstName;
 
-  @Column(name="first_names")
+  @Column(name="first_names", nullable=false)
   private String firstNames;
 
+  @Column(nullable=false)
   private String nationality;
   
+  @Column(nullable=false)
   private String municipality;
   
+  @Column(nullable=false)
   private String language;
   
+  @Column(nullable=false)
   private boolean turvakielto;
   
   @OneToMany(mappedBy="customer", cascade={PERSIST, REMOVE})

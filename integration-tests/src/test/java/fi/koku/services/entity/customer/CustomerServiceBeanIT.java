@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.*;
 import fi.koku.services.entity.customer.v1.AddressType;
 import fi.koku.services.entity.customer.v1.AddressesType;
@@ -69,13 +68,13 @@ public class CustomerServiceBeanIT {
     customer.setSyntymaPvm(Calendar.getInstance());
     customer.setStatusDate(Calendar.getInstance());
     customer.setTurvakieltoKytkin(false);
-    customer.setStatus("");
+    customer.setStatus(""); // TODO: status values?
     customer.setKansalaisuusKoodi("FI");
-    customer.setKuntaKoodi("1000");
+    customer.setKuntaKoodi("1000"); // TODO: municipality codes?
     
     AddressesType addresses = new AddressesType();
     AddressType address = new AddressType();
-    address.setAddressType("TYPE");
+    address.setAddressType("TYPE1"); // TODO: address type values?
     address.setAlkuPvm(Calendar.getInstance());
     address.setLoppuPvm(Calendar.getInstance());
     address.setKatuNimi("Hitsaajankatu 24");
@@ -83,6 +82,16 @@ public class CustomerServiceBeanIT {
     address.setPostinumeroKoodi("00811");
     address.setPostitoimipaikkaNimi("Helsinki");
     address.setMaatunnusKoodi("FI");
+    addresses.getAddress().add(address);
+    address = new AddressType();
+    address.setAddressType("TYPE2");
+    address.setAlkuPvm(Calendar.getInstance());
+    address.setLoppuPvm(Calendar.getInstance());
+    address.setKatuNimi("Iltatie 24");
+    address.setPostilokeroTeksti(null);
+    address.setPostinumeroKoodi("02220");
+    address.setPostitoimipaikkaNimi("Espoo");
+    address.setMaatunnusKoodi("FI");    
     addresses.getAddress().add(address);
     customer.setAddresses(addresses);
     
@@ -100,6 +109,7 @@ public class CustomerServiceBeanIT {
     customerServicePort.opAddCustomer(customer, audit);
     
     assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM customer"), is(1));
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM address"), is(2));
   }  
   
   private CustomerServicePortType getCustomerServicePort() {
