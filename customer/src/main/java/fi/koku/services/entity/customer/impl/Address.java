@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -17,6 +18,7 @@ import javax.persistence.TemporalType;
  * @author Ixonos / aspluma
  */
 @Entity
+@Table(name = "address")
 public class Address {
   @Id
   @GeneratedValue

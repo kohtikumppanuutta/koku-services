@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 
@@ -20,6 +21,7 @@ import javax.persistence.Version;
  * @author Ixonos / aspluma
  */
 @Entity
+@Table(name = "community")
 public class Community implements Serializable {
   private static final long serialVersionUID = -6318987012290421231L;
 
