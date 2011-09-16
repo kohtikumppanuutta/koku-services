@@ -233,13 +233,15 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	      n.setCustomer(c);
 	    }
 	    
-	    for(ElectronicContactInfoType ec : ct.getElectronicContactInfos().getEContactInfo()) {
-	      ElectronicContactInfo e = new ElectronicContactInfo();
-	      e.setType(ec.getContactInfoType());
-	      e.setContact(ec.getContactInfo());
-	      c.getElectronicContacts().add(e);
-	      e.setCustomer(c);
-	    }
+      if (ct.getElectronicContactInfos() != null) {
+        for (ElectronicContactInfoType ec : ct.getElectronicContactInfos().getEContactInfo()) {
+          ElectronicContactInfo e = new ElectronicContactInfo();
+          e.setType(ec.getContactInfoType());
+          e.setContact(ec.getContactInfo());
+          c.getElectronicContacts().add(e);
+          e.setCustomer(c);
+        }
+      }
 	    
 	    return c;
 	  }
