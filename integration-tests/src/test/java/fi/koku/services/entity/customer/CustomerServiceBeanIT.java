@@ -1,6 +1,5 @@
 package fi.koku.services.entity.customer;
 
-import java.net.URL;
 import java.util.Calendar;
 
 import org.junit.Before;
@@ -8,11 +7,14 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
+import fi.koku.services.entity.customer.v1.AddressType;
+import fi.koku.services.entity.customer.v1.AddressesType;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
-import fi.koku.services.entity.customer.v1.ServiceFault;
+import fi.koku.services.entity.customer.v1.PhoneNumberType;
+import fi.koku.services.entity.customer.v1.PhoneNumbersType;
 import fi.koku.services.test.util.TestDbUtils;
 import fi.koku.services.test.util.TestPropertiesUtil;
 
@@ -44,7 +46,7 @@ public class CustomerServiceBeanIT {
     CustomerType customer;
     try {
       customer = customerServicePort.opGetCustomer("12346", audit);
-    } catch (ServiceFault e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
     
@@ -68,11 +70,37 @@ public class CustomerServiceBeanIT {
     customer.setSyntymaPvm(Calendar.getInstance());
     customer.setStatusDate(Calendar.getInstance());
     customer.setTurvakieltoKytkin(false);
-    customer.setAddresses(null);
-
+    
+    AddressesType addresses = new AddressesType();
+    AddressType address = new AddressType();
+    address.setAddressType("TYPE");
+    address.setAlkuPvm(Calendar.getInstance());
+    address.setLoppuPvm(Calendar.getInstance());
+    address.setKatuNimi("Hitsaajankatu 24");
+    address.setPostilokeroTeksti("PL 284");
+    address.setPostinumeroKoodi("00811");
+    address.setPostitoimipaikkaNimi("Helsinki");
+    address.setMaatunnusKoodi("FI");
+    addresses.getAddress().add(address);
+    customer.setAddresses(addresses);
+    
+    PhoneNumbersType phoneNumbers = new PhoneNumbersType();
+    PhoneNumberType phoneNumber = new PhoneNumberType();
+    phoneNumber.setNumberClass("+358 424 2231");
+    phoneNumber.setNumberType("WORK");
+    phoneNumber.setNumberClass("?");
+    phoneNumber = new PhoneNumberType();
+    phoneNumber.setNumberClass("+358 424 9087");
+    phoneNumber.setNumberType("HOME");
+    phoneNumber.setNumberClass("?");
+    phoneNumbers.getPhone().add(phoneNumber);
+    customer.setPhoneNumbers(phoneNumbers);
+    
+    
+    
     try {
       customerServicePort.opAddCustomer(customer, audit);
-    } catch (ServiceFault e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
     
