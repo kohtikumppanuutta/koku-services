@@ -48,6 +48,7 @@ public class CustomerServiceBeanIT {
     try {
       customer = customerServicePort.opGetCustomer("12346", audit);
     } catch (Exception e) {
+      System.out.println("testing catch block");
       fail(e.toString());
     }
     
@@ -100,6 +101,7 @@ public class CustomerServiceBeanIT {
     try {
       customerServicePort.opAddCustomer(customer, audit);
     } catch (Exception e) {
+      System.out.println("testing catch block");
       fail(e.toString());
     }
     
