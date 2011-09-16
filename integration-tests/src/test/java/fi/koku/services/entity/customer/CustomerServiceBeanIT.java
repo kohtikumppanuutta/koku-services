@@ -42,7 +42,7 @@ public class CustomerServiceBeanIT {
     
     // Setup fixture here
     TestDbUtils.executeSqlScriptFromClasspath("/test-data/customer-test.sql", jdbcTemplate);
-    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM CUSTOMER"), is(2));
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM customer"), is(2));
     
     // Call the web service
     CustomerType customer = null;
@@ -99,7 +99,7 @@ public class CustomerServiceBeanIT {
 //    customer.setPhoneNumbers(phoneNumbers);
     customerServicePort.opAddCustomer(customer, audit);
     
-    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM CUSTOMER"), is(1));
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM customer"), is(1));
   }  
   
   private CustomerServicePortType getCustomerServicePort() {
