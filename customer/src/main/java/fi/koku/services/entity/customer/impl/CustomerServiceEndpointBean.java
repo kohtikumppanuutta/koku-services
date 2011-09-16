@@ -90,7 +90,7 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	@Override
 	public CustomerType opGetCustomer(String pic, AuditInfoType auditHeader) {
 		logger.debug("opGetCustomer");
-		return customerConverter.toWsType(customerService.get(pic), "basic");
+		return customerConverter.toWsType(customerService.get(pic), "full");
 	}
 
 	@Override

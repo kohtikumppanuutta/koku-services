@@ -44,8 +44,7 @@ public class CustomerServiceBeanIT {
     assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM customer"), is(2));
     
     // Call the web service
-    CustomerType customer = null;
-    customer = customerServicePort.opGetCustomer("12346", audit);
+    CustomerType customer = customerServicePort.opGetCustomer("12346", audit);
     
     // Verify the returned result or DB state
     assertThat(customer.getId(), is("12346"));
@@ -73,44 +72,73 @@ public class CustomerServiceBeanIT {
     customer.setKuntaKoodi("1000"); // TODO: municipality codes?
     
     AddressesType addresses = new AddressesType();
-    AddressType address = new AddressType();
-    address.setAddressType("TYPE1"); // TODO: address type values?
-    address.setAlkuPvm(Calendar.getInstance());
-    address.setLoppuPvm(Calendar.getInstance());
-    address.setKatuNimi("Hitsaajankatu 24");
-    address.setPostilokeroTeksti("PL 284");
-    address.setPostinumeroKoodi("00811");
-    address.setPostitoimipaikkaNimi("Helsinki");
-    address.setMaatunnusKoodi("FI");
-    addresses.getAddress().add(address);
-    address = new AddressType();
-    address.setAddressType("TYPE2");
-    address.setAlkuPvm(Calendar.getInstance());
-    address.setLoppuPvm(Calendar.getInstance());
-    address.setKatuNimi("Iltatie 24");
-    address.setPostilokeroTeksti(null);
-    address.setPostinumeroKoodi("02220");
-    address.setPostitoimipaikkaNimi("Espoo");
-    address.setMaatunnusKoodi("FI");    
-    addresses.getAddress().add(address);
+    AddressType address1 = new AddressType();
+    address1.setAddressType("TYPE1"); // TODO: address type values?
+    address1.setAlkuPvm(Calendar.getInstance());
+    address1.setLoppuPvm(Calendar.getInstance());
+    address1.setKatuNimi("Hitsaajankatu 24");
+    address1.setPostilokeroTeksti("PL 284");
+    address1.setPostinumeroKoodi("00811");
+    address1.setPostitoimipaikkaNimi("Helsinki");
+    address1.setMaatunnusKoodi("FI");
+    addresses.getAddress().add(address1);
+    AddressType address2 = new AddressType();
+    address2.setAddressType("TYPE2");
+    address2.setAlkuPvm(Calendar.getInstance());
+    address2.setLoppuPvm(Calendar.getInstance());
+    address2.setKatuNimi("Iltatie 24");
+    address2.setPostilokeroTeksti(null);
+    address2.setPostinumeroKoodi("02220");
+    address2.setPostitoimipaikkaNimi("Espoo");
+    address2.setMaatunnusKoodi("FI");    
+    addresses.getAddress().add(address2);
     customer.setAddresses(addresses);
     
-//    PhoneNumbersType phoneNumbers = new PhoneNumbersType();
-//    PhoneNumberType phoneNumber = new PhoneNumberType();
-//    phoneNumber.setNumberClass("+358 424 2231");
-//    phoneNumber.setNumberType("WORK");
-//    phoneNumber.setNumberClass("?");
-//    phoneNumber = new PhoneNumberType();
-//    phoneNumber.setNumberClass("+358 424 9087");
-//    phoneNumber.setNumberType("HOME");
-//    phoneNumber.setNumberClass("?");
-//    phoneNumbers.getPhone().add(phoneNumber);
-//    customer.setPhoneNumbers(phoneNumbers);
-    customerServicePort.opAddCustomer(customer, audit);
+    PhoneNumbersType phoneNumbers = new PhoneNumbersType();
+    PhoneNumberType phoneNumber = new PhoneNumberType();
+    phoneNumber.setPuhelinnumeroTeksti("+358501234567"); 
+    phoneNumber.setNumberType("WORK"); // TODO: number type?
+    phoneNumber.setNumberClass("?"); // TODO: number class?
+    phoneNumbers.getPhone().add(phoneNumber);
+    phoneNumber = new PhoneNumberType();
+    phoneNumber.setPuhelinnumeroTeksti("+35891234567"); 
+    phoneNumber.setNumberType("HOME"); // TODO: number type?
+    phoneNumber.setNumberClass("?"); // TODO: number class?
+    phoneNumbers.getPhone().add(phoneNumber);
+    customer.setPhoneNumbers(phoneNumbers);
     
-    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM customer"), is(1));
-    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM address"), is(2));
-  }  
+    String customerId = customerServicePort.opAddCustomer(customer, audit);
+    
+    // Get the inserted customer
+    CustomerType insertedCustomer = customerServicePort.opGetCustomer(customer.getHenkiloTunnus(), audit);
+    
+    assertThat(insertedCustomer.getHenkiloTunnus(), is(customer.getHenkiloTunnus()));
+    assertThat(insertedCustomer.getAddresses().getAddress().size(), is(2));
+    assertThat(insertedCustomer.getPhoneNumbers().getPhone().size(), is(2));
+    
+    // Change etunimi property
+    insertedCustomer.setEtuNimi(insertedCustomer.getEtuNimi() + " upd");
+    // Update the customer
+    customerServicePort.opUpdateCustomer(insertedCustomer, audit);
+    // Get the customer again
+    CustomerType updatedCustomer = customerServicePort.opGetCustomer(insertedCustomer.getHenkiloTunnus(), audit);
+    assertThat(updatedCustomer.getHenkiloTunnus(), is(insertedCustomer.getHenkiloTunnus()));
+    // Field should be updated
+    assertThat(updatedCustomer.getEtuNimi(), is("Matti upd"));
+    // These should be unchanged
+    assertThat(updatedCustomer.getAddresses().getAddress().size(), is(2));
+    assertThat(updatedCustomer.getPhoneNumbers().getPhone().size(), is(2));
+  }
+  
+  @SuppressWarnings("unused")
+  private AddressType getAddressType(String type, AddressesType addresses) {
+    for (AddressType a: addresses.getAddress()) {
+      if (a.getAddressType().equals(type)) {
+        return a;
+      }
+    }
+    return null;
+  }
   
   private CustomerServicePortType getCustomerServicePort() {
     return new CustomerServiceFactory(TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_USERNAME),

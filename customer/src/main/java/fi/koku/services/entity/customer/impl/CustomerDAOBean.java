@@ -40,10 +40,9 @@ public class CustomerDAOBean implements CustomerDAO {
 
   @Override
   public void updateCustomer(Customer c) {
-    throw new RuntimeException("Operation not implemented"); // TODO: implement
-//    Customer customer = em.find(Customer.class, c.getId());
-//    customer.setCustomer(c);
-//    em.merge(c);
+    Customer customer = findCustomer(c.getPic());
+    customer.setCustomer(c);
+    em.merge(customer);
   }
 
   @Override
