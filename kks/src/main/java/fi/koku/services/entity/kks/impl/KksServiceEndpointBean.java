@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.koku.services.entity.kks.v1.AuditInfoType;
+import fi.koku.services.entity.kks.v1.IdType;
 import fi.koku.services.entity.kks.v1.KksCollectionClassesType;
 import fi.koku.services.entity.kks.v1.KksCollectionCreationCriteriaType;
 import fi.koku.services.entity.kks.v1.KksCollectionStateCriteriaType;
@@ -24,6 +25,7 @@ import fi.koku.services.entity.kks.v1.KksTagIdsType;
 import fi.koku.services.entity.kks.v1.KksTagsType;
 import fi.koku.services.entity.kks.v1.KksType;
 import fi.koku.services.entity.kks.v1.ServiceFault;
+import fi.koku.services.entity.kks.v1.VoidType;
 
 /**
  * KoKu KKS service implementation class.
@@ -93,24 +95,18 @@ public class KksServiceEndpointBean implements KksServicePortType {
   }
 
   @Override
-  public boolean opUpdateKksCollection(KksCollectionType kksCollection, AuditInfoType auditHeader) throws ServiceFault {
+  public VoidType opUpdateKksCollection(KksCollectionType kksCollection, AuditInfoType auditHeader) throws ServiceFault {
     LOG.debug("opUpdateKksCollection");
-
-    // TODO
     kksService.update(KksConverter.fromWsType(kksCollection));
-    return true;
+    return new VoidType();
   }
 
   @Override
   public KksCollectionsType opQueryKks(KksQueryCriteriaType kksQueryCriteria, AuditInfoType auditHeader)
       throws ServiceFault {
     LOG.debug("opQueryKks");
-
-    // TODO:
     KksCollectionsType kksCollectionsType = new KksCollectionsType();
-
     List<String> tagNames = kksQueryCriteria.getKksTagNames().getKksTagName();
-
     List<KksCollection> tmp = kksService.getCollections(kksQueryCriteria.getPic(), tagNames);
 
     for (KksCollection c : tmp) {
@@ -121,31 +117,49 @@ public class KksServiceEndpointBean implements KksServicePortType {
   }
 
   @Override
-  public KksCollectionType opAddKksCollection(KksCollectionCreationCriteriaType kksCollectionCreationCriteria,
+  public IdType opAddKksCollection(KksCollectionCreationCriteriaType kksCollectionCreationCriteria,
       AuditInfoType auditHeader) throws ServiceFault {
     LOG.debug("opAddKksCollection");
 
-    return KksConverter.toWsType(kksService.add(auditHeader.getUserId(), kksCollectionCreationCriteria.getPic(),
-        kksCollectionCreationCriteria.getCollectionTypeId(), kksCollectionCreationCriteria.getCollectionName()));
+    // TODO: prober return handling
+
+    IdType id = new IdType();
+
+    if (kksCollectionCreationCriteria.getKksScope().equals("new")) {
+      String colId = kksService
+          .add(auditHeader.getUserId(), kksCollectionCreationCriteria.getPic(),
+              kksCollectionCreationCriteria.getCollectionTypeId(), kksCollectionCreationCriteria.getCollectionName())
+          .getId().toString();
+      id.setId(colId);
+    } else {
+      String colId = kksService.version(auditHeader.getUserId(), kksCollectionCreationCriteria.getPic(),
+          kksCollectionCreationCriteria.getCollectionTypeId(), kksCollectionCreationCriteria.getCollectionName(),
+          kksCollectionCreationCriteria.getKksScope().equals("empty_version")).toString();
+      id.setId(colId);
+    }
+    return id;
   }
 
   @Override
-  public boolean opAddEntry(KksEntryCriteriaType kksEntryAddType, AuditInfoType auditHeader) throws ServiceFault {
-    // TODO muuta service-apia
-    return false;
+  public IdType opAddEntry(KksEntryCriteriaType kksEntryAddType, AuditInfoType auditHeader) throws ServiceFault {
+    IdType id = new IdType();
+    id.setId(kksService.addEntry(kksEntryAddType.getEntryId(), kksEntryAddType.getPic(), kksEntryAddType.getCreator(),
+        kksEntryAddType.getModified().getTime(), kksEntryAddType.getCollectionId(), kksEntryAddType.getValue())
+        .toString());
+    return id;
   }
 
   @Override
-  public boolean opDeleteEntry(KksEntryCriteriaType kksEntryDeleteType, AuditInfoType auditHeader) throws ServiceFault {
+  public VoidType opDeleteEntry(KksEntryCriteriaType kksEntryDeleteType, AuditInfoType auditHeader) throws ServiceFault {
     kksService.removeEntry(Long.parseLong(kksEntryDeleteType.getEntryId()));
-    return true;
+    return new VoidType();
   }
 
   @Override
-  public boolean opUpdateKksCollectionStatus(KksCollectionStateCriteriaType kksCollectionStateCriteriaType,
+  public VoidType opUpdateKksCollectionStatus(KksCollectionStateCriteriaType kksCollectionStateCriteriaType,
       AuditInfoType auditHeader) throws ServiceFault {
     kksService.updateCollectionStatus(kksCollectionStateCriteriaType.getCollectionId(),
         kksCollectionStateCriteriaType.getState());
-    return true;
+    return new VoidType();
   }
 }

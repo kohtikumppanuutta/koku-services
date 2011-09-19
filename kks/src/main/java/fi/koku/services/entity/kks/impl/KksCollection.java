@@ -1,6 +1,7 @@
 package fi.koku.services.entity.kks.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,11 +29,14 @@ import javax.persistence.Version;
  * 
  */
 @Entity
-@NamedQueries({ @NamedQuery(name = KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_PIC, query = "FROM KksCollection k WHERE k.customer =:pic") })
+@NamedQueries({
+    @NamedQuery(name = KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_PIC, query = "FROM KksCollection k WHERE k.customer =:pic"),
+    @NamedQuery(name = KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_IDS, query = "FROM KksCollection k WHERE k.id IN (:ids)") })
 @Table(name = "kks_collection")
 public class KksCollection implements Serializable {
 
   public static final String NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_PIC = "getAllCollectionsByPic";
+  public static final String NAMED_QUERY_GET_COLLECTIONS_BY_IDS = "getAllCollectionsByIds";
 
   private static final long serialVersionUID = 8064946506296337381L;
 
@@ -180,6 +184,21 @@ public class KksCollection implements Serializable {
 
   public void setTags(List<KksTag> tags) {
     this.tags = tags;
+  }
+
+  public void addKksEntry(KksEntry e) {
+    this.entries.add(e);
+  }
+
+  public void removeKksEntry(KksEntry e) {
+    List<KksEntry> listTmp = new ArrayList<KksEntry>(entries);
+    for (int i = 0; i < listTmp.size(); i++) {
+      KksEntry tmp = listTmp.get(i);
+      if (tmp.getId().equals(e.getId())) {
+        entries.remove(i);
+        break;
+      }
+    }
   }
 
 }

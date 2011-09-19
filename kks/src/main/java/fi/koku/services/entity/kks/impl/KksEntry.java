@@ -1,6 +1,7 @@
 package fi.koku.services.entity.kks.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,8 +30,11 @@ import javax.persistence.Version;
  * 
  */
 @Entity
+@NamedQueries({ @NamedQuery(name = KksEntry.NAMED_QUERY_DELETE_ENTRIES_BY_IDS, query = "DELETE FROM KksEntry k WHERE k.id IN (:ids)") })
 @Table(name = "kks_entry")
 public class KksEntry implements Serializable {
+
+  public static final String NAMED_QUERY_DELETE_ENTRIES_BY_IDS = "deleteAllEntriesByIds";
 
   private static final long serialVersionUID = -4758238731645701773L;
 
@@ -62,6 +68,11 @@ public class KksEntry implements Serializable {
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "kks_entry_tags", joinColumns = @JoinColumn(name = "entry_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tag_id"))
   private List<KksTag> tags;
+
+  public KksEntry() {
+    values = new ArrayList<KksValue>();
+    tags = new ArrayList<KksTag>();
+  }
 
   public Long getId() {
     return id;
@@ -135,4 +146,39 @@ public class KksEntry implements Serializable {
     this.tags = tags;
   }
 
+  public void addKksTag(KksTag tag) {
+    this.tags.add(tag);
+  }
+
+  public void removeKksTag(KksTag tag) {
+    List<KksTag> tmp = new ArrayList<KksTag>(tags);
+
+    for (int i = 0; i < tmp.size(); i++) {
+      KksTag t = tmp.get(i);
+      if (t.getId().equals(tag.getId())) {
+        tags.remove(i);
+        break;
+      }
+    }
+  }
+
+  public void addKksValue(KksValue val) {
+    this.values.add(val);
+  }
+
+  public void removeKksValue(KksValue val) {
+    List<KksValue> tmp = new ArrayList<KksValue>(values);
+
+    for (int i = 0; i < tmp.size(); i++) {
+      KksValue t = tmp.get(i);
+      if (t != null && t.getId().equals(val.getId())) {
+        int size = values.size();
+        values.remove(i);
+
+        size = values.size();
+        int a = 0;
+        break;
+      }
+    }
+  }
 }

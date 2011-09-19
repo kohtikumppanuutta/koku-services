@@ -1,13 +1,14 @@
 package fi.koku.services.entity.kks.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Local;
 
+import fi.koku.services.entity.kks.v1.KksEntryValueType;
+
 @Local
 public interface KksServiceDAO {
-
-  KksCollectionClass getCollectionClass(String collectionClass);
 
   List<KksCollection> getCollections(String pic);
 
@@ -15,7 +16,7 @@ public interface KksServiceDAO {
 
   KksCollection insertCollection(String name, String type, String customer, String creator);
 
-  Long insertEntry(KksEntry e);
+  Long insertEntry(Long id, String pic, String creator, Date modified, Long collectionId, KksEntryValueType value);
 
   void deleteEntry(Long id);
 
@@ -23,8 +24,12 @@ public interface KksServiceDAO {
 
   List<KksTag> getTags(List<String> tagIds);
 
-  List<KksEntryClass> getEntryClasses(List<String> entryClassIds);
-
   List<KksCollectionClass> getCollectionClasses();
+
+  List<KksCollection> queryCollections(String pic, List<String> tagNames);
+
+  void update(KksCollection collection);
+
+  Long insertAndCopy(String creator, String customer, String collectionId, String name, boolean empty);
 
 }

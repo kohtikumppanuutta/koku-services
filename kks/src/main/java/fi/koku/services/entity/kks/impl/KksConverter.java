@@ -202,7 +202,7 @@ public class KksConverter {
 
     kksCollection.setCustomer(collection.getCustomerId());
     kksCollection.setCreated(collection.getCreated().getTime());
-
+    kksCollection.setCreator(collection.getCreator());
     kksCollection.setDescription(collection.getDescription());
     kksCollection.setId(Long.parseLong(collection.getId()));
     kksCollection.setName(collection.getName());
@@ -215,6 +215,8 @@ public class KksConverter {
     for (KksEntryType et : collection.getKksEntries().getEntries()) {
       tmp.add(KksConverter.fromWsType(et));
     }
+
+    kksCollection.setEntries(tmp);
 
     return kksCollection;
   }
@@ -240,6 +242,7 @@ public class KksConverter {
       KksValue v = new KksValue();
       v.setId(parseNullableLong(value.getId()));
       v.setValue(value.getValue());
+      v.setEntry(entry);
       tmp.add(v);
     }
 
