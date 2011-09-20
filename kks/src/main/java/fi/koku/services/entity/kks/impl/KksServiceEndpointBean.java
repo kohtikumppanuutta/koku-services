@@ -107,7 +107,8 @@ public class KksServiceEndpointBean implements KksServicePortType {
     LOG.debug("opQueryKks");
     KksCollectionsType kksCollectionsType = new KksCollectionsType();
     List<String> tagNames = kksQueryCriteria.getKksTagNames().getKksTagName();
-    List<KksCollection> tmp = kksService.getCollections(kksQueryCriteria.getPic(), tagNames);
+    KksQueryCriteria qc = new KksQueryCriteria(kksQueryCriteria.getPic(), tagNames);
+    List<KksCollection> tmp = kksService.search(qc);
 
     for (KksCollection c : tmp) {
       kksCollectionsType.getKksCollection().add(KksConverter.toWsType(c));
@@ -117,24 +118,24 @@ public class KksServiceEndpointBean implements KksServicePortType {
   }
 
   @Override
-  public IdType opAddKksCollection(KksCollectionCreationCriteriaType kksCollectionCreationCriteria,
-      AuditInfoType auditHeader) throws ServiceFault {
+  public IdType opAddKksCollection(KksCollectionCreationCriteriaType criteria, AuditInfoType auditHeader)
+      throws ServiceFault {
     LOG.debug("opAddKksCollection");
 
-    // TODO: prober return handling
+    KksCollectionCreation c = new KksCollectionCreation(auditHeader.getUserId(), criteria.getPic(),
+        criteria.getCollectionTypeId(), criteria.getCollectionName(), false);
 
     IdType id = new IdType();
 
-    if (kksCollectionCreationCriteria.getKksScope().equals("new")) {
-      String colId = kksService
-          .add(auditHeader.getUserId(), kksCollectionCreationCriteria.getPic(),
-              kksCollectionCreationCriteria.getCollectionTypeId(), kksCollectionCreationCriteria.getCollectionName())
-          .getId().toString();
+    if (criteria.getKksScope().equals("new")) {
+      String colId = kksService.add(c).toString();
       id.setId(colId);
     } else {
-      String colId = kksService.version(auditHeader.getUserId(), kksCollectionCreationCriteria.getPic(),
-          kksCollectionCreationCriteria.getCollectionTypeId(), kksCollectionCreationCriteria.getCollectionName(),
-          kksCollectionCreationCriteria.getKksScope().equals("empty_version")).toString();
+
+      if (criteria.getKksScope().equals("empty_version")) {
+        c.setEmpty(true);
+      }
+      String colId = kksService.version(c).toString();
       id.setId(colId);
     }
     return id;
@@ -142,10 +143,15 @@ public class KksServiceEndpointBean implements KksServicePortType {
 
   @Override
   public IdType opAddEntry(KksEntryCriteriaType kksEntryAddType, AuditInfoType auditHeader) throws ServiceFault {
+
+    KksValue value = new KksValue();
+    value.setId(kksEntryAddType.getValue().getId() == null ? null : Long.parseLong(kksEntryAddType.getValue().getId()));
+    value.setValue(kksEntryAddType.getValue().getValue());
+    KksEntryCreation c = new KksEntryCreation(kksEntryAddType.getEntryId(), kksEntryAddType.getPic(),
+        kksEntryAddType.getCreator(), kksEntryAddType.getModified().getTime(), kksEntryAddType.getCollectionId(), value);
+
     IdType id = new IdType();
-    id.setId(kksService.addEntry(kksEntryAddType.getEntryId(), kksEntryAddType.getPic(), kksEntryAddType.getCreator(),
-        kksEntryAddType.getModified().getTime(), kksEntryAddType.getCollectionId(), kksEntryAddType.getValue())
-        .toString());
+    id.setId(kksService.addEntry(c).toString());
     return id;
   }
 

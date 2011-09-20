@@ -1,12 +1,9 @@
 package fi.koku.services.entity.kks.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
-import fi.koku.services.entity.kks.v1.KksEntryValueType;
 
 /**
  * KKS service implementation class
@@ -32,7 +29,6 @@ public class KksServiceBean implements KksService {
 
   @Override
   public List<KksCollection> getCollections(String customer, String scope) {
-
     // TODO: Scope mukaan, ehkä lazy init kirjausten hakemiselle
     return serviceDAO.getCollections(customer);
   }
@@ -49,14 +45,14 @@ public class KksServiceBean implements KksService {
   }
 
   @Override
-  public List<KksCollection> getCollections(String customer, List<String> tagNames) {
-    return serviceDAO.queryCollections(customer, tagNames);
+  public List<KksCollection> search(KksQueryCriteria criteria) {
+    return serviceDAO.query(criteria);
   }
 
   @Override
-  public KksCollection add(String creator, String customer, String collectionClassId, String name) {
+  public Long add(KksCollectionCreation creation) {
 
-    return serviceDAO.insertCollection(name, collectionClassId, customer, creator);
+    return serviceDAO.insertCollection(creation);
   }
 
   @Override
@@ -70,14 +66,12 @@ public class KksServiceBean implements KksService {
   }
 
   @Override
-  public Long addEntry(String id, String pic, String creator, Date modified, String collectionId,
-      KksEntryValueType value) {
-    return serviceDAO.insertEntry(id == null ? null : Long.parseLong(id), pic, creator, modified,
-        collectionId == null ? null : Long.parseLong(collectionId), value);
+  public Long addEntry(KksEntryCreation creation) {
+    return serviceDAO.insertEntry(creation);
   }
 
   @Override
-  public Long version(String creator, String customer, String collectionId, String name, boolean empty) {
-    return serviceDAO.insertAndCopy(creator, customer, collectionId, name, empty);
+  public Long version(KksCollectionCreation creation) {
+    return serviceDAO.copyAndInsert(creation);
   }
 }

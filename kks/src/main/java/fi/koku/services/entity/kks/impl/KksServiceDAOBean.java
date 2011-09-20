@@ -14,8 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import fi.koku.services.entity.kks.v1.KksEntryValueType;
-
 @Stateless
 public class KksServiceDAOBean implements KksServiceDAO {
 
@@ -90,16 +88,16 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public KksCollection insertCollection(String name, String type, String customer, String creator) {
+  public Long insertCollection(KksCollectionCreation creation) {
     KksCollection k = new KksCollection();
-    k.setCollectionClass(Integer.parseInt(type));
-    k.setName(name);
-    k.setCustomer(customer);
+    k.setCollectionClass(Integer.parseInt(creation.getCollectionId()));
+    k.setName(creation.getName());
+    k.setCustomer(creation.getCustomer());
     k.setCreated(new Date());
-    k.setCreator(creator);
+    k.setCreator(creation.getCreator());
     k.setStatus("ACTIVE");
     em.persist(k);
-    return k;
+    return k.getId();
   }
 
   @Override
@@ -131,32 +129,35 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public Long insertEntry(Long id, String pic, String creator, Date modified, Long collectionId, KksEntryValueType value) {
+  public Long insertEntry(KksEntryCreation creation) {
 
-    if (id == null) {
+    if (creation.getId() == null) {
       KksEntry e = new KksEntry();
-      e.setCustomer(pic);
-      e.setModified(modified);
-      e.setKksCollection(em.find(KksCollection.class, collectionId));
-      e.setCreator(creator);
-      KksValue v = new KksValue();
-      v.setValue(value.getValue());
+      e.setCustomer(creation.getPic());
+      e.setModified(creation.getModified());
+      e.setKksCollection(em.find(KksCollection.class, creation.getCollectionId()));
+      e.setCreator(creation.getCreator());
       List<KksValue> tmp = new ArrayList<KksValue>();
-      tmp.add(v);
+      tmp.add(creation.getValue());
       e.setValues(tmp);
       em.persist(e);
       return e.getId();
 
     } else {
-      KksEntry e = em.find(KksEntry.class, id);
-      e.setCustomer(pic);
-      e.setCreator(creator);
-      e.setModified(modified);
+      KksEntry e = em.find(KksEntry.class, creation.getId());
+      e.setCustomer(creation.getPic());
+      e.setCreator(creation.getCreator());
+      e.setModified(creation.getModified());
 
-      KksValue v = value.getId() == null ? new KksValue() : em.find(KksValue.class, Long.parseLong(value.getId()));
-      v.setValue(value.getValue());
       List<KksValue> tmp = new ArrayList<KksValue>();
-      tmp.add(v);
+
+      if (creation.getValue().getId() == null) {
+        tmp.add(creation.getValue());
+      } else {
+        KksValue v = em.find(KksValue.class, creation.getId());
+        v.setValue(creation.getValue().getValue());
+        tmp.add(v);
+      }
       e.setValues(tmp);
       em.merge(e);
       return e.getId();
@@ -177,10 +178,11 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public List<KksCollection> queryCollections(String pic, List<String> tagNames) {
+  public List<KksCollection> query(KksQueryCriteria criteria) {
 
+    List<String> tagNames = criteria.getTagNames();
     if (tagNames.size() == 0) {
-      return getCollections(pic);
+      return getCollections(criteria.getPic());
     }
 
     StringBuilder tmp = new StringBuilder();
@@ -197,7 +199,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
     StringBuilder qs = new StringBuilder();
     qs.append("SELECT DISTINCT collection_id FROM kks_entry WHERE customer = ");
-    qs.append(pic);
+    qs.append(criteria.getPic());
     qs.append(" AND id IN( SELECT DISTINCT entry_class_id FROM kks_entry_class_tags WHERE entry_class_id IN (SELECT tag_id FROM kks_tag WHERE");
     qs.append(tmp.toString());
     qs.append("));");
@@ -395,23 +397,23 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public Long insertAndCopy(String creator, String customer, String collectionId, String name, boolean empty) {
-    KksCollection old = getCollection(collectionId);
+  public Long copyAndInsert(KksCollectionCreation creation) {
+    KksCollection old = getCollection(creation.getCollectionId());
 
     KksCollection newVersion = new KksCollection();
-    newVersion.setName(name);
-    newVersion.setCreator(creator);
+    newVersion.setName(creation.getName());
+    newVersion.setCreator(creation.getCreator());
     newVersion.setCreated(new Date());
-    newVersion.setCustomer(customer);
+    newVersion.setCustomer(creation.getCustomer());
     newVersion.setPrevVersion("" + old.getId());
     newVersion.setStatus("ACTIVE");
 
-    if (!empty) {
+    if (!creation.isEmpty()) {
 
       for (KksEntry e : old.getEntries()) {
         KksEntry newE = new KksEntry();
         newE.setCreator(e.getCreator());
-        newE.setCustomer(customer);
+        newE.setCustomer(creation.getCustomer());
         newE.setEntryClassId(e.getEntryClassId());
         newE.setModified(e.getModified());
         newVersion.addKksEntry(newE);
