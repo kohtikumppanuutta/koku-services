@@ -102,14 +102,14 @@ public class CommunityServiceBean implements CommunityService {
     StringBuilder jpql = new StringBuilder("SELECT c FROM Community c " +
     		"JOIN FETCH c.members " +
     		"WHERE c IN (" +
-    		"SELECT cm.community FROM CommunityMember cm WHERE cm.memberId = :memberId" +
+    		"SELECT cm.community FROM CommunityMember cm WHERE cm.memberPic = :memberPic" +
     		")"
         );
     if(qc.getCommunityType() != null) {
       jpql.append(" AND c.type = :type");
     }
     Query q = em.createQuery(jpql.toString());
-    q.setParameter("memberId", qc.getMemberPic());
+    q.setParameter("memberPic", qc.getMemberPic());
     if(qc.getCommunityType() != null) {
       q.setParameter("type", qc.getCommunityType());
     }
