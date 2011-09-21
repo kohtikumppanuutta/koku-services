@@ -3,6 +3,8 @@ package fi.koku.services.utility.log.impl;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -15,11 +17,12 @@ import javax.persistence.TemporalType;
  *
  */
 @Entity
-@Table(name = "ADMINLOG")
+@Table(name = "LOG_ADMIN")
 public class AdminLogEntry {
-
-  @Column(name="log_id", unique=true, nullable=false)
-  private String logId; // id given by the logging system
+  @Id
+  @GeneratedValue
+  @Column(name="id", unique=true, nullable=false)
+  private String id; // id given by the logging system
   
   @Column(name="timestamp")
   @Temporal(TemporalType.DATE)
@@ -60,11 +63,11 @@ public class AdminLogEntry {
   }
  
   public String getLogId() {
-    return logId;
+    return id;
   }
 
   public void setLogId(String logId) {
-    this.logId = logId;
+    this.id = logId;
   }
 
   public String getOperation() {
