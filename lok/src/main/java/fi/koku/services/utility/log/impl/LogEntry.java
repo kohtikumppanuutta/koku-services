@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -39,11 +41,10 @@ DELETE FROM log WHERE timestamp > valittualkuhetki AND timestamp < valittualkuhe
 
 @Table(name = "LOG")
 public class LogEntry {
-  
-  private String message; // message
-
-  @Column(name="log_id", unique=true, nullable=false)
-  private Long logId; // id given by the logging system 
+  @Id
+  @GeneratedValue
+  @Column(name="id", unique=true, nullable=false)
+  private Long id; // id given by the logging system 
 
   @Column(name="data_item_id")
   private String dataItemId; // id of the data item that was read/written/etc.
@@ -66,12 +67,15 @@ public class LogEntry {
   @Column(name="client_system_id")
   private String clientSystemId; // pyh, kks, kunpo, pegasos..
 
+  private String message;
+
+
   public Long getLogId() {
-    return logId;
+    return id;
   }
 
   public void setLogId(Long logId) {
-    this.logId = logId;
+    this.id = logId;
   }
   
   public Date getTimestamp() {
@@ -143,7 +147,7 @@ public class LogEntry {
   }
   
   public String getMessage() {
-    message = logId +" "+ timestamp +" "+ userPic +" "+ customerPic +" "+ dataItemType +" "+ 
+    message = id +" "+ timestamp +" "+ userPic +" "+ customerPic +" "+ dataItemType +" "+ 
       operation +" "+ clientSystemId;
     
     return message;
