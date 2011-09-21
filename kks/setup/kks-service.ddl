@@ -10,6 +10,7 @@ CREATE TABLE kks_collection_class (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   collection_class_id INT UNSIGNED NOT NULL,
   name VARCHAR(250) NOT NULL,
+  concent_type VARCHAR(250) NOT NULL,
   description VARCHAR(500) NOT NULL,
   CONSTRAINT UNIQUE (collection_class_id)
 );
