@@ -13,18 +13,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * 
  * LogEntry entity, used for logging all events (LOK-3).
  * 
  * @author aspluma
  * @author makinsu
- */
-/*
- * INSERT INTO log_archive (...)
-SELECT FROM log WHERE timestamp > valittualkuhetki AND timestamp < valittualkuhetki;
--> jos ei löydy mitään, ilmoitus käyttäjälle
-
-DELETE FROM log WHERE timestamp > valittualkuhetki AND timestamp < valittualkuhetki;
  */
 
 @Entity
@@ -39,7 +31,7 @@ DELETE FROM log WHERE timestamp > valittualkuhetki AND timestamp < valittualkuhe
     "VALUES (:data_item_id, :timestamp, :user_pic, :customer_pic, :data_item_type, :operation, :client_system_id, :message)")
 })
 
-@Table(name = "LOG")
+@Table(name = "log")
 public class LogEntry {
   @Id
   @GeneratedValue

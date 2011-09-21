@@ -17,7 +17,7 @@ import javax.persistence.TemporalType;
  *
  */
 @Entity
-@Table(name = "LOG_ADMIN")
+@Table(name = "log_admin")
 public class AdminLogEntry {
   @Id
   @GeneratedValue
@@ -62,12 +62,12 @@ public class AdminLogEntry {
     this.customerPic = customerPic;
   }
  
-  public String getLogId() {
+  public String getId() {
     return id;
   }
 
-  public void setLogId(String logId) {
-    this.id = logId;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getOperation() {
