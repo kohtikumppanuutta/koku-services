@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -47,10 +49,12 @@ public class LogDAOBean implements LogDAO {
      * http://dev.mysql.com/doc/refman/5.0/en/insert-select.html
      */
     // check if there is anything to archive
-    Query selectQuery = em.createNamedQuery("selectLogByDate");
+    
+    Query selectQuery = em.createQuery("SELECT COUNT(l) FROM LogEntry l WHERE l.timestamp < :date");
     selectQuery.setParameter("date", date);
+    Long logEntryCount = (Long)selectQuery.getSingleResult(); // en ole varma toimiiko tyypitys näin
 
-    List archiveList = selectQuery.getResultList();
+    List archiveList = new ArrayList(); // FIXME
    
     // there is nothing to archive
     if (archiveList == null || archiveList.isEmpty()) {
@@ -60,14 +64,19 @@ public class LogDAOBean implements LogDAO {
       throw new ServiceFault("ei löytynyt arkistoitavaa", sfdt);
     }
 
-    Query archiveQuery = em.createNamedQuery("archiveLogByDate");
+    logger.info("insert log entries to archive log (date="+date);
+    Query archiveQuery = em.createNativeQuery("INSERT INTO " +
+        "log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) " +
+        "SELECT data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message " +
+        "FROM log WHERE timestamp < :date");
     archiveQuery.setParameter("date", date);
+    int updateCount = archiveQuery.executeUpdate();
 
     logger.info("Archived log to log_archive table up to " + date);
     // TODO: Millä komennolla arkistointi pitäisi ajaa? Kuuluuko palauttaa
     // jotain? archiveQuery.getSingleResult();
     // jos arkistointi onnistui, ajetaan tämä
-    Query deleteQuery = em.createNamedQuery("deleteLogByDate");
+    Query deleteQuery = em.createNativeQuery("DELETE FROM log WHERE timestamp < :date");
     deleteQuery.setParameter("date", date);
     int deletedRows = deleteQuery.executeUpdate();
     logger.info("Deleted " + deletedRows + " rows from log table");

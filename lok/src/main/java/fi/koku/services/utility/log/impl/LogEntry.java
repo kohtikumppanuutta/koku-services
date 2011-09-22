@@ -20,17 +20,6 @@ import javax.persistence.TemporalType;
  */
 
 @Entity
-@NamedQueries({
-  @NamedQuery(name = "selectLogByDate", query = "SELECT * FROM log WHERE timestamp < :date"), 
-  @NamedQuery(name = "archiveLogByDate", query = "INSERT INTO " +
-  	"log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) " +
-    "SELECT data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message " +
-    "FROM log WHERE timestamp < :date"),
-  @NamedQuery(name = "deleteLogByDate", query = "DELETE FROM log WHERE timestamp < :date"),  
-  @NamedQuery(name = "writeLog", query = "INSERT INTO log (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) "+
-    "VALUES (:data_item_id, :timestamp, :user_pic, :customer_pic, :data_item_type, :operation, :client_system_id, :message)")
-})
-
 @Table(name = "log")
 public class LogEntry {
   @Id
