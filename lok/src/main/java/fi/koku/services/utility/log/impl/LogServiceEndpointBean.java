@@ -40,7 +40,11 @@ import fi.koku.services.utility.log.v1.VoidType;
  * @author makinsu
  */
 @Stateless
-@WebService(wsdlLocation = "META-INF/wsdl/logService.wsdl", endpointInterface = "fi.koku.services.utility.log.v1.LogServicePortType", targetNamespace = "http://services.koku.fi/utility/log/v1", portName = "logService-soap11-port", serviceName = "logService")
+@WebService(wsdlLocation = "META-INF/wsdl/logService.wsdl", 
+    endpointInterface = "fi.koku.services.utility.log.v1.LogServicePortType", 
+    targetNamespace = "http://services.koku.fi/utility/log/v1", 
+    portName = "logService-soap11-port", 
+    serviceName = "logService")
 @RolesAllowed("koku-role")
 public class LogServiceEndpointBean implements LogServicePortType {
   private static final Logger logger = LoggerFactory.getLogger(LogServiceEndpointBean.class);
@@ -50,6 +54,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
   @EJB
   private LogService logService;
+  
   private LogConverter logConverter;
 
   public LogServiceEndpointBean() {
@@ -143,7 +148,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
     public LogQueryCriteria fromWsType(LogQueryCriteriaType type) {
       // TODO: onko null-tsekkaus tehty jo aiemmin?
       LogQueryCriteria criteria = new LogQueryCriteria(type.getLogType(), type.getCustomerPic(),
-          type.getDataItemType(), type.getStartTime().getTime(), type.getEndDate().getTime());
+          type.getDataItemType(), type.getStartTime().getTime(), type.getEndTime().getTime());
 
       return criteria;
     }

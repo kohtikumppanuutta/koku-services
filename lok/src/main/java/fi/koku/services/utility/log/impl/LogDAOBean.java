@@ -13,7 +13,6 @@ import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import fi.koku.services.utility.log.v1.ServiceFault;
 import fi.koku.services.utility.log.v1.ServiceFaultDetailType;
 
@@ -39,6 +38,7 @@ public class LogDAOBean implements LogDAO {
   @Override
   public void archiveLog(Date date) throws ServiceFault {
 
+    
     /*
      * TODO tähän tyyliin: INSERT INTO log_archive (...) SELECT FROM log WHERE
      * timestamp > valittualkuhetki AND timestamp < valittualkuhetki; -> jos ei
@@ -89,19 +89,8 @@ public class LogDAOBean implements LogDAO {
    */
   @Override
   public void writeLog(LogEntry entry) {
-        
-    Query writeQuery = em.createNamedQuery("writeLog");
-    writeQuery.setParameter("data_item_id", entry.getDataItemId());
-    writeQuery.setParameter("timestamp", entry.getTimestamp());
-    writeQuery.setParameter("user_pic", entry.getUserPic());
-    writeQuery.setParameter("customer_pic", entry.getCustomerPic());
-    writeQuery.setParameter("data_item_type",entry.getDataItemType());
-    writeQuery.setParameter("operation",entry.getOperation());
-    writeQuery.setParameter("client_system_id", entry.getClientSystemId());
-    writeQuery.setParameter("message", entry.getMessage());
-
-    int logWritten = writeQuery.executeUpdate();
-    logger.debug("wrote "+logWritten+ "lines in the LOG table");
+    em.persist(entry);
+    
   }
 
 
@@ -115,7 +104,7 @@ public class LogDAOBean implements LogDAO {
   public List<LogEntry> queryLog(LogQueryCriteria criteria) throws ServiceFault {
     StringBuilder sb = new StringBuilder();
     List<Object[]> params = new ArrayList<Object[]>();
-
+logger.debug("queryLog-metodi: "+criteria.getLogType()+", "+criteria.getCustomerPic()+", "+criteria.getStartTime()+", "+criteria.getEndDate());
     // TODO:
     // ennen tätä tsekkaa nullit:
     // -starttime, enddate, logtype
