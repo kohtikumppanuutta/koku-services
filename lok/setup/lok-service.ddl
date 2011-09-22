@@ -23,8 +23,7 @@ CREATE TABLE log_admin (
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11) NOT NULL,
   operation VARCHAR(10) NOT NULL,
-  message VARCHAR(100),
-  FOREIGN KEY (log_id) REFERENCES log(id)
+  message VARCHAR(100)
 );
 
 CREATE TABLE log_archive (
