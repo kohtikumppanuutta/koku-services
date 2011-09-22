@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -22,8 +22,11 @@ import javax.persistence.Table;
  * 
  */
 @Entity
+@NamedQueries({ @NamedQuery(name = KksEntryClass.NAMED_QUERY_GET_ALL_ENTRY_CLASSES, query = "SELECT DISTINCT k FROM KksEntryClass k LEFT OUTER JOIN FETCH k.tags") })
 @Table(name = "kks_entry_class")
 public class KksEntryClass implements Serializable {
+
+  public static final String NAMED_QUERY_GET_ALL_ENTRY_CLASSES = "getAllEntryClasses";
 
   private static final long serialVersionUID = 4568034252182971307L;
 
@@ -52,11 +55,14 @@ public class KksEntryClass implements Serializable {
   @Column(name = "value_spaces")
   private String valueSpaces;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "entry_group")
-  private KksGroup group;
+  @Column(name = "entry_group")
+  private Integer groupId;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  // @ManyToOne
+  // @JoinColumn(name = "entry_group")
+  // private KksGroup group;
+
+  @ManyToMany
   @JoinTable(name = "kks_entry_class_tags", joinColumns = @JoinColumn(name = "entry_class_id", referencedColumnName = "entry_class_id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tag_id"))
   private List<KksTag> tags;
 
@@ -120,13 +126,13 @@ public class KksEntryClass implements Serializable {
     this.valueSpaces = valueSpaces;
   }
 
-  public KksGroup getGroup() {
-    return group;
-  }
-
-  public void setGroup(KksGroup croup) {
-    this.group = croup;
-  }
+  // public KksGroup getGroup() {
+  // return group;
+  // }
+  //
+  // public void setGroup(KksGroup croup) {
+  // this.group = croup;
+  // }
 
   public List<KksTag> getTags() {
     return tags;
@@ -142,6 +148,14 @@ public class KksEntryClass implements Serializable {
 
   public void setEntryClassId(int entryClassId) {
     this.entryClassId = entryClassId;
+  }
+
+  public Integer getGroupId() {
+    return groupId;
+  }
+
+  public void setGroupId(Integer groupId) {
+    this.groupId = groupId;
   }
 
 }

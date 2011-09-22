@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -48,10 +47,11 @@ public class KksGroup implements Serializable, Comparable<KksGroup> {
   @Column(nullable = false)
   private String register;
 
-  @Column(name = "parent_id")
+  @Column(name = "parent_id", nullable = true)
   private Integer parentId;
 
-  @OneToMany(mappedBy = "group")
+  // @OneToMany(mappedBy = "group")
+  @Transient
   private List<KksEntryClass> entryClasses;
 
   @Column(name = "collection_id")
@@ -110,7 +110,13 @@ public class KksGroup implements Serializable, Comparable<KksGroup> {
   }
 
   public void setEntryClasses(List<KksEntryClass> entryClasses) {
-    this.entryClasses = entryClasses;
+
+    if (entryClasses == null) {
+      this.entryClasses = new ArrayList<KksEntryClass>();
+
+    } else {
+      this.entryClasses = entryClasses;
+    }
   }
 
   public int getCollectionClassId() {

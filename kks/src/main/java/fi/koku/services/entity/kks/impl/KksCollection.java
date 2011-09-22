@@ -82,6 +82,11 @@ public class KksCollection implements Serializable {
   @JoinTable(name = "kks_collection_tags", joinColumns = @JoinColumn(name = "collection_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tag_id"))
   private List<KksTag> tags;
 
+  public KksCollection() {
+    entries = new ArrayList<KksEntry>();
+    tags = new ArrayList<KksTag>();
+  }
+
   public Long getId() {
     return id;
   }

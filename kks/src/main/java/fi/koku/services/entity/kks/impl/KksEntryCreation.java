@@ -9,14 +9,17 @@ public class KksEntryCreation {
   private String creator;
   private Date modified;
   private Long collectionId;
+  private Integer entryClassId;
   private KksValue value;
 
-  public KksEntryCreation(String id, String pic, String creator, Date modified, String collectionId, KksValue value) {
+  public KksEntryCreation(String id, String pic, String creator, Date modified, String collectionId,
+      String entryClassId, KksValue value) {
     this.id = id == null ? null : Long.parseLong(id);
     this.pic = pic;
     this.creator = creator;
     this.modified = modified;
     this.collectionId = collectionId == null ? null : Long.parseLong(collectionId);
+    this.entryClassId = entryClassId == null ? null : Integer.parseInt(entryClassId);
     this.value = value;
   }
 
@@ -66,6 +69,14 @@ public class KksEntryCreation {
 
   public void setValue(KksValue value) {
     this.value = value;
+  }
+
+  public Integer getEntryClassId() {
+    return entryClassId;
+  }
+
+  public void setEntryClassId(Integer entryClassId) {
+    this.entryClassId = entryClassId;
   }
 
 }

@@ -40,6 +40,9 @@ public class KksCollectionClass implements Serializable {
   @Column
   private String description;
 
+  @Column(name = "concent_type")
+  private String concentType;
+
   @Transient
   private List<KksGroup> groups;
 
@@ -82,4 +85,13 @@ public class KksCollectionClass implements Serializable {
   public void setCollectionClassId(int collectionClassId) {
     this.collectionClassId = collectionClassId;
   }
+
+  public String getConcentType() {
+    return concentType;
+  }
+
+  public void setConcentType(String concentType) {
+    this.concentType = concentType;
+  }
+
 }

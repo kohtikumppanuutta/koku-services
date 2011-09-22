@@ -53,7 +53,7 @@ public class KksConverter {
   public static KksCollectionClassType toWsType(KksCollectionClass collectionClass) {
 
     KksCollectionClassType tmp = new KksCollectionClassType();
-    tmp.setId("" + collectionClass.getId());
+    tmp.setId("" + collectionClass.getCollectionClassId());
     tmp.setDescription(collectionClass.getDescription());
     tmp.setName(collectionClass.getName());
 
@@ -68,10 +68,10 @@ public class KksConverter {
 
   public static KksEntryClassType toWsType(KksEntryClass entryClass) {
     KksEntryClassType kksEntryClassType = new KksEntryClassType();
-    kksEntryClassType.setId("" + entryClass.getId());
+    kksEntryClassType.setId("" + entryClass.getEntryClassId());
     kksEntryClassType.setDescription(entryClass.getDescription());
     kksEntryClassType.setDataType(entryClass.getDataType());
-    kksEntryClassType.setGroupId("" + entryClass.getGroup().getId());
+    kksEntryClassType.setGroupId("" + entryClass.getGroupId());
     kksEntryClassType.setMultiValue(entryClass.isMultiValue());
     kksEntryClassType.setName(entryClass.getName());
     kksEntryClassType.setSortOrder(new BigInteger("" + entryClass.getSortOrder()));
@@ -80,7 +80,7 @@ public class KksConverter {
     if (entryClass.getTags() != null) {
       for (KksTag tag : entryClass.getTags()) {
         KksTagType t = new KksTagType();
-        t.setId("" + tag.getId());
+        t.setId("" + tag.getTagId());
         t.setName(tag.getName());
         t.setDescription(tag.getDescription());
         kksTagsType.getKksTag().add(t);
@@ -106,7 +106,7 @@ public class KksConverter {
 
   public static KksGroupType toWsType(KksGroup group) {
     KksGroupType kksGroupType = new KksGroupType();
-    kksGroupType.setId("" + group.getId());
+    kksGroupType.setId("" + group.getGroupId());
     kksGroupType.setDescription(group.getDescription());
     kksGroupType.setName(group.getName());
     kksGroupType.setOrder(new BigInteger("" + group.getSortOrder()));

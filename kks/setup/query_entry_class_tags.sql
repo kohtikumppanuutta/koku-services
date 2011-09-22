@@ -1,0 +1,1 @@
+select kks_entry_class.name, kks_tag.name  from kks_entry_class inner join kks_entry_class_tags on kks_entry_class.entry_class_id = kks_entry_class_tags.entry_class_id join kks_tag on  kks_entry_class_tags.tag_id = kks_tag.tag_id;

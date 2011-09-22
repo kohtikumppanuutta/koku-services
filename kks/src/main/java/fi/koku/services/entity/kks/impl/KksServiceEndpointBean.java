@@ -145,10 +145,12 @@ public class KksServiceEndpointBean implements KksServicePortType {
   public IdType opAddEntry(KksEntryCriteriaType kksEntryAddType, AuditInfoType auditHeader) throws ServiceFault {
 
     KksValue value = new KksValue();
-    value.setId(kksEntryAddType.getValue().getId() == null ? null : Long.parseLong(kksEntryAddType.getValue().getId()));
+    value.setId(kksEntryAddType.getValue().getId() == null || "".equals(kksEntryAddType.getValue().getId()) ? null
+        : Long.parseLong(kksEntryAddType.getValue().getId()));
     value.setValue(kksEntryAddType.getValue().getValue());
     KksEntryCreation c = new KksEntryCreation(kksEntryAddType.getEntryId(), kksEntryAddType.getPic(),
-        kksEntryAddType.getCreator(), kksEntryAddType.getModified().getTime(), kksEntryAddType.getCollectionId(), value);
+        kksEntryAddType.getCreator(), kksEntryAddType.getModified().getTime(), kksEntryAddType.getCollectionId(),
+        kksEntryAddType.getEntryClassId(), value);
 
     IdType id = new IdType();
     id.setId(kksService.addEntry(c).toString());

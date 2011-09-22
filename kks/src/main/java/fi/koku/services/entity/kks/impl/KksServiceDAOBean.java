@@ -32,7 +32,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
     // due to recursive reference between groups and subgroups, group mapping is
     // hand made
     // if this would have done via annotations, it would have made the
-    // insertions harder to make (ie: full path should have been set inside
+    // insertions harder to make (ie: full group path should have been set
+    // inside
     // single transaction)
     Map<Integer, List<KksGroup>> groups = getRootGroupsMap();
     for (KksCollectionClass c : list) {
@@ -45,14 +46,38 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   private Map<Integer, List<KksGroup>> getRootGroupsMap() {
     Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_GROUPS);
+    Query classes = em.createNamedQuery(KksEntryClass.NAMED_QUERY_GET_ALL_ENTRY_CLASSES);
+    List<KksEntryClass> entries = (List<KksEntryClass>) classes.getResultList();
+
+    Map<Integer, List<KksEntryClass>> entryMap = new HashMap<Integer, List<KksEntryClass>>();
+
+    for (KksEntryClass e : entries) {
+      if (entryMap.containsKey(e.getGroupId())) {
+        List<KksEntryClass> tmp = entryMap.get(e.getGroupId());
+        tmp.add(e);
+      } else {
+        List<KksEntryClass> tmp = new ArrayList<KksEntryClass>();
+        tmp.add(e);
+        entryMap.put(e.getGroupId(), tmp);
+      }
+    }
 
     @SuppressWarnings("unchecked")
     List<KksGroup> list = (List<KksGroup>) q.getResultList();
+
     Map<Integer, KksGroup> map = new LinkedHashMap<Integer, KksGroup>();
     Map<Integer, List<KksGroup>> collectionMap = new HashMap<Integer, List<KksGroup>>();
 
     for (KksGroup g : list) {
       map.put(g.getGroupId(), g);
+      g.setEntryClasses(entryMap.get(g.getGroupId()));
+      List<KksEntryClass> tmp = g.getEntryClasses();
+
+      if (tmp != null) {
+        for (KksEntryClass e : tmp) {
+          System.out.println(e.getName());
+        }
+      }
 
       if (g.getParentId() == null) {
         // map only root groups
@@ -137,7 +162,9 @@ public class KksServiceDAOBean implements KksServiceDAO {
       e.setModified(creation.getModified());
       e.setKksCollection(em.find(KksCollection.class, creation.getCollectionId()));
       e.setCreator(creation.getCreator());
+      e.setEntryClassId(creation.getEntryClassId());
       List<KksValue> tmp = new ArrayList<KksValue>();
+      creation.getValue().setEntry(e);
       tmp.add(creation.getValue());
       e.setValues(tmp);
       em.persist(e);
@@ -152,9 +179,11 @@ public class KksServiceDAOBean implements KksServiceDAO {
       List<KksValue> tmp = new ArrayList<KksValue>();
 
       if (creation.getValue().getId() == null) {
+        creation.getValue().setEntry(e);
         tmp.add(creation.getValue());
       } else {
         KksValue v = em.find(KksValue.class, creation.getId());
+        v.setEntry(e);
         v.setValue(creation.getValue().getValue());
         tmp.add(v);
       }
@@ -407,6 +436,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     newVersion.setCustomer(creation.getCustomer());
     newVersion.setPrevVersion("" + old.getId());
     newVersion.setStatus("ACTIVE");
+    newVersion.setCollectionClass(old.getCollectionClass());
 
     if (!creation.isEmpty()) {
 
@@ -416,12 +446,14 @@ public class KksServiceDAOBean implements KksServiceDAO {
         newE.setCustomer(creation.getCustomer());
         newE.setEntryClassId(e.getEntryClassId());
         newE.setModified(e.getModified());
+        newE.setKksCollection(newVersion);
         newVersion.addKksEntry(newE);
 
         for (KksValue value : e.getValues()) {
           KksValue newVal = new KksValue();
           newVal.setEntry(newE);
           newVal.setValue(value.getValue());
+          newVal.setEntry(newE);
           newE.addKksValue(newVal);
         }
 
@@ -434,6 +466,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     em.persist(newVersion);
 
     old.setNextVersion("" + newVersion.getId());
+    old.setStatus("LOCKED");
     em.merge(old);
 
     return newVersion.getId();
