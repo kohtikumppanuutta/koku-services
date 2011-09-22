@@ -7,7 +7,7 @@ SET storage_engine = innodb;
 CREATE TABLE log (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   data_item_id VARCHAR(10) NOT NULL,
-  timestamp DATE NOT NULL,
+  timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11) NOT NULL,
   data_item_type VARCHAR(15) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE log (
 CREATE TABLE log_admin (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   log_id BIGINT UNSIGNED NOT NULL,
-  timestamp DATE NOT NULL,
+  timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11) NOT NULL,
   operation VARCHAR(10) NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE log_admin (
 CREATE TABLE log_archive (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   data_item_id VARCHAR(10) NOT NULL,
-  timestamp DATE NOT NULL,
+  timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11) NOT NULL,
   data_item_type VARCHAR(15) NOT NULL,
