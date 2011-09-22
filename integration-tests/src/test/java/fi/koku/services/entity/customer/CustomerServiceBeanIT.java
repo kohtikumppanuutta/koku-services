@@ -1,7 +1,6 @@
 package fi.koku.services.entity.customer;
 
 import java.util.Calendar;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,9 +9,11 @@ import static org.hamcrest.CoreMatchers.*;
 import fi.koku.services.entity.customer.v1.AddressType;
 import fi.koku.services.entity.customer.v1.AddressesType;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
+import fi.koku.services.entity.customer.v1.CustomerQueryCriteriaType;
 import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
+import fi.koku.services.entity.customer.v1.CustomersType;
 import fi.koku.services.entity.customer.v1.ElectronicContactInfoType;
 import fi.koku.services.entity.customer.v1.ElectronicContactInfosType;
 import fi.koku.services.entity.customer.v1.PhoneNumberType;
@@ -46,78 +47,67 @@ public class CustomerServiceBeanIT {
     assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM customer"), is(2));
     
     // Call the web service
-    CustomerType customer = customerServicePort.opGetCustomer("12346", audit);
+    CustomerType customer = customerServicePort.opGetCustomer("123456-123A", audit);
     
     // Verify the returned result or DB state
-    assertThat(customer.getId(), is("12346"));
+    assertThat(customer.getHenkiloTunnus(), is("123456-123A"));
     assertThat(customer.getEtuNimi(), is("Liisa"));
     assertThat(customer.getSukuNimi(), is("Virtanen"));
   }
+  
+  @Test
+  public void testQueryCustomer() throws ServiceFault {
+    CustomerServicePortType customerServicePort = getCustomerServicePort();
+    AuditInfoType audit = getAudit();
+    
+    // Setup fixture
+    TestDbUtils.executeSqlScriptFromClasspath("/test-data/customer-test.sql", jdbcTemplate);
+    CustomerType customer = createCustomer();
+    customerServicePort.opAddCustomer(customer, audit);
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM customer"), is(3));
+    
+    // Test get by pic
+    CustomerQueryCriteriaType query = new CustomerQueryCriteriaType();
+    query.setPic("150790-123A");
+    CustomersType customers = customerServicePort.opQueryCustomers(query, audit);
+    assertThat(customers.getCustomer().size(), is(1));
+    customer = customers.getCustomer().get(0);
+    // Verify the returned result or DB state
+    assertThat(customer.getHenkiloTunnus(), is("150790-123A"));
+    assertThat(customer.getEtuNimi(), is("Matti"));
+    assertThat(customer.getSukuNimi(), is("Järvinen"));
+    // Limited data set
+    assertThat(customer.getAddresses(), nullValue());
+    
+    // Test get by pic with full dataset
+    query.setSelection("full");
+    customers = customerServicePort.opQueryCustomers(query, audit);
+    assertThat(customers.getCustomer().size(), is(1));
+    customer = customers.getCustomer().get(0);
+    // Verify the returned result or DB state
+    assertThat(customer.getHenkiloTunnus(), is("150790-123A"));
+    // Full data set
+    assertThat(customer.getAddresses().getAddress().size(), is(2));
+    assertThat(customer.getPhoneNumbers().getPhone().size(), is(2));
+    
+    // Test get by id
+    query = new CustomerQueryCriteriaType();
+    query.setId("12346");
+    query.setPic("puppu");
+    query.setSelection("full");
+    customers = customerServicePort.opQueryCustomers(query, audit);
+    assertThat(customers.getCustomer().size(), is(1));
+    customer = customers.getCustomer().get(0);
+    // Verify the returned result or DB state
+    assertThat(customer.getHenkiloTunnus(), is("123456-123A"));
+  }  
   
   @Test
   public void testInsertAndUpdateCustomer() throws ServiceFault {
     CustomerServicePortType customerServicePort = getCustomerServicePort();
     AuditInfoType audit = getAudit();
     
-    CustomerType customer = new CustomerType();
-    customer.setEtuNimi("Matti");
-    customer.setEtunimetNimi("");
-    customer.setSukuNimi("Virtanen");
-    customer.setHenkiloTunnus("150790-123A");
-    customer.setKieliKoodi("FI");
-    customer.setSyntymaPvm(Calendar.getInstance());
-    customer.setStatusDate(Calendar.getInstance());
-    customer.setTurvakieltoKytkin(false);
-    customer.setStatus(""); // TODO: status values?
-    customer.setKansalaisuusKoodi("FI");
-    customer.setKuntaKoodi("1000"); // TODO: municipality codes?
-    
-    AddressesType addresses = new AddressesType();
-    AddressType address1 = new AddressType();
-    address1.setAddressType("TYPE1"); // TODO: address type values?
-    address1.setAlkuPvm(Calendar.getInstance());
-    address1.setLoppuPvm(Calendar.getInstance());
-    address1.setKatuNimi("Hitsaajankatu 24");
-    address1.setPostilokeroTeksti("PL 284");
-    address1.setPostinumeroKoodi("00811");
-    address1.setPostitoimipaikkaNimi("Helsinki");
-    address1.setMaatunnusKoodi("FI");
-    addresses.getAddress().add(address1);
-    AddressType address2 = new AddressType();
-    address2.setAddressType("TYPE2");
-    address2.setAlkuPvm(Calendar.getInstance());
-    address2.setLoppuPvm(Calendar.getInstance());
-    address2.setKatuNimi("Iltatie 24");
-    address2.setPostilokeroTeksti(null);
-    address2.setPostinumeroKoodi("02220");
-    address2.setPostitoimipaikkaNimi("Espoo");
-    address2.setMaatunnusKoodi("FI");    
-    addresses.getAddress().add(address2);
-    customer.setAddresses(addresses);
-    
-    PhoneNumbersType phoneNumbers = new PhoneNumbersType();
-    PhoneNumberType phoneNumber = new PhoneNumberType();
-    phoneNumber.setPuhelinnumeroTeksti("+358501234567"); 
-    phoneNumber.setNumberType("WORK"); // TODO: number type?
-    phoneNumber.setNumberClass("?"); // TODO: number class?
-    phoneNumbers.getPhone().add(phoneNumber);
-    phoneNumber = new PhoneNumberType();
-    phoneNumber.setPuhelinnumeroTeksti("+35891234566"); 
-    phoneNumber.setNumberType("HOME"); // TODO: number type?
-    phoneNumber.setNumberClass("?"); // TODO: number class?
-    phoneNumbers.getPhone().add(phoneNumber);
-    customer.setPhoneNumbers(phoneNumbers);
-    
-    ElectronicContactInfosType contactInfos = new ElectronicContactInfosType();
-    ElectronicContactInfoType contactInfo = new ElectronicContactInfoType();
-    contactInfo.setContactInfo("matti.virtanen");
-    contactInfo.setContactInfoType("SKYPE");
-    contactInfos.getEContactInfo().add(contactInfo);
-    contactInfo = new ElectronicContactInfoType();
-    contactInfo.setContactInfo("testinfo");
-    contactInfo.setContactInfoType("INFO1");
-    contactInfos.getEContactInfo().add(contactInfo);
-    customer.setElectronicContactInfos(contactInfos);
+    CustomerType customer = createCustomer();
     
     String customerId = customerServicePort.opAddCustomer(customer, audit);
     assertThat(customerId, notNullValue());
@@ -126,6 +116,15 @@ public class CustomerServiceBeanIT {
     CustomerType insertedCustomer = customerServicePort.opGetCustomer(customer.getHenkiloTunnus(), audit);
     
     assertThat(insertedCustomer.getHenkiloTunnus(), is(customer.getHenkiloTunnus()));
+    assertThat(insertedCustomer.getEtuNimi(), is(customer.getEtuNimi()));
+    assertThat(insertedCustomer.getSukuNimi(), is(customer.getSukuNimi()));
+    assertThat(insertedCustomer.getEtunimetNimi(), is(customer.getEtunimetNimi()));
+    assertThat(insertedCustomer.getKieliKoodi(), is(customer.getKieliKoodi()));
+    assertThat(insertedCustomer.isTurvakieltoKytkin(), is(customer.isTurvakieltoKytkin()));
+    assertThat(insertedCustomer.getStatus(), is(customer.getStatus()));
+    assertThat(insertedCustomer.getKansalaisuusKoodi(), is(customer.getKansalaisuusKoodi()));
+    assertThat(insertedCustomer.getKuntaKoodi(), is(customer.getKuntaKoodi()));
+    
     assertThat(insertedCustomer.getAddresses().getAddress().size(), is(2));
     assertThat(insertedCustomer.getPhoneNumbers().getPhone().size(), is(2));
     assertThat(insertedCustomer.getElectronicContactInfos().getEContactInfo().size(), is(2));
@@ -148,11 +147,11 @@ public class CustomerServiceBeanIT {
     customer = customerServicePort.opGetCustomer("150790-123A", audit);
     // Update address
     AddressType address = getAddressType("TYPE1", customer.getAddresses());
-    assertThat(address.getKatuNimi(), is("Hitsaajankatu 24"));
+    assertThat(address.getKatuNimi(), is("Hitsaajankatu € 24"));
     address.setKatuNimi(address.getKatuNimi() + " upd");
     // Add one new address
     AddressType newAddress = new AddressType();
-    newAddress.setAddressType("TYPE3"); // TODO: address type values?
+    newAddress.setAddressType("TYPE3");
     newAddress.setAlkuPvm(Calendar.getInstance());
     newAddress.setLoppuPvm(Calendar.getInstance());
     newAddress.setKatuNimi("Kuusitie 4");
@@ -174,8 +173,8 @@ public class CustomerServiceBeanIT {
     customer.getPhoneNumbers().getPhone().add(newPhone);
 
     // Update e contact info
-    contactInfo = getElectronicContactInfoType("SKYPE", customer.getElectronicContactInfos());
-    assertThat(contactInfo.getContactInfo(), is("matti.virtanen"));
+    ElectronicContactInfoType contactInfo = getElectronicContactInfoType("SKYPE", customer.getElectronicContactInfos());
+    assertThat(contactInfo.getContactInfo(), is("matti.jarvinen"));
     contactInfo.setContactInfo(contactInfo.getContactInfo() + " upd");
     // Add one new contact info
     ElectronicContactInfoType newContactInfo = new ElectronicContactInfoType();
@@ -187,7 +186,7 @@ public class CustomerServiceBeanIT {
     // Verify update
     customer = customerServicePort.opGetCustomer("150790-123A", audit);
     address = getAddressType("TYPE1", customer.getAddresses());
-    assertThat(address.getKatuNimi(), is("Hitsaajankatu 24 upd"));
+    assertThat(address.getKatuNimi(), is("Hitsaajankatu € 24 upd"));
     assertThat(customer.getAddresses().getAddress().size(), is(3));
     
     phone = getPhoneNumbersType("HOME", customer.getPhoneNumbers());
@@ -195,7 +194,7 @@ public class CustomerServiceBeanIT {
     assertThat(customer.getPhoneNumbers().getPhone().size(), is(3));
     
     contactInfo = getElectronicContactInfoType("SKYPE", customer.getElectronicContactInfos());
-    assertThat(contactInfo.getContactInfo(), is("matti.virtanen upd"));
+    assertThat(contactInfo.getContactInfo(), is("matti.jarvinen upd"));
     assertThat(customer.getElectronicContactInfos().getEContactInfo().size(), is(3));
 
     // Test remove
@@ -216,6 +215,88 @@ public class CustomerServiceBeanIT {
     assertThat(getAddressType("TYPE1", customer.getAddresses()), nullValue());
     assertThat(getPhoneNumbersType("HOME", customer.getPhoneNumbers()), nullValue());
     assertThat(getElectronicContactInfoType("SKYPE", customer.getElectronicContactInfos()), nullValue());
+  }
+  
+  @Test
+  public void testDeleteCustomer() throws ServiceFault {
+    CustomerServicePortType customerServicePort = getCustomerServicePort();
+    AuditInfoType audit = getAudit();
+    
+    CustomerType customer = createCustomer();
+    customerServicePort.opAddCustomer(customer, audit);
+    
+    customerServicePort.opDeleteCustomer(customer.getHenkiloTunnus(), audit);
+    
+    // Customer and child entities should be now removed from the DB
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM customer"), is(0));
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM address"), is(0)); 
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM electronic_contact_info"), is(0)); 
+    assertThat(jdbcTemplate.queryForInt("SELECT COUNT(*) FROM phone_number"), is(0)); 
+  }
+  
+  private CustomerType createCustomer() {
+    CustomerType customer = new CustomerType();
+    customer.setEtuNimi("Matti");
+    customer.setEtunimetNimi("Matti Ville");
+    customer.setSukuNimi("Järvinen");
+    customer.setHenkiloTunnus("150790-123A");
+    customer.setKieliKoodi("FI");
+    customer.setSyntymaPvm(Calendar.getInstance());
+    customer.setStatusDate(Calendar.getInstance());
+    customer.setTurvakieltoKytkin(false);
+    customer.setStatus("STATUS1");
+    customer.setKansalaisuusKoodi("FI");
+    customer.setKuntaKoodi("1000");
+    
+    AddressesType addresses = new AddressesType();
+    AddressType address1 = new AddressType();
+    address1.setAddressType("TYPE1");
+    address1.setAlkuPvm(Calendar.getInstance());
+    address1.setLoppuPvm(Calendar.getInstance());
+    // Test special character
+    address1.setKatuNimi("Hitsaajankatu € 24");
+    address1.setPostilokeroTeksti("PL 284");
+    address1.setPostinumeroKoodi("00811");
+    address1.setPostitoimipaikkaNimi("Helsinki");
+    address1.setMaatunnusKoodi("FI");
+    addresses.getAddress().add(address1);
+    AddressType address2 = new AddressType();
+    address2.setAddressType("TYPE2");
+    address2.setAlkuPvm(Calendar.getInstance());
+    address2.setLoppuPvm(Calendar.getInstance());
+    address2.setKatuNimi("Iltatie 24");
+    address2.setPostilokeroTeksti(null);
+    address2.setPostinumeroKoodi("02220");
+    address2.setPostitoimipaikkaNimi("Espoo");
+    address2.setMaatunnusKoodi("FI");    
+    addresses.getAddress().add(address2);
+    customer.setAddresses(addresses);
+    
+    PhoneNumbersType phoneNumbers = new PhoneNumbersType();
+    PhoneNumberType phoneNumber = new PhoneNumberType();
+    phoneNumber.setPuhelinnumeroTeksti("+358501234567"); 
+    phoneNumber.setNumberType("WORK");
+    phoneNumber.setNumberClass("CLASS1");
+    phoneNumbers.getPhone().add(phoneNumber);
+    phoneNumber = new PhoneNumberType();
+    phoneNumber.setPuhelinnumeroTeksti("+35891234566"); 
+    phoneNumber.setNumberType("HOME");
+    phoneNumber.setNumberClass("CLASS2");
+    phoneNumbers.getPhone().add(phoneNumber);
+    customer.setPhoneNumbers(phoneNumbers);
+    
+    ElectronicContactInfosType contactInfos = new ElectronicContactInfosType();
+    ElectronicContactInfoType contactInfo = new ElectronicContactInfoType();
+    contactInfo.setContactInfo("matti.jarvinen");
+    contactInfo.setContactInfoType("SKYPE");
+    contactInfos.getEContactInfo().add(contactInfo);
+    contactInfo = new ElectronicContactInfoType();
+    contactInfo.setContactInfo("testinfo");
+    contactInfo.setContactInfoType("INFO1");
+    contactInfos.getEContactInfo().add(contactInfo);
+    customer.setElectronicContactInfos(contactInfos);
+    
+    return customer;
   }
   
   private AddressType getAddressType(String type, AddressesType addresses) {
