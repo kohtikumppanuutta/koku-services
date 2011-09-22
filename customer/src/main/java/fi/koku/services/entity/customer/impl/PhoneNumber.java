@@ -75,4 +75,10 @@ public class PhoneNumber {
     this.customer = customer;
   }
 
+  public void setPhoneNumber(PhoneNumber phoneNumber) {
+    setType(phoneNumber.getType());
+    setNumber(phoneNumber.getNumber());
+    setNumberClass(phoneNumber.getNumberClass());
+  }
+
 }

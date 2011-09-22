@@ -53,7 +53,6 @@ public class Address {
   @ManyToOne
   @JoinColumn(name="customer_id", nullable=false)
   private Customer customer;
-
   
   public Address() {
   }
@@ -136,6 +135,42 @@ public class Address {
 
   public void setCustomer(Customer customer) {
     this.customer = customer;
+  }
+  
+  public void setAddress(Address a) {
+    setType(a.getType());
+    setStreetAddress(a.getStreetAddress());
+    setPostalDistrict(a.getPostalDistrict());
+    setPostalCode(a.getPostalCode());
+    setPoBox(a.getPoBox());
+    setCountryCode(a.getCountryCode());
+    setValidFrom(a.getValidFrom());
+    setValidTo(a.getValidTo());
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Address other = (Address) obj;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
   }
 
 }

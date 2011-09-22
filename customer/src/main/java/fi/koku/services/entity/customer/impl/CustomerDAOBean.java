@@ -2,7 +2,12 @@ package fi.koku.services.entity.customer.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -39,10 +44,128 @@ public class CustomerDAOBean implements CustomerDAO {
   }
 
   @Override
-  public void updateCustomer(Customer c) {
-    Customer customer = findCustomer(c.getPic());
-    customer.setCustomer(c);
-    em.merge(customer);
+  public void updateCustomer(Customer c2) {
+    Customer c1 = findCustomer(c2.getPic());
+    c1.setCustomer(c2);
+    
+    // Update child entities
+    updateAddresses(c1, c2);
+    updatePhoneNumbers(c1, c2);
+    updateElectronicContactInfos(c1, c2);
+  }
+  
+  /**
+   * Merge from c2 to c1.
+   * 
+   * @param c1
+   * @param c2
+   */
+  private void updateAddresses(Customer c1, Customer c2) {
+    Set<String> c1Addresses = new HashSet<String>();
+    Map<String, Address> c2Addresses = new HashMap<String, Address>();
+    
+    for (Address a : c2.getAddresses()) {
+      c2Addresses.put(a.getType(), a);
+    }
+    
+    for(Iterator<Address> i = c1.getAddresses().iterator(); i.hasNext(); ) {
+      Address a = i.next();
+      Address a2 = c2Addresses.get(a.getType());
+      if (a2 != null) {
+        // Update Address
+        a.setAddress(a2);
+      } else {
+        // Delete Address
+        i.remove();
+        em.remove(a);        
+      }
+      c1Addresses.add(a.getType());
+    }
+    
+    // Add Address
+    Set<String> addressTypes = c2Addresses.keySet(); 
+    addressTypes.removeAll(c1Addresses);
+    for(String type : addressTypes) {
+      Address a = c2Addresses.get(type);
+      a.setCustomer(c1);
+      c1.getAddresses().add(a);
+    }    
+  }
+  
+  /**
+   * Merge from c2 to c1.
+   * 
+   * @param c1
+   * @param c2
+   */  
+  private void updatePhoneNumbers(Customer c1, Customer c2) {
+    Set<String> c1PhoneNumbers = new HashSet<String>();
+    Map<String, PhoneNumber> c2PhoneNumbers = new HashMap<String, PhoneNumber>();
+    
+    for (PhoneNumber p : c2.getPhones()) {
+      c2PhoneNumbers.put(p.getType(), p);
+    }
+    
+    for(Iterator<PhoneNumber> i = c1.getPhones().iterator(); i.hasNext(); ) {
+      PhoneNumber p = i.next();
+      PhoneNumber p2 = c2PhoneNumbers.get(p.getType());
+      if (p2 != null) {
+        // Update PhoneNumber
+        p.setPhoneNumber(p2);
+      } else {
+        // Delete PhoneNumber
+        i.remove();
+        em.remove(p);        
+      }
+      c1PhoneNumbers.add(p.getType());
+    }
+    
+    // Add new PhoneNumber
+    Set<String> PhoneNumberTypes = c2PhoneNumbers.keySet(); 
+    PhoneNumberTypes.removeAll(c1PhoneNumbers);
+    for(String type : PhoneNumberTypes) {
+      PhoneNumber p = c2PhoneNumbers.get(type);
+      p.setCustomer(c1);
+      c1.getPhones().add(p);
+    }    
+  }
+  
+  /**
+   * Merge from c2 to c1.
+   * 
+   * @param c1
+   * @param c2
+   */  
+  private void updateElectronicContactInfos(Customer c1, Customer c2) {
+    Set<String> c1ElectronicContactInfos = new HashSet<String>();
+    Map<String, ElectronicContactInfo> c2ElectronicContactInfos = new HashMap<String, ElectronicContactInfo>();
+    
+    for (ElectronicContactInfo e : c2.getElectronicContacts()) {
+      c2ElectronicContactInfos.put(e.getType(), e);
+    }
+    
+    for(Iterator<ElectronicContactInfo> i = c1.getElectronicContacts().iterator(); i.hasNext(); ) {
+      ElectronicContactInfo e = i.next();
+      ElectronicContactInfo e2 = c2ElectronicContactInfos.get(e.getType());
+      if (e2 != null) {
+        // Update ElectronicContactInfo
+        e.setElectronicContactInfo(e2);
+      } else {
+        // Delete ElectronicContactInfo
+        i.remove();
+        em.remove(e);        
+      }
+      c1ElectronicContactInfos.add(e.getType());
+    }
+    
+    // Add new ElectronicContactInfo
+    Set<String> ElectronicContactInfoTypes = c2ElectronicContactInfos.keySet(); 
+    ElectronicContactInfoTypes.removeAll(c1ElectronicContactInfos);
+    for(String type : ElectronicContactInfoTypes) {
+      ElectronicContactInfo e = c2ElectronicContactInfos.get(type);
+      e.setCustomer(c1);
+      c1.getElectronicContacts().add(e);
+    }    
   }
 
   @Override

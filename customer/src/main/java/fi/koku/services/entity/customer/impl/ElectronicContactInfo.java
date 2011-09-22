@@ -65,5 +65,10 @@ public class ElectronicContactInfo {
   public void setCustomer(Customer customer) {
     this.customer = customer;
   }
+
+  public void setElectronicContactInfo(ElectronicContactInfo electronicContactInfo) {
+    setType(electronicContactInfo.getType());
+    setContact(electronicContactInfo.getContact());
+  }
   
 }
