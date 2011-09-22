@@ -89,7 +89,7 @@ public class CustomerDAOBean implements CustomerDAO {
       Address a = c2Addresses.get(type);
       a.setCustomer(c1);
       c1.getAddresses().add(a);
-    }    
+    }
   }
   
   /**
@@ -171,14 +171,14 @@ public class CustomerDAOBean implements CustomerDAO {
   @Override
   public void deleteCustomer(String pic) {
     Customer c = findCustomer(pic);
-    em.remove(c.getId());
+    em.remove(c);
   }
 
   @Override
   public Collection<Customer> queryCustomers(CustomerQueryCriteria qc) {
-    StringBuilder qs = new StringBuilder("FROM Customer c ");
+    StringBuilder qs = new StringBuilder("SELECT DISTINCT c FROM Customer c ");
     if("full".equals(qc.getSelection())) {
-    		qs.append("LEFT JOIN FETCH c.addresses ");
+    		qs.append("LEFT OUTER JOIN FETCH c.addresses LEFT OUTER JOIN FETCH c.phones LEFT OUTER JOIN FETCH c.electronicContacts ");
     }
     qs.append("WHERE ");
     List<Object[]> params = new ArrayList<Object[]>();
@@ -193,22 +193,17 @@ public class CustomerDAOBean implements CustomerDAO {
       params.add(new Object[] {"id", qc.getId()});
     }
 
-    if(params.size() == 0)
+    if(params.size() == 0) {
       throw new RuntimeException("missing criteria");
+    }
     Query q = em.createQuery(qs.toString());
 
-    for(int i = 0; i<params.size(); i++)
+    for(int i = 0; i<params.size(); i++) {
       q.setParameter((String)params.get(i)[0], params.get(i)[1]);
+    }
     
     @SuppressWarnings("unchecked")
     List<Customer> customers = q.getResultList();
-    if("full".equals(qc.getSelection())) {
-      for(Customer c : customers) {
-        c.getPhones();
-        c.getElectronicContacts();
-      }
-    }
-    
     return customers;
   }
 

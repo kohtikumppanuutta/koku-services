@@ -3,9 +3,10 @@ package fi.koku.services.entity.customer.impl;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REMOVE;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -68,13 +69,13 @@ public class Customer {
   private boolean turvakielto;
   
   @OneToMany(mappedBy="customer", cascade={PERSIST, REMOVE})
-  private Collection<Address> addresses = new ArrayList<Address>();
+  private Set<Address> addresses = new HashSet<Address>();
   
   @OneToMany(mappedBy="customer", cascade={PERSIST, REMOVE})
-  private Collection<PhoneNumber> phones = new ArrayList<PhoneNumber>();
+  private Set<PhoneNumber> phones = new HashSet<PhoneNumber>();
   
   @OneToMany(mappedBy="customer", cascade={PERSIST, REMOVE})
-  private Collection<ElectronicContactInfo> electronicContacts = new ArrayList<ElectronicContactInfo>();
+  private Set<ElectronicContactInfo> electronicContacts = new HashSet<ElectronicContactInfo>();
 
   
   @Version
