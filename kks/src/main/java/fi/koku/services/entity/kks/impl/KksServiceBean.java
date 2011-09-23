@@ -35,6 +35,7 @@ public class KksServiceBean implements KksService {
 
   @Override
   public void update(KksCollection collection) {
+
     serviceDAO.update(collection);
   }
 
@@ -56,8 +57,8 @@ public class KksServiceBean implements KksService {
   }
 
   @Override
-  public void removeEntry(Long id) {
-    serviceDAO.deleteEntry(id);
+  public void removeEntryValue(Long id) {
+    serviceDAO.deleteValue(id);
   }
 
   @Override

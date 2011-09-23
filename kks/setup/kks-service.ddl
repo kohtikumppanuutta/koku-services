@@ -7,12 +7,12 @@ CREATE TABLE kks_tag (
 );
 
 CREATE TABLE kks_collection_class (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  collection_class_id INT UNSIGNED NOT NULL,
+  id INT UNSIGNED NOT NULL PRIMARY KEY,
+  type_code VARCHAR(250) NOT NULL,
   name VARCHAR(250) NOT NULL,
-  concent_type VARCHAR(250) NOT NULL,
+  consent_type VARCHAR(250) NOT NULL,
   description VARCHAR(500) NOT NULL,
-  CONSTRAINT UNIQUE (collection_class_id)
+  CONSTRAINT UNIQUE (type_code)
 );
 
 CREATE TABLE kks_group (
@@ -23,9 +23,9 @@ CREATE TABLE kks_group (
   description VARCHAR(500),
   register VARCHAR(500) NOT NULL,
   parent_id INT UNSIGNED,
-  collection_id INT UNSIGNED NOT NULL,
+  collection_class_id INT UNSIGNED NOT NULL,
   CONSTRAINT UNIQUE (group_id),
-  FOREIGN KEY (collection_id) REFERENCES kks_collection_class(collection_class_id)
+  FOREIGN KEY (collection_class_id) REFERENCES kks_collection_class(id)
 );
 
 CREATE TABLE kks_entry_class (
@@ -54,14 +54,14 @@ CREATE TABLE kks_collection (
   name VARCHAR(250) NOT NULL,
   description VARCHAR(500),
   status VARCHAR(15) NOT NULL,
-  created DATE NOT NULL,
+  created DATETIME NOT NULL,
   creator VARCHAR(15) NOT NULL,
   version INT NOT NULL,
   prev_version VARCHAR(50),
   next_version VARCHAR(50),
   customer VARCHAR(15) NOT NULL,  
   collection_class_id INT UNSIGNED NOT NULL,  
-  FOREIGN KEY (collection_class_id) REFERENCES kks_collection_class(collection_class_id)  
+  FOREIGN KEY (collection_class_id) REFERENCES kks_collection_class(id)  
 );
 
 CREATE TABLE kks_collection_tags (
@@ -73,7 +73,7 @@ CREATE TABLE kks_collection_tags (
 
 CREATE TABLE kks_entry (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  modified DATE NOT NULL,
+  modified DATETIME NOT NULL,
   creator VARCHAR(15) NOT NULL,
   version INT NOT NULL,
   entry_class_id INT UNSIGNED NOT NULL,

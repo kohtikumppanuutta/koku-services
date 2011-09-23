@@ -53,9 +53,11 @@ public class KksConverter {
   public static KksCollectionClassType toWsType(KksCollectionClass collectionClass) {
 
     KksCollectionClassType tmp = new KksCollectionClassType();
-    tmp.setId("" + collectionClass.getCollectionClassId());
+    tmp.setId("" + collectionClass.getId());
     tmp.setDescription(collectionClass.getDescription());
     tmp.setName(collectionClass.getName());
+    tmp.setConsessionType(collectionClass.getConsentType());
+    tmp.setTypeCode(collectionClass.getTypeCode());
 
     KksGroupsType kksGroupsType = new KksGroupsType();
     for (KksGroup g : collectionClass.getGroups()) {
@@ -177,9 +179,9 @@ public class KksConverter {
 
     KksTagIdsType kksTagIdsType = new KksTagIdsType();
 
-    // for (Integer tagId : entry.getTagIds()) {
-    // kksTagIdsType.getKksTagId().add("" + tagId);
-    // }
+    for (KksTag tagId : entry.getTags()) {
+      kksTagIdsType.getKksTagId().add("" + tagId.getId());
+    }
 
     kksEntryType.setKksTagIds(kksTagIdsType);
 
@@ -252,7 +254,7 @@ public class KksConverter {
       for (String tagId : entryType.getKksTagIds().getKksTagId()) {
         tagIds.add(Integer.parseInt(tagId));
       }
-      // entry.setTagIds(tagIds);
+      entry.setTagIds(tagIds);
     }
     entry.setValues(tmp);
     return entry;

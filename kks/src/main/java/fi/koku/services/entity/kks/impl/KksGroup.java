@@ -54,7 +54,7 @@ public class KksGroup implements Serializable, Comparable<KksGroup> {
   @Transient
   private List<KksEntryClass> entryClasses;
 
-  @Column(name = "collection_id")
+  @Column(name = "collection_class_id")
   private int collectionClassId;
 
   @Transient

@@ -1,11 +1,14 @@
 use koku1
 
 insert into kks_collection_class (
-  collection_class_id
+  id
+  ,type_code
   ,name
   ,description
-  ,concent_type
-) VALUES (10   -- collection_class_id
+  ,consent_type
+) VALUES (
+	1
+  ,'kks.kehitysasialaji.vasu'   -- type_code
   ,'Varhaiskasvatussuunnitelma'  -- name
   ,''  -- description
   ,'Varhaiskasvatussuunnitelma'  -- concent_type
@@ -17,14 +20,14 @@ insert into kks_group (
   ,name
   ,description
   ,register
-  ,collection_id
+  ,collection_class_id
 ) VALUES (
    10   -- group_id
   ,1   -- sort_order
   ,'Huoltaja'  -- name
   ,''  -- description
   ,'päivähoidon asiakasrekisteri'  -- register
-  ,10   -- collection_id
+  ,1
 );
 
 -- Ryhmat
@@ -35,14 +38,14 @@ insert into kks_group (
   ,name
   ,description
   ,register
-  ,collection_id
+  ,collection_class_id
 ) VALUES (
    11   -- group_id
   ,2   -- sort_order
   ,'Päivähoito'  -- name
   ,''  -- description
   ,'päivähoidon asiakasrekisteri'  -- register
-  ,10   -- collection_id
+  ,1
 );
 
 insert into kks_group (
@@ -52,7 +55,7 @@ insert into kks_group (
   ,description
   ,register
   ,parent_id
-  ,collection_id
+  ,collection_class_id
 ) VALUES (
    12   -- group_id
   ,1   -- sort_order
@@ -60,7 +63,7 @@ insert into kks_group (
   ,''  -- description
   ,'päivähoidon asiakasrekisteri'  -- register
   ,10   -- parent_id
-  ,10   -- collection_id
+  ,1
 );
 
 insert into kks_group (
@@ -70,7 +73,7 @@ insert into kks_group (
   ,description
   ,register
   ,parent_id
-  ,collection_id
+  ,collection_class_id
 ) VALUES (
    13   -- group_id
   ,2   -- sort_order
@@ -78,7 +81,7 @@ insert into kks_group (
   ,''  -- description
   ,'päivähoidon asiakasrekisteri'  -- register
   ,10   -- parent_id
-  ,10   -- collection_id
+  ,1
 );
 
 insert into kks_group (
@@ -88,7 +91,7 @@ insert into kks_group (
   ,description
   ,register
   ,parent_id
-  ,collection_id
+  ,collection_class_id
 ) VALUES (
    14   -- group_id
   ,3   -- sort_order
@@ -96,7 +99,7 @@ insert into kks_group (
   ,''  -- description
   ,'päivähoidon asiakasrekisteri'  -- register
   ,10   -- parent_id
-  ,10   -- collection_id
+  ,1
 );
 
 insert into kks_group (
@@ -106,7 +109,7 @@ insert into kks_group (
   ,description
   ,register
   ,parent_id
-  ,collection_id
+  ,collection_class_id
 ) VALUES (
    15   -- group_id
   ,3   -- sort_order
@@ -114,7 +117,7 @@ insert into kks_group (
   ,''  -- description
   ,'päivähoidon asiakasrekisteri'  -- register
   ,11 -- group id
-  ,10   -- collection_id
+  ,1
 );
 
 -- Huoltaja

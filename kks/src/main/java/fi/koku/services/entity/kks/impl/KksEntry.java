@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 /**
@@ -69,9 +70,13 @@ public class KksEntry implements Serializable {
   @JoinTable(name = "kks_entry_tags", joinColumns = @JoinColumn(name = "entry_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tag_id"))
   private List<KksTag> tags;
 
+  @Transient
+  private List<Integer> tagIds;
+
   public KksEntry() {
     values = new ArrayList<KksValue>();
     tags = new ArrayList<KksTag>();
+    tagIds = new ArrayList<Integer>();
   }
 
   public Long getId() {
@@ -181,4 +186,21 @@ public class KksEntry implements Serializable {
       }
     }
   }
+
+  public void addTag(KksTag t) {
+    tags.add(t);
+  }
+
+  public List<Integer> getTagIds() {
+    return tagIds;
+  }
+
+  public void setTagIds(List<Integer> tagIds) {
+    this.tagIds = tagIds;
+  }
+
+  public void clearTags() {
+    tags.clear();
+  }
+
 }

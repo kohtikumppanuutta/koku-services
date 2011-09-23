@@ -72,7 +72,7 @@ public interface KksService {
    * @param id
    *          of the removed entry
    */
-  void removeEntry(Long id);
+  void removeEntryValue(Long id);
 
   /**
    * Updates given collection

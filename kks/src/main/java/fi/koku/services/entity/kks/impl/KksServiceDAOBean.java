@@ -37,7 +37,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     // single transaction)
     Map<Integer, List<KksGroup>> groups = getRootGroupsMap();
     for (KksCollectionClass c : list) {
-      c.setGroups(groups.get(c.getCollectionClassId()));
+      c.setGroups(groups.get(c.getId()));
       Collections.sort(c.getGroups());
     }
 
@@ -46,9 +46,12 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   private Map<Integer, List<KksGroup>> getRootGroupsMap() {
     Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_GROUPS);
-    Query classes = em.createNamedQuery(KksEntryClass.NAMED_QUERY_GET_ALL_ENTRY_CLASSES);
-    List<KksEntryClass> entries = (List<KksEntryClass>) classes.getResultList();
 
+    Query tags = em.createNamedQuery(KksTag.NAMED_QUERY_GET_TAGS_BY_IDS);
+
+    Query classes = em.createNamedQuery(KksEntryClass.NAMED_QUERY_GET_ALL_ENTRY_CLASSES);
+    @SuppressWarnings("unchecked")
+    List<KksEntryClass> entries = (List<KksEntryClass>) classes.getResultList();
     Map<Integer, List<KksEntryClass>> entryMap = new HashMap<Integer, List<KksEntryClass>>();
 
     for (KksEntryClass e : entries) {
@@ -71,14 +74,6 @@ public class KksServiceDAOBean implements KksServiceDAO {
     for (KksGroup g : list) {
       map.put(g.getGroupId(), g);
       g.setEntryClasses(entryMap.get(g.getGroupId()));
-      List<KksEntryClass> tmp = g.getEntryClasses();
-
-      if (tmp != null) {
-        for (KksEntryClass e : tmp) {
-          System.out.println(e.getName());
-        }
-      }
-
       if (g.getParentId() == null) {
         // map only root groups
         mapGroupToCollectionClass(collectionMap, g);
@@ -127,6 +122,10 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   @Override
   public List<KksTag> getTags(List<String> tagIds) {
+
+    if (tagIds.isEmpty()) {
+      return new ArrayList<KksTag>();
+    }
     Query q = em.createNamedQuery(KksTag.NAMED_QUERY_GET_TAGS_BY_IDS);
 
     List<Integer> tmp = new ArrayList<Integer>();
@@ -194,9 +193,10 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public void deleteEntry(Long id) {
-    KksEntry e = em.find(KksEntry.class, id);
-    em.remove(e);
+  public void deleteValue(Long id) {
+    List<Long> ids = new ArrayList<Long>();
+    ids.add(id);
+    em.createNamedQuery(KksValue.NAMED_QUERY_DELETE_VALUES_BY_IDS).setParameter("ids", ids).executeUpdate();
   }
 
   @Override
@@ -270,7 +270,38 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setCreator(collection.getCreator());
     tmp.setDescription(collection.getDescription());
 
+    List<String> tagIds = new ArrayList<String>();
+
+    setTags(collection, tmp, tagIds);
+
     em.merge(tmp);
+  }
+
+  private void setTags(KksCollection collection, KksCollection newCollection, List<String> tagIds) {
+
+    Map<Long, List<Integer>> entryTagMap = new HashMap<Long, List<Integer>>();
+
+    for (KksEntry e : collection.getEntries()) {
+
+      for (Integer s : e.getTagIds()) {
+        tagIds.add(s.toString());
+      }
+      entryTagMap.put(e.getId(), e.getTagIds());
+    }
+
+    List<KksTag> tags = getTags(tagIds);
+    Map<Integer, KksTag> tagMap = new HashMap<Integer, KksTag>();
+
+    for (KksTag t : tags) {
+      tagMap.put(t.getId(), t);
+    }
+
+    for (KksEntry e : newCollection.getEntries()) {
+      e.clearTags();
+      for (Integer i : entryTagMap.get(e.getId())) {
+        e.addKksTag(tagMap.get(i));
+      }
+    }
   }
 
   private void syncFields(KksCollection collection, KksCollection tmp) {
@@ -423,6 +454,22 @@ public class KksServiceDAOBean implements KksServiceDAO {
         }
       }
     }
+  }
+
+  public void insertTags(List<Integer> tagIds, Long entryId) {
+    StringBuilder qs = new StringBuilder();
+    qs.append("INSERT INTO kks_entry_tags (entry_id,tag_id) VALUES ( ?,? ) ");
+
+    for (Integer i : tagIds) {
+      em.createNativeQuery(qs.toString()).setParameter(1, entryId).setParameter(2, i).executeUpdate();
+    }
+  }
+
+  public void removeTags(Long entryId) {
+    StringBuilder qs = new StringBuilder();
+    qs.append("DELETE FROM kks_entry_tags WHERE entryId = ?");
+
+    em.createNativeQuery(qs.toString()).setParameter(1, entryId).executeUpdate();
   }
 
   @Override

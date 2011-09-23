@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -62,7 +63,7 @@ public class KksEntryClass implements Serializable {
   // @JoinColumn(name = "entry_group")
   // private KksGroup group;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "kks_entry_class_tags", joinColumns = @JoinColumn(name = "entry_class_id", referencedColumnName = "entry_class_id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tag_id"))
   private List<KksTag> tags;
 

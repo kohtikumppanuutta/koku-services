@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -28,11 +27,10 @@ public class KksCollectionClass implements Serializable {
   public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASSES = "getAllCollectionClasses";
 
   @Id
-  @GeneratedValue
   private Integer id;
 
-  @Column(name = "collection_class_id")
-  private int collectionClassId;
+  @Column(name = "type_code")
+  private String typeCode;
 
   @Column
   private String name;
@@ -40,8 +38,8 @@ public class KksCollectionClass implements Serializable {
   @Column
   private String description;
 
-  @Column(name = "concent_type")
-  private String concentType;
+  @Column(name = "consent_type")
+  private String consentType;
 
   @Transient
   private List<KksGroup> groups;
@@ -78,20 +76,20 @@ public class KksCollectionClass implements Serializable {
     this.groups = groups;
   }
 
-  public int getCollectionClassId() {
-    return collectionClassId;
+  public String getTypeCode() {
+    return typeCode;
   }
 
-  public void setCollectionClassId(int collectionClassId) {
-    this.collectionClassId = collectionClassId;
+  public void setTypeCode(String typeCode) {
+    this.typeCode = typeCode;
   }
 
-  public String getConcentType() {
-    return concentType;
+  public String getConsentType() {
+    return consentType;
   }
 
-  public void setConcentType(String concentType) {
-    this.concentType = concentType;
+  public void setConsentType(String concentType) {
+    this.consentType = concentType;
   }
 
 }

@@ -5,7 +5,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    10   -- tag_id
-  ,'kehitysasiatyyppi.alikysely'  -- name
+  ,'kks.kehitysasiatyyppi.alikysely'  -- name
   ,''  -- description
 );
 
@@ -15,7 +15,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    11   -- tag_id
-  ,'kehitysasiatyyppi.arvio'  -- name
+  ,'kks.kehitysasiatyyppi.arvio'  -- name
   ,''  -- description
 );
 
@@ -25,7 +25,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    12   -- tag_id
-  ,'kehitysasiatyyppi.havainto'  -- name
+  ,'kks.kehitysasiatyyppi.havainto'  -- name
   ,''  -- description
 );
 
@@ -35,7 +35,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    13   -- tag_id
-  ,'kehitysasiatyyppi.kysely'  -- name
+  ,'kks.kehitysasiatyyppi.kysely'  -- name
   ,''  -- description
 );
 
@@ -45,7 +45,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    14   -- tag_id
-  ,'kehitysasiatyyppi.mittaus'  -- name
+  ,'kks.kehitysasiatyyppi.mittaus'  -- name
   ,''  -- description
 );
 
@@ -55,7 +55,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    15   -- tag_id
-  ,'kehitysasiatyyppi.tavoite'  -- name
+  ,'kks.kehitysasiatyyppi.tavoite'  -- name
   ,''  -- description
 );
 
@@ -65,7 +65,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    16   -- tag_id
-  ,'kehitysasiatyyppi.sopimus'  -- name
+  ,'kks.kehitysasiatyyppi.sopimus'  -- name
   ,''  -- description
 );
 
@@ -75,7 +75,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    17   -- tag_id
-  ,'kehitysasiatyyppi.toive'  -- name
+  ,'kks.kehitysasiatyyppi.toive'  -- name
   ,''  -- description
 );
 
@@ -85,7 +85,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    18   -- tag_id
-  ,'kehitysasiatyyppi.tottumus'  -- name
+  ,'kks.kehitysasiatyyppi.tottumus'  -- name
   ,''  -- description
 );
 
@@ -95,7 +95,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    19   -- tag_id
-  ,'kehitysasiatyyppi.toive'  -- name
+  ,'kks.kehitysasiatyyppi.toive'  -- name
   ,''  -- description
 );
 
@@ -105,7 +105,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    20   -- tag_id
-  ,'kehitysasia.fyysinen_kehitys'  -- name
+  ,'kks.kehitysasia.fyysinen_kehitys'  -- name
   ,''  -- description
 );
 
@@ -115,7 +115,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    21   -- tag_id
-  ,'kehitysasia.motoriikka'  -- name
+  ,'kks.kehitysasia.motoriikka'  -- name
   ,''  -- description
 );
 
@@ -125,7 +125,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    22   -- tag_id
-  ,'kehitysasia.motoriikka.hieno'  -- name
+  ,'kks.kehitysasia.motoriikka.hieno'  -- name
   ,''  -- description
 );
 
@@ -135,7 +135,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    23   -- tag_id
-  ,'kehitysasia.motoriikka.karkea'  -- name
+  ,'kks.kehitysasia.motoriikka.karkea'  -- name
   ,''  -- description
 );
 
@@ -145,7 +145,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    24   -- tag_id
-  ,'kehitysasia.kehon_hallinta'  -- name
+  ,'kks.kehitysasia.kehon_hallinta'  -- name
   ,''  -- description
 );
 
@@ -155,7 +155,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    25   -- tag_id
-  ,'kehitysasia.kieli_ja_kommunikaatio'  -- name
+  ,'kks.kehitysasia.kieli_ja_kommunikaatio'  -- name
   ,''  -- description
 );
 
@@ -165,7 +165,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    26   -- tag_id
-  ,'kehitysasia.lapsen_toiveet'  -- name
+  ,'kks.kehitysasia.lapsen_toiveet'  -- name
   ,''  -- description
 );
 
@@ -175,7 +175,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    27   -- tag_id
-  ,'kehitysasia.vahvuudet_ja_kiinnostukset'  -- name
+  ,'kks.kehitysasia.vahvuudet_ja_kiinnostukset'  -- name
   ,''  -- description
 );
 
@@ -186,7 +186,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    28   -- tag_id
-  ,'kehitysasia.leikki'  -- name
+  ,'kks.kehitysasia.leikki'  -- name
   ,''  -- description
 );
 
@@ -196,7 +196,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    29   -- tag_id
-  ,'kehitysasia.liikunnalliset_taidot'  -- name
+  ,'kks.kehitysasia.liikunnalliset_taidot'  -- name
   ,''  -- description
 );
 
@@ -206,7 +206,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    30   -- tag_id
-  ,'kehitysasia.matemaatiset_taidot'  -- name
+  ,'kks.kehitysasia.matemaatiset_taidot'  -- name
   ,''  -- description
 );
 
@@ -216,7 +216,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    31   -- tag_id
-  ,'kehitysasia.motoristiset_taidot'  -- name
+  ,'kks.kehitysasia.motoristiset_taidot'  -- name
   ,''  -- description
 );
 
@@ -226,7 +226,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    32   -- tag_id
-  ,'kehitysasia.psyykkinen_kehitys'  -- name
+  ,'kks.kehitysasia.psyykkinen_kehitys'  -- name
   ,''  -- description
 );
 
@@ -236,7 +236,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    33   -- tag_id
-  ,'kehitysasia.päivittäiset_toiminnot'  -- name
+  ,'kks.kehitysasia.päivittäiset_toiminnot'  -- name
   ,''  -- description
 );
 
@@ -246,7 +246,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    34   -- tag_id
-  ,'kehitysasia.rakentelu'  -- name
+  ,'kks.kehitysasia.rakentelu'  -- name
   ,''  -- description
 );
 
@@ -257,7 +257,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    35   -- tag_id
-  ,'kehitysasia.sosisaalisuus_ja_tunneilmaisu'  -- name
+  ,'kks.kehitysasia.sosisaalisuus_ja_tunneilmaisu'  -- name
   ,''  -- description
 );
 
@@ -267,7 +267,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    36   -- tag_id
-  ,'kehitysasia.tarkkaavaisuus'  -- name
+  ,'kks.kehitysasia.tarkkaavaisuus'  -- name
   ,''  -- description
 );
 
@@ -277,7 +277,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    37   -- tag_id
-  ,'kehitysasia.keskittyminen_ja_muisti'  -- name
+  ,'kks.kehitysasia.keskittyminen_ja_muisti'  -- name
   ,''  -- description
 );
 
@@ -287,7 +287,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    38   -- tag_id
-  ,'kehitysasia.ulkoilu'  -- name
+  ,'kks.kehitysasia.ulkoilu'  -- name
   ,''  -- description
 );
 
@@ -297,7 +297,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    39   -- tag_id
-  ,'kehitysasia.tuen_tarve'  -- name
+  ,'kks.kehitysasia.tuen_tarve'  -- name
   ,''  -- description
 );
 
@@ -308,7 +308,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    40   -- tag_id
-  ,'kehitysasia.huolenaiheet'  -- name
+  ,'kks.kehitysasia.huolenaiheet'  -- name
   ,''  -- description
 );
 
@@ -318,7 +318,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    41   -- tag_id
-  ,'kehitysasia.terveydentila'  -- name
+  ,'kks.kehitysasia.terveydentila'  -- name
   ,''  -- description
 );
 
@@ -330,7 +330,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    42   -- tag_id
-  ,'kehitysasia.terveydentila.ruokavalio.peruste'  -- name
+  ,'kks.kehitysasia.terveydentila.ruokavalio.peruste'  -- name
   ,''  -- description
 );
 
@@ -340,7 +340,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    43   -- tag_id
-  ,'kehitysasia.terveydentila.sairaus'  -- name
+  ,'kks.kehitysasia.terveydentila.sairaus'  -- name
   ,''  -- description
 );
 
@@ -350,7 +350,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    44   -- tag_id
-  ,'kehitysasia.terveydentila.sairaus.allergia'  -- name
+  ,'kks.kehitysasia.terveydentila.sairaus.allergia'  -- name
   ,''  -- description
 );
 
@@ -360,7 +360,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    45   -- tag_id
-  ,'kehitysasia.terveydentila.sairaus.allergia.eläin'  -- name
+  ,'kks.kehitysasia.terveydentila.sairaus.allergia.eläin'  -- name
   ,''  -- description
 );
 
@@ -370,7 +370,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    46   -- tag_id
-  ,'kehitysasia.terveydentila.sairaus.allergia.ruoka'  -- name
+  ,'kks.kehitysasia.terveydentila.sairaus.allergia.ruoka'  -- name
   ,''  -- description
 );
 
@@ -380,7 +380,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    47   -- tag_id
-  ,'kehitysasia.terveydentila.lääkehoito'  -- name
+  ,'kks.kehitysasia.terveydentila.lääkehoito'  -- name
   ,''  -- description
 );
 
@@ -390,7 +390,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    48   -- tag_id
-  ,'kehitysasia.koti'  -- name
+  ,'kks.kehitysasia.koti'  -- name
   ,''  -- description
 );
 
@@ -400,7 +400,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    49   -- tag_id
-  ,'kehitysasia.koti.vanhempien_arvostamat_asiat'  -- name
+  ,'kks.kehitysasia.koti.vanhempien_arvostamat_asiat'  -- name
   ,''  -- description
 );
 
@@ -410,7 +410,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    50   -- tag_id
-  ,'kehitysasia.koti.vanhempien_kasvatukselliset_tavoitteet'  -- name
+  ,'kks.kehitysasia.koti.vanhempien_kasvatukselliset_tavoitteet'  -- name
   ,''  -- description
 );
 
@@ -420,7 +420,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    51   -- tag_id
-  ,'kehitysasia.terveydentila.ruokavalio'  -- name
+  ,'kks.kehitysasia.terveydentila.ruokavalio'  -- name
   ,''  -- description
 );
 
@@ -430,7 +430,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    52   -- tag_id
-  ,'kehitysasiatyyppi.lähete'  -- name
+  ,'kks.kehitysasiatyyppi.lähete'  -- name
   ,''  -- description
 );
 
@@ -440,7 +440,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    53   -- tag_id
-  ,'kehitysasiatyyppi.palaute'  -- name
+  ,'kks.kehitysasiatyyppi.palaute'  -- name
   ,''  -- description
 );
 
@@ -450,7 +450,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    54   -- tag_id
-  ,'kehitysasiatyyppi.keskustelu'  -- name
+  ,'kks.kehitysasiatyyppi.keskustelu'  -- name
   ,''  -- description
 );
 
@@ -462,7 +462,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    55   -- tag_id
-  ,'kehitysasia.kumppanuus'  -- name
+  ,'kks.kehitysasia.kumppanuus'  -- name
   ,''  -- description
 );
 
@@ -472,7 +472,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    56   -- tag_id
-  ,'kehitysasia.henkilötiedot'  -- name
+  ,'kks.kehitysasia.henkilötiedot'  -- name
   ,''  -- description
 );
 
@@ -482,7 +482,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    57   -- tag_id
-  ,'kehitysasia.kommentti'  -- name
+  ,'kks.kehitysasia.kommentti'  -- name
   ,''  -- description
 );
 
@@ -492,7 +492,7 @@ insert into kks_tag (
   ,description
 ) VALUES (
    58   -- tag_id
-  ,'kehitysasia.tavoite'  -- name
+  ,'kks.kehitysasia.tavoite'  -- name
   ,''  -- description
 );
 
@@ -502,6 +502,6 @@ insert into kks_tag (
   ,description
 ) VALUES (
    59   -- tag_id
-  ,'kehitysasiatyyppi.kaynti'  -- name
+  ,'kks.kehitysasiatyyppi.kaynti'  -- name
   ,''  -- description
 );

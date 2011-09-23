@@ -22,6 +22,7 @@ import javax.persistence.Table;
 public class KksTag implements Serializable {
 
   public static final String NAMED_QUERY_GET_TAGS_BY_IDS = "getAllTagsById";
+  public static final String NAMED_QUERY_GET_ALL_TAGS = "getAllTags";
 
   private static final long serialVersionUID = -6375772555471958534L;
 

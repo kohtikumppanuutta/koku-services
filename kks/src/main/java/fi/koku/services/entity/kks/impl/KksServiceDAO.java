@@ -54,7 +54,7 @@ public interface KksServiceDAO {
    * @param id
    *          of the deleted entry
    */
-  void deleteEntry(Long id);
+  void deleteValue(Long id);
 
   /**
    * Updates collection status
