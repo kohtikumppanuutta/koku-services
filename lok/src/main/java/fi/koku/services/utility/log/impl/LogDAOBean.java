@@ -36,7 +36,7 @@ public class LogDAOBean implements LogDAO {
   // 1) arkistoloki ei vastaa
   // 2) arkistoloki ei kuittaa onnistunutta tietojen kopiointia
   @Override
-  public void archiveLog(Date date) throws ServiceFault {
+  public void archiveLog(Date date) {
 
     
     /*
@@ -61,7 +61,7 @@ public class LogDAOBean implements LogDAO {
       ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
       sfdt.setCode(LogConstants.LOG_NOTHING_TO_ARCHIVE);
       logger.info("ei arkistoitavaa ennen päivää " + date);
-      throw new ServiceFault("ei löytynyt arkistoitavaa", sfdt);
+   //TODO: Endpointiin?   throw new ServiceFault("ei löytynyt arkistoitavaa", sfdt);
     }
 
     logger.info("insert log entries to archive log (date="+date);
@@ -101,43 +101,51 @@ public class LogDAOBean implements LogDAO {
    * @throws ServiceFault
    */
   @Override
-  public List<LogEntry> queryLog(LogQueryCriteria criteria) throws ServiceFault {
+  public List<LogEntry> queryLog(LogQueryCriteria criteria) {
     StringBuilder sb = new StringBuilder();
     List<Object[]> params = new ArrayList<Object[]>();
-logger.debug("queryLog-metodi: "+criteria.getLogType()+", "+criteria.getCustomerPic()+", "+criteria.getStartTime()+", "+criteria.getEndDate());
+logger.debug("queryLog-metodi: "+criteria.getLogType()+", "+criteria.getCustomerPic()+", "+criteria.getStartTime()+", "+criteria.getEndTime());
     // TODO:
     // ennen tätä tsekkaa nullit:
     // -starttime, enddate, logtype
     // in both log types, start and end time are given for the search
     // these are required and the null check has been made already!
 
-   String tableName = "";
+logger.debug("log type: "+criteria.getLogType());
+   String entity = "";
     // choose the table here
-    if (criteria.getLogType().equalsIgnoreCase(LogConstants.LOG_ADMIN)) { // seurantaloki
-      tableName = "log_admin";
-    } else if (criteria.getLogType().equalsIgnoreCase(LogConstants.LOG_NORMAL)) { // tapahtumaloki
-      tableName = "log";
+    if (LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())) { // seurantaloki
+      entity = "LogAdminEntry";
+    } else if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
+      entity = "LogEntry";
     }
     
-    sb.append("SELECT FROM "+tableName+" entry WHERE ");
+    sb.append("SELECT e FROM "+entity+" e WHERE ");
     
     // starttime and enddate are required and are null-checked earlier
-    sb.append("entry.timestamp >= :startTime");
+    sb.append("e.timestamp >= :startTime");
     params.add(new Object[] { "startTime", criteria.getStartTime() });
 
-    sb.append("entry.timestamp <= :endDate");
-    params.add(new Object[] { "endDate", criteria.getEndDate() });
+    sb.append(" AND ");
+    
+    sb.append("e.timestamp <= :endTime");
+    params.add(new Object[] { "endTime", criteria.getEndTime() });
 
     // add the customer pic and data item type to search criteria for LOK-3
     if (criteria.getLogType().equalsIgnoreCase(LogConstants.LOG_NORMAL)) {
 
+      sb.append(" AND ");
+      
       // pic of the child is null-checked earlier
-      sb.append("entry.customerPic = :pic");
+      sb.append("e.customerPic = :pic");
       params.add(new Object[] { "pic", criteria.getCustomerPic() });
 
       // TODO: ei pakollinen, jos vetovalikossa myös tyhjä vaihtoehto
       if (criteria.getDataItemType() != null) {
-        sb.append("entry.dataItemType = :dataItemType");
+        
+        sb.append(" AND ");
+        
+        sb.append("e.dataItemType = :dataItemType");
         params.add(new Object[] { "dataItemType", criteria.getDataItemType() });
       }
     }
@@ -147,6 +155,7 @@ logger.debug("queryLog-metodi: "+criteria.getLogType()+", "+criteria.getCustomer
     }
 
     try {
+      logger.debug("query: "+sb.toString());
       Query q = em.createQuery(sb.toString());
 
       // TODO: lisää info-lokitus!

@@ -8,15 +8,15 @@ public class LogQueryCriteria {
   private String customerPic;
   private String dataItemType;
   private Date startTime;
-  private Date endDate;
+  private Date endTime;
   
   public LogQueryCriteria(String logType, String customerPic, String dataItemType,
-      Date startTime, Date endDate){
+      Date startTime, Date endTime){
     this.logType = logType;
     this.customerPic = customerPic;
     this.dataItemType = dataItemType;
     this.startTime = startTime;
-    this.endDate = endDate;
+    this.endTime = endTime;
   }
   
   public String getLogType() {
@@ -51,11 +51,11 @@ public class LogQueryCriteria {
     this.startTime = startTime;
   }
 
-  public Date getEndDate() {
-    return endDate;
+  public Date getEndTime() {
+    return endTime;
   }
 
-  public void setEndDate(Date endDate) {
-    this.endDate = endDate;
+  public void setEndTime(Date endTime) {
+    this.endTime = endTime;
   }
 }

@@ -99,22 +99,25 @@ public class LogServiceEndpointBean implements LogServicePortType {
     try {
     // call to the log database
       entries = logService.query(logConverter.fromWsType(criteriaType));
+      if(entries == null){
+        logger.debug("No entries!");
+      } else{
+        Iterator<LogEntry> i = entries.iterator();
+        while (i.hasNext()) {
+          LogEntry entry = (LogEntry) i.next();
+          // convert log entry to Web Service type and add it to the collection
 
-      Iterator<LogEntry> i = entries.iterator();
-      while (i.hasNext()) {
-        LogEntry entry = (LogEntry) i.next();
-        // convert log entry to Web Service type and add it to the collection
-
-        logEntriesType.getLogEntry().add(logConverter.toWsType(entry));
+          logEntriesType.getLogEntry().add(logConverter.toWsType(entry));
+        }
       }
-    } catch (ParseException e){
-      ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
-      sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
-      sfdt.setMessage("TODO. Message: String to calendar epäonnistui.");
-      
-      throw new ServiceFault(e.getMessage(), sfdt);
-    }
+      } catch (ParseException e){
+        ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
+        sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
+        sfdt.setMessage("TODO. Message: String to calendar epäonnistui.");
 
+        throw new ServiceFault(e.getMessage(), sfdt);
+      }
+    
     return logEntriesType;
   }
 
