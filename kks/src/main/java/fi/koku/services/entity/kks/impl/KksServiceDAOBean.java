@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -156,40 +158,68 @@ public class KksServiceDAOBean implements KksServiceDAO {
   public Long insertEntry(KksEntryCreation creation) {
 
     if (creation.getId() == null) {
+      @SuppressWarnings("unchecked")
+      List<KksEntry> list = (List<KksEntry>) em
+          .createNamedQuery(KksEntry.NAMED_QUERY_GET_ENTRY_BY_CLASS_AND_COLLECTION)
+          .setParameter("entryClassId", creation.getEntryClassId())
+          .setParameter("collectionId", creation.getCollectionId()).getResultList();
+
+      if (!list.isEmpty()) {
+        return handleExistingEntryValue(creation, list.get(0));
+      }
+
       KksEntry e = new KksEntry();
       e.setCustomer(creation.getPic());
       e.setModified(creation.getModified());
-      e.setKksCollection(em.find(KksCollection.class, creation.getCollectionId()));
       e.setCreator(creation.getCreator());
+      e.setKksCollection(em.find(KksCollection.class, creation.getCollectionId()));
       e.setEntryClassId(creation.getEntryClassId());
       List<KksValue> tmp = new ArrayList<KksValue>();
       creation.getValue().setEntry(e);
       tmp.add(creation.getValue());
       e.setValues(tmp);
       em.persist(e);
+
+      insertDefaultTags(creation, e);
+
       return e.getId();
 
     } else {
-      KksEntry e = em.find(KksEntry.class, creation.getId());
-      e.setCustomer(creation.getPic());
-      e.setCreator(creation.getCreator());
-      e.setModified(creation.getModified());
-
-      List<KksValue> tmp = new ArrayList<KksValue>();
-
-      if (creation.getValue().getId() == null) {
-        creation.getValue().setEntry(e);
-        tmp.add(creation.getValue());
-      } else {
-        KksValue v = em.find(KksValue.class, creation.getId());
-        v.setEntry(e);
-        v.setValue(creation.getValue().getValue());
-        tmp.add(v);
-      }
-      e.setValues(tmp);
-      em.merge(e);
-      return e.getId();
+      KksEntry k = em.find(KksEntry.class, creation.getId());
+      return handleExistingEntryValue(creation, k);
     }
+  }
+
+  private void insertDefaultTags(KksEntryCreation creation, KksEntry e) {
+
+    @SuppressWarnings("unchecked")
+    List<Integer> ids = (List<Integer>) em
+        .createNativeQuery("SELECT tag_id FROM kks_entry_class_tags WHERE entry_class_id =?")
+        .setParameter(1, e.getEntryClassId()).getResultList();
+
+    insertTags(ids, e.getId());
+  }
+
+  private Long handleExistingEntryValue(KksEntryCreation creation, KksEntry e) {
+    e.setCustomer(creation.getPic());
+    e.setCreator(creation.getCreator());
+    e.setModified(creation.getModified());
+
+    if (creation.getValue().getId() == null) {
+      KksValue v = creation.getValue();
+      v.setEntry(e);
+      em.persist(v);
+      return e.getId();
+    } else {
+      for (KksValue v : e.getValues()) {
+        if (v.getId().equals(creation.getValue().getId())) {
+          v.setValue(creation.getValue().getValue());
+        }
+      }
+    }
+    em.merge(e);
+    em.flush();
+    return e.getId();
   }
 
   @Override
@@ -227,31 +257,60 @@ public class KksServiceDAOBean implements KksServiceDAO {
     }
 
     StringBuilder qs = new StringBuilder();
-    qs.append("SELECT DISTINCT collection_id FROM kks_entry WHERE customer = ");
-    qs.append(criteria.getPic());
-    qs.append(" AND id IN( SELECT DISTINCT entry_class_id FROM kks_entry_class_tags WHERE entry_class_id IN (SELECT tag_id FROM kks_tag WHERE");
+
+    qs.append("SELECT DISTINCT entry_id FROM kks_entry_tags WHERE tag_id IN (SELECT tag_id FROM kks_tag WHERE");
     qs.append(tmp.toString());
-    qs.append("));");
+    qs.append(")");
 
     @SuppressWarnings("unchecked")
-    List<BigInteger> collectionIds = em.createNativeQuery(qs.toString()).getResultList();
+    List<BigInteger> entryIds = em.createNativeQuery(qs.toString()).getResultList();
 
-    List<Long> collectionIdsList = new ArrayList<Long>();
-
-    for (BigInteger b : collectionIds) {
-      collectionIdsList.add(b.longValue());
-    }
-
-    if (collectionIds == null || collectionIds.size() == 0) {
+    if (entryIds.isEmpty()) {
       return new ArrayList<KksCollection>();
     }
 
-    Query q = em.createNamedQuery(KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_IDS);
+    List<Long> entryIdsList = new ArrayList<Long>();
 
-    q.setParameter("ids", collectionIdsList);
+    for (BigInteger b : entryIds) {
+      entryIdsList.add(b.longValue());
+    }
+
+    if (entryIds == null || entryIds.size() == 0) {
+      return new ArrayList<KksCollection>();
+    }
+
+    Query entryQ = em.createNamedQuery(KksEntry.NAMED_QUERY_GET_ENTRIES_BY_IDS);
+    entryQ.setParameter("ids", entryIdsList);
 
     @SuppressWarnings("unchecked")
-    List<KksCollection> collections = (List<KksCollection>) q.getResultList();
+    List<KksEntry> entries = (List<KksEntry>) entryQ.getResultList();
+
+    if (entries.isEmpty()) {
+      return new ArrayList<KksCollection>();
+    }
+
+    Set<KksCollection> collectionIds = new HashSet<KksCollection>();
+    Map<Long, List<KksEntry>> entryMap = new HashMap<Long, List<KksEntry>>();
+
+    for (KksEntry e : entries) {
+      collectionIds.add(e.getKksCollection());
+
+      if (entryMap.containsKey(e.getKksCollection().getId())) {
+        List<KksEntry> tmpList = entryMap.get(e.getKksCollection().getId());
+        tmpList.add(e);
+      } else {
+        List<KksEntry> tmpList = new ArrayList<KksEntry>();
+        tmpList.add(e);
+        entryMap.put(e.getKksCollection().getId(), tmpList);
+      }
+    }
+
+    for (KksCollection c : collectionIds) {
+      c.setEntries(entryMap.get(c.getId()));
+    }
+
+    @SuppressWarnings("unchecked")
+    List<KksCollection> collections = new ArrayList<KksCollection>(collectionIds);
     return collections;
   }
 
@@ -270,37 +329,83 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setCreator(collection.getCreator());
     tmp.setDescription(collection.getDescription());
 
-    List<String> tagIds = new ArrayList<String>();
-
-    setTags(collection, tmp, tagIds);
-
     em.merge(tmp);
+    em.flush();
+    em.refresh(tmp);
+    setTags(collection, tmp);
   }
 
-  private void setTags(KksCollection collection, KksCollection newCollection, List<String> tagIds) {
+  private void setTagsByEntryClass(KksCollection collection, KksCollection newCollection) {
 
-    Map<Long, List<Integer>> entryTagMap = new HashMap<Long, List<Integer>>();
+    List<String> tagIds = new ArrayList<String>();
+
+    Map<Integer, List<Integer>> entryTagMap = new HashMap<Integer, List<Integer>>();
 
     for (KksEntry e : collection.getEntries()) {
 
-      for (Integer s : e.getTagIds()) {
-        tagIds.add(s.toString());
+      List<Integer> tmp = new ArrayList<Integer>();
+      for (KksTag t : e.getTags()) {
+        tmp.add(t.getTagId());
       }
-      entryTagMap.put(e.getId(), e.getTagIds());
+
+      entryTagMap.put(e.getEntryClassId(), tmp);
     }
 
     List<KksTag> tags = getTags(tagIds);
     Map<Integer, KksTag> tagMap = new HashMap<Integer, KksTag>();
 
     for (KksTag t : tags) {
-      tagMap.put(t.getId(), t);
+      tagMap.put(t.getTagId(), t);
+    }
+
+    for (KksEntry e : newCollection.getEntries()) {
+      insertTags(entryTagMap.get(e.getEntryClassId()), e.getId());
+    }
+  }
+
+  private void setTags(KksCollection collection, KksCollection newCollection) {
+
+    List<String> tagIds = new ArrayList<String>();
+    Map<Long, List<Integer>> entryTagMap = new HashMap<Long, List<Integer>>();
+    Map<Integer, List<Integer>> entryClassTagMap = new HashMap<Integer, List<Integer>>();
+
+    for (KksEntry e : collection.getEntries()) {
+
+      List<Integer> tmp = new ArrayList<Integer>();
+      for (Integer s : e.getTagIds()) {
+        tagIds.add(s.toString());
+        tmp.add(s);
+      }
+      entryTagMap.put(e.getId(), e.getTagIds());
+      entryClassTagMap.put(e.getEntryClassId(), tmp);
+    }
+
+    List<KksTag> tags = getTags(tagIds);
+    Map<Integer, KksTag> tagMap = new HashMap<Integer, KksTag>();
+
+    for (KksTag t : tags) {
+      tagMap.put(t.getTagId(), t);
     }
 
     for (KksEntry e : newCollection.getEntries()) {
       e.clearTags();
-      for (Integer i : entryTagMap.get(e.getId())) {
-        e.addKksTag(tagMap.get(i));
+      removeTags(e.getId());
+
+      List<Integer> values = entryTagMap.get(e.getId());
+      if (values == null || values.isEmpty()) {
+        insertTags(entryClassTagMap.get(e.getEntryClassId()), e.getId());
+      } else {
+        insertTags(entryTagMap.get(e.getId()), e.getId());
       }
+
+      // TODO: somehow this is not working, only some of the tags is really
+      // inserted
+      // eventhough all of them is set in here
+      // List<KksTag> tagList = new ArrayList<KksTag>();
+      // for (Integer i : entryTagMap.get(e.getId())) {
+      // tagList.add(tagMap.get(i));
+      // }
+      // e.setTags(tagList);
     }
   }
 
@@ -338,12 +443,11 @@ public class KksServiceDAOBean implements KksServiceDAO {
     }
 
     if (removableEntries.size() > 0) {
+      removeTags(removableEntries);
       em.createNamedQuery(KksEntry.NAMED_QUERY_DELETE_ENTRIES_BY_IDS).setParameter("ids", removableEntries)
           .executeUpdate();
       em.flush();
     }
-
-    // TODO: Tag deleting
 
   }
 
@@ -457,6 +561,11 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   public void insertTags(List<Integer> tagIds, Long entryId) {
+
+    if (tagIds == null || tagIds.isEmpty()) {
+      return;
+    }
+
     StringBuilder qs = new StringBuilder();
     qs.append("INSERT INTO kks_entry_tags (entry_id,tag_id) VALUES ( ?,? ) ");
 
@@ -467,9 +576,26 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   public void removeTags(Long entryId) {
     StringBuilder qs = new StringBuilder();
-    qs.append("DELETE FROM kks_entry_tags WHERE entryId = ?");
+    qs.append("DELETE FROM kks_entry_tags WHERE entry_id = ?");
 
     em.createNativeQuery(qs.toString()).setParameter(1, entryId).executeUpdate();
+  }
+
+  public void removeTags(List<Long> entries) {
+    StringBuilder qs = new StringBuilder();
+    qs.append("DELETE FROM kks_entry_tags WHERE entry_id IN (?)");
+
+    StringBuilder tmp = new StringBuilder();
+
+    for (int i = 0; i < entries.size(); i++) {
+      tmp.append("" + entries.get(i));
+
+      if ((i + 1) < entries.size()) {
+        tmp.append(", ");
+      }
+    }
+
+    em.createNativeQuery(qs.toString()).setParameter(1, tmp.toString()).executeUpdate();
   }
 
   @Override
@@ -488,34 +614,45 @@ public class KksServiceDAOBean implements KksServiceDAO {
     if (!creation.isEmpty()) {
 
       for (KksEntry e : old.getEntries()) {
-        KksEntry newE = new KksEntry();
-        newE.setCreator(e.getCreator());
-        newE.setCustomer(creation.getCustomer());
-        newE.setEntryClassId(e.getEntryClassId());
-        newE.setModified(e.getModified());
-        newE.setKksCollection(newVersion);
-        newVersion.addKksEntry(newE);
 
-        for (KksValue value : e.getValues()) {
-          KksValue newVal = new KksValue();
-          newVal.setEntry(newE);
-          newVal.setValue(value.getValue());
-          newVal.setEntry(newE);
-          newE.addKksValue(newVal);
-        }
+        if (isCopyable(e.getTags())) {
+          KksEntry newE = new KksEntry();
+          newE.setCreator(e.getCreator());
+          newE.setCustomer(creation.getCustomer());
+          newE.setEntryClassId(e.getEntryClassId());
+          newE.setModified(e.getModified());
+          newE.setKksCollection(newVersion);
+          newVersion.addKksEntry(newE);
 
-        for (KksTag tag : e.getTags()) {
-          // todo tags
+          for (KksValue value : e.getValues()) {
+            KksValue newVal = new KksValue();
+            newVal.setEntry(newE);
+            newVal.setValue(value.getValue());
+            newVal.setEntry(newE);
+            newE.addKksValue(newVal);
+          }
         }
       }
     }
 
     em.persist(newVersion);
-
+    setTagsByEntryClass(old, newVersion);
     old.setNextVersion("" + newVersion.getId());
     old.setStatus("LOCKED");
     em.merge(old);
 
     return newVersion.getId();
   }
+
+  private boolean isCopyable(List<KksTag> tags) {
+    if (tags != null && !tags.isEmpty()) {
+      for (KksTag t : tags) {
+        if (t.getName().equalsIgnoreCase("kks.kehitysasia.kommentti")) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
 }

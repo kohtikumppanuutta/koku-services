@@ -180,7 +180,7 @@ public class KksConverter {
     KksTagIdsType kksTagIdsType = new KksTagIdsType();
 
     for (KksTag tagId : entry.getTags()) {
-      kksTagIdsType.getKksTagId().add("" + tagId.getId());
+      kksTagIdsType.getKksTagId().add("" + tagId.getTagId());
     }
 
     kksEntryType.setKksTagIds(kksTagIdsType);

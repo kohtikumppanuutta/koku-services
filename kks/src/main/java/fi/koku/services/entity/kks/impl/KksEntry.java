@@ -31,11 +31,16 @@ import javax.persistence.Version;
  * 
  */
 @Entity
-@NamedQueries({ @NamedQuery(name = KksEntry.NAMED_QUERY_DELETE_ENTRIES_BY_IDS, query = "DELETE FROM KksEntry k WHERE k.id IN (:ids)") })
+@NamedQueries({
+    @NamedQuery(name = KksEntry.NAMED_QUERY_GET_ENTRIES_BY_IDS, query = "FROM KksEntry k WHERE k.id IN (:ids)"),
+    @NamedQuery(name = KksEntry.NAMED_QUERY_DELETE_ENTRIES_BY_IDS, query = "DELETE FROM KksEntry k WHERE k.id IN (:ids)"),
+    @NamedQuery(name = KksEntry.NAMED_QUERY_GET_ENTRY_BY_CLASS_AND_COLLECTION, query = "FROM KksEntry k WHERE k.entryClassId =:entryClassId AND k.kksCollection.id =:collectionId") })
 @Table(name = "kks_entry")
 public class KksEntry implements Serializable {
 
+  public static final String NAMED_QUERY_GET_ENTRIES_BY_IDS = "getAllEntriesByIds";
   public static final String NAMED_QUERY_DELETE_ENTRIES_BY_IDS = "deleteAllEntriesByIds";
+  public static final String NAMED_QUERY_GET_ENTRY_BY_CLASS_AND_COLLECTION = "getEntryByClassAndCollection";
 
   private static final long serialVersionUID = -4758238731645701773L;
 
