@@ -121,7 +121,7 @@ logger.debug("log type: "+criteria.getLogType());
     }
     
     sb.append("SELECT e FROM "+entity+" e WHERE ");
-    
+  // TESTI 24.9.   otetaan pvm:t väliaikaisesti pois!
     // starttime and enddate are required and are null-checked earlier
     sb.append("e.timestamp >= :startTime");
     params.add(new Object[] { "startTime", criteria.getStartTime() });
@@ -132,16 +132,18 @@ logger.debug("log type: "+criteria.getLogType());
     params.add(new Object[] { "endTime", criteria.getEndTime() });
 
     // add the customer pic and data item type to search criteria for LOK-3
-    if (criteria.getLogType().equalsIgnoreCase(LogConstants.LOG_NORMAL)) {
+    if ((LogConstants.LOG_NORMAL).equalsIgnoreCase(criteria.getLogType())) {
 
       sb.append(" AND ");
       
       // pic of the child is null-checked earlier
+      // pic has to be given!
       sb.append("e.customerPic = :pic");
       params.add(new Object[] { "pic", criteria.getCustomerPic() });
 
+    
       // TODO: ei pakollinen, jos vetovalikossa myös tyhjä vaihtoehto
-      if (criteria.getDataItemType() != null) {
+      if (criteria.getDataItemType() != null && !criteria.getDataItemType().isEmpty()) {
         
         sb.append(" AND ");
         

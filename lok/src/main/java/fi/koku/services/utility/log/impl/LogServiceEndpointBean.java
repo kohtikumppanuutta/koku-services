@@ -23,6 +23,7 @@ import javax.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.KoKuFaultException;
 import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogArchivalParametersType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
@@ -167,18 +168,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       et.setDataItemType(entry.getDataItemType());
       et.setMessage(entry.getMessage());
       et.setOperation(entry.getOperation());
-    /*  try {
-        et.setTimestamp(stringToCalendar(entry.getTimestamp()));
-      } catch (ParseException e) {
-        e.printStackTrace();
-        ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
-        sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
-        sfdt.setMessage("TODO. String to calendar epäonnistui.");
-        
-        throw new ServiceFault("", sfdt);
-        
-      }*/
-
+      et.setTimestamp(parseToCal(entry.getTimestamp()));
       et.setUserPic(entry.getUserPic());
 
       return et;
@@ -207,6 +197,40 @@ public class LogServiceEndpointBean implements LogServicePortType {
       return entry;
     }
 
+    /**
+     * Helper method for parsing a Date to a Calendar
+     * @param date
+     * @return
+     */
+    public Calendar parseToCal(Date date) {
+      Calendar cal = null;
+
+      if(date != null){ // if it's null, return a null value
+        cal = Calendar.getInstance();
+        cal.setTime(date);
+      } 
+
+      return cal;
+    }
+
+    
+    /*
+/*    public Calendar parseGivenDate(Date date) throws KoKuFaultException {
+      Calendar cal = Calendar.getInstance();
+      
+      if(date!=null){ // if it's null, return a null value
+        if(date instanceof Date){
+          cal.setTime(date);
+        } else{
+          throw new KoKuFaultException("wrong format of date");
+        }
+      }
+      return cal;
+    }
+    */
+    /*
+     * 
+     */
     //TODO: Voiko tässä tulla joku format-error??
     private String calendarToString(Calendar cal) {
       String str = df.format(cal.getTime());
@@ -239,8 +263,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
      * @throws DatatypeConfigurationException
      * @throws ParseException
      */
-/*   
-*/
+
   }
 
 }
