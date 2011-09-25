@@ -566,3 +566,23 @@ insert into kks_tag (
   ,''  -- description
 );
 
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   66   -- tag_id
+  ,'kks.kehitysasia.sosiaalisuus.suhteet'  -- name
+  ,''  -- description
+);
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   67   -- tag_id
+  ,'kks.kehitysasia.terveys.tottumus'  -- name
+  ,''  -- description
+);
+

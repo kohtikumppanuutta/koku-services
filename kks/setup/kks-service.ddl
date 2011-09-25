@@ -32,7 +32,7 @@ CREATE TABLE kks_entry_class (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   entry_class_id INT UNSIGNED NOT NULL,
   sort_order INT UNSIGNED NOT NULL,
-  name VARCHAR(250) NOT NULL,
+  name VARCHAR(400) NOT NULL,
   description VARCHAR(500)	,
   multi_value BOOLEAN NOT NULL,
   data_type VARCHAR(30) NOT NULL,
