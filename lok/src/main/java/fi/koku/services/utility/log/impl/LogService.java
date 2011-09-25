@@ -18,6 +18,8 @@ public interface LogService {
     
     void write(LogEntry entry);
     
+    void writeAdmin(AdminLogEntry entry);
+    
     List<LogEntry> query(LogQueryCriteria criteria);
   }
 

@@ -25,7 +25,7 @@ public class AdminLogEntry {
   private String id; // id given by the logging system
   
   @Column(name="timestamp")
-  @Temporal(TemporalType.DATE)
+  @Temporal(TemporalType.TIMESTAMP)
   private Date timestamp; // timestamp
   
   @Column(name="user_pic")

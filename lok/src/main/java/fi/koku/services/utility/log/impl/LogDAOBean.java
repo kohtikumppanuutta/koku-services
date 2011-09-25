@@ -93,6 +93,11 @@ public class LogDAOBean implements LogDAO {
     
   }
 
+  @Override
+  public void writeAdminLog(AdminLogEntry entry){
+    logger.debug("writeAdminLog: "+entry.getTimestamp().toString());
+    em.persist(entry);
+  }
 
   /**
    * Makes a query to the "normal" log or to the Admin log and returns a list of

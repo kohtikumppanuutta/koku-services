@@ -44,7 +44,7 @@ public class LogArchiveEntry {
   private String dataItemId; // id of the data item that was read/written/etc.
  
   @Column(name="timestamp")
-  @Temporal(TemporalType.DATE)
+  @Temporal(TemporalType.TIMESTAMP)
   private Date timestamp; // timestamp
   
   @Column(name="user_pic")

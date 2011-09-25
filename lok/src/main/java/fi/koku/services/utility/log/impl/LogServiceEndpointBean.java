@@ -71,7 +71,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
   public VoidType opLog(LogEntryType logEntryType, AuditInfoType auditInfoType) throws ServiceFault {
 
     logger.info("opLog");
-
+    logger.debug("got timestamp: "+logEntryType.getTimestamp().getTime().toString());
+    
     // TODO: NÄITÄ EI KAI SINÄNSÄ KÄYTETÄ MIHINKÄÄN MUUHUN KUIN LOGGAAMISEEN??
     // message context
     Set<String> keys = wsCtx.getMessageContext().keySet();
@@ -82,8 +83,13 @@ public class LogServiceEndpointBean implements LogServicePortType {
     // -------------------------
 
     // call to the actual writing
-    logService.write(logConverter.fromWsType(logEntryType));
-
+    if (("log").equalsIgnoreCase(logEntryType.getClientSystemId())){
+      logger.debug("write to admin log");
+      logService.writeAdmin(logConverter.fromWsTypeToAdmin(logEntryType));
+    }else { // TODO: varmista vielä, että kaikissa muissa tapauksessa kirjoitetaan "tavallisesti"!
+      logger.debug("write to normal log");
+      logService.write(logConverter.fromWsType(logEntryType));
+    }
     return new VoidType(); 
   }
 
@@ -197,6 +203,25 @@ public class LogServiceEndpointBean implements LogServicePortType {
       return entry;
     }
 
+    /**
+     * Converts the LogEntryType ws type to AdminLogEntry type
+     * @param logt
+     * @return
+     */
+    public AdminLogEntry fromWsTypeToAdmin(LogEntryType logt) {
+      AdminLogEntry entry = new AdminLogEntry();
+
+      entry.setCustomerPic(logt.getCustomerPic());
+      entry.setMessage(logt.getMessage());
+      entry.setOperation(logt.getOperation());
+      logger.debug("timestamp: "+logt.getTimestamp().getTime().toString());
+      entry.setTimestamp(logt.getTimestamp().getTime()); 
+      entry.setUserPic(logt.getUserPic());
+
+      return entry;
+    }
+
+    
     /**
      * Helper method for parsing a Date to a Calendar
      * @param date

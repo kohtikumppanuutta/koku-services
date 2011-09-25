@@ -31,7 +31,8 @@ public class LogEntry {
   private String dataItemId; // id of the data item that was read/written/etc.
  
   @Column(name="timestamp")
-  @Temporal(TemporalType.DATE)
+  @Temporal(TemporalType.TIMESTAMP)
+  //yllä oli TemporalType.DATE
   private Date timestamp; // timestamp
   
   @Column(name="user_pic")
