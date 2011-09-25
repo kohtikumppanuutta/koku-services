@@ -25,7 +25,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'koulun asiakasrekisteri'  -- register
-  ,3
+  ,4
 );
 
 insert into kks_group (
