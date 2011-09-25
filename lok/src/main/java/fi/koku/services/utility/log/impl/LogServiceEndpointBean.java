@@ -102,22 +102,53 @@ public class LogServiceEndpointBean implements LogServicePortType {
     logger.info("opQueryLog");
     LogEntriesType logEntriesType = new LogEntriesType();
     List<LogEntry> entries;
-
+    List<AdminLogEntry> adminEntries;
+    
     try {
-    // call to the log database
+      //TODO: onko ok että molemmille hauille sama ??
+      // call to the log database
       entries = logService.query(logConverter.fromWsType(criteriaType));
-      if(entries == null){
-        logger.debug("No entries!");
-      } else{
-        Iterator<LogEntry> i = entries.iterator();
-        while (i.hasNext()) {
-          LogEntry entry = (LogEntry) i.next();
-          // convert log entry to Web Service type and add it to the collection
-
-          logEntriesType.getLogEntry().add(logConverter.toWsType(entry));
+      logger.debug("entries: "+entries.size());
+      
+      if(LogConstants.LOG_NORMAL.equalsIgnoreCase(criteriaType.getLogType())){
+       
+        if(entries == null){
+          logger.debug("No entries found in log table!");
+        } else{
+          Iterator<LogEntry> i = entries.iterator();
+          while (i.hasNext()) {
+            LogEntry entry = (LogEntry) i.next();
+            // convert log entry to Web Service type and add it to the collection
+            logEntriesType.getLogEntry().add(logConverter.toWsType(entry));
+          }
         }
-      }
-      } catch (ParseException e){
+      }else if(LogConstants.LOG_ADMIN.equalsIgnoreCase(criteriaType.getLogType())){
+logger.debug("Admin log");
+          // entries = logService.query(logConverter.fromWsType(criteriaType));
+           
+     //   adminEntries = logService.query(logConverter.fromWsType(criteriaType));
+      if(entries == null){
+          logger.debug("No entries found in log_admin table!");
+        } else{
+            Iterator<LogEntry> j = entries.iterator();
+    
+                // Iterator<AdminLogEntry> i = entries.iterator();
+          while (j.hasNext()) {
+            logger.debug(j.next().getClass().toString());
+            AdminLogEntry entry = logConverter.convertToAdminLogEntry(j.next());
+//            AdminLogEntry aentry = (AdminLogEntry)i.next();
+//           AdminLogEntry aentry = new AdminLogEntry();
+           // AdminLogEntry adminEntry = (AdminLogEntry)i.next();//convertToAdminEntry(i.next());
+
+
+        //    LogEntry entry = (LogEntry) i.next();
+        //    logEntriesType.getLogEntry().add(logConverter.toWsFromAdminType(entry));
+            logEntriesType.getLogEntry().add(logConverter.toWsFromAdminType(entry));
+          }
+          
+        }
+      
+     } } catch (ParseException e){
         ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
         sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
         sfdt.setMessage("TODO. Message: String to calendar epäonnistui.");
@@ -128,6 +159,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
     return logEntriesType;
   }
 
+ 
   
   /**
    * Implements the use case LOK-2 (Arkistoi lokitietoa).
@@ -163,6 +195,31 @@ public class LogServiceEndpointBean implements LogServicePortType {
       return criteria;
     }
 
+   /**
+   * Helper method for converting a LogEntry to AdminLogEntry
+   */
+  private AdminLogEntry convertToAdminLogEntry(LogEntry entry){
+    AdminLogEntry aentry = new AdminLogEntry();
+    aentry.setCustomerPic(entry.getCustomerPic());
+    aentry.setUserPic(entry.getUserPic());
+    aentry.setOperation(entry.getOperation());
+    aentry.setTimestamp(entry.getTimestamp());
+    aentry.setMessage(entry.getMessage());
+    
+    return aentry;
+  }
+    
+    public LogEntryType toWsFromAdminType(AdminLogEntry entry) throws ParseException{
+      logger.debug("toWsFromAdminType pic: "+entry.getCustomerPic());
+      LogEntryType entryType = new LogEntryType();
+      entryType.setCustomerPic(entry.getCustomerPic());
+      entryType.setUserPic(entry.getUserPic());
+      entryType.setOperation(entry.getOperation());
+      entryType.setMessage(entry.getMessage());
+      entryType.setTimestamp(parseToCal(entry.getTimestamp()));
+      return entryType;
+    }
+    
     public LogEntryType toWsType(LogEntry entry) throws ParseException {
       LogEntryType et = new LogEntryType();
 

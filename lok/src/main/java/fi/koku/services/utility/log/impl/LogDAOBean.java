@@ -3,6 +3,7 @@ package fi.koku.services.utility.log.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -37,7 +38,6 @@ public class LogDAOBean implements LogDAO {
   // 2) arkistoloki ei kuittaa onnistunutta tietojen kopiointia
   @Override
   public void archiveLog(Date date) {
-
     
     /*
      * TODO tähän tyyliin: INSERT INTO log_archive (...) SELECT FROM log WHERE
@@ -117,25 +117,30 @@ logger.debug("queryLog-metodi: "+criteria.getLogType()+", "+criteria.getCustomer
     // these are required and the null check has been made already!
 
 logger.debug("log type: "+criteria.getLogType());
+
    String entity = "";
     // choose the table here
     if (LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())) { // seurantaloki
-      entity = "LogAdminEntry";
+      entity = "AdminLogEntry";
     } else if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
       entity = "LogEntry";
     }
     
     sb.append("SELECT e FROM "+entity+" e WHERE ");
-  // TESTI 24.9.   otetaan pvm:t väliaikaisesti pois!
+
     // starttime and enddate are required and are null-checked earlier
+    //TODO: vai ovatko pakollisia???
     sb.append("e.timestamp >= :startTime");
     params.add(new Object[] { "startTime", criteria.getStartTime() });
-
+    logger.debug("end: "+criteria.getStartTime().toString());
+    
     sb.append(" AND ");
     
     sb.append("e.timestamp <= :endTime");
     params.add(new Object[] { "endTime", criteria.getEndTime() });
 
+    logger.debug("end: "+criteria.getEndTime().toString());
+    
     // add the customer pic and data item type to search criteria for LOK-3
     if ((LogConstants.LOG_NORMAL).equalsIgnoreCase(criteria.getLogType())) {
 
@@ -173,7 +178,12 @@ logger.debug("log type: "+criteria.getLogType());
       }
 
       // query the database
-      return q.getResultList();
+      if(LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())){
+        return q.getResultList();
+      }else if(LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())){
+        List<AdminLogEntry> list = q.getResultList();
+        return adminListToLogList(list);
+      }
 
     } catch (IllegalStateException e) {
       // TODO
@@ -183,4 +193,21 @@ logger.debug("log type: "+criteria.getLogType());
     return null; // if something went wrong
   }
 
+  public List<LogEntry> adminListToLogList(List<AdminLogEntry> list){
+    List<LogEntry> entryList = new ArrayList(); //TODO: onko oikein?
+    ListIterator<AdminLogEntry> i = list.listIterator();
+    while(i.hasNext()){
+      AdminLogEntry aentry = (AdminLogEntry)i.next();
+      LogEntry entry = new LogEntry();
+      entry.setCustomerPic(aentry.getCustomerPic());
+      entry.setOperation(aentry.getOperation());
+      entry.setMessage(aentry.getMessage());
+      entry.setTimestamp(aentry.getTimestamp());
+      entry.setUserPic(aentry.getUserPic());
+      
+      entryList.add(entry);
+    }
+   
+    return entryList;
+  }
 }
