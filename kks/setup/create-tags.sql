@@ -502,6 +502,67 @@ insert into kks_tag (
   ,description
 ) VALUES (
    59   -- tag_id
-  ,'kks.kehitysasiatyyppi.kaynti'  -- name
+  ,'kks.kehitysasia.kaynti'  -- name
   ,''  -- description
 );
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   60   -- tag_id
+  ,'kks.kehitysasia.päivähoito'  -- name
+  ,''  -- description
+);
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   61   -- tag_id
+  ,'kks.kehitysasia.päivähoito.huoltaja'  -- name
+  ,''  -- description
+);
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   62   -- tag_id
+  ,'kks.kehitysasia.päivähoito.hoitoaika'  -- name
+  ,''  -- description
+);
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   63   -- tag_id
+  ,'kks.kehitysasia.päivähoito.yhteystiedot'  -- name
+  ,''  -- description
+);
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   64   -- tag_id
+  ,'kks.kehitysasia.päivähoito.luvat'  -- name
+  ,''  -- description
+);
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   65   -- tag_id
+  ,'kks.kehitysasia.päivähoito.perhepäivähoito'  -- name
+  ,''  -- description
+);
+

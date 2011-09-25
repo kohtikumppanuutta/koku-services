@@ -9,7 +9,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.sopimus.päiväkotihoito'   -- type_code
   ,'Päiväkotihoidon Hoitosopimus'  -- name
   ,''  -- description
-  ,'Päiväkotihoidon Hoitosopimus'  -- concent_type
+  ,'Päiväkotihoidon hoitosopimus'  -- concent_type
 );
 
 insert into kks_group (
@@ -1239,3 +1239,817 @@ insert into kks_entry_class (
   ,''  -- value_spaces
   ,43   -- entry_group
 );
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   100   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   100   -- entry_class_id
+  ,61   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   101   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   101   -- entry_class_id
+  ,61   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   102   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   102   -- entry_class_id
+  ,61   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   103   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   103   -- entry_class_id
+  ,61   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   104   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   104   -- entry_class_id
+  ,61   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   105   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   106   -- entry_class_id
+  ,61   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   107   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   107   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   108   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   108   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   109   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   109   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   110   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   110   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   111   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   111   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   112   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   112   -- entry_class_id
+  ,41   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   113   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   113   -- entry_class_id
+  ,41   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   114   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   114   -- entry_class_id
+  ,63   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   115   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   115   -- entry_class_id
+  ,63   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   116   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   116   -- entry_class_id
+  ,60   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   117   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   117   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   118   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   118   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   119   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   119   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   120   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   120   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   121   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   121   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   122   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   122   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   123   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   123   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   124   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   124   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   125   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   125   -- entry_class_id
+  ,60   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   126   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   126   -- entry_class_id
+  ,64   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   127   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   127   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   128   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   128   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   129   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   129   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   130   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   130   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   131   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   131   -- entry_class_id
+  ,62   -- tag_id
+);
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   132   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   132   -- entry_class_id
+  ,62   -- tag_id
+);
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   133   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   133   -- entry_class_id
+  ,62   -- tag_id
+);
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   134   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   134   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   135   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   135   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   136   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   136   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   137   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   137   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   138   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   138   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   139   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   139   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   140   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   140   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   141   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   141   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   142   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   142   -- entry_class_id
+  ,62   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   143   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   143   -- entry_class_id
+  ,63   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   143   -- entry_class_id
+  ,65   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   144   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   144   -- entry_class_id
+  ,63   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   144   -- entry_class_id
+  ,65   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   145   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   145   -- entry_class_id
+  ,63   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   145   -- entry_class_id
+  ,65   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   146   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   146   -- entry_class_id
+  ,63   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   146   -- entry_class_id
+  ,65   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   147   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   147   -- entry_class_id
+  ,63   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   147   -- entry_class_id
+  ,65   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   148   -- entry_class_id
+  ,16   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   148   -- entry_class_id
+  ,63   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   148   -- entry_class_id
+  ,65   -- tag_id
+);
+

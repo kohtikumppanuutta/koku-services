@@ -1067,7 +1067,7 @@ insert into kks_entry_class (
   ,42   -- sort_order
   ,'Kommentit, havainnot ja tavoitteet'  -- name
   ,'neuvolan terveiset päivähoidolle'  -- description
-  ,0   -- multi_value
+  ,1   -- multi_value
   ,'FREE_TEXT'  -- data_type
   ,''  -- value_spaces
   ,28   -- entry_group
@@ -2048,13 +2048,6 @@ insert into kks_entry_class_tags (
    85   -- entry_class_id
   ,11   -- tag_id
 );
-insert into kks_entry_class_tags (
-   entry_class_id
-  ,tag_id
-) VALUES (
-   85   -- entry_class_id
-  ,35   -- tag_id
-);
 
 insert into kks_entry_class_tags (
    entry_class_id
@@ -2062,38 +2055,6 @@ insert into kks_entry_class_tags (
 ) VALUES (
    85   -- entry_class_id
   ,40   -- tag_id
-);
-
-insert into kks_entry_class_tags (
-   entry_class_id
-  ,tag_id
-) VALUES (
-   85   -- entry_class_id
-  ,41   -- tag_id
-);
-
-insert into kks_entry_class_tags (
-   entry_class_id
-  ,tag_id
-) VALUES (
-   85   -- entry_class_id
-  ,32   -- tag_id
-);
-
-insert into kks_entry_class_tags (
-   entry_class_id
-  ,tag_id
-) VALUES (
-   85   -- entry_class_id
-  ,20   -- tag_id
-);
-
-insert into kks_entry_class_tags (
-   entry_class_id
-  ,tag_id
-) VALUES (
-   85   -- entry_class_id
-  ,25   -- tag_id
 );
 
 insert into kks_entry_class_tags (

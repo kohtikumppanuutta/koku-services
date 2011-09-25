@@ -11,7 +11,7 @@ CREATE TABLE kks_collection_class (
   type_code VARCHAR(250) NOT NULL,
   name VARCHAR(250) NOT NULL,
   consent_type VARCHAR(250) NOT NULL,
-  description VARCHAR(500) NOT NULL,
+  description VARCHAR(1000) NOT NULL,
   CONSTRAINT UNIQUE (type_code)
 );
 
@@ -20,7 +20,7 @@ CREATE TABLE kks_group (
   group_id INT UNSIGNED NOT NULL,
   sort_order INT UNSIGNED NOT NULL,
   name VARCHAR(200) NOT NULL,
-  description VARCHAR(500),
+  description VARCHAR(1000),
   register VARCHAR(500) NOT NULL,
   parent_id INT UNSIGNED,
   collection_class_id INT UNSIGNED NOT NULL,
