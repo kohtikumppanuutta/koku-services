@@ -330,7 +330,7 @@ insert into kks_entry_class (
   ,'Tarkempi selvitys ruokavaliosta tehd‰‰n erillisell‰ lomakkeella tarkastuksen yhteydess‰'  -- description
   ,0   -- multi_value
   ,'SELECT'  -- data_type
-  ,''  -- value_spaces
+  ,'Kyll‰, Ei'  -- value_spaces
   ,53   -- entry_group
 );
 
