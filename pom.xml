@@ -145,6 +145,7 @@
     <module>av</module>
     <module>intalio</module>
     <module>tiva</module>
+    <module>hak</module>
     <module>arcusys-ear</module>
     <!--module>gatein</module-->
   </modules>

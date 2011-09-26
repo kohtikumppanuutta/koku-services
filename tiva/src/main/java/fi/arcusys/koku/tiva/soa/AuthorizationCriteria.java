@@ -11,14 +11,34 @@ public class AuthorizationCriteria {
     private Long authorizationTemplateId;
     private String senderUid;
     private String receipientUid;
+    private String targetPersonUid;
 
     public AuthorizationDTOCriteria toDtoCriteria() {
         final AuthorizationDTOCriteria dtoCriteria = new AuthorizationDTOCriteria();
         dtoCriteria.setAuthorizationTemplateId(authorizationTemplateId);
         dtoCriteria.setReceipientUid(receipientUid);
         dtoCriteria.setSenderUid(senderUid);
+        dtoCriteria.setTargetPersonUid(targetPersonUid);
         return dtoCriteria;
     }
+
+    /**
+     * @return the targetPersonUid
+     */
+    public String getTargetPersonUid() {
+        return targetPersonUid;
+    }
+
+
+
+    /**
+     * @param targetPersonUid the targetPersonUid to set
+     */
+    public void setTargetPersonUid(String targetPersonUid) {
+        this.targetPersonUid = targetPersonUid;
+    }
+
+
 
     /**
      * @return the authorizationTemplateId

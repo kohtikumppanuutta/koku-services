@@ -1,10 +1,8 @@
 package fi.arcusys.koku.common.service.impl;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.Query;
 
 import fi.arcusys.koku.common.service.MessageRefDAO;
 import fi.arcusys.koku.common.service.datamodel.MessageRef;

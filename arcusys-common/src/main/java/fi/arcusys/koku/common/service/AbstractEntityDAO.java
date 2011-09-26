@@ -20,5 +20,5 @@ public interface AbstractEntityDAO<T> {
 
 	int deleteAll(final List<Long> entityIds);
 	
-	void update(final T entity);
+	T update(final T entity);
 }

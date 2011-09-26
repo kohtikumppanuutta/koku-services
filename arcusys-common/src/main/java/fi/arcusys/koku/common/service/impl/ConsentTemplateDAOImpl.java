@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
-import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.ConsentTemplateDAO;
 import fi.arcusys.koku.common.service.datamodel.ConsentTemplate;
 

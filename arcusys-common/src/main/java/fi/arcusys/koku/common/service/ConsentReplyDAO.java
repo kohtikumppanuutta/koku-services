@@ -1,7 +1,6 @@
 package fi.arcusys.koku.common.service;
 
 import java.util.List;
-import java.util.Set;
 
 import fi.arcusys.koku.common.service.datamodel.Consent;
 import fi.arcusys.koku.common.service.datamodel.ConsentReply;

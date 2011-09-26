@@ -100,6 +100,11 @@ public class AuthorizationDAOImpl extends AbstractEntityDAOImpl<Authorization> i
             query.append(" AND auth.toUser.uid = :receipientUid ");
             params.put("receipientUid", receipientUid);
         } 
+        final String targetPersonUid = criteria.getTargetPersonUid();
+        if (targetPersonUid != null && !"".equals(targetPersonUid.trim())) {
+            query.append(" AND auth.targetPerson.uid = :targetPersonUid ");
+            params.put("targetPersonUid", targetPersonUid);
+        } 
         return params;
     }
 

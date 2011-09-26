@@ -15,6 +15,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
+import fi.arcusys.koku.common.service.CalendarUtil;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 23, 2011
@@ -22,13 +24,15 @@ import javax.persistence.OneToMany;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = Request.GET_REQUESTS_BY_IDS, query = "SELECT DISTINCT r FROM Request r WHERE r.id in (:ids) ORDER BY r.id DESC"),
-	@NamedQuery(name = Request.GET_REQUESTS_BY_USER_UID, query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user ORDER BY r.id DESC")
+	@NamedQuery(name = Request.GET_REQUESTS_BY_USER_UID, query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user ORDER BY r.id DESC"),
+    @NamedQuery(name = "countRequestsByTemplate", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.template = :template")
 })
 public class Request extends Message {
 	public static final String GET_REQUESTS_BY_IDS = "getRequestsByIds";
 	public static final String GET_REQUESTS_BY_USER_UID = "getRequestsByUserUid";
 	
-	private Date endDate;
+	private Date replyTill;
+	private Integer notifyBeforeDays;
 
 	@ManyToOne
 	private RequestTemplate template;
@@ -67,18 +71,31 @@ public class Request extends Message {
 		this.responses = new HashSet<Response>(responses);
 	}
 
-	/**
-	 * @return the endDate
-	 */
-	public Date getEndDate() {
-		return endDate;
-	}
+    /**
+     * @return the replyTill
+     */
+    public Date getReplyTill() {
+        return replyTill;
+    }
 
-	/**
-	 * @param endDate the endDate to set
-	 */
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-	
+    /**
+     * @param replyTill the replyTill to set
+     */
+    public void setReplyTill(Date replyTill) {
+        this.replyTill = replyTill;
+    }
+
+    /**
+     * @return the notifyBeforeDays
+     */
+    public Integer getNotifyBeforeDays() {
+        return notifyBeforeDays;
+    }
+
+    /**
+     * @param notifyBeforeDays the notifyBeforeDays to set
+     */
+    public void setNotifyBeforeDays(Integer notifyBeforeDays) {
+        this.notifyBeforeDays = notifyBeforeDays;
+    }
 }

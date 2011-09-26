@@ -8,6 +8,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,8 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 	 */
 	@Override
 	public Long sendRequest(final String fromUserUid, final String subject, final Receipients receipients, 
-	        final Questions questions, final MultipleChoices choices, final String content) {
+	        final Questions questions, final MultipleChoices choices, final String content, 
+	        final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
 		logger.debug("sendRequest: [fromUserUid, subject, receipients, questions, content] = " +
 				"[" + fromUserUid
 				+ "," + subject 
@@ -75,7 +77,8 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 				+ "]");
 		final Long requestId = kvFacade.sendRequest(fromUserUid, subject, receipients.getReceipients(), content, 
 		        questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
-		        choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>());
+		        choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>(),
+		                replyTill, notifyBeforeDays);
 		logger.debug("Request sent: " + requestId);
 		return requestId;
 	}
@@ -119,7 +122,31 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
      * @return
      */
     @Override
-    public Long sendRequestWithTemplate(String fromUserUid, long requestTemplateId, String subject, Receipients receipients, String content) {
-        return kvFacade.sendRequestWithTemplate(fromUserUid, requestTemplateId, subject, receipients.getReceipients(), content);
+    public Long sendRequestWithTemplate(String fromUserUid, long requestTemplateId, String subject, Receipients receipients, String content, 
+            final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
+        return kvFacade.sendRequestWithTemplate(fromUserUid, requestTemplateId, subject, receipients.getReceipients(), content, replyTill, notifyBeforeDays);
+    }
+
+    /**
+     * @param userUid
+     * @param subject
+     * @return
+     */
+    @Override
+    public RequestTemplateExistenceStatus isRequestTemplateExist(String userUid, String subject) {
+        return kvFacade.isRequestTemplateExist(userUid, subject);
+    }
+
+    /**
+     * @param userUid
+     * @param subject
+     * @param questions
+     * @param choices
+     */
+    @Override
+    public void updateRequestTemplate(final long requestTemplateId, String userUid, String subject, Questions questions, MultipleChoices choices) {
+        kvFacade.updateRequestTemplate(requestTemplateId, userUid, subject, 
+                questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
+                choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>());
     }
 }

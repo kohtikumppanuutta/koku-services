@@ -11,4 +11,10 @@ import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 public interface RequestTemplateDAO extends AbstractEntityDAO<RequestTemplate> {
 
     List<RequestTemplate> searchTemplates(final String searchString, final int limit);
+
+    /**
+     * @param subject
+     * @return
+     */
+    List<RequestTemplate> searchBySubject(final String subject);
 }

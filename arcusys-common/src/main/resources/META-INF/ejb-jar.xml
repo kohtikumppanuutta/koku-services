@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
-         version="3.0">
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
+	version="3.0">
+	<enterprise-beans>
+
+		<session>
+			<ejb-name>UsersAndGroupsServiceImpl</ejb-name>
+			<env-entry>
+				<env-entry-name>ssnAttributeName</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>description</env-entry-value>
+				<injection-target>
+					<injection-target-class>fi.arcusys.koku.common.soa.UsersAndGroupsServiceImpl</injection-target-class>
+					<injection-target-name>ssnAttributeName</injection-target-name>
+				</injection-target>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>userSearchFilter</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>(&amp;(objectclass=inetOrgPerson)(cn=#username#))</env-entry-value>
+				<injection-target>
+					<injection-target-class>fi.arcusys.koku.common.soa.UsersAndGroupsServiceImpl</injection-target-class>
+					<injection-target-name>userSearchFilter</injection-target-name>
+				</injection-target>
+			</env-entry>
+            <resource-ref>
+                <res-ref-name>myldap</res-ref-name>
+                <res-type>javax.naming.directory</res-type>
+                <res-auth>Container</res-auth>
+                <res-sharing-scope>Shareable</res-sharing-scope>
+                <mapped-name>external/ldap/myldap</mapped-name>
+                <injection-target>
+                    <injection-target-class>fi.arcusys.koku.common.soa.UsersAndGroupsServiceImpl</injection-target-class>
+                    <injection-target-name>dirContext</injection-target-name>
+                </injection-target>
+            </resource-ref>
+		</session>
+	</enterprise-beans>
 </ejb-jar>

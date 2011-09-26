@@ -64,4 +64,15 @@ public class CalendarUtil {
 			calendar.set(Calendar.MILLISECOND, 0);
 		}
 	}
+
+    /**
+     * @param createdFromDate
+     * @return
+     */
+    public static Date getSafeDate(XMLGregorianCalendar calendar) {
+        if (calendar == null) {
+            return null;
+        }
+        return calendar.toGregorianCalendar().getTime();
+    }
 }

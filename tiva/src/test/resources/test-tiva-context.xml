@@ -20,4 +20,5 @@
     
     <bean id="authorizationServiceFacade" class="fi.arcusys.koku.tiva.service.impl.AuthorizationServiceFacadeImpl" />
 
+    <bean id="informationRequestServiceFacade" class="fi.arcusys.koku.tiva.service.impl.InformationRequestServiceFacadeImpl" />
 </beans>

@@ -83,7 +83,7 @@ public class ConsentServiceTest {
         
         final String employeeUid = "Ville Virkamies";
         final Long consentId = service.requestForConsent(templateId, employeeUid, 
-                "Lassi Lapsi", Arrays.asList(parentForApprove, parentForDecline), null, Boolean.FALSE);
+                "Lassi Lapsi", Arrays.asList(parentForApprove, parentForDecline), null, null, Boolean.FALSE);
 
         assertNull(getById(consentId, service.getProcessedConsents(employeeUid, new ConsentQuery(1, 10))));
         
@@ -92,15 +92,7 @@ public class ConsentServiceTest {
         assertNotNull(getById(consentId, consentsForApprove));
         final ConsentForReplyTO consentForApprove = service.getConsentForReply(consentId, parentForApprove);
         assertNotNull(consentForApprove);
-        final List<ActionPermittedTO> actionPermits = new ArrayList<ActionPermittedTO>();
-        // approve only 2 actions, the last one is declined if otherwise is not specified
-        for (int i = 1; i <= 2; i++) {
-            final ActionPermittedTO actionPermittedTO = new ActionPermittedTO();
-            actionPermittedTO.setActionRequestNumber(i);
-            actionPermittedTO.setPermitted(true);
-            actionPermits.add(actionPermittedTO);
-        }
-        service.giveConsent(consentForApprove.getConsentId(), parentForApprove, actionPermits, 
+        service.giveConsent(consentForApprove.getConsentId(), parentForApprove, getTestActionsPermitted(), 
                 CalendarUtil.getXmlDate(new Date()), "consent given");
         assertNull("already processed consent: ", getById(consentId, service.getAssignedConsents(parentForApprove, 1, 10)));
         
@@ -156,7 +148,7 @@ public class ConsentServiceTest {
         final String employee = "testTotalsEmployee";
         
         final Long consentId = service.requestForConsent(templateId, employee, 
-                "Lassi Lapsi", Arrays.asList(parent), null, Boolean.FALSE);
+                "Lassi Lapsi", Arrays.asList(parent), null, null, Boolean.FALSE);
         
         assertEquals(1, service.getTotalAssignedConsents(parent));
         assertEquals(0, service.getTotalOwnConsents(parent));
@@ -178,7 +170,7 @@ public class ConsentServiceTest {
         
         final String employeeUid = "Ville Virkamies";
         final Long consentId = service.requestForConsent(templateId, employeeUid, 
-                "Lassi Lapsi", Arrays.asList(parent1, parent2), null, Boolean.FALSE);
+                "Lassi Lapsi", Arrays.asList(parent1, parent2), null, null, Boolean.FALSE);
         
         final ConsentQuery query = new ConsentQuery(1, 100);
         assertNull(getById(consentId, service.getProcessedConsents(employeeUid, query)));
@@ -201,6 +193,40 @@ public class ConsentServiceTest {
         assertNull("not found by wrong receipient uid: ", getById(consentId, service.getProcessedConsents(employeeUid, query)));
         query.getCriteria().setReceipientUid(parent1);
         assertNotNull("found by receipient uid: ", getById(consentId, service.getProcessedConsents(employeeUid, query)));
+    }
+    
+    @Test
+    public void createConsentOnBehalf() {
+        final Long templateId = service.createConsentTemplate(createTestTemplate("templateForCreationOnBehalf"));
+        final String parent1 = "parent1";
+        final String parent2 = "parent2";
+        
+        final String employeeUid = "Ville Virkamies";
+        
+        final Long consentId = service.writeConsentOnBehalf(templateId, employeeUid,
+                "Paper-based", "Lassi Lapsi", Arrays.asList(parent1, parent2), null, getTestActionsPermitted(), "given on behalf");
+        
+        final ConsentQuery query = new ConsentQuery(1, 100);
+        final ConsentSummary autoApproved = getById(consentId, service.getProcessedConsents(employeeUid, query));
+        assertNotNull("Already processed consent for employee: ", autoApproved);
+        assertEquals(ConsentStatus.Valid, autoApproved.getStatus());
+        
+        assertNotNull("Already processed consent for parent1: ", getById(consentId, service.getOwnConsents(parent1, 1, 10)));
+        assertNotNull("Already processed consent for parent2: ", getById(consentId, service.getOwnConsents(parent2, 1, 10)));
+
+        service.revokeConsent(consentId, parent1, "no comments");
+        assertEquals(ConsentStatus.Revoked, getById(consentId, service.getProcessedConsents(employeeUid, query)).getStatus());
+    }
+
+    private List<ActionPermittedTO> getTestActionsPermitted() {
+        final List<ActionPermittedTO> actionPermits = new ArrayList<ActionPermittedTO>();
+        for (int i = 1; i <= 2; i++) {
+            final ActionPermittedTO actionPermittedTO = new ActionPermittedTO();
+            actionPermittedTO.setActionRequestNumber(i);
+            actionPermittedTO.setPermitted(true);
+            actionPermits.add(actionPermittedTO);
+        }
+        return actionPermits;
     }
 
     /**

@@ -3,7 +3,6 @@ package fi.arcusys.koku.common.service;
 import java.util.List;
 
 import fi.arcusys.koku.common.service.datamodel.TargetPerson;
-import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

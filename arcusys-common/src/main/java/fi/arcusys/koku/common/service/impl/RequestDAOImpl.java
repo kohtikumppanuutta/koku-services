@@ -1,14 +1,13 @@
 package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.RequestDAO;
 import fi.arcusys.koku.common.service.datamodel.Request;
+import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
@@ -53,4 +52,13 @@ public class RequestDAOImpl extends AbstractEntityDAOImpl<Request> implements Re
 	public List<Request> getRequestsByUser(User user, int startNum, int maxNum) {
 		return super.getResultList(Request.GET_REQUESTS_BY_USER_UID, Collections.<String, Object>singletonMap("user", user), startNum, maxNum);
 	}
+
+    /**
+     * @param template
+     * @return
+     */
+    @Override
+    public Long getTotalByTemplate(RequestTemplate template) {
+        return getSingleResult("countRequestsByTemplate", Collections.singletonMap("template", template));
+    }
 }

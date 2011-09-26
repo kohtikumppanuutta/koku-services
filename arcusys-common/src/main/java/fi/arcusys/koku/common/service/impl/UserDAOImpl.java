@@ -1,15 +1,17 @@
 package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
-import javax.ejb.Local;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fi.arcusys.koku.common.service.UserDAO;
-import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -17,6 +19,12 @@ import fi.arcusys.koku.common.service.datamodel.User;
  */
 @Stateless
 public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO {
+
+    private final static Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);
+    
+    @EJB
+    private UsersAndGroupsService usersService;
+    
 	public UserDAOImpl() {
 		super(User.class);
 	}
@@ -44,6 +52,7 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
 			fromUser = new User();
 			fromUser.setUid(uid);
 			fromUser = super.create(fromUser);
+			logger.warn("Creation of the user by UID - should be used for test purposes only.");
 		}
 		return fromUser;
 	}
@@ -53,18 +62,26 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
      * @return
      */
     @Override
-    public User getOrCreateUserByKunpoName(String kunpoName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public User getOrCreateUserByPortalName(String portalName) {
+        if (portalName == null) {
+            throw new IllegalArgumentException("Can't retrieve user with empty name.");
+        }
 
-    /**
-     * @param looraName
-     * @return
-     */
-    @Override
-    public User getOrCreateUserByLooraName(String looraName) {
-        // TODO Auto-generated method stub
-        return null;
+        final User existingUser = getSingleResultOrNull("findUserByPortalName", Collections.singletonMap("portalName", portalName));
+        if (existingUser != null) {
+            return existingUser;
+        }
+        
+        final String ssn = usersService.getSsnByLdapName(portalName);
+        // get some extra info from CustomerService
+        final User user = new User();
+        user.setSsn(ssn);
+        user.setUid(generateUid());
+        user.setPortalName(portalName);
+        return super.create(user);
+    }
+    
+    private String generateUid() {
+        return UUID.randomUUID().toString();
     }
 }

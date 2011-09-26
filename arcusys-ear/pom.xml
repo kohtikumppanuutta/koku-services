@@ -35,6 +35,11 @@
                         <artifactId>tiva-model</artifactId>
                         <version>0.1-SNAPSHOT</version>
                 </dependency>
+                <dependency>
+                        <groupId>kohti-kumppanuutta</groupId>
+                        <artifactId>hak-model</artifactId>
+                        <version>0.1-SNAPSHOT</version>
+                </dependency>
 	</dependencies>
 
 </project>

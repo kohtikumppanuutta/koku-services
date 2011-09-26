@@ -5,6 +5,7 @@ import java.util.List;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -18,7 +19,9 @@ public interface KokuRequestProcessingService {
 					 @WebParam(name = "receipients") final Receipients receipients,
 					 @WebParam(name = "questions") final Questions questions, 
 					 @WebParam(name = "choices") final MultipleChoices choices,
-					 @WebParam(name = "requestContent") final String content);
+					 @WebParam(name = "requestContent") final String content,
+					 @WebParam(name = "replyTill") final XMLGregorianCalendar replyTill,
+					 @WebParam(name = "notifyBeforeDays") final Integer notifyBeforeDays);
 	
 	void receiveRequest(@WebParam(name = "toUser") final String toUserUid, 
 						@WebParam(name = "requestId") final Long requestId);
@@ -33,7 +36,16 @@ public interface KokuRequestProcessingService {
             @WebParam(name = "questions") final Questions questions,
             @WebParam(name = "choices") final MultipleChoices choices);
 	
-	List<RequestTemplateSummary> getRequestTemplateSummary(
+	RequestTemplateExistenceStatus isRequestTemplateExist(final String userUid, final String subject);
+	
+    void updateRequestTemplate(
+            @WebParam(name = "requestTemplateId") final long requestTemplateId,
+            @WebParam(name = "creator") final String userUid, 
+            @WebParam(name = "subject") final String subject, 
+            @WebParam(name = "questions") final Questions questions,
+            @WebParam(name = "choices") final MultipleChoices choices);
+
+    List<RequestTemplateSummary> getRequestTemplateSummary(
 	        @WebParam(name = "subjectPrefix") final String subjectPrefix, 
 	        @WebParam(name = "limit") final int limit);
 	
@@ -45,5 +57,7 @@ public interface KokuRequestProcessingService {
             @WebParam(name = "requestTemplateId") final long requestTemplateId, 
             @WebParam(name = "subject") final String subject, 
             @WebParam(name = "receipients") final Receipients receipients,
-            @WebParam(name = "requestContent") final String content);
+            @WebParam(name = "requestContent") final String content,
+            @WebParam(name = "replyTill") final XMLGregorianCalendar replyTill,
+            @WebParam(name = "notifyBeforeDays") final Integer notifyBeforeDays);
 }

@@ -11,7 +11,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -33,6 +32,7 @@ import javax.persistence.OneToMany;
             " AND cn.creator = :sender")
 })
 public class Consent extends AbstractEntity {
+    private Date replyTill;
     private Date validTill;
     private Boolean endDateMandatory;
     
@@ -50,6 +50,20 @@ public class Consent extends AbstractEntity {
     
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> receipients;
+
+    /**
+     * @return the replyTill
+     */
+    public Date getReplyTill() {
+        return replyTill;
+    }
+
+    /**
+     * @param replyTill the replyTill to set
+     */
+    public void setReplyTill(Date replyTill) {
+        this.replyTill = replyTill;
+    }
 
     /**
      * @return the isEndDateMandatory

@@ -2,6 +2,8 @@ package fi.arcusys.koku.tiva.soa;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -16,6 +18,8 @@ public class AuthorizationSummary extends AuthorizationShortSummary {
     /**
      * @return the createdAt
      */
+    @XmlElement
+    @XmlSchemaType(name = "date")
     public XMLGregorianCalendar getCreatedAt() {
         return createdAt;
     }
@@ -28,6 +32,8 @@ public class AuthorizationSummary extends AuthorizationShortSummary {
     /**
      * @return the replyTill
      */
+    @XmlElement
+    @XmlSchemaType(name = "date")
     public XMLGregorianCalendar getReplyTill() {
         return replyTill;
     }
@@ -40,6 +46,8 @@ public class AuthorizationSummary extends AuthorizationShortSummary {
     /**
      * @return the givenAt
      */
+    @XmlElement
+    @XmlSchemaType(name = "date")
     public XMLGregorianCalendar getGivenAt() {
         return givenAt;
     }

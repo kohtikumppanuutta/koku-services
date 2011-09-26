@@ -3,6 +3,7 @@ package fi.arcusys.koku.common.service;
 import java.util.List;
 
 import fi.arcusys.koku.common.service.datamodel.Request;
+import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
@@ -18,5 +19,11 @@ public interface RequestDAO extends AbstractEntityDAO<Request> {
 	 * @return
 	 */
 	List<Request> getRequestsByUser(User user, int startNum, int maxNum);
+
+    /**
+     * @param template
+     * @return
+     */
+    Long getTotalByTemplate(RequestTemplate template);
 
 }

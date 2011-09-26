@@ -49,7 +49,7 @@ public interface ConsentServiceFacade {
      * @param asList
      * @return
      */
-    Long requestForConsent(final Long templateId, String senderUid, String targetPersonUid, List<String> receipients, XMLGregorianCalendar endDate, Boolean isMandatory);
+    Long requestForConsent(final Long templateId, String senderUid, String targetPersonUid, List<String> receipients, XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory);
 
     
     /**
@@ -152,4 +152,17 @@ public interface ConsentServiceFacade {
      * @return
      */
     List<ConsentTemplateTO> getConsentTemplates(String searchString, int limit);
+
+    /**
+     * @param templateId
+     * @param employeeUid
+     * @param string
+     * @param string2
+     * @param asList
+     * @param object
+     * @return
+     */
+    Long writeConsentOnBehalf(final Long templateId, final String employeeUid, final String consentType, 
+            final String targetPersonUid, final List<String> receipientUids, final XMLGregorianCalendar endDate,
+            List<ActionPermittedTO> actions, final String comment);
 }

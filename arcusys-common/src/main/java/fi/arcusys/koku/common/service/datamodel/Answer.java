@@ -1,7 +1,6 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
 
 
 /**

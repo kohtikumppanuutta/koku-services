@@ -86,8 +86,8 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public Long requestForConsent(long consentTemplateId, String senderUid, final String targetPersonUid,
-            List<String> receivers, final XMLGregorianCalendar endDate, final Boolean isMandatory) {
-        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers, endDate, isMandatory);
+            List<String> receivers, final XMLGregorianCalendar replyTillDate, final XMLGregorianCalendar endDate, final Boolean isMandatory) {
+        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers, replyTillDate, endDate, isMandatory);
     }
 
     /**
@@ -174,9 +174,9 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public Long writeConsentOnBehalf(long consentTemplateId, String senderUid,
-            String consentType, String targetPersonUid, List<String> receivers, final XMLGregorianCalendar endDate) {
-        // TODO Auto-generated method stub
-        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers, endDate, Boolean.FALSE);
+            String consentType, String targetPersonUid, List<String> receivers, final XMLGregorianCalendar endDate,
+            final List<ActionPermittedTO> actions, final String comment) {
+        return serviceFacade.writeConsentOnBehalf(consentTemplateId, senderUid, consentType, targetPersonUid, receivers, endDate, actions, comment);
     }
 
     /**

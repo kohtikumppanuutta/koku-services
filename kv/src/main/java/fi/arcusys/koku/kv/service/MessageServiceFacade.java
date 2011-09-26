@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
@@ -19,6 +20,7 @@ import fi.arcusys.koku.kv.soa.Questions;
 import fi.arcusys.koku.kv.soa.Receipients;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
+import fi.arcusys.koku.kv.soa.RequestTemplateExistenceStatus;
 import fi.arcusys.koku.kv.soa.RequestTemplateSummary;
 import fi.arcusys.koku.kv.soa.RequestTemplateTO;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
@@ -51,7 +53,9 @@ public interface MessageServiceFacade {
 	int getUnreadMessagesCount(final String userId, final FolderType folderType);
 
 	Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, 
-	        final List<QuestionTO> questions, final List<MultipleChoiceTO> choices);
+	        final List<QuestionTO> questions, final List<MultipleChoiceTO> choices, 
+            XMLGregorianCalendar replyTill, 
+            Integer notifyBeforeDays);
 	
 	RequestTO getRequestById(final Long requestId);
 
@@ -92,7 +96,9 @@ public interface MessageServiceFacade {
             final long requestTemplateId, 
             final String subject,
             final List<String> receipients,
-            final String content);
+            final String content, 
+            XMLGregorianCalendar replyTill, 
+            Integer notifyBeforeDays);
 
     /**
      * @param fromUserUid
@@ -102,4 +108,23 @@ public interface MessageServiceFacade {
      * @return
      */
     void receiveNewMessage(final String fromUserUid, final String subject, final String toUserUid, final String content);
+
+    void deliverMessage(final String fromUser, final List<String> toUsers, final String subject, final String content);
+
+    /**
+     * @param userUid
+     * @param subject
+     * @return
+     */
+    RequestTemplateExistenceStatus isRequestTemplateExist(final String userUid, final String subject);
+
+    /**
+     * @param requestTemplateId
+     * @param userUid
+     * @param subject
+     * @param list
+     * @param list2
+     * @return
+     */
+    void updateRequestTemplate(long requestTemplateId, String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices);
 }

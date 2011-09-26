@@ -55,6 +55,12 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
     private static final String APPOINTMENT_CANCELLED_WHOLE_BODY = "Tapaaminen \"{0}\" on peruutettu";
     private static final String APPOINTMENT_CANCELLED_SUBJECT = "Tapaaminen on peruutettu";
 
+    private static final String APPOINTMENT_APPROVED_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on hyväksytty käyttäjän {2} toimesta.";
+    private static final String APPOINTMENT_APPROVED_SUBJECT = "Tapaaminen on hyväksytty";
+
+    private static final String APPOINTMENT_DECLINED_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on hylätty käyttäjän {2} toimesta.";
+    private static final String APPOINTMENT_DECLINED_SUBJECT = "Tapaaminen on hylätty";
+
     private final static Logger logger = LoggerFactory.getLogger(AppointmentServiceFacadeImpl.class);
     
 	@EJB
@@ -87,6 +93,10 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         response.setStatus(AppointmentResponseStatus.Accepted);
 		
 		appointmentDAO.update(appointment);
+        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_APPROVED_SUBJECT, 
+                Collections.singletonList(response.getAppointment().getSender().getUid()), 
+                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_APPROVED_BODY, 
+                        new Object[] {response.getAppointment().getSubject(), targetPersonUid, userUid}));
 	}
 
 	/**
@@ -101,6 +111,10 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         response.setStatus(AppointmentResponseStatus.Rejected);
 		
 		appointmentDAO.update(appointment);
+        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_DECLINED_SUBJECT, 
+                Collections.singletonList(response.getAppointment().getSender().getUid()), 
+                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_DECLINED_BODY, 
+                        new Object[] {response.getAppointment().getSubject(), targetPersonUid, userUid}));
 	}
 
     private AppointmentResponse processReply(final String targetPersonUid,
@@ -524,7 +538,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         appointmentTO.setStatus(getAppointmentStatusByResponse(response));
         appointmentTO.setReplier(response.getReplier().getUid());
         appointmentTO.setReplierComment(response.getComment());
-        appointmentTO.setApprovedSlot(getSlotTOBySlot(appointment.getSlotByNumber(response.getSlotNumber())));
+        if (appointmentTO.getStatus() == AppointmentSummaryStatus.Approved) {
+            appointmentTO.setApprovedSlot(getSlotTOBySlot(appointment.getSlotByNumber(response.getSlotNumber())));
+        }
         
         return appointmentTO;
     }

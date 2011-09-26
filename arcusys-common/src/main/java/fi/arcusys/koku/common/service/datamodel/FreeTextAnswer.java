@@ -1,6 +1,5 @@
 package fi.arcusys.koku.common.service.datamodel;
 
-import javax.persistence.Entity;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

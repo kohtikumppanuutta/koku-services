@@ -1,6 +1,5 @@
 package fi.arcusys.koku.common.service.datamodel;
 
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

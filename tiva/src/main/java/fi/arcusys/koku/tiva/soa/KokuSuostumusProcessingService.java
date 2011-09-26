@@ -33,6 +33,7 @@ public interface KokuSuostumusProcessingService {
             @WebParam(name = "lahettaja") final String senderUid,
             @WebParam(name = "kohdehenkilo") final String targetPersonUid,
             @WebParam(name = "vastaanottaja") final List<String> receivers,
+            @WebParam(name = "replyTillDate") final XMLGregorianCalendar replyTillDate,
             @WebParam(name = "maaraaika") final XMLGregorianCalendar endDate,
             @WebParam(name = "maaraaikaMandatory") final Boolean endDateMandatory);
 
@@ -44,7 +45,9 @@ public interface KokuSuostumusProcessingService {
             @WebParam(name = "suostumustapa") final String consentType,
             @WebParam(name = "kohdehenkilo") final String targetPersonUid,
             @WebParam(name = "vastaanottaja") final List<String> receivers,
-            @WebParam(name = "maaraaika") final XMLGregorianCalendar endDate);
+            @WebParam(name = "maaraaika") final XMLGregorianCalendar endDate,
+            @WebParam(name = "vastaukset") final List<ActionPermittedTO> actions,
+            @WebParam(name = "kommentti") final String comment);
 
     @WebMethod(operationName = "annaSuostumus")
     void giveConsent(

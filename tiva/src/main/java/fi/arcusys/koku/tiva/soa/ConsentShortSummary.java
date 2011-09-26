@@ -1,5 +1,9 @@
 package fi.arcusys.koku.tiva.soa;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -11,6 +15,7 @@ public class ConsentShortSummary {
     private String anotherPermitterUid;
     private String requestor;
     private ConsentCreateType createType;
+    private XMLGregorianCalendar replyTill;
     /**
      * @return the consentId
      */
@@ -67,5 +72,19 @@ public class ConsentShortSummary {
      */
     public void setCreateType(ConsentCreateType createType) {
         this.createType = createType;
+    }
+    /**
+     * @return the replyTill
+     */
+    @XmlElement
+    @XmlSchemaType(name = "date")
+    public XMLGregorianCalendar getReplyTill() {
+        return replyTill;
+    }
+    /**
+     * @param replyTill the replyTill to set
+     */
+    public void setReplyTill(XMLGregorianCalendar replyTill) {
+        this.replyTill = replyTill;
     }
 }

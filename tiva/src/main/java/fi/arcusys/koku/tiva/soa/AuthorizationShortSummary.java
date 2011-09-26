@@ -1,5 +1,7 @@
 package fi.arcusys.koku.tiva.soa;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -103,6 +105,8 @@ public class AuthorizationShortSummary {
     /**
      * @return the validTill
      */
+    @XmlElement
+    @XmlSchemaType(name = "date")
     public XMLGregorianCalendar getValidTill() {
         return validTill;
     }

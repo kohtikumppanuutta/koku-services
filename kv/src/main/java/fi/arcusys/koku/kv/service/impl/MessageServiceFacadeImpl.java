@@ -13,6 +13,7 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,7 @@ import fi.arcusys.koku.kv.soa.Questions;
 import fi.arcusys.koku.kv.soa.Receipients;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
+import fi.arcusys.koku.kv.soa.RequestTemplateExistenceStatus;
 import fi.arcusys.koku.kv.soa.RequestTemplateSummary;
 import fi.arcusys.koku.kv.soa.RequestTemplateTO;
 import fi.arcusys.koku.kv.soa.ResponseTO;
@@ -69,9 +71,6 @@ import static fi.arcusys.koku.common.service.AbstractEntityDAO.MAX_RESULTS_COUNT
  */
 @Stateless
 @Local({MessageServiceFacade.class, KokuSystemNotificationsService.class})
-//@WebService(serviceName = "MessageServiceFacade", portName = "MessageServiceFacadePort", 
-//		endpointInterface = "fi.arcusys.koku.kv.service.MessageServiceFacade",
-//		targetNamespace = "http://service.kv.koku.arcusys.fi/")
 public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSystemNotificationsService {
 	private final static Logger logger = LoggerFactory.getLogger(MessageServiceFacadeImpl.class);
 	
@@ -398,7 +397,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		result.setSender(request.getUser().getUid());
 		result.setSubject(request.getSubject());
 		result.setCreationDate(CalendarUtil.getXmlGregorianCalendar(request.getCreatedDate()));
-		result.setEndDate(CalendarUtil.getXmlGregorianCalendar(request.getEndDate()));
+		result.setEndDate(CalendarUtil.getXmlGregorianCalendar(request.getReplyTill()));
 		
 		result.setRespondedAmount(request.getResponses().size());
 		for (final Response response : request.getResponses()) {
@@ -429,17 +428,21 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	 * @return
 	 */
 	@Override
-	public Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, final List<QuestionTO> questionTOs, final List<MultipleChoiceTO> choices) {
+	public Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, 
+	        final List<QuestionTO> questionTOs, final List<MultipleChoiceTO> choices,
+            final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
 		final RequestTemplate template = doCreateRequestTemplate(fromUserId, subject, questionTOs, choices);
 
-		return doCreateRequest(fromUserId, subject, receipients, content, template).getId();
+		return doCreateRequest(fromUserId, subject, receipients, content, template, replyTill, notifyBeforeDays).getId();
 	}
 
     private Request doCreateRequest(final String fromUserId,
             final String subject, final List<String> receipients,
-            final String content, final RequestTemplate template) {
+            final String content, final RequestTemplate template, XMLGregorianCalendar replyTill, Integer notifyBeforeDays) {
         Request request = new Request();
         request.setTemplate(template);
+        request.setReplyTill(CalendarUtil.getSafeDate(replyTill));
+        request.setNotifyBeforeDays(notifyBeforeDays);
 		final User fromUser = getUserByUid(fromUserId);
 		
 		fillMessage(request, fromUser, subject, receipients, content);
@@ -460,6 +463,13 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      */
     private RequestTemplate doCreateRequestTemplate(String fromUserId, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choiceTOs) {
         final RequestTemplate requestTemplate = new RequestTemplate();
+        fillRequestTemplate(fromUserId, subject, questionTOs, choiceTOs, requestTemplate);
+        return requestTemplateDAO.create(requestTemplate);
+    }
+
+    private void fillRequestTemplate(String fromUserId, String subject,
+            List<QuestionTO> questionTOs, List<MultipleChoiceTO> choiceTOs,
+            final RequestTemplate requestTemplate) {
         requestTemplate.setCreator(getUserByUid(fromUserId));
         requestTemplate.setSubject(subject);
         final Map<Integer, Question> numberToQuestion = new HashMap<Integer, Question>();
@@ -483,7 +493,6 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             }
         }
         requestTemplate.setQuestions(new HashSet<Question>(numberToQuestion.values()));
-        return requestTemplateDAO.create(requestTemplate);
     }
 
 	private QuestionType getQuestionType(final QuestionTO questionTO) {
@@ -581,10 +590,19 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      */
     @Override
     public void sendNotification(String subject, List<String> receipients, String content) {
-        final Long messageId = sendNewMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, subject, receipients, content);
+        doDeliverMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, receipients, subject, content);
+    }
+
+    private void doDeliverMessage(final String fromUser,
+            List<String> receipients, String subject, String content) {
+        final Long messageId = sendNewMessage(fromUser, subject, receipients, content);
         for (final String receipient : receipients) {
             receiveMessage(receipient, messageId);
         }
+    }
+    
+    public void deliverMessage(final String fromUser, final List<String> toUsers, final String subject, final String content) {
+        doDeliverMessage(fromUser, toUsers, subject, content);
     }
 
     /**
@@ -671,10 +689,12 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @return
      */
     @Override
-    public Long sendRequestWithTemplate(String fromUserUid, long requestTemplateId, final String subject, List<String> receipients, String content) {
+    public Long sendRequestWithTemplate(String fromUserUid, long requestTemplateId, final String subject, 
+            List<String> receipients, String content,
+            final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
         final RequestTemplate template = loadRequestTemplate(requestTemplateId);
         
-        return doCreateRequest(fromUserUid, subject, receipients, content, template).getId();
+        return doCreateRequest(fromUserUid, subject, receipients, content, template, replyTill, notifyBeforeDays).getId();
     }
 
     private RequestTemplate loadRequestTemplate(long requestTemplateId) {
@@ -698,5 +718,46 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         msg = messageDao.create(msg);
         
         doReceiveNewMessage(getUserByUid(toUserUid), msg);
+    }
+
+    /**
+     * @param userUid
+     * @param subject
+     * @return
+     */
+    @Override
+    public RequestTemplateExistenceStatus isRequestTemplateExist(String userUid, String subject) {
+        final List<RequestTemplate> templates = requestTemplateDAO.searchBySubject(subject);
+        if (templates.size() == 0) {
+            return RequestTemplateExistenceStatus.NotExists;
+        } 
+        if (templates.size() > 1) {
+            logger.warn("More then one template with subject '" + subject + "'");
+        }
+        final RequestTemplate template = templates.get(0);
+        if (!template.getCreator().getUid().equals(userUid) ||
+                getIntValue(requestDAO.getTotalByTemplate(template)) > 0) {
+            return RequestTemplateExistenceStatus.ExistsActive;
+        } else {
+            return RequestTemplateExistenceStatus.ExistsNotActive;
+        }
+    }
+
+    /**
+     * @param requestTemplateId
+     * @param userUid
+     * @param subject
+     * @param questions
+     * @param choices
+     */
+    @Override
+    public void updateRequestTemplate(long requestTemplateId, String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices) {
+        final RequestTemplate template = loadRequestTemplate(requestTemplateId);
+        if (!template.getCreator().getUid().equals(userUid)) {
+            throw new IllegalStateException("Can't update request template ID '" + requestTemplateId + "'. User " + userUid + " is not a creator.");
+        }
+        
+        fillRequestTemplate(userUid, subject, questions, choices, template);
+        requestTemplateDAO.update(template);
     }
 }

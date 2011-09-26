@@ -17,6 +17,7 @@ public class ConsentSummary extends ConsentShortSummary {
     private ConsentStatus status;
     private XMLGregorianCalendar givenAt;
     private XMLGregorianCalendar validTill;
+    
     /**
      * @return the receipients
      */

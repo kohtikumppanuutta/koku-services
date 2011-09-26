@@ -1,8 +1,10 @@
 package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
@@ -11,13 +13,14 @@ import javax.persistence.Query;
 
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.datamodel.AbstractEntity;
+import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 18, 2011
  */
 public abstract class AbstractEntityDAOImpl<T extends AbstractEntity> implements AbstractEntityDAO<T> {
-	public static final String IDS_PARAMETER_NAME = "ids";
+    public static final String IDS_PARAMETER_NAME = "ids";
 
 	protected EntityManager em;
 
@@ -102,8 +105,8 @@ public abstract class AbstractEntityDAOImpl<T extends AbstractEntity> implements
 		throw new UnsupportedOperationException("This method should be overrided in subclass.");
 	}
 
-	public void update(final T entity) {
-		em.merge(entity);
+	public T update(final T entity) {
+		return em.merge(entity);
 	}
 
 	protected <E> List<E> getResultList(final String queryName, final Map<String, ? extends Object> params) {

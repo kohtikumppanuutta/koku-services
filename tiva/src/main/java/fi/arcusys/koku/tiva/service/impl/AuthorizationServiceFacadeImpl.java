@@ -1,6 +1,8 @@
 package fi.arcusys.koku.tiva.service.impl;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.common.service.AuthorizationDAO;
 import fi.arcusys.koku.common.service.AuthorizationTemplateDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
+import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.Authorization;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationReplyStatus;
@@ -36,6 +39,9 @@ import fi.arcusys.koku.tiva.soa.AuthorizationTemplateTO;
  */
 @Stateless
 public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacade {
+
+    private final static String AUTHORIZATION_CREATED_SUBJECT = "Uusi valtakirja";
+    private final static String AUTHORIZATION_CREATED_BODY = "Sinulle on uusi valtakirja kumppanuustililla.";
     
     private final static Logger logger = LoggerFactory.getLogger(AuthorizationServiceFacadeImpl.class);
 
@@ -47,6 +53,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
     
     @EJB
     private UserDAO userDAO;
+    
+    @EJB
+    private KokuSystemNotificationsService notificationService;
 
     /**
      * @param searchString
@@ -94,7 +103,12 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         authorization.setCreationType(AuthorizationType.Electronic);
         authorization.setValidTill(getSafeDate(endDate));
         
-        return authorizationDAO.create(authorization).getId();
+        final Authorization newAuthorization = authorizationDAO.create(authorization);
+        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_CREATED_SUBJECT, 
+                Collections.singletonList(receiverUid), 
+                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_CREATED_BODY, 
+                        new Object[] {}));
+        return newAuthorization.getId();
     }
 
     private Date getSafeDate(XMLGregorianCalendar calendar) {
@@ -118,6 +132,7 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         authorizationTO.setCreateDate(CalendarUtil.getXmlDate(authorization.getCreatedDate()));
         authorizationTO.setReceiverUid(authorization.getToUser().getUid());
         authorizationTO.setSenderUid(authorization.getFromUser().getUid());
+        authorizationTO.setTargetPersonUid(authorization.getTargetPerson().getUid());
         authorizationTO.setTemplate(getTemplateTObyDM(authorization.getTemplate()));
         authorizationTO.setValidTill(CalendarUtil.getXmlDate(authorization.getValidTill()));
         return authorizationTO;

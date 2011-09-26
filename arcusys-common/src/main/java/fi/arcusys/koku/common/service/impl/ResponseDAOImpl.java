@@ -1,7 +1,5 @@
 package fi.arcusys.koku.common.service.impl;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.ResponseDAO;

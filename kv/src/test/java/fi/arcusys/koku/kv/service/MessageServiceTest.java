@@ -155,16 +155,7 @@ public class MessageServiceTest {
 	public void getMessagesWithPaging() {
 		final String fromUserId = "testSenderPaging";
 		final String toUserId = "testReceiverPaging";
-//		for (int i = 0; i < 11; i ++) {
-//			serviceFacade.sendNewMessage(fromUserId, "subject_" + i, Collections.singletonList(toUserId), "content");
-//		}
-//		assertEquals(11, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Outbox));
-//		
-//		assertEquals("get first page: ", 10, serviceFacade.getMessages(fromUserId, FolderType.Outbox, null, 1, 10).size());
-//		assertEquals("get next page: ", 1, serviceFacade.getMessages(fromUserId, FolderType.Outbox, null, 11, 20).size());
-//		assertEquals("Oldest message is the last: ", "subject_0", serviceFacade.getMessages(fromUserId, FolderType.Outbox, null, 11, 20).get(0).getSubject());
 
-		// TODO: workaround until test "testOpenJPAFailure" is failing
 		for (int i = 0; i < 1; i ++) {
 			serviceFacade.sendNewMessage(fromUserId, "subject_" + i, Collections.singletonList(toUserId), "content");
 		}
@@ -182,7 +173,7 @@ public class MessageServiceTest {
 		
 		final List<QuestionTO> questions = createTestQuestions();
 		
-		final long requestId = serviceFacade.sendRequest(fromUserId, "test request", Collections.singletonList(toUserId), "read-only form of request", questions, new ArrayList<MultipleChoiceTO>());
+		final long requestId = serviceFacade.sendRequest(fromUserId, "test request", Collections.singletonList(toUserId), "read-only form of request", questions, new ArrayList<MultipleChoiceTO>(), null, null);
 		
 		final RequestTO request = serviceFacade.getRequestById(requestId);
 		assertNotNull(request);
@@ -208,7 +199,7 @@ public class MessageServiceTest {
 		
 		final List<QuestionTO> questions = createTestQuestions();
 		
-		final Long requestId = serviceFacade.sendRequest(fromUserId, "test request", toUsers, "read-only form of request", questions, new ArrayList<MultipleChoiceTO>());
+		final Long requestId = serviceFacade.sendRequest(fromUserId, "test request", toUsers, "read-only form of request", questions, new ArrayList<MultipleChoiceTO>(), null, null);
 		assertEquals("No replies yet: ", 0, serviceFacade.getRequestById(requestId).getRespondedAmount());
 		
 		final List<Answer> answers = new ArrayList<Answer>();

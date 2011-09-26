@@ -2,6 +2,7 @@ package fi.arcusys.koku.tiva.soa;
 
 import java.util.List;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 /**
@@ -11,15 +12,26 @@ import javax.jws.WebService;
 @WebService(targetNamespace = "http://soa.tiva.koku.arcusys.fi/")
 public interface KokuKunpoValtakirjaService {
     
-    List<AuthorizationShortSummary> getSentAuthorizations(final String userUid, final int startNum, final int maxNum);
+    List<AuthorizationShortSummary> getSentAuthorizations(
+            @WebParam(name = "user") final String userUid, 
+            @WebParam(name = "startNum") int startNum, 
+            @WebParam(name = "maxNum") int maxNum);
 
-    int getTotalSentAuthorizations(final String userUid);
+    int getTotalSentAuthorizations(@WebParam(name = "user") final String userUid);
     
-    List<AuthorizationShortSummary> getReceivedAuthorizations(final String userUid, final int startNum, final int maxNum);
+    List<AuthorizationShortSummary> getReceivedAuthorizations(
+            @WebParam(name = "user") final String userUid, 
+            @WebParam(name = "startNum") int startNum, 
+            @WebParam(name = "maxNum") int maxNum);
 
-    int getTotalReceivedAuthorizations(final String userUid);
+    int getTotalReceivedAuthorizations(@WebParam(name = "user") final String userUid);
     
-    AuthorizationSummary getAuthorizationSummaryById(final long authorizationId, final String userUid);
+    AuthorizationSummary getAuthorizationSummaryById(
+            @WebParam(name = "authorizationId") final long authorizationId, 
+            @WebParam(name = "user") final String userUid);
     
-    void revokeOwnAuthorization(final long authorizationId, final String userUid, final String comment);
+    void revokeOwnAuthorization(
+            @WebParam(name = "authorizationId") final long authorizationId, 
+            @WebParam(name = "user") final String userUid, 
+            @WebParam(name = "comment") final String comment);
 }

@@ -1,6 +1,5 @@
 package fi.arcusys.koku.common.service.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,6 @@ import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.ConsentDAO;
 import fi.arcusys.koku.common.service.datamodel.Consent;
-import fi.arcusys.koku.common.service.datamodel.ConsentReply;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
 

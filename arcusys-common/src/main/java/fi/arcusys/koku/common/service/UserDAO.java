@@ -1,8 +1,5 @@
 package fi.arcusys.koku.common.service;
 
-import java.util.List;
-
-import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
@@ -19,7 +16,5 @@ public interface UserDAO extends AbstractEntityDAO<User>{
 	
 	User getOrCreateUser(final String uid);
 	
-    User getOrCreateUserByKunpoName(final String kunpoName);
-	
-    User getOrCreateUserByLooraName(final String looraName);
+    User getOrCreateUserByPortalName(final String kunpoName);
 }
