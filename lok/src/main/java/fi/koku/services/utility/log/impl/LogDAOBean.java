@@ -1,6 +1,7 @@
 package fi.koku.services.utility.log.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -90,18 +91,18 @@ public class LogDAOBean implements LogDAO {
   @Override
   public void writeLog(LogEntry entry) {
     em.persist(entry);
-    
   }
 
   @Override
   public void writeAdminLog(AdminLogEntry entry){
     logger.debug("writeAdminLog: "+entry.getTimestamp().toString());
+    logger.debug("customerPic: "+entry.getCustomerPic());
     em.persist(entry);
   }
 
   /**
-   * Makes a query to the "normal" log or to the Admin log and returns a list of
-   * LogEntries for showing to the user in the portlet. (LOK-3 and LOK-4)
+   * Makes a query to the "normal" log and returns a list of
+   * LogEntries for showing to the user in the portlet. (LOK-3)
    * 
    * @throws ServiceFault
    */
@@ -120,10 +121,11 @@ logger.debug("log type: "+criteria.getLogType());
 
    String entity = "";
     // choose the table here
-    if (LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())) { // seurantaloki
-      entity = "AdminLogEntry";
-    } else if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
+  
+     if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
       entity = "LogEntry";
+    } else {
+      logger.error("Joku virhe"); //TODO: parempi virheenkäsittely
     }
     
     sb.append("SELECT e FROM "+entity+" e WHERE ");
@@ -142,8 +144,7 @@ logger.debug("log type: "+criteria.getLogType());
     logger.debug("end: "+criteria.getEndTime().toString());
     
     // add the customer pic and data item type to search criteria for LOK-3
-    if ((LogConstants.LOG_NORMAL).equalsIgnoreCase(criteria.getLogType())) {
-
+//TODO: tässä pitää miettiä, mitkä kentät ovat pakollisia
       sb.append(" AND ");
       
       // pic of the child is null-checked earlier
@@ -160,7 +161,7 @@ logger.debug("log type: "+criteria.getLogType());
         sb.append("e.dataItemType = :dataItemType");
         params.add(new Object[] { "dataItemType", criteria.getDataItemType() });
       }
-    }
+    
 
     if (params.size() == 0) {
       throw new RuntimeException("missing criteria");
@@ -180,9 +181,6 @@ logger.debug("log type: "+criteria.getLogType());
       // query the database
       if(LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())){
         return q.getResultList();
-      }else if(LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())){
-        List<AdminLogEntry> list = q.getResultList();
-        return adminListToLogList(list);
       }
 
     } catch (IllegalStateException e) {
@@ -193,6 +191,68 @@ logger.debug("log type: "+criteria.getLogType());
     return null; // if something went wrong
   }
 
+
+  /**
+   * Makes a query to the admin log and returns a list of
+   * AdminLogEntries for showing to the super user in the portlet. (LOK-4)
+   * 
+   * @throws ServiceFault
+   */
+  @Override
+  public Collection<AdminLogEntry> queryAdminLog(LogQueryCriteria criteria) {
+    StringBuilder sb = new StringBuilder();
+    List<Object[]> params = new ArrayList<Object[]>();
+    String entity = "";
+    
+    if (LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())) { // seurantaloki
+      entity = "AdminLogEntry";
+    } else {
+      logger.error("joku virhe"); // TODO: parempi virheenkäsittely
+    }
+    
+    sb.append("SELECT e FROM "+entity+" e WHERE ");
+
+    // starttime and enddate are required and are null-checked earlier
+    //TODO: vai ovatko pakollisia???
+    sb.append("e.timestamp >= :startTime");
+    params.add(new Object[] { "startTime", criteria.getStartTime() });
+    logger.debug("end: "+criteria.getStartTime().toString());
+    
+    sb.append(" AND ");
+    
+    sb.append("e.timestamp <= :endTime");
+    params.add(new Object[] { "endTime", criteria.getEndTime() });
+
+    logger.debug("end: "+criteria.getEndTime().toString());
+    
+    if (params.size() == 0) {
+      throw new RuntimeException("missing criteria");
+    }
+
+    try {
+      logger.debug("query: "+sb.toString());
+      Query q = em.createQuery(sb.toString());
+
+      // TODO: lisää info-lokitus!
+
+      // build the query
+      for (int i = 0; i < params.size(); i++) {
+        q.setParameter((String) params.get(i)[0], params.get(i)[1]);
+      }
+
+      // query the database
+      return q.getResultList();
+
+    } catch (IllegalStateException e) {
+      // TODO
+    } catch (IllegalArgumentException ex) {
+      // TODO
+    }
+  
+    return null;
+
+  }
+  
   public List<LogEntry> adminListToLogList(List<AdminLogEntry> list){
     List<LogEntry> entryList = new ArrayList(); //TODO: onko oikein?
     ListIterator<AdminLogEntry> i = list.listIterator();

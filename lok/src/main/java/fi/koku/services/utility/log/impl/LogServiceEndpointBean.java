@@ -41,11 +41,7 @@ import fi.koku.services.utility.log.v1.VoidType;
  * @author makinsu
  */
 @Stateless
-@WebService(wsdlLocation = "META-INF/wsdl/logService.wsdl", 
-    endpointInterface = "fi.koku.services.utility.log.v1.LogServicePortType", 
-    targetNamespace = "http://services.koku.fi/utility/log/v1", 
-    portName = "logService-soap11-port", 
-    serviceName = "logService")
+@WebService(wsdlLocation = "META-INF/wsdl/logService.wsdl", endpointInterface = "fi.koku.services.utility.log.v1.LogServicePortType", targetNamespace = "http://services.koku.fi/utility/log/v1", portName = "logService-soap11-port", serviceName = "logService")
 @RolesAllowed("koku-role")
 public class LogServiceEndpointBean implements LogServicePortType {
   private static final Logger logger = LoggerFactory.getLogger(LogServiceEndpointBean.class);
@@ -55,7 +51,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
   @EJB
   private LogService logService;
-  
+
   private LogConverter logConverter;
 
   public LogServiceEndpointBean() {
@@ -71,8 +67,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
   public VoidType opLog(LogEntryType logEntryType, AuditInfoType auditInfoType) throws ServiceFault {
 
     logger.info("opLog");
-    logger.debug("got timestamp: "+logEntryType.getTimestamp().getTime().toString());
-    
+    logger.debug("got timestamp: " + logEntryType.getTimestamp().getTime().toString());
+
     // TODO: NÄITÄ EI KAI SINÄNSÄ KÄYTETÄ MIHINKÄÄN MUUHUN KUIN LOGGAAMISEEN??
     // message context
     Set<String> keys = wsCtx.getMessageContext().keySet();
@@ -83,91 +79,103 @@ public class LogServiceEndpointBean implements LogServicePortType {
     // -------------------------
 
     // call to the actual writing
-    if (("log").equalsIgnoreCase(logEntryType.getClientSystemId())){
+    // TODO: tee "log":sta static
+    if (("log").equalsIgnoreCase(logEntryType.getClientSystemId())) {
       logger.debug("write to admin log");
       logService.writeAdmin(logConverter.fromWsTypeToAdmin(logEntryType));
-    }else { // TODO: varmista vielä, että kaikissa muissa tapauksessa kirjoitetaan "tavallisesti"!
+    } else { // TODO: varmista vielä, että kaikissa muissa tapauksessa
+             // kirjoitetaan "tavallisesti"!
       logger.debug("write to normal log");
       logService.write(logConverter.fromWsType(logEntryType));
     }
-    return new VoidType(); 
+    return new VoidType();
   }
 
   /**
-   * Implements the use cases LOK-3 (Etsi lokitieto) and LOK-4 (Tarkista lokin
-   * käsittelyloki).
+   * Implements the use cases LOK-3 (Etsi lokitieto) and LOK-4 (Tarkista lokin käsittelyloki). 
    */
   @Override
-  public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) throws ServiceFault{
+  public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) throws ServiceFault {
     logger.info("opQueryLog");
     LogEntriesType logEntriesType = new LogEntriesType();
-    List<LogEntry> entries;
-    List<AdminLogEntry> adminEntries;
+   
+
+    if(LogConstants.LOG_NORMAL.equals(criteriaType.getLogType())){
+      List<LogEntry> entries;
     
-    try {
-      //TODO: onko ok että molemmille hauille sama ??
-      // call to the log database
-      entries = logService.query(logConverter.fromWsType(criteriaType));
-      logger.debug("entries: "+entries.size());
-      
-      if(LogConstants.LOG_NORMAL.equalsIgnoreCase(criteriaType.getLogType())){
+      try {
        
-        if(entries == null){
+        // call to the log database
+        entries = logService.query(logConverter.fromWsType(criteriaType));
+        logger.debug("entries: " + entries.size());
+        logger.debug("normal log");
+        if (entries == null) {
           logger.debug("No entries found in log table!");
-        } else{
+        } else {
           Iterator<LogEntry> i = entries.iterator();
           while (i.hasNext()) {
             LogEntry entry = (LogEntry) i.next();
-            // convert log entry to Web Service type and add it to the collection
+            // convert log entry to Web Service type and add it to the
+            // collection
             logEntriesType.getLogEntry().add(logConverter.toWsType(entry));
           }
         }
-      }else if(LogConstants.LOG_ADMIN.equalsIgnoreCase(criteriaType.getLogType())){
-logger.debug("Admin log");
-          // entries = logService.query(logConverter.fromWsType(criteriaType));
-           
-     //   adminEntries = logService.query(logConverter.fromWsType(criteriaType));
-      if(entries == null){
-          logger.debug("No entries found in log_admin table!");
-        } else{
-            Iterator<LogEntry> j = entries.iterator();
-    
-                // Iterator<AdminLogEntry> i = entries.iterator();
-          while (j.hasNext()) {
-            logger.debug(j.next().getClass().toString());
-            AdminLogEntry entry = logConverter.convertToAdminLogEntry(j.next());
-//            AdminLogEntry aentry = (AdminLogEntry)i.next();
-//           AdminLogEntry aentry = new AdminLogEntry();
-           // AdminLogEntry adminEntry = (AdminLogEntry)i.next();//convertToAdminEntry(i.next());
 
-
-        //    LogEntry entry = (LogEntry) i.next();
-        //    logEntriesType.getLogEntry().add(logConverter.toWsFromAdminType(entry));
-            logEntriesType.getLogEntry().add(logConverter.toWsFromAdminType(entry));
-          }
-          
-        }
-      
-     } } catch (ParseException e){
+      } catch (ParseException e) {
         ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
         sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
         sfdt.setMessage("TODO. Message: String to calendar epäonnistui.");
 
         throw new ServiceFault(e.getMessage(), sfdt);
       }
-    
+
+    } else if(LogConstants.LOG_ADMIN.equals(criteriaType.getLogType())){
+      List<AdminLogEntry> entries;
+      
+      try {
+        
+        // call to the log database
+        entries = logService.queryAdmin(logConverter.fromWsType(criteriaType));
+        logger.debug("entries: " + entries.size());
+
+        logger.debug("Admin log");
+
+        if (entries == null) {
+          logger.debug("No entries found in log_admin table!");
+        } else {
+          Iterator<AdminLogEntry> j = entries.iterator();
+
+          // Iterator<AdminLogEntry> i = entries.iterator();
+          while (j.hasNext()) {
+
+            // convert log entry to AdminLog Web Service type and 
+            // add it to the collection
+            AdminLogEntry entry = (AdminLogEntry)j.next();  //logConverter.convertToAdminLogEntry(j.next());
+            logger.debug("adminlogentryn message: "+entry.getMessage());
+            logEntriesType.getLogEntry().add(logConverter.toWsFromAdminType(entry));
+          }
+        }
+      }catch (ParseException e) {
+        ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
+        sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
+        sfdt.setMessage("TODO. Message: String to calendar epäonnistui.");
+
+        throw new ServiceFault(e.getMessage(), sfdt);
+      }
+      
+    }
     return logEntriesType;
   }
 
  
-  
   /**
    * Implements the use case LOK-2 (Arkistoi lokitietoa).
    */
   @Override
-  public VoidType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType) throws ServiceFault{
+  public VoidType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
+      throws ServiceFault {
     logger.info("opArchiveLog");
-    
+
     // call to the actual archiving
     logService.archive(archivalParameters.getEndDate().getTime());
 
@@ -195,22 +203,27 @@ logger.debug("Admin log");
       return criteria;
     }
 
-   /**
-   * Helper method for converting a LogEntry to AdminLogEntry
-   */
-  private AdminLogEntry convertToAdminLogEntry(LogEntry entry){
-    AdminLogEntry aentry = new AdminLogEntry();
-    aentry.setCustomerPic(entry.getCustomerPic());
-    aentry.setUserPic(entry.getUserPic());
-    aentry.setOperation(entry.getOperation());
-    aentry.setTimestamp(entry.getTimestamp());
-    aentry.setMessage(entry.getMessage());
-    
-    return aentry;
-  }
-    
-    public LogEntryType toWsFromAdminType(AdminLogEntry entry) throws ParseException{
-      logger.debug("toWsFromAdminType pic: "+entry.getCustomerPic());
+    /**
+     * Helper method for converting a LogEntry to AdminLogEntry
+     */
+    private AdminLogEntry convertToAdminLogEntry(LogEntry entry) {
+      AdminLogEntry aentry = new AdminLogEntry();
+      aentry.setCustomerPic(entry.getCustomerPic());
+      aentry.setUserPic(entry.getUserPic());
+      aentry.setOperation(entry.getOperation());
+      aentry.setTimestamp(entry.getTimestamp());
+      aentry.setMessage(entry.getMessage());
+
+      return aentry;
+    }
+
+    public LogEntryType toWsFromAdminType(AdminLogEntry entry) throws ParseException {
+      logger.debug("toWsFromAdminType pic: " + entry.getCustomerPic());
+      logger.debug("userpic: "+entry.getUserPic());
+      logger.debug("operation: "+entry.getOperation());
+      logger.debug("message: "+entry.getMessage());
+      logger.debug("timestamp: "+entry.getTimestamp().toString());
+                      
       LogEntryType entryType = new LogEntryType();
       entryType.setCustomerPic(entry.getCustomerPic());
       entryType.setUserPic(entry.getUserPic());
@@ -219,7 +232,7 @@ logger.debug("Admin log");
       entryType.setTimestamp(parseToCal(entry.getTimestamp()));
       return entryType;
     }
-    
+
     public LogEntryType toWsType(LogEntry entry) throws ParseException {
       LogEntryType et = new LogEntryType();
 
@@ -249,12 +262,13 @@ logger.debug("Admin log");
       LogEntry entry = new LogEntry();
 
       entry.setCustomerPic(logt.getCustomerPic());
+      logger.debug("from WsType customer pic: "+logt.getCustomerPic());
       entry.setClientSystemId(logt.getClientSystemId());
       entry.setDataItemType(logt.getDataItemType());
       entry.setDataItemId(logt.getDataItemId());
       entry.setMessage(logt.getMessage());
       entry.setOperation(logt.getOperation());
-      entry.setTimestamp(logt.getTimestamp().getTime()); 
+      entry.setTimestamp(logt.getTimestamp().getTime());
       entry.setUserPic(logt.getUserPic());
 
       return entry;
@@ -262,61 +276,55 @@ logger.debug("Admin log");
 
     /**
      * Converts the LogEntryType ws type to AdminLogEntry type
+     * 
      * @param logt
      * @return
      */
     public AdminLogEntry fromWsTypeToAdmin(LogEntryType logt) {
       AdminLogEntry entry = new AdminLogEntry();
 
-      entry.setCustomerPic(logt.getCustomerPic());
       entry.setMessage(logt.getMessage());
       entry.setOperation(logt.getOperation());
-      logger.debug("timestamp: "+logt.getTimestamp().getTime().toString());
-      entry.setTimestamp(logt.getTimestamp().getTime()); 
+      logger.debug("timestamp: " + logt.getTimestamp().getTime().toString());
+      entry.setTimestamp(logt.getTimestamp().getTime());
       entry.setUserPic(logt.getUserPic());
+      entry.setCustomerPic(logt.getCustomerPic());
 
       return entry;
     }
 
-    
     /**
      * Helper method for parsing a Date to a Calendar
+     * 
      * @param date
      * @return
      */
     public Calendar parseToCal(Date date) {
       Calendar cal = null;
 
-      if(date != null){ // if it's null, return a null value
+      if (date != null) { // if it's null, return a null value
         cal = Calendar.getInstance();
         cal.setTime(date);
-      } 
-
-      return cal;
-    }
-
-    
-    /*
-/*    public Calendar parseGivenDate(Date date) throws KoKuFaultException {
-      Calendar cal = Calendar.getInstance();
-      
-      if(date!=null){ // if it's null, return a null value
-        if(date instanceof Date){
-          cal.setTime(date);
-        } else{
-          throw new KoKuFaultException("wrong format of date");
-        }
       }
+
       return cal;
     }
-    */
+
+    /*
+     * /* public Calendar parseGivenDate(Date date) throws KoKuFaultException {
+     * Calendar cal = Calendar.getInstance();
+     * 
+     * if(date!=null){ // if it's null, return a null value if(date instanceof
+     * Date){ cal.setTime(date); } else{ throw new
+     * KoKuFaultException("wrong format of date"); } } return cal; }
+     */
     /*
      * 
      */
-    //TODO: Voiko tässä tulla joku format-error??
+    // TODO: Voiko tässä tulla joku format-error??
     private String calendarToString(Calendar cal) {
       String str = df.format(cal.getTime());
-     
+
       return str;
     }
 

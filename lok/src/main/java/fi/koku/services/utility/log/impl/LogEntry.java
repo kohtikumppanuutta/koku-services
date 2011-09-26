@@ -12,6 +12,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * LogEntry entity, used for logging all events (LOK-3).
  * 
@@ -22,6 +25,8 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "log")
 public class LogEntry {
+  private static final Logger logger = LoggerFactory.getLogger(LogEntry.class);
+
   @Id
   @GeneratedValue
   @Column(name="id", unique=true, nullable=false)
@@ -52,12 +57,12 @@ public class LogEntry {
   private String message;
 
 
-  public Long getLogId() {
+  public Long getId() {
     return id;
   }
 
-  public void setLogId(Long logId) {
-    this.id = logId;
+  public void setId(Long id) {
+    this.id = id;
   }
   
   public Date getTimestamp() {
@@ -110,6 +115,7 @@ public class LogEntry {
   }
 
   public void setMessage(String message) {
+    logger.debug("LogEntryn setMessage(): "+message);
     this.message = message;
   }
 
@@ -129,8 +135,10 @@ public class LogEntry {
   }
   
   public String getMessage() {
-    message = id +" "+ timestamp +" "+ userPic +" "+ customerPic +" "+ dataItemType +" "+ 
-      operation +" "+ clientSystemId;
+   message = "logentryn message";
+ //   message = id +" "+ timestamp +" "+ userPic +" "+ customerPic +" "+ dataItemType +" "+ 
+  //    operation +" "+ clientSystemId;
+    logger.debug("LogEntryn getMessage(): "+message);
     
     return message;
   }

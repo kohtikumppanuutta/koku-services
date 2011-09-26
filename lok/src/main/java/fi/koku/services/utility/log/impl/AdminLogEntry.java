@@ -9,6 +9,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 
  * AdminLogEntry entity, used for admin log (LOK-4).
@@ -19,6 +22,9 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "log_admin")
 public class AdminLogEntry {
+  
+  private static final Logger logger = LoggerFactory.getLogger(AdminLogEntry.class);
+  
   @Id
   @GeneratedValue
   @Column(name="id", unique=true, nullable=false)
@@ -79,10 +85,12 @@ public class AdminLogEntry {
   }
 
   public String getMessage() {
+    logger.debug("AdminLogEntryn getMessage(): "+message);
     return message;
   }
 
   public void setMessage(String message) {
+    logger.debug("AdminLogEntryn setMessage(): "+message);
     this.message = message;
   }
   

@@ -21,6 +21,8 @@ public interface LogDAO {
   void writeLog(LogEntry entry);
 
   Collection<LogEntry> queryLog(LogQueryCriteria criteria);
+  
+  Collection<AdminLogEntry> queryAdminLog(LogQueryCriteria criteria);
 
   void writeAdminLog(AdminLogEntry entry);
 }

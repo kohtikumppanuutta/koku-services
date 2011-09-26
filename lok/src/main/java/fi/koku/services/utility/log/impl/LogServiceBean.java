@@ -38,4 +38,9 @@ public class LogServiceBean implements LogService{
     logDAO.writeAdminLog(entry);
   }
 
+  @Override
+  public List<AdminLogEntry> queryAdmin(LogQueryCriteria criteria) {
+   return (List<AdminLogEntry>) logDAO.queryAdminLog(criteria);
+  }
+
 }

@@ -21,5 +21,7 @@ public interface LogService {
     void writeAdmin(AdminLogEntry entry);
     
     List<LogEntry> query(LogQueryCriteria criteria);
+    
+    List<AdminLogEntry> queryAdmin(LogQueryCriteria criteria);
   }
 
