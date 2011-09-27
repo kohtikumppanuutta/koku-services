@@ -66,11 +66,13 @@ public class LogEntry {
   }
   
   public Date getTimestamp() {
+    logger.debug("service get timestamp: "+timestamp);
     return timestamp;
   }
 
   // format for timestamp: yyyy-mm-dd
   public void setTimestamp(Date timestamp) {
+    logger.debug("service set timestamp: "+timestamp);
     this.timestamp = timestamp;
   }
 

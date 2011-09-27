@@ -45,7 +45,7 @@ import fi.koku.services.utility.log.v1.VoidType;
 @RolesAllowed("koku-role")
 public class LogServiceEndpointBean implements LogServicePortType {
   private static final Logger logger = LoggerFactory.getLogger(LogServiceEndpointBean.class);
-
+  SimpleDateFormat df = new SimpleDateFormat(LogConstants.DATE_FORMAT);
   @Resource
   private WebServiceContext wsCtx;
 
@@ -128,7 +128,19 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
         throw new ServiceFault(e.getMessage(), sfdt);
       }
+      
+      // log this query to admin log 
+      logger.debug("write to admin log");
+      AdminLogEntry adminLogEntry = new AdminLogEntry();
+      adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
+      adminLogEntry.setUserPic(auditInfoType.getUserId());
+      adminLogEntry.setCustomerPic(criteriaType.getCustomerPic());
+      adminLogEntry.setOperation("view log");
+      // LOK-3: "tapahtumatietona hakuehdot"
+      adminLogEntry.setMessage(criteriaType.getCustomerPic()+" "+criteriaType.getDataItemType()+" "+df.format(criteriaType.getStartTime().getTime())+"-"+df.format(criteriaType.getEndTime().getTime()));
 
+      logService.writeAdmin(adminLogEntry); 
+      
     } else if(LogConstants.LOG_ADMIN.equals(criteriaType.getLogType())){
       List<AdminLogEntry> entries;
       
@@ -163,6 +175,20 @@ public class LogServiceEndpointBean implements LogServicePortType {
         throw new ServiceFault(e.getMessage(), sfdt);
       }
       
+      // log the query to normal log
+      logger.debug("write to log");
+      LogEntry logEntry = new LogEntry();
+      logEntry.setUserPic(auditInfoType.getUserId());
+      // LOK-4: "Tapahtumatietona hakuehdot"
+      logEntry.setMessage("start: "+df.format(criteriaType.getStartTime().getTime())+", end: "+df.format(criteriaType.getEndTime().getTime()));
+      logEntry.setTimestamp(Calendar.getInstance().getTime());
+      logEntry.setOperation("search");
+      logEntry.setClientSystemId("adminlog");
+      logEntry.setDataItemType("log");
+      logEntry.setDataItemId("dataitemid");
+      // call to lok service
+      logService.write(logEntry);
+      
     }
     return logEntriesType;
   }
@@ -175,10 +201,25 @@ public class LogServiceEndpointBean implements LogServicePortType {
   public VoidType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
       throws ServiceFault {
     logger.info("opArchiveLog");
+   
+    try{
+      // call to the actual archiving
+      logService.archive(archivalParameters.getEndDate().getTime());
 
-    // call to the actual archiving
-    logService.archive(archivalParameters.getEndDate().getTime());
+      // log this query to admin log 
+      logger.debug("write to admin log");
+      AdminLogEntry adminLogEntry = new AdminLogEntry();
+      adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
+      adminLogEntry.setUserPic(auditInfoType.getUserId());
+      adminLogEntry.setOperation("delete");
+      //TODO: Pitääkö servicen selvittää aikaisin log:n tieto ja kirjata tähän myös alkupäivä?
+      adminLogEntry.setMessage("archive log up to "+df.format(archivalParameters.getEndDate().getTime()));
 
+      logService.writeAdmin(adminLogEntry); 
+    }catch(ServiceFault f){
+      logger.debug("endpoint: ei arkistoitavaa, throw ServiceFault");
+      throw f;
+    }
     return new VoidType();
   }
 

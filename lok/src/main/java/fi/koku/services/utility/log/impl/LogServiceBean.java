@@ -6,6 +6,8 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import fi.koku.services.utility.log.v1.ServiceFault;
+
 /**
  * Log service implementation class
  * 
@@ -19,7 +21,7 @@ public class LogServiceBean implements LogService{
   LogDAO logDAO;
   
   @Override
-  public void archive(Date date) {
+  public void archive(Date date) throws ServiceFault {
     logDAO.archiveLog(date);
   }
 

@@ -38,7 +38,7 @@ public class LogDAOBean implements LogDAO {
   // 1) arkistoloki ei vastaa
   // 2) arkistoloki ei kuittaa onnistunutta tietojen kopiointia
   @Override
-  public void archiveLog(Date date) {
+  public void archiveLog(Date date) throws ServiceFault {
     
     /*
      * TODO tähän tyyliin: INSERT INTO log_archive (...) SELECT FROM log WHERE
@@ -55,32 +55,36 @@ public class LogDAOBean implements LogDAO {
     selectQuery.setParameter("date", date);
     Long logEntryCount = (Long)selectQuery.getSingleResult(); // en ole varma toimiiko tyypitys näin
 
-    List archiveList = new ArrayList(); // FIXME
+   
+ //   List archiveList =  selectQuery.getResultList(); // FIXME
+   logger.debug("archive list size: "+logEntryCount);
    
     // there is nothing to archive
-    if (archiveList == null || archiveList.isEmpty()) {
+ //   if (archiveList == null || archiveList.isEmpty()) {
+   if(logEntryCount == 0){
       ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
       sfdt.setCode(LogConstants.LOG_NOTHING_TO_ARCHIVE);
       logger.info("ei arkistoitavaa ennen päivää " + date);
-   //TODO: Endpointiin?   throw new ServiceFault("ei löytynyt arkistoitavaa", sfdt);
+      throw new ServiceFault("ei arkistoitavaa", sfdt);
+    } else{
+
+      logger.info("insert log entries to archive log (date="+date);
+      Query archiveQuery = em.createNativeQuery("INSERT INTO " +
+          "log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) " +
+          "SELECT data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message " +
+      "FROM log WHERE timestamp < :date");
+      archiveQuery.setParameter("date", date);
+      int updateCount = archiveQuery.executeUpdate();
+
+      logger.info("Archived log to log_archive table up to " + date);
+      // TODO: Millä komennolla arkistointi pitäisi ajaa? Kuuluuko palauttaa
+      // jotain? archiveQuery.getSingleResult();
+      // jos arkistointi onnistui, ajetaan tämä
+      Query deleteQuery = em.createNativeQuery("DELETE FROM log WHERE timestamp < :date");
+      deleteQuery.setParameter("date", date);
+      int deletedRows = deleteQuery.executeUpdate();
+      logger.info("Deleted " + deletedRows + " rows from log table");
     }
-
-    logger.info("insert log entries to archive log (date="+date);
-    Query archiveQuery = em.createNativeQuery("INSERT INTO " +
-        "log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) " +
-        "SELECT data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message " +
-        "FROM log WHERE timestamp < :date");
-    archiveQuery.setParameter("date", date);
-    int updateCount = archiveQuery.executeUpdate();
-
-    logger.info("Archived log to log_archive table up to " + date);
-    // TODO: Millä komennolla arkistointi pitäisi ajaa? Kuuluuko palauttaa
-    // jotain? archiveQuery.getSingleResult();
-    // jos arkistointi onnistui, ajetaan tämä
-    Query deleteQuery = em.createNativeQuery("DELETE FROM log WHERE timestamp < :date");
-    deleteQuery.setParameter("date", date);
-    int deletedRows = deleteQuery.executeUpdate();
-    logger.info("Deleted " + deletedRows + " rows from log table");
   }
 
   // TODO: entä jos write menee pieleen? Mistä ServiceFault heitetään?
