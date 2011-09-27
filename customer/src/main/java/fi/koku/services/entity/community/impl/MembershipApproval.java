@@ -20,6 +20,11 @@ public class MembershipApproval {
     this.status = status;
   }
 
+  public MembershipApproval(String approverPic, String status) {
+    this.approverPic = approverPic;
+    this.status = status;
+  }
+  
   public Long getId() {
     return id;
   }

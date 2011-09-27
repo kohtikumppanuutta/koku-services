@@ -20,6 +20,7 @@ import fi.koku.services.entity.community.v1.CommunityType;
 import fi.koku.services.entity.community.v1.MemberType;
 import fi.koku.services.entity.community.v1.MembersType;
 import fi.koku.services.entity.community.v1.MembershipApprovalType;
+import fi.koku.services.entity.community.v1.MembershipApprovalsType;
 import fi.koku.services.entity.community.v1.MembershipRequestQueryCriteriaType;
 import fi.koku.services.entity.community.v1.MembershipRequestType;
 import fi.koku.services.entity.community.v1.MembershipRequestsType;
@@ -175,16 +176,34 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
 
     public MembershipRequestConverter() {
     }
-    
+
     @Override
     public MembershipRequest fromWsType(MembershipRequestType from) {
       MembershipRequest to = new MembershipRequest();
+      to.setCommunityId(Long.valueOf(from.getCommunityId()));
+      to.setMemberRole(from.getMemberRole());
+      to.setMemberPic(from.getMemberPic());
+      to.setRequesterPic(from.getRequesterPic());
+      for(MembershipApprovalType a : from.getApprovals().getApproval()) {
+        to.getApprovals().add(new MembershipApproval(a.getApproverPic(), a.getStatus()));
+      }
       return to;
     }
 
     @Override
     public MembershipRequestType toWsType(MembershipRequest from) {
       MembershipRequestType to = new MembershipRequestType();
+      to.setCommunityId(from.getCommunityId().toString());
+      to.setMemberRole(from.getMemberRole());
+      to.setMemberPic(from.getMemberPic());
+      to.setRequesterPic(from.getRequesterPic());
+      to.setApprovals(new MembershipApprovalsType());
+      for(MembershipApproval a : from.getApprovals()) {
+        MembershipApprovalType at = new MembershipApprovalType();
+        at.setApproverPic(a.getApproverPic());
+        at.setStatus(a.getStatus());
+        to.getApprovals().getApproval().add(at);
+      }
       return to;
     }
   }

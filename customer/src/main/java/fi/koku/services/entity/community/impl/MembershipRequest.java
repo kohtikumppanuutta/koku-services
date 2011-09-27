@@ -8,7 +8,7 @@ import java.util.Set;
  * @author aspluma
  */
 public class MembershipRequest {
-  private Long id; 
+  private Long id;
   private Long communityId;
   private String memberRole;
   private String memberPic;
