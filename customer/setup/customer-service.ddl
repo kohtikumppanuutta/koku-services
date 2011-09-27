@@ -75,3 +75,21 @@ CREATE TABLE community_member (
   CONSTRAINT UNIQUE (community_id, member_pic),
   FOREIGN KEY (community_id) REFERENCES community(id)
 );
+
+CREATE TABLE community_membership_request (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  community_id BIGINT UNSIGNED NOT NULL,
+  member_role VARCHAR(30) NOT NULL,
+  member_pic VARCHAR(11) NOT NULL,
+  requester_pic VARCHAR(11) NOT NULL,
+  created DATE NOT NULL,
+  FOREIGN KEY (community_id) REFERENCES community(id)
+);
+
+CREATE TABLE membership_approval (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  membership_request_id BIGINT UNSIGNED NOT NULL,
+  approver_pic VARCHAR(11) NOT NULL,
+  status VARCHAR(30) NOT NULL,
+  FOREIGN KEY (membership_request_id) REFERENCES community_membership_request(id)
+);

@@ -1,14 +1,41 @@
 package fi.koku.services.entity.community.impl;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 /**
  * Membership request approval.
  * 
  * @author aspluma
  */
-public class MembershipApproval {
+@Entity
+@Table(name = "membership_approval")
+public class MembershipApproval implements Serializable {
+  private static final long serialVersionUID = 5782489865453741129L;
+
+  @Id
+  @GeneratedValue
   private Long id;
+
+  @ManyToOne
+  @JoinColumn(name="membership_request_id")
+  private MembershipRequest membershipRequest;
+  
+  @Transient
   private String membershipRequestId;
+
+  @Column(name = "approver_pic", nullable = false)
   private String approverPic;
+
+  @Column(nullable = false)
   private String status;
 
   public MembershipApproval() {
@@ -31,6 +58,14 @@ public class MembershipApproval {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public MembershipRequest getMembershipRequest() {
+    return membershipRequest;
+  }
+
+  public void setMembershipRequest(MembershipRequest membershipRequest) {
+    this.membershipRequest = membershipRequest;
   }
 
   public String getMembershipRequestId() {
