@@ -19,14 +19,16 @@ import fi.koku.services.entity.community.v1.CommunityServicePortType;
 import fi.koku.services.entity.community.v1.CommunityType;
 import fi.koku.services.entity.community.v1.MemberType;
 import fi.koku.services.entity.community.v1.MembersType;
+import fi.koku.services.entity.community.v1.MembershipApprovalType;
+import fi.koku.services.entity.community.v1.MembershipRequestQueryCriteriaType;
+import fi.koku.services.entity.community.v1.MembershipRequestType;
+import fi.koku.services.entity.community.v1.MembershipRequestsType;
+import fi.koku.services.entity.community.v1.ServiceFault;
 import fi.koku.services.entity.community.v1.VoidType;
 
 
 /**
  * KoKu Community service implementation class.
- * 
- * TODO
- * - ID handling: which ID to use for customers; ID data types
  * 
  * @author Ixonos / aspluma
  */
@@ -50,11 +52,13 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
   private CommunityService communityService;
 
   
-  private CommunityConverter communityConverter;
+  private WSTypeConverter<CommunityType, Community> communityConverter;
+  private WSTypeConverter<MembershipRequestType, MembershipRequest> membershipRequestConverter;
   
   
   public CommunityServiceEndpointBean() {
     communityConverter = new CommunityConverter();
+    membershipRequestConverter = new MembershipRequestConverter();
   }
 
   @Override
@@ -92,12 +96,45 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
     return ret;
   }
 
+  @Override
+  public String opAddMembershipRequest(MembershipRequestType membershipRequest, AuditInfoType auditHeader)
+      throws ServiceFault {
+    Long id = communityService.addMembershipRequest(membershipRequestConverter.fromWsType(membershipRequest));
+    return id.toString();
+  }
+
+  @Override
+  public MembershipRequestsType opQueryMembershipRequests(MembershipRequestQueryCriteriaType mrqc, AuditInfoType auditHeader)
+      throws ServiceFault {
+    MembershipRequestQueryCriteria qc = new MembershipRequestQueryCriteria(mrqc.getRequesterPic(), mrqc.getApproverPic());
+    Collection<MembershipRequest> rqs = communityService.queryMembershipRequests(qc);
+    MembershipRequestsType ret = new MembershipRequestsType();
+    for(MembershipRequest rq : rqs) {
+      ret.getMembershipRequest().add(membershipRequestConverter.toWsType(rq));
+    }
+    return ret;
+  }
+
+  @Override
+  public VoidType opUpdateMembershipApproval(MembershipApprovalType ma, AuditInfoType auditHeader)
+      throws ServiceFault {
+    MembershipApproval app = new MembershipApproval(ma.getMembershipRequestId(), ma.getApproverPic(), ma.getStatus());
+    communityService.updateMembershipApproval(app);
+    return new VoidType();
+  }
   
-  private static class CommunityConverter {
+  
+  private static class CommunityConverter implements WSTypeConverter<CommunityType, Community> {
+    @SuppressWarnings("unused")
+    private Logger logger = LoggerFactory.getLogger(CommunityConverter.class);
     
     public CommunityConverter() {
     }
 
+    /* (non-Javadoc)
+     * @see fi.koku.services.entity.community.impl.WSTypeConverter#fromWsType(fi.koku.services.entity.community.v1.CommunityType)
+     */
+    @Override
     public Community fromWsType(CommunityType from) {
       Community to = new Community();
       to.setId(Long.valueOf(from.getId()));
@@ -111,6 +148,10 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       return  to;
     }
 
+    /* (non-Javadoc)
+     * @see fi.koku.services.entity.community.impl.WSTypeConverter#toWsType(fi.koku.services.entity.community.impl.Community)
+     */
+    @Override
     public CommunityType toWsType(Community from) {
       CommunityType to = new CommunityType();
       to.setId(from.getId().toString());
@@ -126,8 +167,26 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       }
       return to;
     }
-    
   }
-  
-  
+
+  private static class MembershipRequestConverter implements WSTypeConverter<MembershipRequestType, MembershipRequest> {
+    @SuppressWarnings("unused")
+    private Logger logger = LoggerFactory.getLogger(MembershipRequestConverter.class);
+
+    public MembershipRequestConverter() {
+    }
+    
+    @Override
+    public MembershipRequest fromWsType(MembershipRequestType from) {
+      MembershipRequest to = new MembershipRequest();
+      return to;
+    }
+
+    @Override
+    public MembershipRequestType toWsType(MembershipRequest from) {
+      MembershipRequestType to = new MembershipRequestType();
+      return to;
+    }
+  }
+
 }

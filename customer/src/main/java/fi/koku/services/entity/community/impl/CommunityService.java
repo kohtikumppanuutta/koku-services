@@ -16,4 +16,7 @@ public interface CommunityService {
   void update(Community c);
   void delete(String id);
   Collection<Community> query(CommunityQueryCriteria q);
+  Long addMembershipRequest(MembershipRequest rq);
+  Collection<MembershipRequest> queryMembershipRequests(MembershipRequestQueryCriteria q);
+  void updateMembershipApproval(MembershipApproval approval);
 }

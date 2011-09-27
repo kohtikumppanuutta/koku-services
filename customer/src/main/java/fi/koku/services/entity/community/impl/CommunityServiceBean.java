@@ -1,6 +1,7 @@
 package fi.koku.services.entity.community.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 */
 @Stateless
 public class CommunityServiceBean implements CommunityService {
+  @SuppressWarnings("unused")
   private Logger logger = LoggerFactory.getLogger(CommunityService.class);
 
   @PersistenceContext
@@ -122,6 +124,21 @@ public class CommunityServiceBean implements CommunityService {
       r.add(c);
     }
     return r;
+  }
+
+  @Override
+  public Long addMembershipRequest(MembershipRequest rq) {
+    return 123L; // TODO
+  }
+
+  @Override
+  public Collection<MembershipRequest> queryMembershipRequests(MembershipRequestQueryCriteria q) {
+    return Collections.emptyList(); // TODO
+  }
+
+  @Override
+  public void updateMembershipApproval(MembershipApproval approval) {
+    // TODO
   }
 
 }
