@@ -199,6 +199,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
     @Override
     public MembershipRequestType toWsType(MembershipRequest from) {
       MembershipRequestType to = new MembershipRequestType();
+      to.setId(from.getId().toString());
       to.setCommunityId(from.getCommunityId().toString());
       to.setMemberRole(from.getMemberRole());
       to.setMemberPic(from.getMemberPic());
