@@ -11,8 +11,11 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
+import fi.koku.KoKuFaultException;
 
 /**
  * CustomerDAOBean.
@@ -33,8 +36,13 @@ public class CustomerDAOBean implements CustomerDAO {
   public Customer findCustomer(String pic) {
     Query q = em.createNamedQuery("getCustomerByPic");
     q.setParameter("pic", pic);
-    Customer c = (Customer) q.getSingleResult();
-    return c;
+    try {
+      Customer c = (Customer) q.getSingleResult();
+      return c;
+    } catch (NoResultException e) {
+      CustomerServiceErrorCode errorCode = CustomerServiceErrorCode.CUSTOMER_NOT_FOUND;
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription(), e);
+    }
   }
 
   @Override

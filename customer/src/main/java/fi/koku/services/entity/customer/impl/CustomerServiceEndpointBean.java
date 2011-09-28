@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
@@ -39,6 +40,7 @@ import fi.koku.services.entity.customer.v1.CustomersType;
  * @author laukksa
  */
 @Stateless
+@Interceptors({CustomerServiceFaultInterceptor.class})
 @WebService(wsdlLocation="META-INF/wsdl/customerService.wsdl",
     endpointInterface="fi.koku.services.entity.customer.v1.CustomerServicePortType",
     targetNamespace="http://services.koku.fi/entity/customer/v1",
