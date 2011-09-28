@@ -10,10 +10,10 @@ CREATE TABLE log (
   timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11),
-  data_item_type VARCHAR(15) NOT NULL,
-  operation VARCHAR(10) NOT NULL,
-  client_system_id VARCHAR(10) NOT NULL,
-  message VARCHAR(100)
+  data_item_type VARCHAR(30) NOT NULL,
+  operation VARCHAR(20) NOT NULL,
+  client_system_id VARCHAR(20) NOT NULL,
+  message VARCHAR(200)
 );
 
 CREATE TABLE log_admin (
@@ -21,8 +21,8 @@ CREATE TABLE log_admin (
   timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11),
-  operation VARCHAR(10) NOT NULL,
-  message VARCHAR(100)
+  operation VARCHAR(20) NOT NULL,
+  message VARCHAR(200)
 );
 
 CREATE TABLE log_archive (
@@ -31,8 +31,8 @@ CREATE TABLE log_archive (
   timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11),
-  data_item_type VARCHAR(15) NOT NULL,
-  operation VARCHAR(10) NOT NULL,
-  client_system_id VARCHAR(10) NOT NULL,
-  message VARCHAR(100)
+  data_item_type VARCHAR(30) NOT NULL,
+  operation VARCHAR(20) NOT NULL,
+  client_system_id VARCHAR(20) NOT NULL,
+  message VARCHAR(200)
 );
