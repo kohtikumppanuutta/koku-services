@@ -11,7 +11,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.vasu'   -- type_code
   ,'Varhaiskasvatussuunnitelma'  -- name
   ,''  -- description
-  ,'Varhaiskasvatussuunnitelma'  -- concent_type
+  ,'kks.suostumus.vasu'  -- concent_type
 );
 
 insert into kks_group (
@@ -26,7 +26,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Huoltaja'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,1
 );
 
@@ -44,7 +44,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Päivähoito'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,1
 );
 
@@ -61,7 +61,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Lapsen hyvinvointi'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,10   -- parent_id
   ,1
 );
@@ -79,7 +79,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Vuorovaikutus'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,10   -- parent_id
   ,1
 );
@@ -97,7 +97,7 @@ insert into kks_group (
   ,3   -- sort_order
   ,'Kodin ja päivähoidon yhteistyö'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,10   -- parent_id
   ,1
 );
@@ -115,7 +115,7 @@ insert into kks_group (
   ,3   -- sort_order
   ,''  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,11 -- group id
   ,1
 );

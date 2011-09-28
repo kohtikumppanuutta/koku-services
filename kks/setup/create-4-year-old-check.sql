@@ -9,7 +9,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.4-vuotiaan.terveystarkastus'   -- type_code
   ,'4-vuotiaan terveystarkastus'  -- name
   ,''  -- description
-  ,'4-vuotiaan terveystarkastus'  -- concent_type
+  ,'kks.suostumus.4-vuotiaan.terveystarkastus'  -- concent_type
 );
 
 insert into kks_group (
@@ -24,7 +24,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Huoltaja'  -- name
   ,''  -- description
-  ,'potilasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,2
 );
 
@@ -40,7 +40,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Päivähoito'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,2
 );
 
@@ -56,7 +56,7 @@ insert into kks_group (
   ,3   -- sort_order
   ,'Neuvola'  -- name
   ,''  -- description
-  ,'potilasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,2
 );
 
@@ -73,7 +73,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,''  -- name
   ,''  -- description
-  ,'potilasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,20   -- parent_id
   ,2
 );
@@ -91,7 +91,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Päivittäistoiminnot'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,21   -- parent_id
   ,2
 );
@@ -109,7 +109,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Liikkuminen ja hahmottaminen'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,21   -- parent_id
   ,2
 );
@@ -128,7 +128,7 @@ insert into kks_group (
   ,3   -- sort_order
   ,'Kieli ja kommunikaatio'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,21   -- parent_id
   ,2
 );
@@ -146,7 +146,7 @@ insert into kks_group (
   ,4   -- sort_order
   ,''  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,21   -- parent_id
   ,2
 );
@@ -164,7 +164,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,''  -- name
   ,''  -- description
-  ,'potilasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,22   -- parent_id
   ,2
 );
@@ -182,7 +182,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Mittaukset'  -- name
   ,''  -- description
-  ,'potilasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,22   -- parent_id
   ,2
 );

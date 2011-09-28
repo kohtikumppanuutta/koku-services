@@ -9,7 +9,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.sopimus.päiväkotihoito'   -- type_code
   ,'Päiväkotihoidon Hoitosopimus'  -- name
   ,''  -- description
-  ,'Päiväkotihoidon hoitosopimus'  -- concent_type
+  ,'kks.suostumus.päivähoito.sopimus'  -- concent_type
 );
 
 insert into kks_group (
@@ -24,7 +24,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,''  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,3
 );
 
@@ -40,7 +40,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Ilta- ja vuorohoitosopimuksessa lisäksi'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,3
 );
 
@@ -56,7 +56,7 @@ insert into kks_group (
   ,3   -- sort_order
   ,'Perhepäivähoidon sopimuksessa lisäksi'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,3
 );
 
@@ -73,7 +73,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Vanhempi'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,30   -- parent_id
   ,3
 );
@@ -91,7 +91,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Hoitoaika'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,30   -- parent_id
   ,3
 );
@@ -109,7 +109,7 @@ insert into kks_group (
   ,3   -- sort_order
   ,'Lapsen hyvinvointi'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,30   -- parent_id
   ,3
 );
@@ -127,7 +127,7 @@ insert into kks_group (
   ,4   -- sort_order
   ,'Päiväkodin johtaja'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,30   -- parent_id
   ,3
 );
@@ -145,7 +145,7 @@ insert into kks_group (
   ,5   -- sort_order
   ,'Lapsen sairastuminen'  -- name
   ,'Huoltajat itse järjestävät sairaan lapsen hoidon. Päivähoidon henkilökunnalla on oikeus kirjoittaa todistus lapsen sairastumisesta työnantajalle sairastumispäivän osalta (Kvtes: perhevapaat § 10).'  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,30   -- parent_id
   ,3
 );
@@ -163,7 +163,7 @@ insert into kks_group (
   ,6   -- sort_order
   ,'Luvat'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,30   -- parent_id
   ,3
 );
@@ -181,7 +181,7 @@ insert into kks_group (
   ,7   -- sort_order
   ,'Uskontokasvatus'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,30   -- parent_id
   ,3
 );
@@ -199,7 +199,7 @@ insert into kks_group (
   ,8   -- sort_order
   ,'Päivähoitomatkat'  -- name
   ,'Henkilöt, jotka voivat hakea lapseni hoitopaikasta huoltajien lisäksi. Pääsääntöisesti aikuinen hakee lapsen päivähoidosta. Päivähoitohenkilökunnan velvollisuus on varmistaa, että lasta noutavalla henkilöllä on oikeus noutaa lapsi. Mikäli joku muu kuin huoltaja tai alla mainittu varahakija hakee lapsen päivähoidosta, huoltajat ilmoittavat siitä päivähoidon henkilökunnalle kirjallisesti. Erityistapauksissa, joissa huoltajat esittävät lapsen hakijaksi alaikäistä sisarusta tai muuta vastaavaa henkilöä tai toivovat lapsen kulkevan yksin, päivähoitohenkilökunta arvioi yhdessä huoltajien kanssa keskustellen lapsen kotimatkan turvallisuuden ja sopii siitä kirjallisesti'  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,30   -- parent_id
   ,3
 );
@@ -217,7 +217,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Hoitoaika'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,31   -- parent_id
   ,3
 );
@@ -235,7 +235,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Hoitaja'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,32   -- parent_id
   ,3
 );
@@ -253,7 +253,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Varahoitopaikka'  -- name
   ,''  -- description
-  ,'päivähoidon asiakasrekisteri'  -- register
+  ,'daycareregistry'  -- register
   ,32   -- parent_id
   ,3
 );

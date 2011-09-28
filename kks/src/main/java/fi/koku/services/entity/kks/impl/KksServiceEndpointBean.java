@@ -35,7 +35,7 @@ import fi.koku.services.entity.kks.v1.VoidType;
  * 
  */
 @Stateless
-@Interceptors({KksServiceFaultInterceptor.class})
+@Interceptors({ KksServiceFaultInterceptor.class })
 @WebService(wsdlLocation = "META-INF/wsdl/kksService.wsdl", endpointInterface = "fi.koku.services.entity.kks.v1.KksServicePortType", targetNamespace = "http://services.koku.fi/entity/kks/v1", portName = "kksService-soap11-port", serviceName = "kksService")
 @RolesAllowed("koku-role")
 public class KksServiceEndpointBean implements KksServicePortType {
@@ -49,7 +49,7 @@ public class KksServiceEndpointBean implements KksServicePortType {
   public KksTagsType opGetKksTags(KksTagIdsType kksTagIds, AuditInfoType auditHeader) throws ServiceFault {
 
     LOG.debug("opGetKksTags");
-    List<KksTag> tags = kksService.getTags(kksTagIds.getKksTagId());
+    List<KksTag> tags = kksService.getTags(kksTagIds.getKksTagId(), auditHeader);
 
     KksTagsType kksTagsType = new KksTagsType();
     for (KksTag t : tags) {
@@ -63,7 +63,7 @@ public class KksServiceEndpointBean implements KksServicePortType {
   public KksCollectionClassesType opGetKksCollectionClasses(String kksScope, AuditInfoType auditHeader)
       throws ServiceFault {
     LOG.debug("opGetKksCollectionClasses");
-    List<KksCollectionClass> tmp = kksService.getCollectionClasses();
+    List<KksCollectionClass> tmp = kksService.getCollectionClasses(auditHeader);
     KksCollectionClassesType c = new KksCollectionClassesType();
 
     for (KksCollectionClass kc : tmp) {
@@ -80,7 +80,7 @@ public class KksServiceEndpointBean implements KksServicePortType {
     KksCollectionsType kksCollectionsType = new KksCollectionsType();
 
     List<KksCollection> tmp = kksService.getCollections(kksCollectionCriteria.getPic(),
-        kksCollectionCriteria.getKksScope());
+        kksCollectionCriteria.getKksScope(), auditHeader);
 
     for (KksCollection c : tmp) {
       kksCollectionsType.getKksCollection().add(KksConverter.toWsType(c));
@@ -93,13 +93,13 @@ public class KksServiceEndpointBean implements KksServicePortType {
   @Override
   public KksCollectionType opGetKksCollection(String kksCollectionId, AuditInfoType auditHeader) throws ServiceFault {
     LOG.debug("opGetKksCollection");
-    return KksConverter.toWsType(kksService.get(kksCollectionId));
+    return KksConverter.toWsType(kksService.get(kksCollectionId, auditHeader));
   }
 
   @Override
   public VoidType opUpdateKksCollection(KksCollectionType kksCollection, AuditInfoType auditHeader) throws ServiceFault {
     LOG.debug("opUpdateKksCollection");
-    kksService.update(KksConverter.fromWsType(kksCollection));
+    kksService.update(KksConverter.fromWsType(kksCollection), auditHeader);
     return new VoidType();
   }
 
@@ -110,7 +110,7 @@ public class KksServiceEndpointBean implements KksServicePortType {
     KksCollectionsType kksCollectionsType = new KksCollectionsType();
     List<String> tagNames = kksQueryCriteria.getKksTagNames().getKksTagName();
     KksQueryCriteria qc = new KksQueryCriteria(kksQueryCriteria.getPic(), tagNames);
-    List<KksCollection> tmp = kksService.search(qc);
+    List<KksCollection> tmp = kksService.search(qc, auditHeader);
 
     for (KksCollection c : tmp) {
       kksCollectionsType.getKksCollection().add(KksConverter.toWsType(c));
@@ -130,14 +130,14 @@ public class KksServiceEndpointBean implements KksServicePortType {
     IdType id = new IdType();
 
     if (criteria.getKksScope().equals("new")) {
-      String colId = kksService.add(c).toString();
+      String colId = kksService.add(c, auditHeader).toString();
       id.setId(colId);
     } else {
 
       if (criteria.getKksScope().equals("empty_version")) {
         c.setEmpty(true);
       }
-      String colId = kksService.version(c).toString();
+      String colId = kksService.version(c, auditHeader).toString();
       id.setId(colId);
     }
     return id;
@@ -155,21 +155,22 @@ public class KksServiceEndpointBean implements KksServicePortType {
         kksEntryAddType.getEntryClassId(), value);
 
     IdType id = new IdType();
-    id.setId(kksService.addEntry(c).toString());
+    id.setId(kksService.addEntry(c, auditHeader).toString());
     return id;
   }
 
   @Override
   public VoidType opDeleteEntry(KksEntryCriteriaType kksEntryDeleteType, AuditInfoType auditHeader) throws ServiceFault {
-    kksService.removeEntryValue(Long.parseLong(kksEntryDeleteType.getValue().getId()));
+    kksService.removeEntryValue(kksEntryDeleteType.getPic(), Long.parseLong(kksEntryDeleteType.getValue().getId()),
+        auditHeader);
     return new VoidType();
   }
 
   @Override
   public VoidType opUpdateKksCollectionStatus(KksCollectionStateCriteriaType kksCollectionStateCriteriaType,
       AuditInfoType auditHeader) throws ServiceFault {
-    kksService.updateCollectionStatus(kksCollectionStateCriteriaType.getCollectionId(),
-        kksCollectionStateCriteriaType.getState());
+    kksService.updateCollectionStatus(kksCollectionStateCriteriaType.getCustomer(),
+        kksCollectionStateCriteriaType.getCollectionId(), kksCollectionStateCriteriaType.getState(), auditHeader);
     return new VoidType();
   }
 }

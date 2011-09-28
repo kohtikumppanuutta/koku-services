@@ -18,61 +18,88 @@ public class KksServiceBean implements KksService {
   KksServiceDAO serviceDAO;
 
   @Override
-  public List<KksTag> getTags(List<String> tagIds) {
+  public List<KksTag> getTags(List<String> tagIds, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    new Log().logRead("", "kks.metadata.tags", audit, "Read tag metadata");
     return serviceDAO.getTags(tagIds);
   }
 
   @Override
-  public List<KksCollectionClass> getCollectionClasses() {
+  public List<KksCollectionClass> getCollectionClasses(fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    new Log().logRead("", "kks.metadata.collections", audit, "Read KKS metadata");
     return serviceDAO.getCollectionClasses();
   }
 
   @Override
-  public List<KksCollection> getCollections(String customer, String scope) {
+  public List<KksCollection> getCollections(String customer, String scope,
+      fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+
+    new Log().logRead(customer, "kks.collections", audit, "Read person collections");
     // TODO: Scope mukaan, ehkä lazy init kirjausten hakemiselle
     return serviceDAO.getCollections(customer);
   }
 
   @Override
-  public void update(KksCollection collection) {
-
+  public void update(KksCollection collection, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    KksCollectionClass c = serviceDAO.getCollectionClass(collection.getCollectionClass());
+    new Log().logUpdate(collection.getCustomer(), c.getTypeCode(), audit,
+        "Updating person collection " + collection.getId());
     serviceDAO.update(collection);
   }
 
   @Override
-  public KksCollection get(String collectionId) {
-
-    return serviceDAO.getCollection(collectionId);
+  public KksCollection get(String collectionId, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    KksCollection c = serviceDAO.getCollection(collectionId);
+    KksCollectionClass cc = serviceDAO.getCollectionClass(c.getCollectionClass());
+    new Log().logRead(c.getCustomer(), cc.getTypeCode(), audit, "Read person collections");
+    return c;
   }
 
   @Override
-  public List<KksCollection> search(KksQueryCriteria criteria) {
+  public List<KksCollection> search(KksQueryCriteria criteria, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    new Log().logQuery(criteria.getPic(), "kks.collection.query", audit, "Quering person collections with criteria"
+        + criteria.getTagNames());
     return serviceDAO.query(criteria);
   }
 
   @Override
-  public Long add(KksCollectionCreation creation) {
-
+  public Long add(KksCollectionCreation creation, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    KksCollectionClass cc = serviceDAO.getCollectionClass(Integer.parseInt(creation.getCollectionId()));
+    new Log().logCreate(creation.getCustomer(), cc.getTypeCode(), audit,
+        "Creating collection type " + creation.getCollectionId() + " with name " + creation.getName());
     return serviceDAO.insertCollection(creation);
   }
 
   @Override
-  public void removeEntryValue(Long id) {
+  public void removeEntryValue(String customer, Long id, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    new Log().logDelete(customer, "" + id, audit, "Removing entry " + id);
     serviceDAO.deleteValue(id);
   }
 
   @Override
-  public void updateCollectionStatus(String collection, String status) {
+  public void updateCollectionStatus(String customer, String collection, String status,
+      fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    new Log().logUpdate(customer, collection, audit, "Updating collection status to " + status);
     serviceDAO.updateCollectionStatus(collection, status);
   }
 
   @Override
-  public Long addEntry(KksEntryCreation creation) {
+  public Long addEntry(KksEntryCreation creation, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+
+    if (creation.getId() == null) {
+      new Log().logCreate(creation.getPic(), "" + creation.getCollectionId(), audit,
+          "Adding entry type " + creation.getEntryClassId() + " to collection " + creation.getCollectionId());
+    } else {
+      new Log().logUpdate(creation.getPic(), "" + creation.getCollectionId(), audit,
+          "Updating entry " + creation.getId() + " in collection " + creation.getCollectionId());
+    }
     return serviceDAO.insertEntry(creation);
   }
 
   @Override
-  public Long version(KksCollectionCreation creation) {
+  public Long version(KksCollectionCreation creation, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+    new Log().logCreate(creation.getCustomer(), "" + creation.getCollectionId(), audit,
+        "Creating new collection version from " + creation.getCollectionId() + " with name " + creation.getName());
     return serviceDAO.copyAndInsert(creation);
   }
+
 }

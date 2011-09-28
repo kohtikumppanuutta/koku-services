@@ -46,6 +46,11 @@ public class KksServiceDAOBean implements KksServiceDAO {
     return list;
   }
 
+  public KksCollectionClass getCollectionClass(int id) {
+
+    return (KksCollectionClass) em.find(KksCollectionClass.class, id);
+  }
+
   private Map<Integer, List<KksGroup>> getRootGroupsMap() {
     Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_GROUPS);
 
@@ -325,8 +330,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setPrevVersion(collection.getPrevVersion());
     tmp.setStatus(collection.getStatus());
     tmp.setName(collection.getName());
-    tmp.setCreated(new Date());
-    tmp.setCreator(collection.getCreator());
+    // tmp.setCreated(new Date());
+    // tmp.setCreator(collection.getCreator());
     tmp.setDescription(collection.getDescription());
 
     em.merge(tmp);

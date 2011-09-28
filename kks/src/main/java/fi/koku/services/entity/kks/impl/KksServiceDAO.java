@@ -82,6 +82,14 @@ public interface KksServiceDAO {
   List<KksCollectionClass> getCollectionClasses();
 
   /**
+   * Gets collection class
+   * 
+   * @param id
+   * @return
+   */
+  KksCollectionClass getCollectionClass(int id);
+
+  /**
    * Queries entries
    * 
    * @param criteria

@@ -212,6 +212,7 @@ public class KksConverter {
     kksCollection.setNextVersion(collection.getNextVersion());
     kksCollection.setPrevVersion(collection.getPrevVersion());
     kksCollection.setStatus(collection.getStatus());
+    kksCollection.setCollectionClass(Integer.parseInt(collection.getCollectionClassId()));
     kksCollection.setVersion(collection.getVersion().intValue());
 
     List<KksEntry> tmp = new ArrayList<KksEntry>();

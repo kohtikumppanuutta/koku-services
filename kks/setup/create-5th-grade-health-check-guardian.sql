@@ -24,7 +24,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,''  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,4
 );
 
@@ -41,7 +41,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Koulunkäynti/Kaverit'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,50   -- parent_id
   ,4
 );
@@ -59,7 +59,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Oppilaan ja hänen perheensä nykytilanne'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,50   -- parent_id
   ,4
 );
@@ -77,7 +77,7 @@ insert into kks_group (
   ,3   -- sort_order
   ,'Oppilaan ja perheen elämäntavat ja terveystottumukset'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,50   -- parent_id
   ,4
 );
@@ -95,7 +95,7 @@ insert into kks_group (
   ,4   -- sort_order
   ,'Terveydentila'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,50   -- parent_id
   ,4
 );
@@ -113,7 +113,7 @@ insert into kks_group (
   ,5   -- sort_order
   ,'Murrosikä'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,50   -- parent_id
   ,4
 );
@@ -131,7 +131,7 @@ insert into kks_group (
   ,6   -- sort_order
   ,'Perheen terveys'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,50   -- parent_id
   ,4
 );
@@ -149,7 +149,7 @@ insert into kks_group (
   ,7   -- sort_order
   ,'Toiveet'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,50   -- parent_id
   ,4
 );

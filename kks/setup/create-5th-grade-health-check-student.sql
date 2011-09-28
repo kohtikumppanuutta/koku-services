@@ -24,7 +24,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,''  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,5
 );
 
@@ -41,7 +41,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Koulunkäynti/Kaverit'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,60   -- parent_id
   ,5
 );
@@ -59,7 +59,7 @@ insert into kks_group (
   ,2   -- sort_order
   ,'Elämäntavat'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,60   -- parent_id
   ,5
 );

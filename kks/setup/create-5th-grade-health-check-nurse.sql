@@ -26,7 +26,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,''  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,6
 );
 
@@ -43,7 +43,7 @@ insert into kks_group (
   ,1   -- sort_order
   ,'Oppilaan terveystarkastuksen tiedot'  -- name
   ,''  -- description
-  ,'koulun asiakasrekisteri'  -- register
+  ,'healthcareregistry'  -- register
   ,70   -- parent_id
   ,6
 );

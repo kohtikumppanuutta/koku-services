@@ -1,3 +1,5 @@
+SET storage_engine = innodb;
+
 CREATE TABLE kks_tag (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   tag_id INT UNSIGNED NOT NULL,
