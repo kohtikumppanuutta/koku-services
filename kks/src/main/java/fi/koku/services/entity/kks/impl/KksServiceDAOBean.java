@@ -170,7 +170,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
       KksEntry e = new KksEntry();
       e.setCustomer(creation.getPic());
-      e.setModified(creation.getModified());
+      e.setModified(new Date());
       e.setCreator(creation.getCreator());
       e.setKksCollection(em.find(KksCollection.class, creation.getCollectionId()));
       e.setEntryClassId(creation.getEntryClassId());
@@ -203,7 +203,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
   private Long handleExistingEntryValue(KksEntryCreation creation, KksEntry e) {
     e.setCustomer(creation.getPic());
     e.setCreator(creation.getCreator());
-    e.setModified(creation.getModified());
+    e.setModified(new Date());
 
     if (creation.getValue().getId() == null) {
       KksValue v = creation.getValue();
@@ -325,7 +325,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setPrevVersion(collection.getPrevVersion());
     tmp.setStatus(collection.getStatus());
     tmp.setName(collection.getName());
-    tmp.setCreated(collection.getCreated());
+    tmp.setCreated(new Date());
     tmp.setCreator(collection.getCreator());
     tmp.setDescription(collection.getDescription());
 
@@ -504,6 +504,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
       if (old == null) {
         e.setKksCollection(tmp);
+        e.setModified(new Date());
         tmp.addKksEntry(e);
       } else {
         old.setCreator(e.getCreator());
@@ -596,6 +597,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     }
 
     em.createNativeQuery(qs.toString()).setParameter(1, tmp.toString()).executeUpdate();
+    em.flush();
   }
 
   @Override

@@ -53,7 +53,7 @@ insert into kks_group (
   ,collection_class_id
 ) VALUES (
    22   -- group_id
-  ,1   -- sort_order
+  ,3   -- sort_order
   ,'Neuvola'  -- name
   ,''  -- description
   ,'potilasrekisteri'  -- register

@@ -49,7 +49,7 @@ public class KksEntry implements Serializable {
   private Long id;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.DATE)
+  @Temporal(TemporalType.TIMESTAMP)
   private Date modified;
 
   @Column(nullable = false)

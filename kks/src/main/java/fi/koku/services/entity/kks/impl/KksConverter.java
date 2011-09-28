@@ -141,6 +141,7 @@ public class KksConverter {
     Date created = collection.getCreated();
     Calendar c = new GregorianCalendar();
     c.setTime(created);
+
     kksCollectionType.setCreated(c);
     kksCollectionType.setCreator(collection.getCreator());
     kksCollectionType.setCustomerId(collection.getCustomer());

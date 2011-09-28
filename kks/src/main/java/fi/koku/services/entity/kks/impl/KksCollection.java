@@ -54,7 +54,7 @@ public class KksCollection implements Serializable {
   private String status;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.DATE)
+  @Temporal(TemporalType.TIMESTAMP)
   private Date created;
 
   @Column(nullable = false)
