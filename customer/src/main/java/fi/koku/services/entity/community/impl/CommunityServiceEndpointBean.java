@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
@@ -35,6 +36,7 @@ import fi.koku.services.entity.community.v1.VoidType;
  * @author Ixonos / aspluma
  */
 @Stateless
+@Interceptors({CommunityServiceFaultInterceptor.class})
 @WebService(wsdlLocation="META-INF/wsdl/communityService.wsdl",
     endpointInterface="fi.koku.services.entity.community.v1.CommunityServicePortType",
     targetNamespace="http://services.koku.fi/entity/community/v1",

@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -41,6 +42,7 @@ import fi.koku.services.utility.log.v1.VoidType;
  * @author makinsu
  */
 @Stateless
+@Interceptors({LogServiceFaultInterceptor.class})
 @WebService(wsdlLocation = "META-INF/wsdl/logService.wsdl", endpointInterface = "fi.koku.services.utility.log.v1.LogServicePortType", targetNamespace = "http://services.koku.fi/utility/log/v1", portName = "logService-soap11-port", serviceName = "logService")
 @RolesAllowed("koku-role")
 public class LogServiceEndpointBean implements LogServicePortType {

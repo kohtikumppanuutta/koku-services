@@ -26,6 +26,9 @@ public class KksServiceFaultInterceptor {
     try {
       return invocationContext.proceed();
     } catch (final RuntimeException e) {
+      // Log the exception
+      logger.error("Exception occured.", e);
+      
       ServiceFaultDetailType type = new ServiceFaultDetailType();
       String message = null;
       // JBoss wraps runtime exceptions to EJBTransactionRolledbackException, we need to get the cause
@@ -40,8 +43,6 @@ public class KksServiceFaultInterceptor {
         message = KoKuException.COMMON_ERROR_MESSAGE;
       }
       type.setMessage(message);
-      // Log the exception
-      logger.error("Exception occured.", e);
       // Throw service fault to the client
       throw new ServiceFault(message, type);
     }

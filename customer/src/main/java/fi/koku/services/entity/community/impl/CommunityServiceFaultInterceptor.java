@@ -1,4 +1,4 @@
-package fi.koku.services.entity.customer.impl;
+package fi.koku.services.entity.community.impl;
 
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
@@ -6,20 +6,20 @@ import javax.interceptor.InvocationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.koku.KoKuFaultException;
 import fi.koku.KoKuException;
-import fi.koku.services.entity.customer.v1.ServiceFault;
-import fi.koku.services.entity.customer.v1.ServiceFaultDetailType;
+import fi.koku.KoKuFaultException;
+import fi.koku.services.entity.community.v1.ServiceFault;
+import fi.koku.services.entity.community.v1.ServiceFaultDetailType;
 
 /**
- * CustomerServiceFaultInterceptor.
+ * CommunityServiceFaultInterceptor.
  * 
  * @author laukksa
  *
  */
-public class CustomerServiceFaultInterceptor {
+public class CommunityServiceFaultInterceptor {
 
-  private static Logger logger = LoggerFactory.getLogger(CustomerServiceFaultInterceptor.class);
+  private static Logger logger = LoggerFactory.getLogger(CommunityServiceFaultInterceptor.class);
   
   @AroundInvoke
   public Object intercept(final InvocationContext invocationContext) throws Exception {
