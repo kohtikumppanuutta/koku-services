@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import fi.koku.services.entity.kks.v1.VoidType;
  * 
  */
 @Stateless
+@Interceptors({KksServiceFaultInterceptor.class})
 @WebService(wsdlLocation = "META-INF/wsdl/kksService.wsdl", endpointInterface = "fi.koku.services.entity.kks.v1.KksServicePortType", targetNamespace = "http://services.koku.fi/entity/kks/v1", portName = "kksService-soap11-port", serviceName = "kksService")
 @RolesAllowed("koku-role")
 public class KksServiceEndpointBean implements KksServicePortType {
