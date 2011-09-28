@@ -164,8 +164,10 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	        at.setPostinumeroKoodi(a.getPostalCode());
 	        at.setPostilokeroTeksti(a.getPoBox());
 	        at.setMaatunnusKoodi(a.getCountryCode());
-	        at.setAlkuPvm(dateToCalendar(a.getValidFrom()));
-	        at.setLoppuPvm(dateToCalendar(a.getValidTo()));
+	        if(a.getValidFrom() != null)
+	          at.setAlkuPvm(dateToCalendar(a.getValidFrom()));
+	        if(a.getValidTo() != null)
+	          at.setLoppuPvm(dateToCalendar(a.getValidTo()));
 	        ct.getAddresses().getAddress().add(at);
 	      }
 
@@ -221,8 +223,10 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
           a.setPostalCode(at.getPostinumeroKoodi());
           a.setPoBox(at.getPostilokeroTeksti());
           a.setCountryCode(at.getMaatunnusKoodi());
-          a.setValidFrom(at.getAlkuPvm().getTime());
-          a.setValidTo(at.getLoppuPvm().getTime());
+          if(at.getAlkuPvm() != null)
+            a.setValidFrom(at.getAlkuPvm().getTime());
+          if(at.getLoppuPvm() != null)
+            a.setValidTo(at.getLoppuPvm().getTime());
           c.getAddresses().add(a);
           a.setCustomer(c);
         }
