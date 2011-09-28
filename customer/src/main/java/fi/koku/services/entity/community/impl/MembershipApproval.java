@@ -30,7 +30,7 @@ public class MembershipApproval implements Serializable {
   private MembershipRequest membershipRequest;
   
   @Transient
-  private String membershipRequestId;
+  private Long membershipRequestId;
 
   @Column(name = "approver_pic", nullable = false)
   private String approverPic;
@@ -41,7 +41,7 @@ public class MembershipApproval implements Serializable {
   public MembershipApproval() {
   }
 
-  public MembershipApproval(String membershipRequestId, String approverPic, String status) {
+  public MembershipApproval(Long membershipRequestId, String approverPic, String status) {
     this.membershipRequestId = membershipRequestId;
     this.approverPic = approverPic;
     this.status = status;
@@ -69,11 +69,11 @@ public class MembershipApproval implements Serializable {
     this.membershipRequest = membershipRequest;
   }
 
-  public String getMembershipRequestId() {
+  public Long getMembershipRequestId() {
     return membershipRequestId;
   }
 
-  public void setMembershipRequestId(String membershipRequestId) {
+  public void setMembershipRequestId(Long membershipRequestId) {
     this.membershipRequestId = membershipRequestId;
   }
 

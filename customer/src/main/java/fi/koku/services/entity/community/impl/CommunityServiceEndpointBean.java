@@ -123,7 +123,8 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
   @Override
   public VoidType opUpdateMembershipApproval(MembershipApprovalType ma, AuditInfoType auditHeader)
       throws ServiceFault {
-    MembershipApproval app = new MembershipApproval(ma.getMembershipRequestId(), ma.getApproverPic(), ma.getStatus());
+    Long rqId = Long.valueOf(ma.getMembershipRequestId());
+    MembershipApproval app = new MembershipApproval(rqId, ma.getApproverPic(), ma.getStatus());
     communityService.updateMembershipApproval(app);
     return new VoidType();
   }
@@ -196,7 +197,6 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
 
     @Override
     public MembershipRequestType toWsType(MembershipRequest from) {
-      logger.debug("toWsType: "+from+", "+from.getApprovals().size());
       MembershipRequestType to = new MembershipRequestType();
       to.setCommunityId(from.getCommunityId().toString());
       to.setMemberRole(from.getMemberRole());

@@ -26,9 +26,10 @@ import org.slf4j.LoggerFactory;
 */
 @Stateless
 public class CommunityServiceBean implements CommunityService {
-  @SuppressWarnings("unused")
   private Logger logger = LoggerFactory.getLogger(CommunityService.class);
-
+  
+  private final static String REQUEST_APPROVED = "approved"; // TODO: move this definition
+  
   @PersistenceContext
   private EntityManager em;
 
@@ -137,7 +138,7 @@ public class CommunityServiceBean implements CommunityService {
     Query q = null;
 
     if(qc.getRequesterPic() != null) {
-      q = em.createQuery("SELECT r FROM MembershipRequest r WHERE r.requesterPic = :requesterPic");
+      q = em.createQuery("SELECT r FROM MembershipRequest r JOIN FETCH r.approvals WHERE r.requesterPic = :requesterPic");
       q.setParameter("requesterPic", qc.getRequesterPic());
     } else if(qc.getApproverPic() != null) {
       String jpql = "SELECT r FROM MembershipRequest r " +
@@ -167,7 +168,53 @@ public class CommunityServiceBean implements CommunityService {
 
   @Override
   public void updateMembershipApproval(MembershipApproval approval) {
-    // TODO
-  }
+    MembershipRequest rq = getMembershipRequest(approval.getMembershipRequestId());
 
+    String approvalLogInfo = "request="+approval.getMembershipRequestId()+"; community="+rq.getCommunityId()+
+        "; person="+approval.getApproverPic();
+    if(!REQUEST_APPROVED.equals(approval.getStatus())) {
+      // a) a non-approval (==> rejection). an approver does not approve, dismiss the request.
+      logger.info("membership request rejected: "+approvalLogInfo);
+      em.remove(rq);
+    } else if(isFinalMembershipRequestApproval(rq, approval)) {
+      // b) final approval. add to community and remove request.
+      // add member to community
+      Community c = get(rq.getCommunityId());
+      CommunityMember member = new CommunityMember(c, null, rq.getMemberPic(), rq.getMemberRole());
+      c.getMembers().add(member);
+      logger.info("membership request approved: "+approvalLogInfo);
+      em.remove(rq);
+    } else {
+      // c) an approval. update approval.
+      logger.debug("membership request update: "+approvalLogInfo);
+      for(MembershipApproval a : rq.getApprovals()) {
+        if(a.getApproverPic().equals(approval.getApproverPic())) {
+          a.setStatus(approval.getStatus());
+          em.merge(a);
+          break;
+        }
+      }
+    }
+    
+  }
+  
+  private boolean isFinalMembershipRequestApproval(MembershipRequest rq, MembershipApproval approval) {
+    for(MembershipApproval a : rq.getApprovals()) {
+      if(!a.getApproverPic().equals(approval.getApproverPic()) &&
+          !REQUEST_APPROVED.equals(a.getStatus())) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+
+  private MembershipRequest getMembershipRequest(Long requestId) {
+    Query q = em.createQuery("SELECT r FROM MembershipRequest r JOIN FETCH r.approvals WHERE r.id = :id");
+    q.setParameter("id", requestId);
+    MembershipRequest rq = (MembershipRequest) q.getSingleResult();
+    
+    return rq;
+  }
+  
 }
