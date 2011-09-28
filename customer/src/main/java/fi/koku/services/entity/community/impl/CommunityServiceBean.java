@@ -1,7 +1,6 @@
 package fi.koku.services.entity.community.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -128,12 +127,42 @@ public class CommunityServiceBean implements CommunityService {
 
   @Override
   public Long addMembershipRequest(MembershipRequest rq) {
-    return 123L; // TODO
+    rq.setId(null);
+    em.persist(rq);
+    return rq.getId();
   }
 
   @Override
-  public Collection<MembershipRequest> queryMembershipRequests(MembershipRequestQueryCriteria q) {
-    return Collections.emptyList(); // TODO
+  public Collection<MembershipRequest> queryMembershipRequests(MembershipRequestQueryCriteria qc) {
+    Query q = null;
+
+    if(qc.getRequesterPic() != null) {
+      q = em.createQuery("SELECT r FROM MembershipRequest r WHERE r.requesterPic = :requesterPic");
+      q.setParameter("requesterPic", qc.getRequesterPic());
+    } else if(qc.getApproverPic() != null) {
+      String jpql = "SELECT r FROM MembershipRequest r " +
+          "JOIN FETCH r.approvals " +
+          "WHERE r IN (" +
+          "SELECT a.membershipRequest FROM MembershipApproval a WHERE a.approverPic = :approverPic" +
+          ")";
+      q = em.createQuery(jpql);
+      q.setParameter("approverPic", qc.getApproverPic());
+    } else {
+      throw new IllegalArgumentException("missing query parameters");
+    }
+
+    @SuppressWarnings("unchecked")
+    Collection<MembershipRequest> requests = q.getResultList();
+    Set<Long> ids = new HashSet<Long>();
+    for(Iterator<MembershipRequest> i = requests.iterator(); i.hasNext(); ) {
+      MembershipRequest mr = i.next();
+      if(ids.contains(mr.getId())) {
+        i.remove();
+      }
+      ids.add(mr.getId());
+    }
+    
+    return requests;
   }
 
   @Override

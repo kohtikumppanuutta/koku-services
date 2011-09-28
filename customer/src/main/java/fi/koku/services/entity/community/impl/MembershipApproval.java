@@ -47,11 +47,12 @@ public class MembershipApproval implements Serializable {
     this.status = status;
   }
 
-  public MembershipApproval(String approverPic, String status) {
+  public MembershipApproval(MembershipRequest rq, String approverPic, String status) {
+    this.membershipRequest = rq;
     this.approverPic = approverPic;
     this.status = status;
   }
-  
+
   public Long getId() {
     return id;
   }

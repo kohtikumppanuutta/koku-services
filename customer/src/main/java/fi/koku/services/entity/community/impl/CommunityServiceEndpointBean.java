@@ -1,6 +1,7 @@
 package fi.koku.services.entity.community.impl;
 
 import java.util.Collection;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
@@ -100,7 +101,9 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
   @Override
   public String opAddMembershipRequest(MembershipRequestType membershipRequest, AuditInfoType auditHeader)
       throws ServiceFault {
-    Long id = communityService.addMembershipRequest(membershipRequestConverter.fromWsType(membershipRequest));
+    MembershipRequest rq = membershipRequestConverter.fromWsType(membershipRequest);
+    rq.setCreated(new Date());
+    Long id = communityService.addMembershipRequest(rq);
     return id.toString();
   }
 
@@ -108,9 +111,8 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
   public MembershipRequestsType opQueryMembershipRequests(MembershipRequestQueryCriteriaType mrqc, AuditInfoType auditHeader)
       throws ServiceFault {
     MembershipRequestQueryCriteria qc = new MembershipRequestQueryCriteria(mrqc.getRequesterPic(), mrqc.getApproverPic());
-    Collection<MembershipRequest> rqs = communityService.queryMembershipRequests(qc);
     MembershipRequestsType ret = new MembershipRequestsType();
-    for(MembershipRequest rq : rqs) {
+    for(MembershipRequest rq : communityService.queryMembershipRequests(qc)) {
       ret.getMembershipRequest().add(membershipRequestConverter.toWsType(rq));
     }
     return ret;
@@ -185,13 +187,14 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       to.setMemberPic(from.getMemberPic());
       to.setRequesterPic(from.getRequesterPic());
       for(MembershipApprovalType a : from.getApprovals().getApproval()) {
-        to.getApprovals().add(new MembershipApproval(a.getApproverPic(), a.getStatus()));
+        to.getApprovals().add(new MembershipApproval(to, a.getApproverPic(), a.getStatus()));
       }
       return to;
     }
 
     @Override
     public MembershipRequestType toWsType(MembershipRequest from) {
+      logger.debug("toWsType: "+from+", "+from.getApprovals().size());
       MembershipRequestType to = new MembershipRequestType();
       to.setCommunityId(from.getCommunityId().toString());
       to.setMemberRole(from.getMemberRole());

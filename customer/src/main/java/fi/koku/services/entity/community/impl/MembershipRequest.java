@@ -4,6 +4,7 @@ import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REMOVE;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -43,7 +44,7 @@ public class MembershipRequest implements Serializable {
   private String requesterPic;
 
   @OneToMany(mappedBy="membershipRequest", cascade={PERSIST, REMOVE})
-  private Collection<MembershipApproval> approvals;
+  private Collection<MembershipApproval> approvals = new ArrayList<MembershipApproval>();
   
   @Column(nullable=false)
   @Temporal(TemporalType.DATE)
