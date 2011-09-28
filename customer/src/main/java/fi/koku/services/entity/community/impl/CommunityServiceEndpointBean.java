@@ -79,7 +79,9 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
 
   @Override
   public VoidType opUpdateCommunity(CommunityType community, AuditInfoType auditHeader) {
-    communityService.update(communityConverter.fromWsType(community));
+    Community c = communityConverter.fromWsType(community);
+    c.setId(Long.valueOf(community.getId()));
+    communityService.update(c);
     return new VoidType();
   }
 
@@ -143,7 +145,6 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
     @Override
     public Community fromWsType(CommunityType from) {
       Community to = new Community();
-      to.setId(Long.valueOf(from.getId()));
       to.setType(from.getType());
       to.setName(from.getName());
       MembersType mt = from.getMembers();
