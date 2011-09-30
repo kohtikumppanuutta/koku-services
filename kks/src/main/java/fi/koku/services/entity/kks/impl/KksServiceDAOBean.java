@@ -21,9 +21,9 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   @PersistenceContext
   private EntityManager em;
-
-  public KksServiceDAOBean() {
-  }
+  public static final String ACTIVE = "ACTIVE";
+  public static final String LOCKED = "LOCKED";
+  public static final String COMMENT_FIELD_LABEL = "kks.kehitysasia.kommentti";
 
   public List<KksCollectionClass> getCollectionClasses() {
     Query q = em.createNamedQuery(KksCollectionClass.NAMED_QUERY_GET_ALL_COLLECTION_CLASSES);
@@ -615,7 +615,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     newVersion.setCreated(new Date());
     newVersion.setCustomer(creation.getCustomer());
     newVersion.setPrevVersion("" + old.getId());
-    newVersion.setStatus("ACTIVE");
+    newVersion.setStatus(ACTIVE);
     newVersion.setCollectionClass(old.getCollectionClass());
 
     if (!creation.isEmpty()) {
@@ -645,7 +645,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     em.persist(newVersion);
     setTagsByEntryClass(old, newVersion);
     old.setNextVersion("" + newVersion.getId());
-    old.setStatus("LOCKED");
+    old.setStatus(LOCKED);
     em.merge(old);
 
     return newVersion.getId();
@@ -654,7 +654,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
   private boolean isCopyable(List<KksTag> tags) {
     if (tags != null && !tags.isEmpty()) {
       for (KksTag t : tags) {
-        if (t.getName().equalsIgnoreCase("kks.kehitysasia.kommentti")) {
+        if (t.getName().equalsIgnoreCase(COMMENT_FIELD_LABEL)) {
           return false;
         }
       }

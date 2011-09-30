@@ -1052,7 +1052,7 @@ insert into kks_entry_class (
 ) VALUES (
    139   -- entry_class_id
   ,40   -- sort_order
-  ,'Lapsen hoittoaika MA-PE'  -- name
+  ,'Lapsen hoitoaika MA-PE'  -- name
   ,'(esim. 06:00-14:00)'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -1072,7 +1072,7 @@ insert into kks_entry_class (
 ) VALUES (
    140   -- entry_class_id
   ,41   -- sort_order
-  ,'Lapsen hoittoaika LA'  -- name
+  ,'Lapsen hoitoaika LA'  -- name
   ,'(esim. 06:00-14:00)'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -1092,7 +1092,7 @@ insert into kks_entry_class (
 ) VALUES (
    141   -- entry_class_id
   ,42   -- sort_order
-  ,'Lapsen hoittoaika SU'  -- name
+  ,'Lapsen hoitoaika SU'  -- name
   ,'(esim. 06:00-14:00)'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
