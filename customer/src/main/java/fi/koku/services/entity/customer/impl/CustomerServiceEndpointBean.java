@@ -3,6 +3,7 @@ package fi.koku.services.entity.customer.impl;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -113,10 +114,10 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	public CustomersType opQueryCustomers(CustomerQueryCriteriaType criteria, AuditInfoType auditHeader) {
 		logger.debug("opQueryCustomers");
 		
-		Long id = criteria.getId() != null ? Long.valueOf(criteria.getId()) : null;
-		CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(id, criteria.getPic(), criteria.getSelection());
-		Collection<Customer> customers = customerService.query(customerQueryCriteria);
-		CustomersType r = new CustomersType();
+    CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(new HashSet<String>(
+        criteria.getPics() != null ? criteria.getPics().getPic() : new HashSet<String>()), criteria.getSelection());
+    Collection<Customer> customers = customerService.query(customerQueryCriteria);
+    CustomersType r = new CustomersType();
 		for(Customer c : customers) {
 		  r.getCustomer().add(customerConverter.toWsType(c, criteria.getSelection()));
 		}

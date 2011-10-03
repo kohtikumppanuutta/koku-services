@@ -1,5 +1,7 @@
 package fi.koku.services.entity.customer.impl;
 
+import java.util.Set;
+
 
 /**
  * Customer query criteria.
@@ -7,22 +9,17 @@ package fi.koku.services.entity.customer.impl;
  * @author aspluma
  */
 public class CustomerQueryCriteria {
-  private Long id;
-  private String pic;
+
+  private Set<String> pics;
   private String selection;
 
-  public CustomerQueryCriteria(Long id, String pic, String selection) {
-    this.id = id;
-    this.pic = pic;
+  public CustomerQueryCriteria(Set<String> pics, String selection) {
+    this.pics = pics;
     this.selection = selection;
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public String getPic() {
-    return pic;
+  public Set<String> getPics() {
+    return pics;
   }
 
   public String getSelection() {

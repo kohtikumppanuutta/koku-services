@@ -14,7 +14,7 @@
 
   <properties>
     <failsafe.plugin.version>2.9</failsafe.plugin.version>
-    <customerservice.api.version>0.0.11</customerservice.api.version>
+    <customerservice.api.version>0.0.12</customerservice.api.version>
     <ant.run.plugin.version>1.6</ant.run.plugin.version>
     <wagon.plugin.version>1.0-beta-3</wagon.plugin.version>
     <wagon.ssh.extension.version>1.0-beta-6</wagon.ssh.extension.version>

@@ -8,7 +8,8 @@ package fi.koku.services.entity.customer.impl;
  */
 public enum CustomerServiceErrorCode {
 
-  CUSTOMER_NOT_FOUND(1001, "Customer not found.");
+  CUSTOMER_NOT_FOUND(1001, "Customer not found."),
+  NO_QUERY_CRITERIA(1002, "Query criteria missing.");
   
   private final int value;
 

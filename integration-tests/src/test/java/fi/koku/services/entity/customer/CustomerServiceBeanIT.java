@@ -18,6 +18,7 @@ import fi.koku.services.entity.customer.v1.ElectronicContactInfoType;
 import fi.koku.services.entity.customer.v1.ElectronicContactInfosType;
 import fi.koku.services.entity.customer.v1.PhoneNumberType;
 import fi.koku.services.entity.customer.v1.PhoneNumbersType;
+import fi.koku.services.entity.customer.v1.PicsType;
 import fi.koku.services.entity.customer.v1.ServiceFault;
 import fi.koku.services.test.util.TestDbUtils;
 import fi.koku.services.test.util.TestPropertiesUtil;
@@ -49,7 +50,6 @@ public class CustomerServiceBeanIT {
     // Call the web service
     CustomerType customer = customerServicePort.opGetCustomer("123456-123A", audit);
     
-    // Verify the returned result or DB state
     assertThat(customer.getHenkiloTunnus(), is("123456-123A"));
     assertThat(customer.getEtuNimi(), is("Liisa"));
     assertThat(customer.getSukuNimi(), is("Virtanen"));
@@ -68,38 +68,36 @@ public class CustomerServiceBeanIT {
     
     // Test get by pic
     CustomerQueryCriteriaType query = new CustomerQueryCriteriaType();
-    query.setPic("150790-123A");
+    PicsType pics = new PicsType();
+    pics.getPic().add("150790-123A");
+    pics.getPic().add("puppu");
+    pics.getPic().add("111456-163A");
+    query.setPics(pics);
     CustomersType customers = customerServicePort.opQueryCustomers(query, audit);
-    assertThat(customers.getCustomer().size(), is(1));
-    customer = customers.getCustomer().get(0);
-    // Verify the returned result or DB state
+    assertThat(customers.getCustomer().size(), is(2));
+    customer = getCustomerType("150790-123A", customers);
+
     assertThat(customer.getHenkiloTunnus(), is("150790-123A"));
     assertThat(customer.getEtuNimi(), is("Matti"));
     assertThat(customer.getSukuNimi(), is("Järvinen"));
     // Limited data set
     assertThat(customer.getAddresses(), nullValue());
+    // Other customer should be present also
+    assertThat(getCustomerType("111456-163A", customers), notNullValue());
     
     // Test get by pic with full dataset
+    pics = new PicsType();
+    pics.getPic().add("150790-123A");
+    query.setPics(pics);
     query.setSelection("full");
     customers = customerServicePort.opQueryCustomers(query, audit);
     assertThat(customers.getCustomer().size(), is(1));
     customer = customers.getCustomer().get(0);
-    // Verify the returned result or DB state
+
     assertThat(customer.getHenkiloTunnus(), is("150790-123A"));
     // Full data set
     assertThat(customer.getAddresses().getAddress().size(), is(2));
     assertThat(customer.getPhoneNumbers().getPhone().size(), is(2));
-    
-    // Test get by id
-    query = new CustomerQueryCriteriaType();
-    query.setId("12346");
-    query.setPic("puppu");
-    query.setSelection("full");
-    customers = customerServicePort.opQueryCustomers(query, audit);
-    assertThat(customers.getCustomer().size(), is(1));
-    customer = customers.getCustomer().get(0);
-    // Verify the returned result or DB state
-    assertThat(customer.getHenkiloTunnus(), is("123456-123A"));
   }  
   
   @Test
@@ -324,7 +322,16 @@ public class CustomerServiceBeanIT {
       }
     }
     return null;
-  }   
+  }
+  
+  private CustomerType getCustomerType(String pic, CustomersType customersType) {
+    for (CustomerType c : customersType.getCustomer()) {
+      if (c.getHenkiloTunnus().equals(pic)) {
+        return c;
+      }
+    }
+    return null;
+  }     
   
   private CustomerServicePortType getCustomerServicePort() {
     return new CustomerServiceFactory(TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_USERNAME),

@@ -190,19 +190,22 @@ public class CustomerDAOBean implements CustomerDAO {
     }
     qs.append("WHERE ");
     List<Object[]> params = new ArrayList<Object[]>();
-    if(qc.getPic() != null) {
-      qs.append("c.pic = :pic");
-      params.add(new Object[] {"pic", qc.getPic()});
+    if(qc.getPics() != null && qc.getPics().size() > 0) {
+      qs.append("c.pic IN (:pics)");
+      params.add(new Object[] {"pics", qc.getPics()});
     }
-    if(qc.getId() != null) {
-      if(params.size() > 0)
-        qs.append(" OR ");
-      qs.append("c.id = :id");
-      params.add(new Object[] {"id", qc.getId()});
-    }
+    
+    // Query by id is not in use, left here as an example how to add more criteria params
+    //if(qc.getId() != null) {
+    //  if(params.size() > 0)
+    //    qs.append(" OR ");
+    //  qs.append("c.id = :id");
+    //  params.add(new Object[] {"id", qc.getId()});
+    //}
 
     if(params.size() == 0) {
-      throw new RuntimeException("missing criteria");
+      CustomerServiceErrorCode errorCode = CustomerServiceErrorCode.NO_QUERY_CRITERIA;
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());      
     }
     Query q = em.createQuery(qs.toString());
 
