@@ -1,13 +1,11 @@
 package fi.arcusys.koku.tiva.soa;
 
-import java.util.Date;
+import static fi.arcusys.koku.common.service.CalendarUtil.getSafeDate;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import static fi.arcusys.koku.common.service.CalendarUtil.getSafeDate;
-import fi.arcusys.koku.common.service.dto.AuthorizationDTOCriteria;
 import fi.arcusys.koku.common.service.dto.InformationRequestDTOCriteria;
 
 /**

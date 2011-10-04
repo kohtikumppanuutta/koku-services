@@ -1,24 +1,14 @@
 package fi.arcusys.koku.av.soa;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.jws.WebParam;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
-import fi.arcusys.koku.common.service.datamodel.Appointment;
-import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -28,6 +18,7 @@ import fi.arcusys.koku.common.service.datamodel.User;
 @WebService(serviceName = "KokuAppointmentProcessingService", portName = "KokuAppointmentProcessingServicePort", 
 		endpointInterface = "fi.arcusys.koku.av.soa.KokuAppointmentProcessingService",
 		targetNamespace = "http://soa.av.koku.arcusys.fi/")
+@Interceptors(KokuAppointmentInterceptor.class)
 public class KokuAppointmentProcessingServiceImpl implements KokuAppointmentProcessingService {
 	private static final Logger log = LoggerFactory.getLogger(KokuAppointmentProcessingServiceImpl.class);
 	

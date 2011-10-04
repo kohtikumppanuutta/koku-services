@@ -61,16 +61,19 @@
             <groupId>fi.arcusys.koku</groupId>
             <artifactId>arcusys-common</artifactId>
             <version>0.1-SNAPSHOT</version>
+            <type>ejb</type>
         </dependency>
         <dependency>
             <groupId>fi.arcusys.koku</groupId>
             <artifactId>arcusys-common-test</artifactId>
             <version>0.1-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>kv-model</artifactId>
             <version>0.1-SNAPSHOT</version>
+            <type>ejb</type>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

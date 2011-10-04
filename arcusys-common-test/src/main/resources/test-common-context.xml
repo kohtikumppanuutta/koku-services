@@ -105,4 +105,6 @@
 
     <bean id="usersAndGroupsService" class="fi.arcusys.koku.common.soa.UsersAndGroupsServiceImpl" />
     
+    <bean id="logServiceDao" class="fi.arcusys.koku.common.external.LogServiceDAOImpl" />
+
 </beans>

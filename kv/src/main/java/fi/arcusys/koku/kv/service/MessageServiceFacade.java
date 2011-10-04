@@ -107,7 +107,7 @@ public interface MessageServiceFacade {
      * @param content
      * @return
      */
-    void receiveNewMessage(final String fromUserUid, final String subject, final String toUserUid, final String content);
+    Long receiveNewMessage(final String fromUserUid, final String subject, final String toUserUid, final String content);
 
     void deliverMessage(final String fromUser, final List<String> toUsers, final String subject, final String content);
 
@@ -126,5 +126,5 @@ public interface MessageServiceFacade {
      * @param list2
      * @return
      */
-    void updateRequestTemplate(long requestTemplateId, String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices);
+    void updateRequestTemplate(String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices);
 }

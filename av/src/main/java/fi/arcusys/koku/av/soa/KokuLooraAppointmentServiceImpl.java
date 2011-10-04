@@ -5,12 +5,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -25,6 +24,7 @@ import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 @WebService(serviceName = "KokuLooraAppointmentService", portName = "KokuLooraAppointmentServicePort", 
         endpointInterface = "fi.arcusys.koku.av.soa.KokuLooraAppointmentService",
         targetNamespace = "http://soa.av.koku.arcusys.fi/")
+@Interceptors(KokuAppointmentInterceptor.class)
 public class KokuLooraAppointmentServiceImpl implements KokuLooraAppointmentService {
 
     @EJB

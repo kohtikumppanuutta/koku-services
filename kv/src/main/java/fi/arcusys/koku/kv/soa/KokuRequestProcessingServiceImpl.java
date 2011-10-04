@@ -1,12 +1,11 @@
 package fi.arcusys.koku.kv.soa;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.jws.WebParam;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -23,6 +22,7 @@ import fi.arcusys.koku.kv.service.MessageServiceFacade;
 @WebService(serviceName = "KokuRequestProcessingService", portName = "KokuRequestProcessingServicePort", 
 		endpointInterface = "fi.arcusys.koku.kv.soa.KokuRequestProcessingService",
 		targetNamespace = "http://soa.kv.koku.arcusys.fi/")
+@Interceptors(KokuRequestInterceptor.class)
 public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingService {
 	private final static Logger logger = LoggerFactory.getLogger(KokuRequestProcessingServiceImpl.class);
 
@@ -144,8 +144,8 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
      * @param choices
      */
     @Override
-    public void updateRequestTemplate(final long requestTemplateId, String userUid, String subject, Questions questions, MultipleChoices choices) {
-        kvFacade.updateRequestTemplate(requestTemplateId, userUid, subject, 
+    public void updateRequestTemplate(String userUid, String subject, Questions questions, MultipleChoices choices) {
+        kvFacade.updateRequestTemplate(userUid, subject, 
                 questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
                 choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>());
     }

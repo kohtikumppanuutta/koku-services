@@ -1,10 +1,8 @@
 package fi.arcusys.koku.kv.soa;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
@@ -17,6 +15,7 @@ import fi.arcusys.koku.kv.service.MessageServiceFacade;
 @WebService(serviceName = "KokuMessageProcessingService", portName = "KokuMessageProcessingServicePort", 
 		endpointInterface = "fi.arcusys.koku.kv.soa.KokuMessageProcessingService",
 		targetNamespace = "http://soa.kv.koku.arcusys.fi/")
+@Interceptors(KokuMessageInterceptor.class)
 public class KokuMessageProcessingServiceImpl implements KokuMessageProcessingService {
 
 	@EJB
@@ -55,8 +54,8 @@ public class KokuMessageProcessingServiceImpl implements KokuMessageProcessingSe
      * @param content
      */
     @Override
-    public void receiveNewMessage(String fromUserUid, String subject, String toUserUid, String content) {
-        kvFacade.receiveNewMessage(fromUserUid, subject, toUserUid, content);
+    public Long receiveNewMessage(String fromUserUid, String subject, String toUserUid, String content) {
+        return kvFacade.receiveNewMessage(fromUserUid, subject, toUserUid, content);
     }
 
 }

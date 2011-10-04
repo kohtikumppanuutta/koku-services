@@ -2,8 +2,6 @@ package fi.arcusys.koku.tiva.soa;
 
 import java.util.List;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 11, 2011

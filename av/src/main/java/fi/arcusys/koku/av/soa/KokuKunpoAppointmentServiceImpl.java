@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -21,6 +22,7 @@ import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 @WebService(serviceName = "KokuKunpoAppointmentService", portName = "KokuKunpoAppointmentServicePort", 
         endpointInterface = "fi.arcusys.koku.av.soa.KokuKunpoAppointmentService",
         targetNamespace = "http://soa.av.koku.arcusys.fi/")
+@Interceptors(KokuAppointmentInterceptor.class)
 public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentService {
 
     @EJB

@@ -1,20 +1,15 @@
 package fi.arcusys.koku.kv.soa;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
 import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
-
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 
@@ -27,6 +22,7 @@ import fi.arcusys.koku.kv.service.dto.MessageTO;
 @WebService(serviceName = "KokuMessageService", portName = "KokuMessageServicePort", 
 		endpointInterface = "fi.arcusys.koku.kv.soa.KokuMessageService",
 		targetNamespace = "http://soa.kv.koku.arcusys.fi/")
+@Interceptors(KokuMessageInterceptor.class)
 public class KokuMessageServiceImpl implements KokuMessageService {
 
 	@EJB

@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
+import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 
 /**
@@ -16,18 +18,32 @@ import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 @WebService(serviceName = "KokuLooraValtakirjaService", portName = "KokuLooraValtakirjaServicePort", 
         endpointInterface = "fi.arcusys.koku.tiva.soa.KokuLooraValtakirjaService",
         targetNamespace = "http://soa.tiva.koku.arcusys.fi/")
+@Interceptors(KokuValtakirjaInterceptor.class)
 public class KokuLooraValtakirjaServiceImpl implements KokuLooraValtakirjaService {
 
     @EJB
     private AuthorizationServiceFacade serviceFacade;
     
+    @EJB
+    private UsersAndGroupsService userService;
+    
     /**
-     * @param criteria
+     * @param updateUserUid(criteria)
      * @return
      */
     @Override
     public int getTotalAuthorizations(AuthorizationCriteria criteria) {
-        return serviceFacade.getTotalAuthorizationsByCriteria(criteria);
+        return serviceFacade.getTotalAuthorizationsByCriteria(updateUserUid(criteria));
+    }
+
+    private AuthorizationCriteria updateUserUid(AuthorizationCriteria criteria) {
+        if (criteria == null) {
+            return null;
+        }
+        criteria.setReceipientUid(userService.getUserUid(criteria.getReceipientUid()));
+        criteria.setSenderUid(userService.getUserUid(criteria.getSenderUid()));
+        criteria.setTargetPersonUid(userService.getUserUid(criteria.getTargetPersonUid()));
+        return criteria;
     }
 
     /**
@@ -36,7 +52,14 @@ public class KokuLooraValtakirjaServiceImpl implements KokuLooraValtakirjaServic
      */
     @Override
     public List<AuthorizationShortSummary> getAuthorizations(AuthorizationQuery query) {
+        updateQuery(query);
         return serviceFacade.getAuthorizationsByQuery(query);
+    }
+
+    private void updateQuery(AuthorizationQuery query) {
+        if (query != null) {
+            query.setCriteria(updateUserUid(query.getCriteria()));
+        }
     }
 
     /**

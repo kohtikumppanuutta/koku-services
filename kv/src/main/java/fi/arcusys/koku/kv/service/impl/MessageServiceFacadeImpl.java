@@ -712,12 +712,12 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @param content
      */
     @Override
-    public void receiveNewMessage(final String fromUserUid, final String subject, final String toUserUid, final String content) {
+    public Long receiveNewMessage(final String fromUserUid, final String subject, final String toUserUid, final String content) {
         Message msg = new Message();
         fillMessage(msg, getUserByUid(fromUserUid), subject, Collections.singletonList(toUserUid), content);
         msg = messageDao.create(msg);
         
-        doReceiveNewMessage(getUserByUid(toUserUid), msg);
+        return doReceiveNewMessage(getUserByUid(toUserUid), msg).getId();
     }
 
     /**
@@ -727,19 +727,26 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      */
     @Override
     public RequestTemplateExistenceStatus isRequestTemplateExist(String userUid, String subject) {
-        final List<RequestTemplate> templates = requestTemplateDAO.searchBySubject(subject);
-        if (templates.size() == 0) {
+        final RequestTemplate template = getTemplateBySubject(subject);
+        if (template == null) {
             return RequestTemplateExistenceStatus.NotExists;
-        } 
-        if (templates.size() > 1) {
-            logger.warn("More then one template with subject '" + subject + "'");
-        }
-        final RequestTemplate template = templates.get(0);
-        if (!template.getCreator().getUid().equals(userUid) ||
+        } else if (!template.getCreator().getUid().equals(userUid) ||
                 getIntValue(requestDAO.getTotalByTemplate(template)) > 0) {
             return RequestTemplateExistenceStatus.ExistsActive;
         } else {
             return RequestTemplateExistenceStatus.ExistsNotActive;
+        }
+    }
+
+    private RequestTemplate getTemplateBySubject(String subject) {
+        final List<RequestTemplate> templates = requestTemplateDAO.searchBySubject(subject);
+        if (templates.size() == 0) {
+            return null;
+        } else {
+            if (templates.size() > 1) {
+                logger.warn("More then one template with subject '" + subject + "'");
+            }
+            return templates.get(0);
         }
     }
 
@@ -751,12 +758,18 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @param choices
      */
     @Override
-    public void updateRequestTemplate(long requestTemplateId, String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices) {
-        final RequestTemplate template = loadRequestTemplate(requestTemplateId);
+    public void updateRequestTemplate(String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices) {
+        final RequestTemplate template = getTemplateBySubject(subject);
+        if (template == null) {
+            throw new IllegalStateException("Error in update: request template with subject '" + subject + "' is not found.");
+        } 
         if (!template.getCreator().getUid().equals(userUid)) {
-            throw new IllegalStateException("Can't update request template ID '" + requestTemplateId + "'. User " + userUid + " is not a creator.");
-        }
-        
+            throw new IllegalStateException("Error in update: request template with subject '" + subject + "' is created by different user.");
+        } 
+        if (getIntValue(requestDAO.getTotalByTemplate(template)) > 0) {
+            throw new IllegalStateException("Error in update: request template with subject '" + subject + "' is active.");
+        } 
+
         fillRequestTemplate(userUid, subject, questions, choices, template);
         requestTemplateDAO.update(template);
     }

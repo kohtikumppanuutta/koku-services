@@ -153,7 +153,7 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
      */
     @Override
     public List<InformationRequestSummary> getRepliedRequests(String receiverUid, InformationRequestQuery query) {
-        final InformationRequestDTOCriteria criteria = getDtoCriteria(query.getCriteria());
+        final InformationRequestDTOCriteria criteria = getDtoCriteria(query != null ? query.getCriteria() : null);
         criteria.setReceiverUid(receiverUid);
         
         final List<InformationRequestSummary> result = new ArrayList<InformationRequestSummary>();

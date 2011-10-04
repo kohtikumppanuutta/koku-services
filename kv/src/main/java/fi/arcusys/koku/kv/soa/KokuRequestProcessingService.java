@@ -36,10 +36,11 @@ public interface KokuRequestProcessingService {
             @WebParam(name = "questions") final Questions questions,
             @WebParam(name = "choices") final MultipleChoices choices);
 	
-	RequestTemplateExistenceStatus isRequestTemplateExist(final String userUid, final String subject);
+	RequestTemplateExistenceStatus isRequestTemplateExist(
+	        @WebParam(name = "creator") final String userUid, 
+	        @WebParam(name = "subject") final String subject);
 	
     void updateRequestTemplate(
-            @WebParam(name = "requestTemplateId") final long requestTemplateId,
             @WebParam(name = "creator") final String userUid, 
             @WebParam(name = "subject") final String subject, 
             @WebParam(name = "questions") final Questions questions,

@@ -1,7 +1,6 @@
 package fi.arcusys.koku.tiva.soa;
 
 import fi.arcusys.koku.common.service.dto.AuthorizationDTOCriteria;
-import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

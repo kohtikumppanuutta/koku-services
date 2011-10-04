@@ -7,5 +7,6 @@ package fi.arcusys.koku.common.service.datamodel;
 public enum QuestionType {
 	YES_NO_QUESTION,
 	FREE_TEXT_QUESTION,
-	MULTIPLE_CHOICE
+	MULTIPLE_CHOICE,
+	CALENDAR
 }

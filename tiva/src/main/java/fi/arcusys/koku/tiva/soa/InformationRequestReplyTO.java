@@ -2,7 +2,6 @@ package fi.arcusys.koku.tiva.soa;
 
 import java.util.List;
 
-import javax.jws.WebParam;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;

@@ -6,6 +6,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
+import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.arcusys.koku.tiva.service.InformationRequestServiceFacade;
 
 /**
@@ -21,6 +22,9 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
     @EJB
     private InformationRequestServiceFacade serviceFacade;
     
+    @EJB
+    private UsersAndGroupsService userService;
+    
     /**
      * @param receiverUid
      * @param query
@@ -28,7 +32,14 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
      */
     @Override
     public List<InformationRequestSummary> getRepliedRequests(String receiverUid, InformationRequestQuery query) {
+        updateQuery(query);
         return serviceFacade.getRepliedRequests(receiverUid, query);
+    }
+
+    private void updateQuery(InformationRequestQuery query) {
+        if (query != null) {
+            query.setCriteria(updateUserUid(query.getCriteria()));
+        }
     }
 
     /**
@@ -38,7 +49,17 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
      */
     @Override
     public int getTotalRepliedRequests(String receiverUid, InformationRequestCriteria criteria) {
-        return serviceFacade.getTotalRepliedRequests(receiverUid, criteria);
+        return serviceFacade.getTotalRepliedRequests(receiverUid, updateUserUid(criteria));
+    }
+
+    private InformationRequestCriteria updateUserUid(final InformationRequestCriteria criteria) {
+        if (criteria == null) {
+            return null;
+        }
+        criteria.setReceiverUid(userService.getUserUid(criteria.getReceiverUid()));
+        criteria.setSenderUid(userService.getUserUid(criteria.getSenderUid()));
+        criteria.setTargetPersonUid(userService.getUserUid(criteria.getTargetPersonUid()));
+        return criteria;
     }
 
     /**
@@ -48,6 +69,7 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
      */
     @Override
     public List<InformationRequestSummary> getSentRequests(String senderUid, InformationRequestQuery query) {
+        updateQuery(query);
         return serviceFacade.getSentRequests(senderUid, query);
     }
 
@@ -58,7 +80,7 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
      */
     @Override
     public int getTotalSentRequests(String senderUid, InformationRequestCriteria criteria) {
-        return serviceFacade.getTotalSentRequests(senderUid, criteria);
+        return serviceFacade.getTotalSentRequests(senderUid, updateUserUid(criteria));
     }
 
     /**
@@ -76,7 +98,7 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
      */
     @Override
     public int getTotalRequests(InformationRequestCriteria criteria) {
-        return serviceFacade.getTotalRequests(criteria);
+        return serviceFacade.getTotalRequests(updateUserUid(criteria));
     }
 
     /**
@@ -85,6 +107,7 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
      */
     @Override
     public List<InformationRequestSummary> getRequests(InformationRequestQuery query) {
+        updateQuery(query);
         return serviceFacade.getRequests(query);
     }
 

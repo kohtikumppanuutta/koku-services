@@ -14,32 +14,70 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<configuration>
+					<defaultJavaBundleDir>lib</defaultJavaBundleDir>
+					<modules>
+						<ejbModule>
+							<groupId>fi.arcusys.koku</groupId>
+							<artifactId>arcusys-common</artifactId>
+						</ejbModule>
+						<ejbModule>
+							<groupId>kohti-kumppanuutta</groupId>
+							<artifactId>av-model</artifactId>
+						</ejbModule>
+						<ejbModule>
+							<groupId>kohti-kumppanuutta</groupId>
+							<artifactId>kv-model</artifactId>
+						</ejbModule>
+						<ejbModule>
+							<groupId>kohti-kumppanuutta</groupId>
+							<artifactId>tiva-model</artifactId>
+						</ejbModule>
+						<ejbModule>
+							<groupId>kohti-kumppanuutta</groupId>
+							<artifactId>hak-model</artifactId>
+						</ejbModule>
+					</modules>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+    <dependencies>
         <dependency>
             <groupId>fi.arcusys.koku</groupId>
             <artifactId>arcusys-common</artifactId>
             <version>0.1-SNAPSHOT</version>
+            <type>ejb</type>
         </dependency>
                 <dependency>
                         <groupId>kohti-kumppanuutta</groupId>
                         <artifactId>av-model</artifactId>
                         <version>0.1-SNAPSHOT</version>
+                        <type>ejb</type>
                 </dependency>
                 <dependency>
                         <groupId>kohti-kumppanuutta</groupId>
                         <artifactId>kv-model</artifactId>
                         <version>0.1-SNAPSHOT</version>
+                        <type>ejb</type>
                 </dependency>
                 <dependency>
                         <groupId>kohti-kumppanuutta</groupId>
                         <artifactId>tiva-model</artifactId>
                         <version>0.1-SNAPSHOT</version>
+                        <type>ejb</type>
                 </dependency>
                 <dependency>
                         <groupId>kohti-kumppanuutta</groupId>
                         <artifactId>hak-model</artifactId>
                         <version>0.1-SNAPSHOT</version>
+                        <type>ejb</type>
                 </dependency>
-	</dependencies>
-
+    </dependencies>
 </project>

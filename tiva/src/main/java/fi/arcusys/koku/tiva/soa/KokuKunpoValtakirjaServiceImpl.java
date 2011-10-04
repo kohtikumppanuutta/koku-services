@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
@@ -16,6 +17,7 @@ import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 @WebService(serviceName = "KokuKunpoValtakirjaService", portName = "KokuKunpoValtakirjaServicePort", 
 endpointInterface = "fi.arcusys.koku.tiva.soa.KokuKunpoValtakirjaService",
 targetNamespace = "http://soa.tiva.koku.arcusys.fi/")
+@Interceptors(KokuValtakirjaInterceptor.class)
 public class KokuKunpoValtakirjaServiceImpl implements KokuKunpoValtakirjaService {
 
     @EJB

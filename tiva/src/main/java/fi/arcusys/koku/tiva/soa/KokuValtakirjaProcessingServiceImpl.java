@@ -1,19 +1,16 @@
 package fi.arcusys.koku.tiva.soa;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 
 /**
@@ -24,6 +21,7 @@ import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 @WebService(serviceName = "KokuValtakirjaProcessingService", portName = "KokuValtakirjaProcessingServicePort", 
         endpointInterface = "fi.arcusys.koku.tiva.soa.KokuValtakirjaProcessingService",
         targetNamespace = "http://soa.tiva.koku.arcusys.fi/")
+@Interceptors(KokuValtakirjaInterceptor.class)
 public class KokuValtakirjaProcessingServiceImpl implements KokuValtakirjaProcessingService {
 
     private final static Logger logger = LoggerFactory.getLogger(KokuValtakirjaProcessingServiceImpl.class);

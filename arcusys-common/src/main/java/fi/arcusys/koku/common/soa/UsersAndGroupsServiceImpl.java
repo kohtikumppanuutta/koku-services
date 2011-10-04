@@ -2,10 +2,15 @@ package fi.arcusys.koku.common.soa;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.naming.NamingEnumeration;
@@ -19,6 +24,11 @@ import javax.naming.directory.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.arcusys.koku.common.external.LogMessage;
+import fi.arcusys.koku.common.external.LogServiceDAO;
+import fi.arcusys.koku.common.external.LoggedOperation;
+import fi.arcusys.koku.common.external.SystemArea;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 16, 2011
@@ -31,12 +41,13 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UsersAndGroupsServiceImpl.class);
     
-    private static final List<User> users = new ArrayList<User>();
-    private static final List<Group> groups = new ArrayList<Group>();
-    private static final Map<String, List<User>> groupWithUsers = new HashMap<String, List<User>>();
-    private static final List<Child> children = new ArrayList<Child>();
+    private final List<User> users = new ArrayList<User>();
+    private final List<Group> groups = new ArrayList<Group>();
+    private final Map<String, List<User>> groupWithUsers = new HashMap<String, List<User>>();
+    private final List<Child> children = new ArrayList<Child>();
     
-    static {
+    private static List<User> getStaticUsersData() {
+        final List<User> users = new ArrayList<User>();
         // fill users
         final String[] usersData = {
                 "Kalle,Kuntalainen,050-1234567,kalle.kuntalainen@testi.fi",
@@ -62,13 +73,29 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
                 "Ulla,Soukainen,050-1234567,esimerkkiposti@testi.fi",
                 "Vesa,Komonen,050-1234567,esimerkkiposti@testi.fi",
                 "Ville-Veikko,Ahonen,050-1234567,esimerkkiposti@testi.fi",
-                "Ville,Virkamies,050-1234567,esimerkkiposti@testi.fi"
+                "Ville,Virkamies,050-1234567,esimerkkiposti@testi.fi",
+                "kirsi,kuntalainen,050-1234567,esimerkkiposti@testi.fi", 
+                "kalle,kuntalainen,050-1234567,esimerkkiposti@testi.fi",
+                "kaisa,kuntalainen,050-1234567,esimerkkiposti@testi.fi",
+                "kauko,kuntalainen,050-1234567,esimerkkiposti@testi.fi",
+                "keijo,keinonen,050-1234567,esimerkkiposti@testi.fi",
+                "kerttu,kuntalainen,050-1234567,esimerkkiposti@testi.fi",
+                "päivi,päiväkoti,050-1234567,esimerkkiposti@testi.fi",
+                "nelli,neuvola,050-1234567,esimerkkiposti@testi.fi",
+                "veeti,virkamies,050-1234567,esimerkkiposti@testi.fi",
+                "pertti,pääkäyttäjä,050-1234567,esimerkkiposti@testi.fi",
+                "piia,pääkäyttäjä,050-1234567,esimerkkiposti@testi.fi",
+                
+                "liisa,lahtinen,050-1234567,esimerkkiposti@testi.fi",
+                "sami,salminen,050-1234567,esimerkkiposti@testi.fi",
+                "sanni,suhonen,050-1234567,esimerkkiposti@testi.fi",
+                "sulo,simonen,050-1234567,esimerkkiposti@testi.fi"
         };
         for (final String userData : usersData) {
             final String[] data = userData.split(",");
             final String firstName = data[0];
             final String lastName = data[1];
-            final String displayName = firstName + " " + lastName;
+            final String displayName = firstName + "." + lastName;
             final String uid = displayName;
             final String phone = data[2];
             final String email = data[3];
@@ -79,37 +106,52 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
             user.setPhoneNumber(phone);
             users.add(user);
         }
-        // fill groups
+        return users;
+        
+/*        // fill groups
         final String[][] groupsData = {
                 {
-                    "Esimerkkikoulun luokan 1C huoltajat",
-                    "Kalle Kuntalainen",
-                    "Kirsi Kuntalainen",
-                    "Keijo Kuntalainen"
+                    "Oravat",
+                    "kirsi.kuntalainen",
+                    "kalle.kuntalainen",
+                    "liisa.lahtinen"
                 },
                 {
-                    "Virkailijat",
-                    "Ville Virkamies",
-                    "Anna Karkkainen",
-                    "Asko Lippo",
-                    "Eeva-Riitta Pirhonen",
-                    "Jaakko Rekola",
-                    "Jarmo Hallikainen",
-                    "Juhani Heikka",
-                    "Krista Piippo",
-                    "Marjukka Saarijarvi",
-                    "Marja Kanerva",
-                    "Marko Monni",
-                    "Marko Tanska",
-                    "Minna Saario",
-                    "Niina Kuisma",
-                    "Pekka Kortelainen",
-                    "Riitta Viitala",
-                    "Tarja Miikkulainen",
-                    "Ulla Soukainen",
-                    "Vesa Komonen",
-                    "Ville-Veikko Ahonen"
+                    "Siilit",
+                    "sami.salminen",
+                    "sanni.suhonen",
+                    "sulo.simonen"
+                },
+                {
+                    "Esimerkkikoulun luokan 1C huoltajat",
+                    "kalle.kuntalainen",
+                    "kirsi.kuntalainen",
+                    "keijo.keinonen"
                 }
+//                ,
+//                {
+//                    "Virkailijat",
+//                    "ville.virkamies",
+//                    "Anna Karkkainen",
+//                    "Asko Lippo",
+//                    "Eeva-Riitta Pirhonen",
+//                    "Jaakko Rekola",
+//                    "Jarmo Hallikainen",
+//                    "Juhani Heikka",
+//                    "Krista Piippo",
+//                    "Marjukka Saarijarvi",
+//                    "Marja Kanerva",
+//                    "Marko Monni",
+//                    "Marko Tanska",
+//                    "Minna Saario",
+//                    "Niina Kuisma",
+//                    "Pekka Kortelainen",
+//                    "Riitta Viitala",
+//                    "Tarja Miikkulainen",
+//                    "Ulla Soukainen",
+//                    "Vesa Komonen",
+//                    "Ville-Veikko Ahonen"
+//                }
         };
         for (int i = 0; i < groupsData.length ; i++ ) {
             final String groupName = groupsData[i][0]; 
@@ -124,21 +166,17 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
             groupWithUsers.put(group.getGroupUid(), groupUsers);
         }
         // fill children
-        final Child lassi = new Child("Lassi Lapsi", "Lassi Lapsi");
-        lassi.setFirstname("Lassi");
-        lassi.setLastname("Lapsi");
-        lassi.setParents(Arrays.asList(getUserByUid("Kalle Kuntalainen"), getUserByUid("Kirsi Kuntalainen")));
-        final Child liisa = new Child("Liisa Lapsi", "Liisa Lapsi");
-        liisa.setFirstname("Liisa");
-        liisa.setLastname("Lapsi");
-        liisa.setParents(Arrays.asList(getUserByUid("Keijo Kuntalainen"), getUserByUid("Kerttu Kuntalainen")));
-        final Child jussi = new Child("Jussi Lapsi", "Jussi Lapsi");
-        jussi.setFirstname("Jussi");
-        jussi.setLastname("Lapsi");
-        jussi.setParents(Arrays.asList(getUserByUid("Kalle Kuntalainen"), getUserByUid("Kerttu Kuntalainen")));
-        children.add(lassi);
-        children.add(liisa);
-        children.add(jussi);
+        final Child kaisa = new Child("kaisa.kuntalainen", "kaisa.kuntalainen");
+        kaisa.setFirstname("kaisa");
+        kaisa.setLastname("kuntalainen");
+        kaisa.setParents(Arrays.asList(getUserByUid("kirsi.kuntalainen"), getUserByUid("kalle.kuntalainen")));
+        final Child kauko = new Child("kauko.kuntalainen", "kauko.kuntalainen");
+        kauko.setFirstname("kauko");
+        kauko.setLastname("kuntalainen");
+        kauko.setParents(Arrays.asList(getUserByUid("kirsi.kuntalainen"), getUserByUid("keijo.keinonen")));
+        children.add(kaisa);
+        children.add(kauko);
+        */
     }
     
     // NOTE: injected through ejb-jar.xml
@@ -152,6 +190,177 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
     // NOTE: injected through ejb-jar.xml
 //    @Resource(name = "userSearchFilter")
     private String userSearchFilter;
+
+    @PostConstruct
+    public void loadUsers() {
+        if (dirContext != null) {
+            try {
+                SearchControls controls = new SearchControls();
+                controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                final NamingEnumeration<SearchResult> results = dirContext.search("", "(objectclass=inetOrgPerson)", controls);
+                try {
+                    while (results.hasMore()) {
+                        final SearchResult searchResult = results.next();
+                        final Attributes attributes = searchResult.getAttributes();
+
+                        final String firstName = getAttributeValue(attributes, "givenName");
+                        final String lastName = getAttributeValue(attributes, "sn");
+                        final String displayName = getAttributeValue(attributes, "cn");
+                        final String uid = displayName;
+                        final String phone = getAttributeValue(attributes, "telephoneNumber");
+                        final String email = getAttributeValue(attributes, "mail");
+                        final User user = new User(uid, displayName);
+                        user.setEmail(email);
+                        user.setFirstname(firstName);
+                        user.setLastname(lastName);
+                        user.setPhoneNumber(phone);
+                        users.add(user);
+                    }
+                } finally {
+                    results.close();
+                }
+            } catch (NamingException e) {
+                logger.error(null, e);
+                throw new RuntimeException(e);
+            }
+        } else {
+            users.addAll(getStaticUsersData());
+        }
+        final String[][] groupsData = getGroupsData();
+        for (int i = 0; i < groupsData.length ; i++ ) {
+            final String groupName = groupsData[i][0]; 
+            final Group group = new Group();
+            group.setGroupName(groupName);
+            group.setGroupUid("" + i);
+            groups.add(group);
+            final List<User> groupUsers = new ArrayList<User>();
+            for (int j = 1; j < groupsData[i].length; j++) {
+                groupUsers.add(getUserByUid(groupsData[i][j]));
+            }
+            groupWithUsers.put(group.getGroupUid(), groupUsers);
+        }
+        // fill children
+        final Child kaisa = new Child("kaisa.kuntalainen", "kaisa.kuntalainen");
+        kaisa.setFirstname("kaisa");
+        kaisa.setLastname("kuntalainen");
+        kaisa.setParents(Arrays.asList(getUserByUid("kirsi.kuntalainen"), getUserByUid("kalle.kuntalainen")));
+        final Child kauko = new Child("kauko.kuntalainen", "kauko.kuntalainen");
+        kauko.setFirstname("kauko");
+        kauko.setLastname("kuntalainen");
+        kauko.setParents(Arrays.asList(getUserByUid("kirsi.kuntalainen"), getUserByUid("keijo.keinonen")));
+        children.add(kaisa);
+        children.add(kauko);
+    }
+
+    private String[][] getGroupsData() {
+        if (dirContext == null) {
+            return getStaticGroupsData();
+        }
+        try {
+            final List<List<String>> result = new ArrayList<List<String>>();
+            SearchControls controls = new SearchControls();
+            controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+            final NamingEnumeration<SearchResult> results = dirContext.search("", "(objectclass=groupOfNames)", controls);
+            try {
+                while (results.hasMore()) {
+                    final SearchResult searchResult = results.next();
+                    final Attributes attributes = searchResult.getAttributes();
+
+                    final Pattern pattern = Pattern.compile("cn=([^,]+)\\,");
+                    
+                    final List<String> groupWithUserNames = new ArrayList<String>();
+                    groupWithUserNames.add(getAttributeValue(attributes, "cn"));
+                    
+                    final Attribute attribute = attributes.get("member");
+                    for (int i = 0; i < attribute.size(); i++) {
+                        final String member = (String)attribute.get(i);
+                        final Matcher matcher = pattern.matcher(member);
+                        if (matcher.find()) {
+                            final String ldapName = matcher.group(1);
+                            if (isUserExistsByUid(ldapName)) {
+                                groupWithUserNames.add(ldapName);
+                            }
+                        } else {
+                            logger.info("Can't get user uid: " + member);
+                        }
+                    }
+                    if (groupWithUserNames.size() > 1) {
+                        result.add(groupWithUserNames);
+                    } else {
+                        logger.info("Empty group, skipped: " + groupWithUserNames);
+                    }
+                }
+                final String[][] groupData = new String[result.size()][];
+                if (result.size() > 0) {
+                    for (int i = 0; i < result.size(); i++) {
+                        groupData[i] = result.get(i).toArray(new String[result.get(i).size()]);
+                    }
+                }
+                return groupData;
+            } finally {
+                results.close();
+            }
+        } catch (NamingException e) {
+            logger.error(null, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String[][] getStaticGroupsData() {
+        final String[][] groupsData = {
+                {
+                    "Oravat",
+                    "kirsi.kuntalainen",
+                    "kalle.kuntalainen",
+                    "liisa.lahtinen"
+                },
+                {
+                    "Siilit",
+                    "sami.salminen",
+                    "sanni.suhonen",
+                    "sulo.simonen"
+                },
+                {
+                    "Esimerkkikoulun luokan 1C huoltajat",
+                    "kalle.kuntalainen",
+                    "kirsi.kuntalainen",
+                    "keijo.keinonen"
+                }
+//                ,
+//                {
+//                    "Virkailijat",
+//                    "ville.virkamies",
+//                    "Anna Karkkainen",
+//                    "Asko Lippo",
+//                    "Eeva-Riitta Pirhonen",
+//                    "Jaakko Rekola",
+//                    "Jarmo Hallikainen",
+//                    "Juhani Heikka",
+//                    "Krista Piippo",
+//                    "Marjukka Saarijarvi",
+//                    "Marja Kanerva",
+//                    "Marko Monni",
+//                    "Marko Tanska",
+//                    "Minna Saario",
+//                    "Niina Kuisma",
+//                    "Pekka Kortelainen",
+//                    "Riitta Viitala",
+//                    "Tarja Miikkulainen",
+//                    "Ulla Soukainen",
+//                    "Vesa Komonen",
+//                    "Ville-Veikko Ahonen"
+//                }
+        };
+        return groupsData;
+    }
+
+    private String getAttributeValue(final Attributes attributes, final String attrName) throws NamingException {
+        final Attribute attr = attributes.get(attrName);
+        if (attr != null) {
+            return (String) attr.get();
+        }
+        return null;
+    }
     
     public String getSsnByLdapName(final String username) {
         try {
@@ -180,7 +389,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         return "unknown";
     }
     
-    private static User getUserByUid(final String userUid) {
+    private  User getUserByUid(final String userUid) {
         for (final User user : users ) {
             if (user.getUid().equalsIgnoreCase(userUid) ) {
                 return user;
@@ -189,7 +398,16 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         throw new IllegalArgumentException("User with uid " + userUid + " is not found.");
     }
     
-    private static Child getChildByUid(final String childUid) {
+    private boolean isUserExistsByUid(final String userUid) {
+        for (final User user : users ) {
+            if (user.getUid().equalsIgnoreCase(userUid) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private  Child getChildByUid(final String childUid) {
         for (final Child child : children ) {
             if (child.getUid().equalsIgnoreCase(childUid) ) {
                 return child;
@@ -198,7 +416,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         throw new IllegalArgumentException("User with uid " + childUid + " is not found.");
     }
 
-    private static List<Child> getChildrenByParentUid(final String parentUid) {
+    private  List<Child> getChildrenByParentUid(final String parentUid) {
         final List<Child> result = new ArrayList<Child>();
         for (final Child child : children ) {
             for (final User parent : child.getParents()) {
@@ -296,6 +514,24 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
             }
         }
         return result;
+    }
+    
+    @Override
+    public String getUserUid(final String ssn) {
+        if (ssn == null || ssn.trim().isEmpty()) {
+            return null;
+        }
+        
+        final List<User> users = searchUsers(ssn, 1);
+        if (users == null || users.isEmpty()) {
+            logger.info("Users not found by by uniq id: " + ssn);
+            return ssn;
+        } else if (users.size() > 1) {
+            logger.warn("Found many users by the same uniq id: " + ssn);
+            return ssn;
+        } else {
+            return users.get(0).getUid();
+        }
     }
 
     private boolean checkUserBySearchString(String searchString, final User user) {

@@ -1,6 +1,5 @@
 package fi.arcusys.koku.kv.soa;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
-import fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

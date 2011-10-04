@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.service.datamodel;
 import java.util.Date;
 
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -11,12 +13,14 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class InformationRequestReply {
     private Date replyCreatedDate;
-    private InformationReplyStatus replyStatus;
     private String replyDescription;
     private String informationDetails;
     private String additionalReplyInfo;
     private String attachmentURL;
     private InformationReplyAccessType accessType;
+
+    @Enumerated(EnumType.STRING)
+    private InformationReplyStatus replyStatus;
 
     /**
      * @return the createdDate

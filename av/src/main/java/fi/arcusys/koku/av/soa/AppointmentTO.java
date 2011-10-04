@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

@@ -1,6 +1,5 @@
 package fi.arcusys.koku.kv.soa;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,7 +11,8 @@ public enum QuestionType {
 
 	YES_NO(fi.arcusys.koku.common.service.datamodel.QuestionType.YES_NO_QUESTION),
 	FREE_TEXT(fi.arcusys.koku.common.service.datamodel.QuestionType.FREE_TEXT_QUESTION), 
-	MULTIPLE_CHOICE(fi.arcusys.koku.common.service.datamodel.QuestionType.MULTIPLE_CHOICE)
+	MULTIPLE_CHOICE(fi.arcusys.koku.common.service.datamodel.QuestionType.MULTIPLE_CHOICE),
+    CALENDAR(fi.arcusys.koku.common.service.datamodel.QuestionType.CALENDAR)
 	;
 
 	private final fi.arcusys.koku.common.service.datamodel.QuestionType dmQuestionType;

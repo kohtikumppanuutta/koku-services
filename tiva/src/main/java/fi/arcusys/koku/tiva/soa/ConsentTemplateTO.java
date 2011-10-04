@@ -1,13 +1,10 @@
 package fi.arcusys.koku.tiva.soa;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.jws.WebService;
 
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;

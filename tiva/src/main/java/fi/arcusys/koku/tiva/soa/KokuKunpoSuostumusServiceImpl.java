@@ -1,12 +1,12 @@
 package fi.arcusys.koku.tiva.soa;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -24,6 +24,7 @@ import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 @WebService(serviceName = "KokuKunpoSuostumusService", portName = "KokuKunpoSuostumusServicePort", 
         endpointInterface = "fi.arcusys.koku.tiva.soa.KokuKunpoSuostumusService",
         targetNamespace = "http://soa.tiva.koku.arcusys.fi/")
+@Interceptors(KokuSuostumusInterceptor.class)
 public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService {
 
     private final static Logger logger = LoggerFactory.getLogger(KokuKunpoSuostumusServiceImpl.class);

@@ -3,11 +3,14 @@ package fi.arcusys.koku.tiva.soa;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fi.arcusys.koku.tiva.service.InformationRequestServiceFacade;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -21,15 +24,16 @@ public class KokuTietopyyntoProcessingServiceImpl implements KokuTietopyyntoProc
 
     private final static Logger logger = LoggerFactory.getLogger(KokuTietopyyntoProcessingServiceImpl.class);
     
+    @EJB
+    private InformationRequestServiceFacade serviceFacade;
+    
     /**
      * @param request
      * @return
      */
     @Override
     public Long createInformationRequest(InformationRequestTO request) {
-        // TODO Auto-generated method stub
-        logger.info("createInformationRequest: " + request);
-        return 123L;
+        return serviceFacade.createInformationRequest(request);
     }
 
     /**
@@ -39,8 +43,7 @@ public class KokuTietopyyntoProcessingServiceImpl implements KokuTietopyyntoProc
      */
     @Override
     public void approveRequest(InformationRequestReplyTO reply) {
-        // TODO Auto-generated method stub
-        logger.info("approveRequest: " + reply.getRequestId() + ", " + reply.getCategoryIds() + ", " + reply.getInformationDetails());
+        serviceFacade.approveRequest(reply);
     }
 
     /**
@@ -48,8 +51,7 @@ public class KokuTietopyyntoProcessingServiceImpl implements KokuTietopyyntoProc
      */
     @Override
     public void declineRequest(Long requestId, final String explanation) {
-        // TODO Auto-generated method stub
-        logger.info("declineRequest: " + requestId + ", explanation: " + explanation);
+        serviceFacade.declineRequest(requestId, explanation);
     }
 
     /**
