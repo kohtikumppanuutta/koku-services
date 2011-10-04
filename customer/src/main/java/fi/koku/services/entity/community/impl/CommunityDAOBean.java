@@ -13,6 +13,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import fi.koku.KoKuFaultException;
+
 /**
  * CommunityDAOBean.
  * 
@@ -85,19 +87,22 @@ public class CommunityDAOBean implements CommunityDAO {
 
   @Override
   public Collection<Community> queryCommunities(CommunityQueryCriteria qc) {
-    // JPQL generates an unnecessary join in the SQL subquery.
-    StringBuilder jpql = new StringBuilder("SELECT c FROM Community c " +
-        "JOIN FETCH c.members " +
-        "WHERE c IN (" +
-        "SELECT cm.community FROM CommunityMember cm WHERE cm.memberPic = :memberPic" +
-        ")"
-        );
+    StringBuilder jpql = new StringBuilder("SELECT c FROM Community c "
+        + "JOIN FETCH c.members cm WHERE cm.memberPic IN (:memberPics)");
     if(qc.getCommunityType() != null) {
       jpql.append(" AND c.type = :type");
     }
     Query q = em.createQuery(jpql.toString());
-    q.setParameter("memberPic", qc.getMemberPic());
-    if(qc.getCommunityType() != null) {
+    
+    if (qc.getMemberPics() != null && qc.getMemberPics().size() > 0) {
+      q.setParameter("memberPics", qc.getMemberPics());
+    } else {
+      // MemberPics are mandatory
+      CommunityServiceErrorCode errorCode = CommunityServiceErrorCode.NO_MEMBER_PICS_QUERY_CRITERIA;
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
+    }
+    
+    if (qc.getCommunityType() != null) {
       q.setParameter("type", qc.getCommunityType());
     }
     

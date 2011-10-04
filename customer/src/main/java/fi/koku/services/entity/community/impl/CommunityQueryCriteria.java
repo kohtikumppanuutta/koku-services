@@ -1,16 +1,18 @@
 package fi.koku.services.entity.community.impl;
 
+import java.util.Set;
+
 /**
  * Community query criteria.
  * 
  * @author aspluma
  */
 public class CommunityQueryCriteria {
-  private String memberPic;
+  private Set<String> memberPics;
   private String communityType;
 
-  public CommunityQueryCriteria(String memberPic, String communityType) {
-    this.memberPic = memberPic;
+  public CommunityQueryCriteria(Set<String> memberPics, String communityType) {
+    this.memberPics = memberPics;
     this.communityType = communityType;
   }
   
@@ -18,7 +20,7 @@ public class CommunityQueryCriteria {
     return communityType;
   }
 
-  public String getMemberPic() {
-    return memberPic;
+  public Set<String> getMemberPics() {
+    return memberPics;
   }
 }

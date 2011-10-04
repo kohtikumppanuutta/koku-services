@@ -2,6 +2,7 @@ package fi.koku.services.entity.community.impl;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
@@ -93,7 +94,8 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
 
   @Override
   public CommunitiesType opQueryCommunities(CommunityQueryCriteriaType query, AuditInfoType auditHeader) {
-    CommunityQueryCriteria qc = new CommunityQueryCriteria(query.getMemberPic(), query.getCommunityType());
+    CommunityQueryCriteria qc = new CommunityQueryCriteria(
+        query.getMemberPics() != null ? new HashSet<String>(query.getMemberPics().getMemberPic()) : new HashSet<String>(), query.getCommunityType());
     Collection<Community> comms = communityService.query(qc);
     CommunitiesType ret = new CommunitiesType();
     for(Community c : comms) {
