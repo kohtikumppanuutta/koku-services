@@ -96,6 +96,8 @@ public class CommunityServiceBeanIT {
     criteria.setMemberPics(pics);
     CommunitiesType communities = communityService.opQueryCommunities(criteria, audit);
     assertThat(communities.getCommunity().size(), is(2));
+    assertThat(getCommunityType(communities, community1Id).getMembers().getMember().size(), is(2));
+    assertThat(getCommunityType(communities, community3Id).getMembers().getMember().size(), is(2));    
     assertThat(communitiesContains(communities, community1Id, community3Id), is(true));
     
     pics = new MemberPicsType();
@@ -126,6 +128,15 @@ public class CommunityServiceBeanIT {
       communityIds.add(community.getId());
     }
     return communityIds.containsAll(Arrays.asList(expectedCommunityIds));
+  }
+  
+  private CommunityType getCommunityType(CommunitiesType communities, String communityId) {
+    for (CommunityType community : communities.getCommunity()) {
+      if (community.getId().equals(communityId)) {
+        return community;
+      }
+    }
+    return null;
   }
   
   private CommunityServicePortType getCommunityServicePort() {

@@ -87,8 +87,13 @@ public class CommunityDAOBean implements CommunityDAO {
 
   @Override
   public Collection<Community> queryCommunities(CommunityQueryCriteria qc) {
-    StringBuilder jpql = new StringBuilder("SELECT c FROM Community c "
-        + "JOIN FETCH c.members cm WHERE cm.memberPic IN (:memberPics)");
+    // JPQL generates an unnecessary join in the SQL subquery.
+    StringBuilder jpql = new StringBuilder("SELECT c FROM Community c " +
+        "JOIN FETCH c.members " +
+        "WHERE c IN (" +
+        "SELECT cm.community FROM CommunityMember cm WHERE cm.memberPic IN (:memberPics)" +
+        ")"
+        );    
     if(qc.getCommunityType() != null) {
       jpql.append(" AND c.type = :type");
     }
