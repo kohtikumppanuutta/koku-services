@@ -2,6 +2,7 @@ package fi.arcusys.koku.tiva.service.impl;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,6 +60,18 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     
     private static final String NEW_CONSENT_REQUEST_BODY = "Sinulle on toimenpidepyyntö \"{0}\".";
     private static final String NEW_CONSENT_REQUEST_SUBJECT = "Uusi toimenpidepyyntö";
+
+    private static final String CONSENT_GIVEN_BODY = "Suostumus on antanut: \"{0}\".";
+    private static final String CONSENT_GIVEN_SUBJECT = "Suostumus on antanut";
+
+    private static final String CONSENT_DECLINED_BODY = "Suostumus on evännyt: \"{0}\".";
+    private static final String CONSENT_DECLINED_SUBJECT = "Suostumus on evännyt";
+
+    private static final String CONSENT_REVOKED_BODY = "Suostumus on mitätöinyt: \"{0}\".";
+    private static final String CONSENT_REVOKED_SUBJECT = "Suostumus on mitätöinyt";
+
+    private static final String CONSENT_UPDATED_BODY = "Suostumus on muokkanut: \"{0}\".";
+    private static final String CONSENT_UPDATED_SUBJECT = "Suostumus on muokkanut";
 
     private static final Logger logger = LoggerFactory.getLogger(ConsentServiceFacadeImpl.class); 
 
@@ -330,6 +343,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         final User replier = userDao.getOrCreateUser(userUid);
         
         doGiveConsent(consentId, actions, validTill, comment, consent, replier);
+        notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_GIVEN_SUBJECT, Collections.singletonList(consent.getCreator().getUid()), 
+                MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_GIVEN_BODY, new Object[] {consent.getTemplate().getTitle()}));
     }
 
     private void doGiveConsent(Long consentId, List<ActionPermittedTO> actions,
@@ -385,6 +400,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             oldReply.setStatus(ConsentReplyStatus.Declined);
 
             consentReplyDao.update(oldReply);
+            notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_DECLINED_SUBJECT, Collections.singletonList(consent.getCreator().getUid()), 
+                    MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_DECLINED_BODY, new Object[] {consent.getTemplate().getTitle()}));
         } else {
             final ConsentReply reply = new ConsentReply();
             reply.setConsent(consent);
@@ -393,6 +410,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             reply.setStatus(ConsentReplyStatus.Declined);
 
             consentReplyDao.create(reply);
+            notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_DECLINED_SUBJECT, Collections.singletonList(consent.getCreator().getUid()), 
+                    MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_DECLINED_BODY, new Object[] {consent.getTemplate().getTitle()}));
         }
     }
 
@@ -474,6 +493,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         reply.setComment(comment);
         
         consentReplyDao.update(reply);
+        notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_UPDATED_SUBJECT, Collections.singletonList(reply.getConsent().getCreator().getUid()), 
+                MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_UPDATED_BODY, new Object[] {reply.getConsent().getTemplate().getTitle()}));
     }
 
     /**
@@ -528,6 +549,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         reply.setStatus(ConsentReplyStatus.Revoked);
         
         consentReplyDao.update(reply);
+        notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_REVOKED_SUBJECT, Collections.singletonList(consent.getCreator().getUid()), 
+                MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_REVOKED_BODY, new Object[] {consent.getTemplate().getTitle()}));
     }
 
     /**

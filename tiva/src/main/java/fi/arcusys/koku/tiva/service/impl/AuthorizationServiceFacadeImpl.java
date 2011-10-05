@@ -43,6 +43,18 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
     private final static String AUTHORIZATION_CREATED_SUBJECT = "Uusi valtakirja";
     private final static String AUTHORIZATION_CREATED_BODY = "Sinulle on uusi valtakirja kumppanuustililla.";
     
+    private final static String AUTHORIZATION_APPROVED_SUBJECT = "Valtakirja on hyväksynnyt";
+    private final static String AUTHORIZATION_APPROVED_BODY = "Valtakirja on hyväksynnyt: \"{0}\".";
+
+    private final static String AUTHORIZATION_DECLINED_SUBJECT = "Valtakirja on hylkännyt";
+    private final static String AUTHORIZATION_DECLINED_BODY = "Valtakirja on hylkännyt: \"{0}\".";
+
+    private final static String AUTHORIZATION_UPDATED_SUBJECT = "Valtakirja on muokkanut";
+    private final static String AUTHORIZATION_UPDATED_BODY = "Valtakirja on muokkanut: \"{0}\".";
+
+    private final static String AUTHORIZATION_REVOKED_SUBJECT = "Valtakirja on mitätöinyt";
+    private final static String AUTHORIZATION_REVOKED_BODY = "Valtakirja on mitätöinyt: \"{0}\".";
+
     private final static Logger logger = LoggerFactory.getLogger(AuthorizationServiceFacadeImpl.class);
 
     @EJB
@@ -216,10 +228,14 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
      */
     @Override
     public void approveAuthorization(long authorizationId, String replierUid, String comment) {
-        replyToAuthorization(authorizationId, replierUid, comment, AuthorizationReplyStatus.Approved);
+        final Authorization authorization = replyToAuthorization(authorizationId, replierUid, comment, AuthorizationReplyStatus.Approved);
+        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_APPROVED_SUBJECT, 
+                Collections.singletonList(authorization.getFromUser().getUid()), 
+                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_APPROVED_BODY, 
+                        new Object[] {authorization.getTemplate().getName()}));
     }
 
-    private void replyToAuthorization(long authorizationId, String replierUid,
+    private Authorization replyToAuthorization(long authorizationId, String replierUid,
             String comment, final AuthorizationReplyStatus replyStatus) {
         final Authorization authorization = loadAuthorization(authorizationId);
 
@@ -234,7 +250,7 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         
         authorization.setStatus(replyStatus);
         authorization.setReplyComment(comment);
-        authorizationDAO.update(authorization);
+        return authorizationDAO.update(authorization);
     }
 
     /**
@@ -244,7 +260,11 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
      */
     @Override
     public void declineAuthorization(long authorizationId, String replierUid, String comment) {
-        replyToAuthorization(authorizationId, replierUid, comment, AuthorizationReplyStatus.Declined);
+        final Authorization authorization = replyToAuthorization(authorizationId, replierUid, comment, AuthorizationReplyStatus.Declined);
+        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_DECLINED_SUBJECT, 
+                Collections.singletonList(authorization.getFromUser().getUid()), 
+                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_DECLINED_BODY, 
+                        new Object[] {authorization.getTemplate().getName()}));
     }
 
     /**
@@ -260,6 +280,11 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         authorization.setValidTill(getSafeDate(endDate));
         authorization.setComment(comment);
         authorizationDAO.update(authorization);
+        
+        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_UPDATED_SUBJECT, 
+                Collections.singletonList(authorization.getToUser().getUid()), 
+                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_UPDATED_BODY, 
+                        new Object[] {authorization.getTemplate().getName()}));
     }
 
     private Authorization loadAuthorizationForUpdate(long authorizationId, String senderUid) {
@@ -282,6 +307,11 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         
         authorization.setStatus(AuthorizationReplyStatus.Revoked);
         authorizationDAO.update(authorization);
+
+        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_REVOKED_SUBJECT, 
+                Collections.singletonList(authorization.getToUser().getUid()), 
+                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_REVOKED_BODY, 
+                        new Object[] {authorization.getTemplate().getName()}));
     }
 
     /**

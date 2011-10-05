@@ -1,6 +1,8 @@
 package fi.arcusys.koku.tiva.service.impl;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +14,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.InformationRequestDAO;
+import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.InformationReplyAccessType;
 import fi.arcusys.koku.common.service.datamodel.InformationReplyStatus;
@@ -37,12 +40,24 @@ import fi.arcusys.koku.tiva.soa.InformationRequestTO;
 @Stateless
 public class InformationRequestServiceFacadeImpl implements InformationRequestServiceFacade {
 
+    private final static String INFORMATION_REQUEST_CREATED_SUBJECT = "Uusi tietopyyntö";
+    private final static String INFORMATION_REQUEST_CREATED_BODY = "Sinulle on uusi tietopyyntö: \"{0}\".";
+    
+    private final static String INFORMATION_REQUEST_APPROVED_SUBJECT = "Tietopyyntö on hyväksynnyt";
+    private final static String INFORMATION_REQUEST_APPROVED_BODY = "Tietopyyntö on hyväksynnyt: \"{0}\".";
+
+    private final static String INFORMATION_REQUEST_REJECTED_SUBJECT = "Tietopyyntö on hylkännyt";
+    private final static String INFORMATION_REQUEST_REJECTED_BODY = "Tietopyyntö on hylkännyt: \"{0}\".";
+
     @EJB
     private InformationRequestDAO informationRequestDao;
     
     @EJB
     private UserDAO userDao; 
     
+    @EJB
+    private KokuSystemNotificationsService notificationService;
+
     /**
      * @param request
      * @return
@@ -67,7 +82,14 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         request.setTargetPerson(userDao.getOrCreateUser(requestTO.getTargetPersonUid()));
         request.setTitle(requestTO.getTitle());
         request.setValidTill(getSafeDate(requestTO.getValidTill()));
-        return informationRequestDao.create(request).getId();
+        final InformationRequest result = informationRequestDao.create(request);
+        
+        notificationService.sendNotification(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_CREATED_SUBJECT, 
+                Collections.singletonList(request.getReceiver().getUid()), 
+                MessageFormat.format(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_CREATED_BODY, 
+                        new Object[] {request.getDescription()}));
+
+        return result.getId();
     }
 
     private Date getSafeDate(XMLGregorianCalendar calendar) {
@@ -104,6 +126,11 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         request.setCategories(categories);
         request.setReply(reply);
         informationRequestDao.update(request);
+
+        notificationService.sendNotification(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_APPROVED_SUBJECT, 
+                Collections.singletonList(request.getSender().getUid()), 
+                MessageFormat.format(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_APPROVED_BODY, 
+                        new Object[] {request.getDescription()}));
     }
 
     private InformationRequest loadRequestForReply(final Long requestId) {
@@ -135,6 +162,11 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         reply.setReplyDescription(explanation);
         request.setReply(reply);
         informationRequestDao.update(request);
+
+        notificationService.sendNotification(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_REJECTED_SUBJECT, 
+                Collections.singletonList(request.getSender().getUid()), 
+                MessageFormat.format(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_REJECTED_BODY, 
+                        new Object[] {request.getDescription()}));
     }
 
     /**
