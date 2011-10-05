@@ -13,13 +13,35 @@ import javax.ejb.Local;
 public interface KksServiceDAO {
 
   /**
-   * Gets collections for the customer
+   * Gets customer (pic) collections <b>without</b> checking authorization (for
+   * customers parent).
    * 
    * @param pic
    *          of the customer
    * @return customer collections
    */
-  List<KksCollection> getCollections(String pic);
+  List<KksCollection> getChildCollectionsForParent(String pic);
+
+  /**
+   * Gets customer (pic) collections where user is authorized to see the
+   * collection (either by collection owner or via collection registers)
+   * 
+   * @param pic
+   * @param user
+   * @param registers
+   *          that are allowed for the user
+   * @return collections that are authorized for the user
+   */
+  public List<KksCollection> getAuthorizedCollections(String pic, String user, List<String> registers);
+
+  /**
+   * Gets customer (pic) collections where user is the creator of the collection
+   * 
+   * @param pic
+   * @param user
+   * @return collections that are authorized for the user
+   */
+  public List<KksCollection> getAuthorizedCollections(String pic, String user);
 
   /**
    * Gets collection
@@ -44,9 +66,10 @@ public interface KksServiceDAO {
    * 
    * @param creation
    *          parameters
+   * @param user
    * @return entry id
    */
-  Long insertEntry(KksEntryCreation creation);
+  Long insertEntry(String user, KksEntryCreation creation);
 
   /**
    * Deletes entry
@@ -59,12 +82,13 @@ public interface KksServiceDAO {
   /**
    * Updates collection status
    * 
+   * @param user
    * @param collection
    *          that is updated
    * @param status
    *          new status
    */
-  void updateCollectionStatus(String collection, String status);
+  void updateCollectionStatus(String user, String collection, String status);
 
   /**
    * Gets tags
@@ -92,26 +116,37 @@ public interface KksServiceDAO {
   /**
    * Queries entries
    * 
+   * @param user
    * @param criteria
    *          of the query
    * @return list of collections containing the matching entries
    */
-  List<KksCollection> query(KksQueryCriteria criteria);
+  List<KksCollection> query(String user, KksQueryCriteria criteria);
 
   /**
    * Updates collection
    * 
    * @param collection
+   * @param user
    */
-  void update(KksCollection collection);
+  void update(String user, KksCollection collection);
 
   /**
    * Copies and insert new version from given source
    * 
    * @param source
    *          for the version
+   * @param user
    * @return id of the new version
    */
-  Long copyAndInsert(KksCollectionCreation source);
+  Long copyAndInsert(String user, KksCollectionCreation source);
+
+  /**
+   * Gets registers that are used in given collection class
+   * 
+   * @param classId
+   * @return collection registers
+   */
+  List<String> getCollectionClassRegisters(int classId);
 
 }

@@ -1,6 +1,7 @@
 package fi.koku.services.entity.kks.impl;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Entity for kks entity value
@@ -38,6 +41,13 @@ public class KksValue implements Serializable {
   @JoinColumn(name = "entry_id")
   private KksEntry entry;
 
+  @Column(nullable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date modified;
+
+  @Column
+  private String modifier;
+
   public Long getId() {
     return id;
   }
@@ -62,4 +72,25 @@ public class KksValue implements Serializable {
     this.entry = entry;
   }
 
+  public Date getModified() {
+    return modified;
+  }
+
+  public void setModified(Date modified) {
+    this.modified = modified;
+  }
+
+  public String getModifier() {
+    return modifier;
+  }
+
+  public void setModifier(String modifier) {
+    this.modifier = modifier;
+  }
+
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("id: ").append(getId()).append(" value:").append(getValue());
+    return sb.toString();
+  }
 }

@@ -31,12 +31,14 @@ import javax.persistence.Version;
 @Entity
 @NamedQueries({
     @NamedQuery(name = KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_PIC, query = "FROM KksCollection k WHERE k.customer =:pic"),
-    @NamedQuery(name = KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_IDS, query = "FROM KksCollection k WHERE k.id IN (:ids)") })
+    @NamedQuery(name = KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_IDS, query = "FROM KksCollection k WHERE k.id IN (:ids)"),
+    @NamedQuery(name = KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_AND_CREATOR, query = "FROM KksCollection k WHERE k.creator =:creator AND k.customer =:customer") })
 @Table(name = "kks_collection")
 public class KksCollection implements Serializable {
 
   public static final String NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_PIC = "getAllCollectionsByPic";
   public static final String NAMED_QUERY_GET_COLLECTIONS_BY_IDS = "getAllCollectionsByIds";
+  public static final String NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_AND_CREATOR = "getAllCollectionsByCustomerAndCreator";
 
   private static final long serialVersionUID = 8064946506296337381L;
 

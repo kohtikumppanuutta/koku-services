@@ -11,50 +11,55 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import fi.koku.services.entity.userinfo.v1.model.Registry;
+
 @Stateless
 public class KksServiceDAOBean implements KksServiceDAO {
 
-  @PersistenceContext
-  private EntityManager em;
   public static final String ACTIVE = "ACTIVE";
   public static final String LOCKED = "LOCKED";
-  public static final String COMMENT_FIELD_LABEL = "kks.kehitysasia.kommentti";
+  public static final String COMMENT_FIELD_TAG = "kks.kehitysasia.kommentti";
 
+  @EJB
+  Authorization authorization;
+
+  @PersistenceContext
+  private EntityManager em;
+
+  @Override
   public List<KksCollectionClass> getCollectionClasses() {
     Query q = em.createNamedQuery(KksCollectionClass.NAMED_QUERY_GET_ALL_COLLECTION_CLASSES);
 
     @SuppressWarnings("unchecked")
     List<KksCollectionClass> list = q.getResultList();
 
-    // due to recursive reference between groups and subgroups, group mapping is
-    // hand made
-    // if this would have done via annotations, it would have made the
-    // insertions harder to make (ie: full group path should have been set
-    // inside
-    // single transaction)
+    // metadata loading is done manually
     Map<Integer, List<KksGroup>> groups = getRootGroupsMap();
     for (KksCollectionClass c : list) {
       c.setGroups(groups.get(c.getId()));
       Collections.sort(c.getGroups());
     }
-
     return list;
   }
 
+  @Override
   public KksCollectionClass getCollectionClass(int id) {
-
     return (KksCollectionClass) em.find(KksCollectionClass.class, id);
   }
 
+  /**
+   * Creates map from root groups (groups that don't have parent)
+   * 
+   * @return root group map
+   */
   private Map<Integer, List<KksGroup>> getRootGroupsMap() {
-    Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_GROUPS);
-
-    Query tags = em.createNamedQuery(KksTag.NAMED_QUERY_GET_TAGS_BY_IDS);
+    Query groups = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_GROUPS);
 
     Query classes = em.createNamedQuery(KksEntryClass.NAMED_QUERY_GET_ALL_ENTRY_CLASSES);
     @SuppressWarnings("unchecked")
@@ -73,7 +78,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     }
 
     @SuppressWarnings("unchecked")
-    List<KksGroup> list = (List<KksGroup>) q.getResultList();
+    List<KksGroup> list = (List<KksGroup>) groups.getResultList();
 
     Map<Integer, KksGroup> map = new LinkedHashMap<Integer, KksGroup>();
     Map<Integer, List<KksGroup>> collectionMap = new HashMap<Integer, List<KksGroup>>();
@@ -100,9 +105,28 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public List<KksCollection> getCollections(String pic) {
+  public List<KksCollection> getChildCollectionsForParent(String pic) {
     Query q = em.createNamedQuery(KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_PIC);
     q.setParameter("pic", pic);
+
+    @SuppressWarnings("unchecked")
+    List<KksCollection> list = (List<KksCollection>) q.getResultList();
+    return list;
+  }
+
+  public List<KksCollection> getAuthorizedCollections(String pic, String user, List<String> registers) {
+    Query q = em
+        .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:creator OR c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers)))");
+    q.setParameter("customer", pic).setParameter("creator", user).setParameter("registers", registers);
+
+    @SuppressWarnings("unchecked")
+    List<KksCollection> list = (List<KksCollection>) q.getResultList();
+    return list;
+  }
+
+  public List<KksCollection> getAuthorizedCollections(String pic, String user) {
+    Query q = em.createNamedQuery(KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_AND_CREATOR);
+    q.setParameter("creator", user).setParameter("customer", pic);
 
     @SuppressWarnings("unchecked")
     List<KksCollection> list = (List<KksCollection>) q.getResultList();
@@ -122,7 +146,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     k.setCustomer(creation.getCustomer());
     k.setCreated(new Date());
     k.setCreator(creation.getCreator());
-    k.setStatus("ACTIVE");
+    k.setStatus(ACTIVE);
     em.persist(k);
     return k.getId();
   }
@@ -148,6 +172,12 @@ public class KksServiceDAOBean implements KksServiceDAO {
     return list;
   }
 
+  /**
+   * Maps group to collection classes
+   * 
+   * @param collectionMap
+   * @param group
+   */
   private void mapGroupToCollectionClass(Map<Integer, List<KksGroup>> collectionMap, KksGroup group) {
     if (collectionMap.containsKey(group.getCollectionClassId())) {
       List<KksGroup> tmp = collectionMap.get(group.getCollectionClassId());
@@ -160,7 +190,10 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public Long insertEntry(KksEntryCreation creation) {
+  public Long insertEntry(String user, KksEntryCreation creation) {
+
+    KksCollection collection = em.find(KksCollection.class, creation.getCollectionId());
+    KksCollectionClass metadata = getCollectionClass(collection.getCollectionClass());
 
     if (creation.getId() == null) {
       @SuppressWarnings("unchecked")
@@ -170,14 +203,14 @@ public class KksServiceDAOBean implements KksServiceDAO {
           .setParameter("collectionId", creation.getCollectionId()).getResultList();
 
       if (!list.isEmpty()) {
-        return handleExistingEntryValue(creation, list.get(0));
+        return handleExistingEntryValue(user, collection, metadata, creation, list.get(0));
       }
 
       KksEntry e = new KksEntry();
       e.setCustomer(creation.getPic());
       e.setModified(new Date());
       e.setCreator(creation.getCreator());
-      e.setKksCollection(em.find(KksCollection.class, creation.getCollectionId()));
+      e.setKksCollection(collection);
       e.setEntryClassId(creation.getEntryClassId());
       List<KksValue> tmp = new ArrayList<KksValue>();
       creation.getValue().setEntry(e);
@@ -185,13 +218,15 @@ public class KksServiceDAOBean implements KksServiceDAO {
       e.setValues(tmp);
       em.persist(e);
 
+      Log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
+          creation.getValue());
       insertDefaultTags(creation, e);
 
       return e.getId();
 
     } else {
       KksEntry k = em.find(KksEntry.class, creation.getId());
-      return handleExistingEntryValue(creation, k);
+      return handleExistingEntryValue(user, collection, metadata, creation, k);
     }
   }
 
@@ -205,7 +240,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
     insertTags(ids, e.getId());
   }
 
-  private Long handleExistingEntryValue(KksEntryCreation creation, KksEntry e) {
+  private Long handleExistingEntryValue(String user, KksCollection collection, KksCollectionClass metadata,
+      KksEntryCreation creation, KksEntry e) {
     e.setCustomer(creation.getPic());
     e.setCreator(creation.getCreator());
     e.setModified(new Date());
@@ -214,11 +250,21 @@ public class KksServiceDAOBean implements KksServiceDAO {
       KksValue v = creation.getValue();
       v.setEntry(e);
       em.persist(v);
+
+      Log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
+          creation.getValue());
       return e.getId();
     } else {
       for (KksValue v : e.getValues()) {
         if (v.getId().equals(creation.getValue().getId())) {
+
+          Log.logValueUpdate(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e, v,
+              creation.getValue());
+
           v.setValue(creation.getValue().getValue());
+
+          // todo: tänne uudet arvot
+
         }
       }
     }
@@ -235,37 +281,25 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public void updateCollectionStatus(String collection, String status) {
+  public void updateCollectionStatus(String user, String collection, String status) {
     KksCollection k = getCollection(collection);
+    String old = k.getStatus();
+    KksCollectionClass metadata = getCollectionClass(k.getCollectionClass());
     k.setStatus(status);
     em.merge(k);
+    Log.logUpdate(k.getCustomer(), metadata.getTypeCode(), user, k.getName() + " changed status from " + old + " to "
+        + status);
   }
 
   @Override
-  public List<KksCollection> query(KksQueryCriteria criteria) {
+  public List<KksCollection> query(String user, KksQueryCriteria criteria) {
 
     List<String> tagNames = criteria.getTagNames();
     if (tagNames.size() == 0) {
-      return getCollections(criteria.getPic());
+      return new ArrayList<KksCollection>();
     }
 
-    StringBuilder tmp = new StringBuilder();
-
-    for (int i = 0; i < tagNames.size(); i++) {
-      String t = tagNames.get(i);
-      tmp.append(" name LIKE '%");
-      tmp.append(t);
-      tmp.append("%' ");
-      if ((i + 1) < tagNames.size()) {
-        tmp.append("AND");
-      }
-    }
-
-    StringBuilder qs = new StringBuilder();
-
-    qs.append("SELECT DISTINCT entry_id FROM kks_entry_tags WHERE tag_id IN (SELECT tag_id FROM kks_tag WHERE");
-    qs.append(tmp.toString());
-    qs.append(")");
+    StringBuilder qs = createQueryString(tagNames);
 
     @SuppressWarnings("unchecked")
     List<BigInteger> entryIds = em.createNativeQuery(qs.toString()).getResultList();
@@ -284,8 +318,16 @@ public class KksServiceDAOBean implements KksServiceDAO {
       return new ArrayList<KksCollection>();
     }
 
+    if (authorization.isParent(user, criteria.getPic())) {
+      return handleParentQuery(user, criteria, entryIdsList);
+    } else {
+      return handleAuthorizedQuery(user, criteria, entryIdsList);
+    }
+  }
+
+  private List<KksCollection> handleParentQuery(String user, KksQueryCriteria criteria, List<Long> entryIdsList) {
     Query entryQ = em.createNamedQuery(KksEntry.NAMED_QUERY_GET_ENTRIES_BY_IDS);
-    entryQ.setParameter("ids", entryIdsList);
+    entryQ.setParameter("customer", criteria.getPic()).setParameter("ids", entryIdsList);
 
     @SuppressWarnings("unchecked")
     List<KksEntry> entries = (List<KksEntry>) entryQ.getResultList();
@@ -294,11 +336,64 @@ public class KksServiceDAOBean implements KksServiceDAO {
       return new ArrayList<KksCollection>();
     }
 
-    Set<KksCollection> collectionIds = new HashSet<KksCollection>();
+    Set<KksCollection> tmpCollections = createCollectionSet(user, criteria.getPic(), entries);
+
+    List<KksCollection> collections = new ArrayList<KksCollection>(tmpCollections);
+    return collections;
+  }
+
+  @Override
+  public List<String> getCollectionClassRegisters(int classId) {
+
+    Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_REGISTERS).setParameter("id", classId);
+
+    @SuppressWarnings("unchecked")
+    List<String> tmp = q.getResultList();
+    return tmp;
+  }
+
+  private List<KksCollection> handleAuthorizedQuery(String user, KksQueryCriteria criteria, List<Long> entryIdsList) {
+    List<String> registrys = authorization.getAuthorizedRegistryNames(user);
+    Query q = em
+        .createQuery("SELECT DISTINCT c.id FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:creator OR c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers)))");
+    q.setParameter("customer", criteria.getPic()).setParameter("creator", user).setParameter("registers", registrys);
+
+    @SuppressWarnings("unchecked")
+    List<Integer> tmp = q.getResultList();
+
+    if (tmp.size() > 0) {
+      Query entryQ = em.createNamedQuery(KksEntry.NAMED_QUERY_GET_ENTRIES_BY_IDS_WITH_COLLECTIONS);
+      entryQ.setParameter("customer", criteria.getPic()).setParameter("ids", entryIdsList).setParameter("cIds", tmp);
+
+      @SuppressWarnings("unchecked")
+      List<KksEntry> entries = (List<KksEntry>) entryQ.getResultList();
+
+      if (entries.isEmpty()) {
+        return new ArrayList<KksCollection>();
+      }
+
+      Set<KksCollection> tmpCollections = createCollectionSet(user, criteria.getPic(), entries);
+
+      List<KksCollection> collections = new ArrayList<KksCollection>(tmpCollections);
+      return collections;
+    }
+    return new ArrayList<KksCollection>();
+  }
+
+  /**
+   * Creates set of collections from given entry list
+   * 
+   * @param entries
+   *          containing collections
+   * @return set of collections used in entries
+   */
+  private Set<KksCollection> createCollectionSet(String user, String customer, List<KksEntry> entries) {
+    Set<KksCollection> tmpCollections = new HashSet<KksCollection>();
     Map<Long, List<KksEntry>> entryMap = new HashMap<Long, List<KksEntry>>();
+    boolean parent = authorization.isParent(user, customer);
 
     for (KksEntry e : entries) {
-      collectionIds.add(e.getKksCollection());
+      tmpCollections.add(e.getKksCollection());
 
       if (entryMap.containsKey(e.getKksCollection().getId())) {
         List<KksEntry> tmpList = entryMap.get(e.getKksCollection().getId());
@@ -310,21 +405,39 @@ public class KksServiceDAOBean implements KksServiceDAO {
       }
     }
 
-    for (KksCollection c : collectionIds) {
+    for (KksCollection c : tmpCollections) {
       c.setEntries(entryMap.get(c.getId()));
     }
+    return tmpCollections;
+  }
 
-    @SuppressWarnings("unchecked")
-    List<KksCollection> collections = new ArrayList<KksCollection>(collectionIds);
-    return collections;
+  private StringBuilder createQueryString(List<String> tagNames) {
+    StringBuilder tmp = new StringBuilder();
+
+    for (int i = 0; i < tagNames.size(); i++) {
+      String t = tagNames.get(i);
+      tmp.append(" name LIKE '%");
+      tmp.append(t);
+      tmp.append("%' ");
+      if ((i + 1) < tagNames.size()) {
+        tmp.append("AND");
+      }
+    }
+
+    StringBuilder qs = new StringBuilder();
+
+    qs.append("SELECT DISTINCT entry_id FROM kks_entry_tags WHERE tag_id IN (SELECT tag_id FROM kks_tag WHERE");
+    qs.append(tmp.toString());
+    qs.append(")");
+    return qs;
   }
 
   @Override
-  public void update(KksCollection collection) {
+  public void update(String user, KksCollection collection) {
 
     KksCollection tmp = em.find(KksCollection.class, collection.getId());
 
-    syncFields(collection, tmp);
+    syncFields(user, collection, tmp);
 
     tmp.setNextVersion(collection.getNextVersion());
     tmp.setPrevVersion(collection.getPrevVersion());
@@ -393,6 +506,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     }
 
     for (KksEntry e : newCollection.getEntries()) {
+      // handle tag deletion & insertion manually
       e.clearTags();
       removeTags(e.getId());
 
@@ -402,44 +516,20 @@ public class KksServiceDAOBean implements KksServiceDAO {
       } else {
         insertTags(entryTagMap.get(e.getId()), e.getId());
       }
-
-      // TODO: somehow this is not working, only some of the tags is really
-      // inserted
-      // eventhough all of them is set in here
-      // List<KksTag> tagList = new ArrayList<KksTag>();
-      // for (Integer i : entryTagMap.get(e.getId())) {
-      // tagList.add(tagMap.get(i));
-      // }
-      // e.setTags(tagList);
     }
   }
 
-  private void syncFields(KksCollection collection, KksCollection tmp) {
-    Map<Long, KksEntry> newEntries = new HashMap<Long, KksEntry>();
-    Map<Long, KksEntry> oldEntries = new HashMap<Long, KksEntry>();
-
-    Map<Long, KksValue> newValues = new HashMap<Long, KksValue>();
-    Map<Long, KksValue> oldValues = new HashMap<Long, KksValue>();
-
-    Map<Integer, KksTag> newTags = new HashMap<Integer, KksTag>();
-    Map<Integer, KksTag> oldTags = new HashMap<Integer, KksTag>();
-
-    createEntriesMap(collection, newEntries, newValues, newTags);
-    createEntriesMap(tmp, oldEntries, oldValues, oldTags);
-
-    combineEntries(collection, tmp, oldEntries, oldValues, oldTags);
-    deleteRemovedFields(tmp, newEntries, newValues, newTags);
+  private void syncFields(String user, KksCollection newCollection, KksCollection oldCollection) {
+    Map<String, Registry> registers = authorization.getAuthorizedRegistries(user);
+    boolean master = authorization.isMasterUser(user, newCollection);
+    CollectionUpdateHelper helper = new CollectionUpdateHelper(user, registers, master, newCollection, oldCollection,
+        getCollectionClass(newCollection.getCollectionClass()));
+    deleteRemovedFields(helper);
   }
 
-  private void deleteRemovedFields(KksCollection tmp, Map<Long, KksEntry> newEntries, Map<Long, KksValue> newValues,
-      Map<Integer, KksTag> newTags) {
-    List<KksEntry> eList = new ArrayList<KksEntry>(tmp.getEntries());
-
-    List<Long> removableEntries = new ArrayList<Long>();
-    List<Long> removableValues = new ArrayList<Long>();
-    List<Integer> removableTags = new ArrayList<Integer>();
-
-    generateRemovableIds(tmp, newEntries, newValues, newTags, eList, removableEntries, removableValues, removableTags);
+  private void deleteRemovedFields(CollectionUpdateHelper helper) {
+    List<Long> removableEntries = helper.getRemovableEntries();
+    List<Long> removableValues = helper.getRemovableValues();
 
     if (removableValues.size() > 0) {
       em.createNamedQuery(KksValue.NAMED_QUERY_DELETE_VALUES_BY_IDS).setParameter("ids", removableValues)
@@ -454,116 +544,6 @@ public class KksServiceDAOBean implements KksServiceDAO {
       em.flush();
     }
 
-  }
-
-  private void generateRemovableIds(KksCollection tmp, Map<Long, KksEntry> newEntries, Map<Long, KksValue> newValues,
-      Map<Integer, KksTag> newTags, List<KksEntry> eList, List<Long> removableEntries, List<Long> removableValues,
-      List<Integer> removableTags) {
-    if (eList != null) {
-      for (KksEntry e : eList) {
-        if (newEntries.get(e.getId()) == null) {
-          tmp.removeKksEntry(e);
-          removableEntries.add(e.getId());
-
-          if (e.getValues() != null) {
-            for (KksValue v : e.getValues()) {
-              removableValues.add(v.getId());
-            }
-          }
-
-          if (e.getTags() != null) {
-            for (KksTag t : e.getTags()) {
-              removableTags.add(t.getId());
-            }
-          }
-        } else {
-
-          if (e.getValues() != null) {
-            List<KksValue> vList = new ArrayList<KksValue>(e.getValues());
-            for (KksValue v : vList) {
-              if (v.getId() != null && newValues.get(v.getId()) == null) {
-                e.removeKksValue(v);
-                removableValues.add(v.getId());
-              }
-            }
-          }
-
-          if (e.getTags() != null) {
-            List<KksTag> tList = new ArrayList<KksTag>(e.getTags());
-            for (KksTag t : tList) {
-              if (newTags.get(t.getId()) == null) {
-                e.removeKksTag(t);
-                removableTags.add(t.getId());
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  private void combineEntries(KksCollection collection, KksCollection tmp, Map<Long, KksEntry> oldEntries,
-      Map<Long, KksValue> oldValues, Map<Integer, KksTag> oldTags) {
-    for (KksEntry e : collection.getEntries()) {
-      KksEntry old = oldEntries.get(e.getId());
-
-      if (old == null) {
-        e.setKksCollection(tmp);
-        e.setModified(new Date());
-        tmp.addKksEntry(e);
-      } else {
-        old.setCreator(e.getCreator());
-        old.setCustomer(e.getCustomer());
-        old.setModified(e.getModified());
-        old.setCustomer(e.getCustomer());
-
-        if (e.getValues() != null) {
-          for (KksValue v : e.getValues()) {
-            KksValue oldV = oldValues.get(v.getId());
-
-            if (oldV == null) {
-              v.setEntry(old);
-              old.addKksValue(v);
-            } else {
-              oldV.setValue(v.getValue());
-            }
-          }
-        }
-
-        if (e.getTags() != null) {
-          for (KksTag t : e.getTags()) {
-            KksTag oldT = oldTags.get(t.getId());
-
-            if (oldT == null) {
-              old.addKksTag(t);
-            }
-          }
-        }
-
-      }
-    }
-  }
-
-  private void createEntriesMap(KksCollection collection, Map<Long, KksEntry> entries, Map<Long, KksValue> values,
-      Map<Integer, KksTag> tags) {
-
-    if (collection.getEntries() != null) {
-      for (KksEntry entry : collection.getEntries()) {
-        entries.put(entry.getId(), entry);
-
-        if (entry.getValues() != null) {
-          for (KksValue value : entry.getValues()) {
-            values.put(value.getId(), value);
-          }
-        }
-
-        if (entry.getTags() != null) {
-          for (KksTag value : entry.getTags()) {
-            tags.put(value.getId(), value);
-          }
-        }
-      }
-    }
   }
 
   public void insertTags(List<Integer> tagIds, Long entryId) {
@@ -606,8 +586,9 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public Long copyAndInsert(KksCollectionCreation creation) {
+  public Long copyAndInsert(String user, KksCollectionCreation creation) {
     KksCollection old = getCollection(creation.getCollectionId());
+    KksCollectionClass metadata = getCollectionClass(old.getCollectionClass());
 
     KksCollection newVersion = new KksCollection();
     newVersion.setName(creation.getName());
@@ -643,10 +624,18 @@ public class KksServiceDAOBean implements KksServiceDAO {
     }
 
     em.persist(newVersion);
+
+    Log.logCreate(old.getCustomer(), metadata.getTypeCode(), user, "Created version " + newVersion.getName() + " from "
+        + old.getName());
+
     setTagsByEntryClass(old, newVersion);
     old.setNextVersion("" + newVersion.getId());
+    String oldStatus = old.getStatus();
     old.setStatus(LOCKED);
     em.merge(old);
+
+    Log.logUpdate(old.getCustomer(), metadata.getTypeCode(), user, "Changed " + old.getName() + " status from "
+        + oldStatus + " to " + LOCKED);
 
     return newVersion.getId();
   }
@@ -654,7 +643,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
   private boolean isCopyable(List<KksTag> tags) {
     if (tags != null && !tags.isEmpty()) {
       for (KksTag t : tags) {
-        if (t.getName().equalsIgnoreCase(COMMENT_FIELD_LABEL)) {
+        if (t.getName().equalsIgnoreCase(COMMENT_FIELD_TAG)) {
           return false;
         }
       }
