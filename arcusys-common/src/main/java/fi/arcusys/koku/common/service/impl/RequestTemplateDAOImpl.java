@@ -1,8 +1,10 @@
 package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -12,13 +14,14 @@ import fi.arcusys.koku.common.service.datamodel.InformationRequest;
 import fi.arcusys.koku.common.service.datamodel.InformationRequestCategory;
 import fi.arcusys.koku.common.service.datamodel.Question;
 import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
+import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.service.datamodel.Visibility;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Sep 2, 2011
  */
 @Stateless
-public class RequestTemplateDAOImpl extends
-        AbstractEntityDAOImpl<RequestTemplate> implements RequestTemplateDAO {
+public class RequestTemplateDAOImpl extends AbstractEntityDAOImpl<RequestTemplate> implements RequestTemplateDAO {
 
     public RequestTemplateDAOImpl() {
         super(RequestTemplate.class);
@@ -30,11 +33,18 @@ public class RequestTemplateDAOImpl extends
      * @return
      */
     @Override
-    public List<RequestTemplate> searchTemplates(String searchString, int limit) {
-        return super.getResultList("findRequestTemplatesByPrefix", Collections
-                .<String, Object> singletonMap("prefix",
-                        getPrefixLike(searchString)), FIRST_RESULT_NUMBER,
-                limit);
+    public List<RequestTemplate> searchTemplates(final User user, String searchString, int limit) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("prefix", getPrefixLike(searchString));
+        if (user == null) {
+            return super.getResultList("findRequestTemplatesByPrefix", params, FIRST_RESULT_NUMBER, limit);
+        } else {
+            params.put("user", user);
+            params.put("visibility_all", Visibility.All);
+            params.put("visibility_organization", Visibility.Organization);
+            params.put("visibility_creator", Visibility.Creator);
+            return super.getResultList("findRequestTemplatesByPrefixAndUser", params, FIRST_RESULT_NUMBER, limit);
+        }
     }
 
     /**

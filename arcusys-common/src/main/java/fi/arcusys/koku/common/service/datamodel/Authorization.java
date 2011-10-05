@@ -14,9 +14,9 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery( name = "findReceivedAuthorizations", query = "SELECT DISTINCT auth FROM Authorization auth WHERE auth.toUser = :user AND auth.replyStatus IS NOT NULL"),
+    @NamedQuery( name = "findReceivedAuthorizations", query = "SELECT DISTINCT auth FROM Authorization auth WHERE auth.toUser = :user AND auth.replyStatus IS NOT NULL ORDER BY auth.id DESC"),
     @NamedQuery( name = "countReceivedAuthorizations", query = "SELECT COUNT(DISTINCT auth) FROM Authorization auth WHERE auth.toUser = :user AND auth.replyStatus IS NOT NULL"),
-    @NamedQuery( name = "findSentAuthorizations", query = "SELECT DISTINCT auth FROM Authorization auth WHERE auth.fromUser = :user"),
+    @NamedQuery( name = "findSentAuthorizations", query = "SELECT DISTINCT auth FROM Authorization auth WHERE auth.fromUser = :user ORDER BY auth.id DESC"),
     @NamedQuery( name = "countSentAuthorizations", query = "SELECT COUNT(DISTINCT auth) FROM Authorization auth WHERE auth.fromUser = :user")
 })
 public class Authorization extends AbstractEntity {

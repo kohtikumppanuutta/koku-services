@@ -25,6 +25,13 @@ public interface KokuKunpoSuostumusService {
             @WebParam(name = "startNum") int startNum, 
             @WebParam(name = "maxNum") int maxNum);
     
+    public int getTotalOldConsents(@WebParam(name = "user") final String user);
+
+    public List<ConsentSummary> getOldConsents(
+            @WebParam(name = "user") final String user,
+            @WebParam(name = "startNum") int startNum, 
+            @WebParam(name = "maxNum") int maxNum);
+
     public ConsentTO getConsentById(@WebParam(name = "suostumusId") final long suostumusId, final String userUid);
     
     public void revokeOwnConsent(@WebParam(name = "suostumusId") final long suostumusId, final String userUid);

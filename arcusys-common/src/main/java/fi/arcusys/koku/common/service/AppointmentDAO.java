@@ -86,4 +86,18 @@ public interface AppointmentDAO extends AbstractEntityDAO<Appointment>{
      * @return
      */
     Long getTotalRespondedAppointments(User user);
+
+    /**
+     * @param orCreateUser
+     * @param startNum
+     * @param i
+     * @return
+     */
+    List<AppointmentResponse> getOldAppointmentResponses(User user, int startNum, int maxResults);
+
+    /**
+     * @param orCreateUser
+     * @return
+     */
+    Long getTotalOldRespondedAppointments(User user);
 }

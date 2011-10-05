@@ -41,6 +41,9 @@ public class Consent extends AbstractEntity {
     
     @Enumerated(EnumType.STRING)
     private ConsentType creationType;
+    
+    @Enumerated(EnumType.STRING)
+    private ReceipientsType receipientsType;
 
     @ManyToOne
     private User creator;
@@ -50,6 +53,20 @@ public class Consent extends AbstractEntity {
     
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> receipients;
+
+    /**
+     * @return the receipientsType
+     */
+    public ReceipientsType getReceipientsType() {
+        return receipientsType;
+    }
+
+    /**
+     * @param receipientsType the receipientsType to set
+     */
+    public void setReceipientsType(ReceipientsType receipientsType) {
+        this.receipientsType = receipientsType;
+    }
 
     /**
      * @return the replyTill

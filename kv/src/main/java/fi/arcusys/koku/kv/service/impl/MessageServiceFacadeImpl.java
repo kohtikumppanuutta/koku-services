@@ -40,6 +40,7 @@ import fi.arcusys.koku.common.service.datamodel.Request;
 import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 import fi.arcusys.koku.common.service.datamodel.Response;
 import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.service.datamodel.Visibility;
 import fi.arcusys.koku.common.service.datamodel.YesNoAnswer;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
@@ -58,6 +59,7 @@ import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateExistenceStatus;
 import fi.arcusys.koku.kv.soa.RequestTemplateSummary;
 import fi.arcusys.koku.kv.soa.RequestTemplateTO;
+import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
 import fi.arcusys.koku.kv.soa.ResponseTO;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 
@@ -429,9 +431,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	 */
 	@Override
 	public Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, 
-	        final List<QuestionTO> questionTOs, final List<MultipleChoiceTO> choices,
+	        final List<QuestionTO> questionTOs, final List<MultipleChoiceTO> choices, final RequestTemplateVisibility visibility,
             final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
-		final RequestTemplate template = doCreateRequestTemplate(fromUserId, subject, questionTOs, choices);
+		final RequestTemplate template = doCreateRequestTemplate(fromUserId, subject, questionTOs, choices, visibility);
 
 		return doCreateRequest(fromUserId, subject, receipients, content, template, replyTill, notifyBeforeDays).getId();
 	}
@@ -459,17 +461,18 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @param fromUserId
      * @param subject
      * @param questionTOs
+     * @param visibility 
      * @return
      */
-    private RequestTemplate doCreateRequestTemplate(String fromUserId, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choiceTOs) {
+    private RequestTemplate doCreateRequestTemplate(String fromUserId, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choiceTOs, RequestTemplateVisibility visibility) {
         final RequestTemplate requestTemplate = new RequestTemplate();
-        fillRequestTemplate(fromUserId, subject, questionTOs, choiceTOs, requestTemplate);
+        fillRequestTemplate(fromUserId, subject, questionTOs, choiceTOs, visibility, requestTemplate);
         return requestTemplateDAO.create(requestTemplate);
     }
 
     private void fillRequestTemplate(String fromUserId, String subject,
             List<QuestionTO> questionTOs, List<MultipleChoiceTO> choiceTOs,
-            final RequestTemplate requestTemplate) {
+            RequestTemplateVisibility visibility, final RequestTemplate requestTemplate) {
         requestTemplate.setCreator(getUserByUid(fromUserId));
         requestTemplate.setSubject(subject);
         final Map<Integer, Question> numberToQuestion = new HashMap<Integer, Question>();
@@ -493,6 +496,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             }
         }
         requestTemplate.setQuestions(new HashSet<Question>(numberToQuestion.values()));
+        requestTemplate.setVisibility(RequestTemplateVisibility.toDmType(visibility == null ? RequestTemplateVisibility.All : visibility));
     }
 
 	private QuestionType getQuestionType(final QuestionTO questionTO) {
@@ -611,8 +615,8 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @param questionTOs
      */
     @Override
-    public void createRequestTemplate(String userUid, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choices) {
-        doCreateRequestTemplate(userUid, subject, questionTOs, choices);
+    public void createRequestTemplate(String userUid, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choices, RequestTemplateVisibility visibility) {
+        doCreateRequestTemplate(userUid, subject, questionTOs, choices, visibility);
     }
 
     /**
@@ -621,9 +625,10 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @return
      */
     @Override
-    public List<RequestTemplateSummary> getRequestTemplateSummary(String subjectPrefix, int limit) {
+    public List<RequestTemplateSummary> getRequestTemplateSummary(final String userUid, String subjectPrefix, int limit) {
         final List<RequestTemplateSummary> result = new ArrayList<RequestTemplateSummary>();
-        for (final RequestTemplate template : requestTemplateDAO.searchTemplates(subjectPrefix, limit)) {
+        final User user = (userUid != null && !userUid.isEmpty()) ? userDao.getOrCreateUser(userUid) : null;
+        for (final RequestTemplate template : requestTemplateDAO.searchTemplates(user, subjectPrefix, limit)) {
             final RequestTemplateSummary summaryTO = new RequestTemplateSummary();
             convertTemplateToDTO(template, summaryTO);
             result.add(summaryTO);
@@ -758,7 +763,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @param choices
      */
     @Override
-    public void updateRequestTemplate(String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices) {
+    public void updateRequestTemplate(String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices, RequestTemplateVisibility visibility) {
         final RequestTemplate template = getTemplateBySubject(subject);
         if (template == null) {
             throw new IllegalStateException("Error in update: request template with subject '" + subject + "' is not found.");
@@ -770,7 +775,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             throw new IllegalStateException("Error in update: request template with subject '" + subject + "' is active.");
         } 
 
-        fillRequestTemplate(userUid, subject, questions, choices, template);
+        fillRequestTemplate(userUid, subject, questions, choices, visibility, template);
         requestTemplateDAO.update(template);
     }
 }

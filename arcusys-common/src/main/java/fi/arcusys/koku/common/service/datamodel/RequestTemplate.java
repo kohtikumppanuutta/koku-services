@@ -4,6 +4,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -16,7 +18,10 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "findRequestTemplatesByPrefix", query = "SELECT tmp FROM RequestTemplate tmp WHERE tmp.subject LIKE :prefix  ORDER BY tmp.id DESC")
+    @NamedQuery(name = "findRequestTemplatesByPrefix", query = "SELECT tmp FROM RequestTemplate tmp WHERE tmp.subject LIKE :prefix  ORDER BY tmp.id DESC"),
+    @NamedQuery(name = "findRequestTemplatesByPrefixAndUser", query = "SELECT tmp FROM RequestTemplate tmp WHERE tmp.subject LIKE :prefix AND " +
+    		" (tmp.visibility = :visibility_all OR tmp.visibility = :visibility_organization OR tmp.visibility = :visibility_creator AND tmp.creator = :user)" +
+    		" ORDER BY tmp.id DESC")
 })
 public class RequestTemplate extends AbstractEntity {
     private String subject;
@@ -26,6 +31,23 @@ public class RequestTemplate extends AbstractEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Question> questions;
+    
+    @Enumerated(EnumType.STRING)
+    private Visibility visibility;
+
+    /**
+     * @return the visibility
+     */
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    /**
+     * @param visibility the visibility to set
+     */
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
 
     /**
      * @return the subject

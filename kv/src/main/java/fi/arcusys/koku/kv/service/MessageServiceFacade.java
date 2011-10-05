@@ -23,6 +23,7 @@ import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateExistenceStatus;
 import fi.arcusys.koku.kv.soa.RequestTemplateSummary;
 import fi.arcusys.koku.kv.soa.RequestTemplateTO;
+import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 
 /**
@@ -53,7 +54,7 @@ public interface MessageServiceFacade {
 	int getUnreadMessagesCount(final String userId, final FolderType folderType);
 
 	Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, 
-	        final List<QuestionTO> questions, final List<MultipleChoiceTO> choices, 
+	        final List<QuestionTO> questions, final List<MultipleChoiceTO> choices, RequestTemplateVisibility visibility,
             XMLGregorianCalendar replyTill, 
             Integer notifyBeforeDays);
 	
@@ -82,11 +83,11 @@ public interface MessageServiceFacade {
     void createRequestTemplate(final String userUid, 
             final String subject, 
             final List<QuestionTO> questions,
-            final List<MultipleChoiceTO> choices);
+            final List<MultipleChoiceTO> choices, RequestTemplateVisibility visibility);
     
     List<RequestTemplateSummary> getRequestTemplateSummary(
-            final String subjectPrefix, 
-            final int limit);
+            final String userUid, 
+            final String subjectPrefix, final int limit);
     
     RequestTemplateTO getRequestTemplateById(
             final long requestTemplateId);
@@ -126,5 +127,5 @@ public interface MessageServiceFacade {
      * @param list2
      * @return
      */
-    void updateRequestTemplate(String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices);
+    void updateRequestTemplate(String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices, RequestTemplateVisibility visibility);
 }

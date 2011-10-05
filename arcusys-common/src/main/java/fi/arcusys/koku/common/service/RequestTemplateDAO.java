@@ -3,6 +3,7 @@ package fi.arcusys.koku.common.service;
 import java.util.List;
 
 import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
+import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -10,7 +11,7 @@ import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
  */
 public interface RequestTemplateDAO extends AbstractEntityDAO<RequestTemplate> {
 
-    List<RequestTemplate> searchTemplates(final String searchString, final int limit);
+    List<RequestTemplate> searchTemplates(final User user, String searchString, final int limit);
 
     /**
      * @param subject

@@ -162,4 +162,25 @@ public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentServ
         serviceFacade.cancelAppointment(targetUser, user, appointmentId, comment);
     }
 
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public int getTotalOldAppointments(String user) {
+        return serviceFacade.getTotalOldAppointments(user);
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<AppointmentWithTarget> getOldAppointments(String user,
+            int startNum, int maxNum) {
+        return serviceFacade.getOldAppointments(user, startNum, maxNum);
+    }
+
 }

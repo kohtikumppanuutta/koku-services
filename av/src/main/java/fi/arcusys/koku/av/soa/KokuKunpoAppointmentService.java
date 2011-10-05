@@ -16,7 +16,14 @@ public interface KokuKunpoAppointmentService {
 
     public int getTotalRespondedAppointments(@WebParam(name = "user") final String user);
 
+    public int getTotalOldAppointments(@WebParam(name = "user") final String user);
+
     public List<AppointmentWithTarget>  getRespondedAppointments(
+            @WebParam(name = "user") final String user,
+            @WebParam(name = "startNum") int startNum, 
+            @WebParam(name = "maxNum") int maxNum);
+
+    public List<AppointmentWithTarget>  getOldAppointments(
             @WebParam(name = "user") final String user,
             @WebParam(name = "startNum") int startNum, 
             @WebParam(name = "maxNum") int maxNum);

@@ -9,9 +9,12 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 
+import java.util.Arrays;
+
 import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.datamodel.Appointment;
 import fi.arcusys.koku.common.service.datamodel.AppointmentResponse;
+import fi.arcusys.koku.common.service.datamodel.AppointmentResponseStatus;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
@@ -142,7 +145,15 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
     @Override
     public List<AppointmentResponse> getAppointmentResponses(User user,
             int startNum, int maxResults) {
-        return getResultList("findAppointmentResponsesByUser", Collections.singletonMap("user", user), startNum, maxResults);
+        return getResultList("findAppointmentResponsesByUser", getRespondedAppointmentsParams(user), startNum, maxResults);
+    }
+
+    protected Map<String, Object> getRespondedAppointmentsParams(User user) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user", user);
+        params.put("appointment_approved", Arrays.<AppointmentStatus>asList(AppointmentStatus.Created, AppointmentStatus.Approved));
+        params.put("reply_approved", AppointmentResponseStatus.Accepted);
+        return params;
     }
 
     /**
@@ -151,6 +162,26 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
      */
     @Override
     public Long getTotalRespondedAppointments(User user) {
-        return getSingleResult("countAppointmentResponsesByUser", Collections.singletonMap("user", user));
+        return getSingleResult("countAppointmentResponsesByUser", getRespondedAppointmentsParams(user));
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxResults
+     * @return
+     */
+    @Override
+    public List<AppointmentResponse> getOldAppointmentResponses(User user, int startNum, int maxResults) {
+        return getResultList("findOldAppointmentResponsesByUser", getRespondedAppointmentsParams(user), startNum, maxResults);
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public Long getTotalOldRespondedAppointments(User user) {
+        return getSingleResult("countOldAppointmentResponsesByUser", getRespondedAppointmentsParams(user));
     }
 }

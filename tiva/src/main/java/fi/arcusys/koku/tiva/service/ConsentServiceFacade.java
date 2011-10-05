@@ -9,6 +9,7 @@ import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
 import fi.arcusys.koku.tiva.soa.ConsentCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
 import fi.arcusys.koku.tiva.soa.ConsentQuery;
+import fi.arcusys.koku.tiva.soa.ConsentReceipientsType;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
 import fi.arcusys.koku.tiva.soa.ConsentSummary;
 import fi.arcusys.koku.tiva.soa.ConsentTO;
@@ -42,6 +43,7 @@ public interface ConsentServiceFacade {
 
     /**
      * @param templateId
+     * @param type 
      * @param isMandatory 
      * @param endDate 
      * @param string
@@ -49,7 +51,7 @@ public interface ConsentServiceFacade {
      * @param asList
      * @return
      */
-    Long requestForConsent(final Long templateId, String senderUid, String targetPersonUid, List<String> receipients, XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory);
+    Long requestForConsent(final Long templateId, String senderUid, String targetPersonUid, List<String> receipients, ConsentReceipientsType type, XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory);
 
     
     /**
@@ -165,4 +167,12 @@ public interface ConsentServiceFacade {
     Long writeConsentOnBehalf(final Long templateId, final String employeeUid, final String consentType, 
             final String targetPersonUid, final List<String> receipientUids, final XMLGregorianCalendar endDate,
             List<ActionPermittedTO> actions, final String comment);
+
+    /**
+     * @param user
+     * @return
+     */
+    int getTotalOldConsents(final String userUid);
+
+    List<ConsentSummary> getOldConsents(final String userUid, final int startNum, final int maxNum);
 }

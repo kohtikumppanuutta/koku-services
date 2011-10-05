@@ -29,6 +29,7 @@ import fi.arcusys.koku.common.service.datamodel.ConsentReply;
 import fi.arcusys.koku.common.service.datamodel.ConsentReplyStatus;
 import fi.arcusys.koku.common.service.datamodel.ConsentTemplate;
 import fi.arcusys.koku.common.service.datamodel.ConsentType;
+import fi.arcusys.koku.common.service.datamodel.ReceipientsType;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
 import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
@@ -41,6 +42,7 @@ import fi.arcusys.koku.tiva.soa.ConsentCreateType;
 import fi.arcusys.koku.tiva.soa.ConsentCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
 import fi.arcusys.koku.tiva.soa.ConsentQuery;
+import fi.arcusys.koku.tiva.soa.ConsentReceipientsType;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
 import fi.arcusys.koku.tiva.soa.ConsentStatus;
 import fi.arcusys.koku.tiva.soa.ConsentSummary;
@@ -192,10 +194,10 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
      */
     @Override
     public Long requestForConsent(final Long templateId, final String senderUid, final String targetPersonUid, 
-            final List<String> receipientUids, XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory) {
+            final List<String> receipientUids, ConsentReceipientsType type, XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory) {
 
         final Consent newConsent = doConsentCreation(templateId, ConsentType.Electronic,
-                senderUid, targetPersonUid, receipientUids, replyTillDate, endDate, isMandatory);
+                senderUid, targetPersonUid, receipientUids, type, replyTillDate, endDate, isMandatory);
         notificationService.sendNotification(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_SUBJECT, receipientUids, 
                 MessageFormat.format(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_BODY, new Object[] {newConsent.getTemplate().getTitle()}));
         return newConsent.getId();
@@ -204,7 +206,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     private Consent doConsentCreation(final Long templateId,
             ConsentType consentType, final String senderUid,
             final String targetPersonUid, final List<String> receipientUids,
-            XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory) {
+            ConsentReceipientsType type, XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory) {
         if (receipientUids == null || receipientUids.isEmpty()) {
             throw new IllegalArgumentException("Consent is requested from empty list of receipients.");
         } 
@@ -227,6 +229,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             receipients.add(userDao.getOrCreateUser(userUid));
         }
         consent.setReceipients(receipients);
+        consent.setReceipientsType(ConsentReceipientsType.toDmType(type == null ? ConsentReceipientsType.BothParents : type));
         return consentDao.create(consent);
     }
 
@@ -237,13 +240,18 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     @Override
     public ConsentForReplyTO getConsentForReply(final Long consentId, final String replierUid) {
         final Consent consent = loadConsent(consentId);
+        final User replier = userDao.getOrCreateUser(replierUid);
+        if (!consent.getReceipients().contains(replier)) {
+            throw new IllegalStateException("Replier " + replierUid + " is absent in receipients list for consent " + consentId);
+        }
+        
         final ConsentForReplyTO consentTO = new ConsentForReplyTO();
         consentTO.setConsentId(consent.getId());
         consentTO.setReplierUid(replierUid);
         consentTO.setTemplate(convertConsentTemplateToDTO(consent.getTemplate()));
         consentTO.setEndDateMandatory(consent.getEndDateMandatory());
 
-        final ConsentReply reply = consentReplyDao.getReplyByConsentAndUser(consent, userDao.getOrCreateUser(replierUid));
+        final ConsentReply reply = consentReplyDao.getReplyByConsentAndUser(consent, replier);
         if (reply != null) {
             consentTO.setReplyComment(reply.getComment());
             consentTO.setEndDate(CalendarUtil.getXmlDate(reply.getValidTill()));
@@ -265,6 +273,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         } else {
             consentTO.setEndDate(CalendarUtil.getXmlDate(consent.getValidTill()));
             consentTO.setAlreadyReplied(false);
+            consentTO.setReplyTillDate(CalendarUtil.getXmlDate(consent.getReplyTill()));
         }
         
         return consentTO;
@@ -404,11 +413,15 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     @Override
     public List<ConsentSummary> getOwnConsents(final String userUid, final int startNum, final int maxNum) {
         final User replier = userDao.getOrCreateUser(userUid);
+        return convertRepliesToConsentSummary(replier, consentReplyDao.getRepliedConsents(replier, startNum, maxNum - startNum + 1));
+    }
 
+    protected List<ConsentSummary> convertRepliesToConsentSummary(
+            final User replier, final List<ConsentReply> repliedConsents) {
         final List<ConsentSummary> consents = new ArrayList<ConsentSummary>();
-        for (final ConsentReply reply : consentReplyDao.getRepliedConsents(replier, startNum, maxNum - startNum + 1)) {
+        for (final ConsentReply reply : repliedConsents) {
             final ConsentSummary consentSummary = new ConsentSummary();
-            fillSummaryByReply(userUid, reply, consentSummary);
+            fillSummaryByReply(replier.getUid(), reply, consentSummary);
 
             consents.add(consentSummary);
         }
@@ -579,7 +592,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             }
         }
 
-        if (consent.getReceipients().size() > replies.size() && consentTO.getStatus() == ConsentStatus.Valid) {
+        if (consent.getReceipients().size() > replies.size() && consentTO.getStatus() == ConsentStatus.Valid && consent.getReceipientsType() == ReceipientsType.BothParents) {
             consentTO.setStatus(ConsentStatus.PartiallyGiven);
         }
         
@@ -682,10 +695,32 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             String consentType, String targetPersonUid,
             List<String> receipientUids, XMLGregorianCalendar endDate,
             List<ActionPermittedTO> actions, final String comment) {
-        final Consent consent = doConsentCreation(templateId, ConsentType.PaperBased, employeeUid, targetPersonUid, receipientUids, null, endDate, Boolean.TRUE);
+        final Consent consent = doConsentCreation(templateId, ConsentType.PaperBased, employeeUid, targetPersonUid, receipientUids, ConsentReceipientsType.BothParents, null, endDate, Boolean.TRUE);
         for (final User receipient : consent.getReceipients() ) {
             doGiveConsent(consent.getId(), actions, endDate, comment, consent, receipient);
         }
         return consent.getId();
+    }
+
+    /**
+     * @param userUid
+     * @return
+     */
+    @Override
+    public int getTotalOldConsents(String userUid) {
+        return getIntValue(consentReplyDao.getTotalOldRepliedConsents(userDao.getOrCreateUser(userUid)));
+    }
+
+    /**
+     * @param userUid
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<ConsentSummary> getOldConsents(String userUid, int startNum,
+            int maxNum) {
+        final User replier = userDao.getOrCreateUser(userUid);
+        return convertRepliesToConsentSummary(replier, consentReplyDao.getOldRepliedConsents(replier, startNum, maxNum - startNum + 1));
     }
 }

@@ -144,4 +144,25 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
         serviceFacade.revokeConsent(suostumusId, userUid, "");
     }
 
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public int getTotalOldConsents(String user) {
+        return serviceFacade.getTotalOldConsents(user);
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<ConsentSummary> getOldConsents(String user, int startNum,
+            int maxNum) {
+        return serviceFacade.getOldConsents(user, startNum, maxNum);
+    }
+
 }

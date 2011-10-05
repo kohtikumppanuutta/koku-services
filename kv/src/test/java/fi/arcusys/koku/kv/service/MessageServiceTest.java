@@ -28,6 +28,7 @@ import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.QuestionType;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
+import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
 
 /**
  * 
@@ -173,7 +174,7 @@ public class MessageServiceTest {
 		
 		final List<QuestionTO> questions = createTestQuestions();
 		
-		final long requestId = serviceFacade.sendRequest(fromUserId, "test request", Collections.singletonList(toUserId), "read-only form of request", questions, new ArrayList<MultipleChoiceTO>(), null, null);
+		final long requestId = serviceFacade.sendRequest(fromUserId, "test request", Collections.singletonList(toUserId), "read-only form of request", questions, new ArrayList<MultipleChoiceTO>(), RequestTemplateVisibility.Creator, null, null);
 		
 		final RequestTO request = serviceFacade.getRequestById(requestId);
 		assertNotNull(request);
@@ -199,7 +200,7 @@ public class MessageServiceTest {
 		
 		final List<QuestionTO> questions = createTestQuestions();
 		
-		final Long requestId = serviceFacade.sendRequest(fromUserId, "test request", toUsers, "read-only form of request", questions, new ArrayList<MultipleChoiceTO>(), null, null);
+		final Long requestId = serviceFacade.sendRequest(fromUserId, "test request", toUsers, "read-only form of request", questions, new ArrayList<MultipleChoiceTO>(), RequestTemplateVisibility.Creator, null, null);
 		assertEquals("No replies yet: ", 0, serviceFacade.getRequestById(requestId).getRespondedAmount());
 		
 		final List<Answer> answers = new ArrayList<Answer>();
@@ -226,6 +227,17 @@ public class MessageServiceTest {
 		
 		final List<RequestSummary> requests = serviceFacade.getRequests(fromUserId, 1, 10);
 		assertEquals(1, requests.size());
+	}
+	
+	@Test
+	public void testRequestTemplateVisibility() {
+        final List<QuestionTO> questions = createTestQuestions();
+        
+        final String userUid = "templateCreator";
+        final String subject = "test request";
+        serviceFacade.createRequestTemplate(userUid, subject, questions, new ArrayList<MultipleChoiceTO>(), RequestTemplateVisibility.Creator);
+        assertFalse(serviceFacade.getRequestTemplateSummary(userUid, subject, 1).isEmpty());
+        assertTrue(serviceFacade.getRequestTemplateSummary("otherThen" + userUid, subject, 1).isEmpty());
 	}
 	
 	@Test

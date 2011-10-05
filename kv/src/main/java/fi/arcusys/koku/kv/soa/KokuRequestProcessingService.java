@@ -18,7 +18,8 @@ public interface KokuRequestProcessingService {
 					 @WebParam(name = "subject") final String subject, 
 					 @WebParam(name = "receipients") final Receipients receipients,
 					 @WebParam(name = "questions") final Questions questions, 
-					 @WebParam(name = "choices") final MultipleChoices choices,
+					 @WebParam(name = "choices") final MultipleChoices choices, 
+					 @WebParam(name = "visibility") final RequestTemplateVisibility visibility,
 					 @WebParam(name = "requestContent") final String content,
 					 @WebParam(name = "replyTill") final XMLGregorianCalendar replyTill,
 					 @WebParam(name = "notifyBeforeDays") final Integer notifyBeforeDays);
@@ -34,7 +35,8 @@ public interface KokuRequestProcessingService {
 	        @WebParam(name = "creator") final String userUid, 
             @WebParam(name = "subject") final String subject, 
             @WebParam(name = "questions") final Questions questions,
-            @WebParam(name = "choices") final MultipleChoices choices);
+            @WebParam(name = "choices") final MultipleChoices choices,
+            @WebParam(name = "visibility") final RequestTemplateVisibility visibility);
 	
 	RequestTemplateExistenceStatus isRequestTemplateExist(
 	        @WebParam(name = "creator") final String userUid, 
@@ -44,9 +46,11 @@ public interface KokuRequestProcessingService {
             @WebParam(name = "creator") final String userUid, 
             @WebParam(name = "subject") final String subject, 
             @WebParam(name = "questions") final Questions questions,
-            @WebParam(name = "choices") final MultipleChoices choices);
+            @WebParam(name = "choices") final MultipleChoices choices, 
+            @WebParam(name = "visibility") final RequestTemplateVisibility visibility);
 
     List<RequestTemplateSummary> getRequestTemplateSummary(
+            @WebParam(name = "user") final String userUid, 
 	        @WebParam(name = "subjectPrefix") final String subjectPrefix, 
 	        @WebParam(name = "limit") final int limit);
 	

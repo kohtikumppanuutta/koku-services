@@ -52,10 +52,19 @@ import javax.persistence.PrePersist;
             " WHERE NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender "),
     @NamedQuery(name = "findAppointmentResponsesByUser", query = "SELECT DISTINCT ar FROM AppointmentResponse ar " +
-            " WHERE replier = :user  ORDER BY ar.id DESC"),
+            " WHERE ar.replier = :user " +
+            " AND ar.status = :reply_approved AND ar.appointment.status IN (:appointment_approved)" +
+            " ORDER BY ar.id DESC"),
     @NamedQuery(name = "countAppointmentResponsesByUser", query = "SELECT COUNT(DISTINCT ar) FROM AppointmentResponse ar " +
-            " WHERE replier = :user ")
-				
+            " WHERE ar.replier = :user " +
+            " AND ar.status = :reply_approved AND ar.appointment.status IN (:appointment_approved)"),
+    @NamedQuery(name = "findOldAppointmentResponsesByUser", query = "SELECT DISTINCT ar FROM AppointmentResponse ar " +
+            " WHERE ar.replier = :user " +
+            " AND NOT (ar.status = :reply_approved AND ar.appointment.status IN (:appointment_approved))" +
+            " ORDER BY ar.id DESC"),
+    @NamedQuery(name = "countOldAppointmentResponsesByUser", query = "SELECT COUNT(DISTINCT ar) FROM AppointmentResponse ar " +
+            " WHERE ar.replier = :user " +
+            " AND NOT (ar.status = :reply_approved AND ar.appointment.status IN (:appointment_approved))")
 })
 public class Appointment extends AbstractEntity {
 

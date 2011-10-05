@@ -12,17 +12,34 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Aug 9, 2011
  */
 @XmlType (name = "suostumusForReply", namespace = "http://soa.tiva.koku.arcusys.fi/",
-propOrder={"consentId", "alreadyReplied", "template", "actionReplies", "replierUid" , "endDate", "endDateMandatory", "replyComment"})
+propOrder={"consentId", "alreadyReplied", "template", "actionReplies", "replierUid" , "replyTillDate", "endDate", "endDateMandatory", "replyComment"})
 public class ConsentForReplyTO {
     private Long consentId;
     private ConsentTemplateTO template;
     private String replierUid;
+    private XMLGregorianCalendar replyTillDate;
     private XMLGregorianCalendar endDate;
     private String replyComment;
     private Boolean endDateMandatory;
     private boolean alreadyReplied;
     private List<ActionPermittedTO> actionReplies;
     
+    
+    
+    /**
+     * @return the replyTillDate
+     */
+    @XmlElement
+    @XmlSchemaType(name = "date")
+    public XMLGregorianCalendar getReplyTillDate() {
+        return replyTillDate;
+    }
+    /**
+     * @param replyTillDate the replyTillDate to set
+     */
+    public void setReplyTillDate(XMLGregorianCalendar replyTillDate) {
+        this.replyTillDate = replyTillDate;
+    }
     /**
      * @return the actionReplies
      */

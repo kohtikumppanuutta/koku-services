@@ -32,6 +32,7 @@ public interface KokuSuostumusProcessingService {
             @WebParam(name = "lahettaja") final String senderUid,
             @WebParam(name = "kohdehenkilo") final String targetPersonUid,
             @WebParam(name = "vastaanottaja") final List<String> receivers,
+            @WebParam(name = "antajatyyppi") final ConsentReceipientsType type,
             @WebParam(name = "replyTillDate") final XMLGregorianCalendar replyTillDate,
             @WebParam(name = "maaraaika") final XMLGregorianCalendar endDate,
             @WebParam(name = "maaraaikaMandatory") final Boolean endDateMandatory);

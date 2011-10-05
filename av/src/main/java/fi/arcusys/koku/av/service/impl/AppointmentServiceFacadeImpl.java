@@ -61,6 +61,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
     private static final String APPOINTMENT_DECLINED_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on hylätty käyttäjän {2} toimesta.";
     private static final String APPOINTMENT_DECLINED_SUBJECT = "Tapaaminen on hylätty";
 
+    private static final String APPOINTMENT_RECEIVED_BODY = "Sinulle on uusi tapaaminen. Aihe: {0}.";
+    private static final String APPOINTMENT_RECEIVED_SUBJECT = "Uusi tapaaminen";
+
     private final static Logger logger = LoggerFactory.getLogger(AppointmentServiceFacadeImpl.class);
     
 	@EJB
@@ -352,13 +355,29 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 			appointment = new Appointment();
 		}
 		fillAppointmentByDto(appointmentTO, appointment);
+		final Appointment result;
 		if (appointment.getId() == null) {
-			return appointmentDAO.create(appointment).getId();
+		    result = appointmentDAO.create(appointment);
 		} else {
-			appointmentDAO.update(appointment);
-			return appointment.getId();
+			result = appointmentDAO.update(appointment);
 		}
+		
+        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_RECEIVED_SUBJECT, 
+                getReceipienUids(appointment.getRecipients()), 
+                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_RECEIVED_BODY, new Object[] {result}));
+
+        return result.getId();
 	}
+
+    protected List<String> getReceipienUids(final Set<TargetPerson> recipients) {
+        final Set<String> result = new HashSet<String>();
+        for (final TargetPerson person : recipients) {
+            for (final User user : person.getGuardians()) {
+                result.add(user.getUid());
+            }
+        }
+        return new ArrayList<String>(result);
+    }
 
     /**
 	 * @param appointmentId
@@ -452,8 +471,13 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
      */
     @Override
     public List<AppointmentWithTarget> getRespondedAppointments(String userUid, int startNum, int maxNum) {
+        return convertResponsesToAppointmentWithTarget(appointmentDAO.getAppointmentResponses(userDao.getOrCreateUser(userUid), startNum, maxNum - startNum + 1));
+    }
+
+    protected List<AppointmentWithTarget> convertResponsesToAppointmentWithTarget(
+            final List<AppointmentResponse> appointmentResponses) {
         final List<AppointmentWithTarget> result = new ArrayList<AppointmentWithTarget>();
-        for (final AppointmentResponse response : appointmentDAO.getAppointmentResponses(userDao.getOrCreateUser(userUid), startNum, maxNum - startNum + 1)) {
+        for (final AppointmentResponse response : appointmentResponses) {
             final AppointmentWithTarget appointmentTO = new AppointmentWithTarget();
             convertAppointmentToDTO(response.getAppointment(), appointmentTO);
             appointmentTO.setTargetPerson(response.getTarget().getTargetUser().getUid());
@@ -610,5 +634,25 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_SUBJECT, 
                 new ArrayList<String>(notificationReceivers), 
                 MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_WHOLE_BODY, new Object[] {appointment.getSubject()}));
+    }
+
+    /**
+     * @param userUid
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<AppointmentWithTarget> getOldAppointments(String userUid, int startNum, int maxNum) {
+        return convertResponsesToAppointmentWithTarget(appointmentDAO.getOldAppointmentResponses(userDao.getOrCreateUser(userUid), startNum, maxNum - startNum + 1));
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public int getTotalOldAppointments(String user) {
+        return getIntValue(appointmentDAO.getTotalOldRespondedAppointments(userDao.getOrCreateUser(user)));
     }
 }

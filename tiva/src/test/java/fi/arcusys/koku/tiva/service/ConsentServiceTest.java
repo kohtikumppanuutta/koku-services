@@ -83,7 +83,7 @@ public class ConsentServiceTest {
         
         final String employeeUid = "Ville Virkamies";
         final Long consentId = service.requestForConsent(templateId, employeeUid, 
-                "Lassi Lapsi", Arrays.asList(parentForApprove, parentForDecline), null, null, Boolean.FALSE);
+                "Lassi Lapsi", Arrays.asList(parentForApprove, parentForDecline), null, null, null, Boolean.FALSE);
 
         assertNull(getById(consentId, service.getProcessedConsents(employeeUid, new ConsentQuery(1, 10))));
         
@@ -106,8 +106,10 @@ public class ConsentServiceTest {
         assertNotNull(getById(consentId, consentsForDecline));
         final ConsentForReplyTO consentForDecline = service.getConsentForReply(consentId, parentForDecline);
         assertNotNull(consentForDecline);
+        assertNull(getById(consentId, service.getOldConsents(parentForDecline, 1, 10)));
         service.declineConsent(consentForDecline.getConsentId(), parentForDecline, "consent declined");
         assertNull("already processed consent: ", getById(consentId, service.getAssignedConsents(parentForDecline, 1, 10)));
+        assertNotNull(getById(consentId, service.getOldConsents(parentForDecline, 1, 10)));
 
         assertEquals(ConsentStatus.Declined, service.getCombinedConsentById(consentId).getStatus());
         
@@ -135,7 +137,10 @@ public class ConsentServiceTest {
         
         // first parent's revoking
         assertNotNull(getById(consentId, service.getOwnConsents(parentForApprove, 1, 10)));
+        assertNull(getById(consentId, service.getOldConsents(parentForApprove, 1, 10)));
         service.revokeConsent(consentId, parentForApprove, "revoked consent");
+        assertNull(getById(consentId, service.getOwnConsents(parentForApprove, 1, 10)));
+        assertNotNull(getById(consentId, service.getOldConsents(parentForApprove, 1, 10)));
         final ConsentTO revoked = service.getConsentById(consentId, parentForApprove);
         assertEquals(ConsentApprovalStatus.Declined, revoked.getApprovalStatus());
         assertEquals(ConsentStatus.Revoked, revoked.getStatus());
@@ -148,7 +153,7 @@ public class ConsentServiceTest {
         final String employee = "testTotalsEmployee";
         
         final Long consentId = service.requestForConsent(templateId, employee, 
-                "Lassi Lapsi", Arrays.asList(parent), null, null, Boolean.FALSE);
+                "Lassi Lapsi", Arrays.asList(parent), null, null, null, Boolean.FALSE);
         
         assertEquals(1, service.getTotalAssignedConsents(parent));
         assertEquals(0, service.getTotalOwnConsents(parent));
@@ -170,7 +175,7 @@ public class ConsentServiceTest {
         
         final String employeeUid = "Ville Virkamies";
         final Long consentId = service.requestForConsent(templateId, employeeUid, 
-                "Lassi Lapsi", Arrays.asList(parent1, parent2), null, null, Boolean.FALSE);
+                "Lassi Lapsi", Arrays.asList(parent1, parent2), null, null, null, Boolean.FALSE);
         
         final ConsentQuery query = new ConsentQuery(1, 100);
         assertNull(getById(consentId, service.getProcessedConsents(employeeUid, query)));

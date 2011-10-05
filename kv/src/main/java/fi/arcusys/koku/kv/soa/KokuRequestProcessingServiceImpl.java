@@ -66,7 +66,7 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 	 */
 	@Override
 	public Long sendRequest(final String fromUserUid, final String subject, final Receipients receipients, 
-	        final Questions questions, final MultipleChoices choices, final String content, 
+	        final Questions questions, final MultipleChoices choices, final RequestTemplateVisibility visibility, final String content, 
 	        final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
 		logger.debug("sendRequest: [fromUserUid, subject, receipients, questions, content] = " +
 				"[" + fromUserUid
@@ -78,7 +78,7 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 		final Long requestId = kvFacade.sendRequest(fromUserUid, subject, receipients.getReceipients(), content, 
 		        questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
 		        choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>(),
-		                replyTill, notifyBeforeDays);
+		        visibility, replyTill, notifyBeforeDays);
 		logger.debug("Request sent: " + requestId);
 		return requestId;
 	}
@@ -89,10 +89,11 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
      * @param questions
      */
     @Override
-    public void createRequestTemplate(String userUid, String subject, Questions questions, final MultipleChoices choices) {
+    public void createRequestTemplate(String userUid, String subject, Questions questions, final MultipleChoices choices, final RequestTemplateVisibility visibility) {
         kvFacade.createRequestTemplate(userUid, subject, 
                 questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
-                choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>());
+                choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>(),
+                visibility);
     }
 
     /**
@@ -101,8 +102,8 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
      * @return
      */
     @Override
-    public List<RequestTemplateSummary> getRequestTemplateSummary(String subjectPrefix, int limit) {
-        return kvFacade.getRequestTemplateSummary(subjectPrefix, limit);
+    public List<RequestTemplateSummary> getRequestTemplateSummary(final String userUid, String subjectPrefix, int limit) {
+        return kvFacade.getRequestTemplateSummary(userUid, subjectPrefix, limit);
     }
 
     /**
@@ -144,9 +145,10 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
      * @param choices
      */
     @Override
-    public void updateRequestTemplate(String userUid, String subject, Questions questions, MultipleChoices choices) {
+    public void updateRequestTemplate(String userUid, String subject, Questions questions, MultipleChoices choices, final RequestTemplateVisibility visibility) {
         kvFacade.updateRequestTemplate(userUid, subject, 
                 questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
-                choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>());
+                choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>(),
+                visibility);
     }
 }

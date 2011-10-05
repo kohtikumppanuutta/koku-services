@@ -77,6 +77,7 @@ public class AppointmentServiceTest {
         final String receipient = appointmentReceipient.getReceipients().get(0);
         final String targetPerson = appointmentReceipient.getTargetPerson();
         final String targetPersonForDecline = newAppointment.getReceipients().get(1).getTargetPerson();
+        final String receipientForDecline = newAppointment.getReceipients().get(1).getReceipients().get(1);
 		final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
 		
 
@@ -88,22 +89,21 @@ public class AppointmentServiceTest {
 		serviceFacade.approveAppointment(targetPerson, receipient, appointmentForApprove.getAppointmentId(), 1, "approved");
         assertFalse(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getAcceptedSlots().isEmpty());
         assertEquals(AppointmentSummaryStatus.Approved, serviceFacade.getAppointmentRespondedById(appointmentForApprove.getAppointmentId(), targetPerson).getStatus());
+        assertNotNull(getById(serviceFacade.getRespondedAppointments(receipient, 1, 10), appointmentId));
+        assertNull(getById(serviceFacade.getOldAppointments(receipient, 1, 10), appointmentId));
 		
         appointments = serviceFacade.getAssignedAppointments(receipient);
         assertFalse(appointments.isEmpty());
 
         final AppointmentSummary appointmentForDecline = getById(appointments, appointmentId);
         assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().isEmpty());
-		serviceFacade.declineAppointment(targetPersonForDecline, receipient, appointmentForDecline.getAppointmentId(), "declined");
+		serviceFacade.declineAppointment(targetPersonForDecline, receipientForDecline, appointmentForDecline.getAppointmentId(), "declined");
         assertFalse(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().isEmpty());
         assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().contains(targetPersonForDecline));
+        assertNull(getById(serviceFacade.getRespondedAppointments(receipientForDecline, 1, 10), appointmentId));
+        assertNotNull(getById(serviceFacade.getOldAppointments(receipientForDecline, 1, 10), appointmentId));
 
-        try {
-            getById(serviceFacade.getAssignedAppointments(receipient), appointmentId);
-            fail("All appointments should be processed already");
-        } catch (IllegalArgumentException e) {
-            // do nothing, exception expected
-        }
+        assertNull("All appointments should be processed already", getById(serviceFacade.getAssignedAppointments(receipientForDecline), appointmentId));
         
         // cancel appointment
         serviceFacade.cancelAppointment(targetPerson, receipient, appointmentForApprove.getAppointmentId(), "cancelled");
@@ -133,7 +133,7 @@ public class AppointmentServiceTest {
 				return appointment;
 			}
 		}
-		throw new IllegalArgumentException("Appointment ID " + appointmentId + " not found.");
+		return null;
 	}
 
 	private AppointmentForEditTO createTestAppointment(final String testSubject, final String description, int numberOfSlots) {

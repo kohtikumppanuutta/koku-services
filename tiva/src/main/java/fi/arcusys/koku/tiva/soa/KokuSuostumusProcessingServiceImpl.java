@@ -87,8 +87,8 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public Long requestForConsent(long consentTemplateId, String senderUid, final String targetPersonUid,
-            List<String> receivers, final XMLGregorianCalendar replyTillDate, final XMLGregorianCalendar endDate, final Boolean isMandatory) {
-        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers, replyTillDate, endDate, isMandatory);
+            List<String> receivers, final ConsentReceipientsType type, final XMLGregorianCalendar replyTillDate, final XMLGregorianCalendar endDate, final Boolean isMandatory) {
+        return serviceFacade.requestForConsent(consentTemplateId, senderUid, targetPersonUid, receivers, type, replyTillDate, endDate, isMandatory);
     }
 
     /**

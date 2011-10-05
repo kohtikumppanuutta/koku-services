@@ -27,11 +27,15 @@ public interface ConsentReplyDAO extends AbstractEntityDAO<ConsentReply> {
      */
     List<ConsentReply> getRepliedConsents(final User replier, final int startNum, final int maxNum);
 
+    List<ConsentReply> getOldRepliedConsents(final User replier, final int startNum, final int maxNum);
+
     /**
      * @param orCreateUser
      * @return
      */
     Long getTotalRepliedConsents(final User user);
+
+    Long getTotalOldRepliedConsents(final User user);
 
     /**
      * @param consent

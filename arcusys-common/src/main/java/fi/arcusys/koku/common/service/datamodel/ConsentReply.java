@@ -20,8 +20,20 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "findReplyByConsentAndUser", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.consent = :consent AND rp.replier = :user ORDER BY rp.id DESC"),
-    @NamedQuery(name = "findRepliedConsentsByUser", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.replier = :user ORDER BY rp.id DESC"),
-    @NamedQuery(name = "countRepliedConsentsByUser", query = "SELECT COUNT(DISTINCT rp) FROM ConsentReply rp WHERE rp.replier = :user"),
+    @NamedQuery(name = "findRepliedConsentsByUser", query = "SELECT DISTINCT rp FROM ConsentReply rp " +
+    		" WHERE rp.replier = :user " +
+    		" AND rp.status = :status_valid AND (rp.validTill IS NULL OR rp.validTill >= CURRENT_DATE)" +
+    		" ORDER BY rp.id DESC"),
+    @NamedQuery(name = "countRepliedConsentsByUser", query = "SELECT COUNT(DISTINCT rp) FROM ConsentReply rp " +
+    		" WHERE rp.replier = :user" +
+    		" AND rp.status = :status_valid AND (rp.validTill IS NULL OR rp.validTill >= CURRENT_DATE)"),
+    @NamedQuery(name = "findOldRepliedConsentsByUser", query = "SELECT DISTINCT rp FROM ConsentReply rp " +
+            " WHERE rp.replier = :user " +
+            " AND NOT (rp.status = :status_valid AND (rp.validTill IS NULL OR rp.validTill >= CURRENT_DATE))" +
+            " ORDER BY rp.id DESC"),
+    @NamedQuery(name = "countOldRepliedConsentsByUser", query = "SELECT COUNT(DISTINCT rp) FROM ConsentReply rp " +
+            " WHERE rp.replier = :user" +
+            " AND NOT (rp.status = :status_valid AND (rp.validTill IS NULL OR rp.validTill >= CURRENT_DATE))"),
     @NamedQuery(name = "findRepliesByConsent", query = "SELECT DISTINCT rp FROM ConsentReply rp WHERE rp.consent = :consent ORDER BY rp.id DESC")
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"consent_id", "replier_id"}))

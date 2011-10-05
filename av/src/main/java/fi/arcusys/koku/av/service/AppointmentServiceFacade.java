@@ -44,6 +44,8 @@ public interface AppointmentServiceFacade {
 
     List<AppointmentWithTarget> getRespondedAppointments(final String userUid, final int startNum, final int maxNum);
 
+    List<AppointmentWithTarget> getOldAppointments(final String userUid, final int startNum, final int maxNum);
+
     /**
 	 * @param appointmentId
 	 */
@@ -57,6 +59,8 @@ public interface AppointmentServiceFacade {
 
     int getTotalRespondedAppointments(String user);
 
+    int getTotalOldAppointments(String user);
+
     /**
 	 * @param user
 	 * @param createdStatuses
@@ -69,7 +73,7 @@ public interface AppointmentServiceFacade {
 	
 	int getTotalProcessedAppointments(final String user);
 	
-	List<AppointmentSummary> getCreatedAppointments(final String user, int startNum, int maxNum);
+    List<AppointmentSummary> getCreatedAppointments(final String user, int startNum, int maxNum);
     
     List<AppointmentSummary> getProcessedAppointments(final String user, int startNum, int maxNum);
 
