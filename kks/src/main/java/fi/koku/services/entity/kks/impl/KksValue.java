@@ -41,7 +41,7 @@ public class KksValue implements Serializable {
   @JoinColumn(name = "entry_id")
   private KksEntry entry;
 
-  @Column(nullable = false)
+  @Column
   @Temporal(TemporalType.TIMESTAMP)
   private Date modified;
 

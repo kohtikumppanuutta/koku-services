@@ -390,7 +390,6 @@ public class KksServiceDAOBean implements KksServiceDAO {
   private Set<KksCollection> createCollectionSet(String user, String customer, List<KksEntry> entries) {
     Set<KksCollection> tmpCollections = new HashSet<KksCollection>();
     Map<Long, List<KksEntry>> entryMap = new HashMap<Long, List<KksEntry>>();
-    boolean parent = authorization.isParent(user, customer);
 
     for (KksEntry e : entries) {
       tmpCollections.add(e.getKksCollection());
