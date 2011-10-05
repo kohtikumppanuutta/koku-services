@@ -21,8 +21,8 @@ public class LogServiceBean implements LogService{
   LogDAO logDAO;
   
   @Override
-  public void archive(Date date) throws ServiceFault {
-    logDAO.archiveLog(date);
+  public int archive(Date date) throws ServiceFault {
+    return logDAO.archiveLog(date);
   }
 
   @Override

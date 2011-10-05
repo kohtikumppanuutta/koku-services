@@ -24,8 +24,8 @@ import javax.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.koku.KoKuFaultException;
 import fi.koku.services.utility.log.v1.AuditInfoType;
+import fi.koku.services.utility.log.v1.IntType;
 import fi.koku.services.utility.log.v1.LogArchivalParametersType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 import fi.koku.services.utility.log.v1.LogEntryType;
@@ -82,11 +82,12 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
     // call to the actual writing
     // TODO: tee "log":sta static
+    
+    // ClientSystemId tells to which log table we write!
     if (("log").equalsIgnoreCase(logEntryType.getClientSystemId())) {
       logger.debug("write to admin log");
       logService.writeAdmin(logConverter.fromWsTypeToAdmin(logEntryType));
-    } else { // TODO: varmista vielä, että kaikissa muissa tapauksessa
-             // kirjoitetaan "tavallisesti"!
+    } else { 
       logger.debug("write to normal log");
       logService.write(logConverter.fromWsType(logEntryType));
     }
@@ -138,8 +139,13 @@ public class LogServiceEndpointBean implements LogServicePortType {
       adminLogEntry.setUserPic(auditInfoType.getUserId());
       adminLogEntry.setCustomerPic(criteriaType.getCustomerPic());
       adminLogEntry.setOperation("view log");
+     
+      // set end date back to 1 day earlier so that the search criteria given by the user is written to admin log
+      Calendar end = criteriaType.getEndTime();
+      end.set(Calendar.DATE, end.get(Calendar.DATE) -1);
+      criteriaType.setEndTime(end);
       // LOK-3: "tapahtumatietona hakuehdot"
-      adminLogEntry.setMessage(criteriaType.getCustomerPic()+" "+criteriaType.getDataItemType()+" "+df.format(criteriaType.getStartTime().getTime())+"-"+df.format(criteriaType.getEndTime().getTime()));
+      adminLogEntry.setMessage(criteriaType.getCustomerPic()+" "+criteriaType.getDataItemType()+" "+df.format(criteriaType.getStartTime().getTime())+" - "+df.format(criteriaType.getEndTime().getTime()));
 
       logService.writeAdmin(adminLogEntry); 
       
@@ -182,7 +188,10 @@ public class LogServiceEndpointBean implements LogServicePortType {
       LogEntry logEntry = new LogEntry();
       logEntry.setUserPic(auditInfoType.getUserId());
       // LOK-4: "Tapahtumatietona hakuehdot"
-      logEntry.setMessage("start: "+df.format(criteriaType.getStartTime().getTime())+", end: "+df.format(criteriaType.getEndTime().getTime()));
+      // set end date back to 1 day earlier so that the real query end date given by the user is written to log
+      Calendar end = criteriaType.getEndTime();
+      end.set(Calendar.DATE, end.get(Calendar.DATE) -1);
+      logEntry.setMessage("start: "+df.format(criteriaType.getStartTime().getTime())+", end: "+df.format(end.getTime()));
       logEntry.setTimestamp(Calendar.getInstance().getTime());
       logEntry.setOperation("search");
       logEntry.setClientSystemId("adminlog");
@@ -200,14 +209,22 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * Implements the use case LOK-2 (Arkistoi lokitietoa).
    */
   @Override
-  public VoidType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
+//  public VoidType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
+  public IntType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
       throws ServiceFault {
     logger.info("opArchiveLog");
    
+    int entryCount = 0;
+    
     try{
       // call to the actual archiving
-      logService.archive(archivalParameters.getEndDate().getTime());
+      entryCount = logService.archive(archivalParameters.getEndDate().getTime());
 
+      if(entryCount < 1) {
+        // do not throw a servicefault
+        logger.info("Ei arkistoitavaa ennen päivää "+archivalParameters.getEndDate().getTime());
+      }
+      
       // log this query to admin log 
       logger.debug("write to admin log");
       AdminLogEntry adminLogEntry = new AdminLogEntry();
@@ -215,14 +232,23 @@ public class LogServiceEndpointBean implements LogServicePortType {
       adminLogEntry.setUserPic(auditInfoType.getUserId());
       adminLogEntry.setOperation("delete");
       //TODO: Pitääkö servicen selvittää aikaisin log:n tieto ja kirjata tähän myös alkupäivä?
-      adminLogEntry.setMessage("archive log up to "+df.format(archivalParameters.getEndDate().getTime()));
+      
+      // set end date back to 1 day earlier so that the archival date given by the user is written to admin log
+      Calendar end = archivalParameters.getEndDate();
+      end.set(Calendar.DATE, end.get(Calendar.DATE) -1);
+      
+      adminLogEntry.setMessage("archive log up to "+df.format(end.getTime()));
 
       logService.writeAdmin(adminLogEntry); 
     }catch(ServiceFault f){
       logger.debug("endpoint: ei arkistoitavaa, throw ServiceFault");
       throw f;
     }
-    return new VoidType();
+    
+    IntType count = new IntType();
+    count.setArchiveCount(entryCount);
+    
+    return count;
   }
 
   /**
@@ -246,26 +272,14 @@ public class LogServiceEndpointBean implements LogServicePortType {
       return criteria;
     }
 
-    /**
-     * Helper method for converting a LogEntry to AdminLogEntry
-     */
-    private AdminLogEntry convertToAdminLogEntry(LogEntry entry) {
-      AdminLogEntry aentry = new AdminLogEntry();
-      aentry.setCustomerPic(entry.getCustomerPic());
-      aentry.setUserPic(entry.getUserPic());
-      aentry.setOperation(entry.getOperation());
-      aentry.setTimestamp(entry.getTimestamp());
-      aentry.setMessage(entry.getMessage());
-
-      return aentry;
-    }
 
     public LogEntryType toWsFromAdminType(AdminLogEntry entry) throws ParseException {
-      logger.debug("toWsFromAdminType pic: " + entry.getCustomerPic());
+ /*     logger.debug("toWsFromAdminType pic: " + entry.getCustomerPic());
       logger.debug("userpic: "+entry.getUserPic());
       logger.debug("operation: "+entry.getOperation());
       logger.debug("message: "+entry.getMessage());
-      logger.debug("timestamp: "+entry.getTimestamp().toString());
+      */
+      logger.debug("toWsFromAdminType timestamp: "+entry.getTimestamp().toString());
                       
       LogEntryType entryType = new LogEntryType();
       entryType.setCustomerPic(entry.getCustomerPic());
@@ -353,17 +367,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       return cal;
     }
 
-    /*
-     * /* public Calendar parseGivenDate(Date date) throws KoKuFaultException {
-     * Calendar cal = Calendar.getInstance();
-     * 
-     * if(date!=null){ // if it's null, return a null value if(date instanceof
-     * Date){ cal.setTime(date); } else{ throw new
-     * KoKuFaultException("wrong format of date"); } } return cal; }
-     */
-    /*
-     * 
-     */
+ 
     // TODO: Voiko tässä tulla joku format-error??
     private String calendarToString(Calendar cal) {
       String str = df.format(cal.getTime());
@@ -371,32 +375,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       return str;
     }
 
-    /**
-     * Method for transforming String to Calendar format
-     * 
-     * @param date
-     * @return
-     * @throws DatatypeConfigurationException
-     * @throws ParseException
-     */
-    private Calendar stringToCalendar(String dateStr) throws ParseException {
-      Calendar cal = Calendar.getInstance();
-
-      Date date = df.parse(dateStr);
-      cal.setTime(date);
-
-      return cal;
-    }
-
-    /**
-     * Method for transforming String to XMLGregorianCalendar format
-     * 
-     * @param date
-     * @return
-     * @throws DatatypeConfigurationException
-     * @throws ParseException
-     */
-
+  
   }
 
 }

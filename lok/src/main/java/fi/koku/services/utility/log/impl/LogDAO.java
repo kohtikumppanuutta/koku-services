@@ -16,7 +16,7 @@ import fi.koku.services.utility.log.v1.ServiceFault;
 @Local
 public interface LogDAO {
   
-  void archiveLog(Date date) throws ServiceFault;
+  int archiveLog(Date date) throws ServiceFault;
   
   void writeLog(LogEntry entry);
 

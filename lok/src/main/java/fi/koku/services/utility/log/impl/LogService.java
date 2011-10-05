@@ -16,7 +16,7 @@ import fi.koku.services.utility.log.v1.ServiceFault;
 @Local
 public interface LogService {
 
-    void archive(Date date) throws ServiceFault;
+    int archive(Date date) throws ServiceFault;
     
     void write(LogEntry entry);
     

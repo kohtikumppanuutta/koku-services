@@ -38,7 +38,7 @@ public class LogDAOBean implements LogDAO {
   // 1) arkistoloki ei vastaa
   // 2) arkistoloki ei kuittaa onnistunutta tietojen kopiointia
   @Override
-  public void archiveLog(Date date) throws ServiceFault {
+  public int archiveLog(Date date) throws ServiceFault {
     
     /*
      * TODO tähän tyyliin: INSERT INTO log_archive (...) SELECT FROM log WHERE
@@ -62,10 +62,7 @@ public class LogDAOBean implements LogDAO {
     // there is nothing to archive
  //   if (archiveList == null || archiveList.isEmpty()) {
    if(logEntryCount == 0){
-      ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
-      sfdt.setCode(LogConstants.LOG_NOTHING_TO_ARCHIVE);
-      logger.info("ei arkistoitavaa ennen päivää " + date);
-      throw new ServiceFault("ei arkistoitavaa", sfdt);
+     return 0;
     } else{
 
       logger.info("insert log entries to archive log (date="+date);
@@ -84,6 +81,7 @@ public class LogDAOBean implements LogDAO {
       deleteQuery.setParameter("date", date);
       int deletedRows = deleteQuery.executeUpdate();
       logger.info("Deleted " + deletedRows + " rows from log table");
+      return updateCount;
     }
   }
 
