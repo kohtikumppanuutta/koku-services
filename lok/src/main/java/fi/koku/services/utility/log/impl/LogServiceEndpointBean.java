@@ -188,7 +188,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       logEntry.setOperation("search");
       logEntry.setClientSystemId("adminlog");
       logEntry.setDataItemType("log");
-      logEntry.setDataItemId("dataitemid");
+      logEntry.setDataItemId("adminlogid");
       // call to lok service
       logService.write(logEntry);
       
