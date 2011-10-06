@@ -73,15 +73,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
     logger.info("opLog");
     logger.debug("got timestamp: " + logEntryType.getTimestamp().getTime().toString());
 
-    // TODO: NÄITÄ EI KAI SINÄNSÄ KÄYTETÄ MIHINKÄÄN MUUHUN KUIN LOGGAAMISEEN??
-    // message context
-    Set<String> keys = wsCtx.getMessageContext().keySet();
-    for (Iterator<String> i = keys.iterator(); i.hasNext();)
-      logger.debug("i: " + i.next());
-    String caller = wsCtx.getUserPrincipal().getName();
-    logger.debug("caller: " + caller);
-    // -------------------------
-
+  
     // call to the actual writing
     // TODO: tee "log":sta static
     

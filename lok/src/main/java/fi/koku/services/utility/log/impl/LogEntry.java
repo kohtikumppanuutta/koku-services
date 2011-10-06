@@ -136,10 +136,6 @@ public class LogEntry {
   }
   
   public String getMessage() {
- //  message = "logentryn message";
- //   message = id +" "+ timestamp +" "+ userPic +" "+ customerPic +" "+ dataItemType +" "+ 
-  //    operation +" "+ clientSystemId;
-   
     
     return message;
   }

@@ -141,9 +141,7 @@ public class LogArchiveEntry {
   }
   
   public String getMessage() {
- //   message = id +" "+ timestamp +" "+ userPic +" "+ customerPic +" "+ dataItemType +" "+ 
- //     operation +" "+ clientSystemId;
-    
+  
     return message;
   }
  
