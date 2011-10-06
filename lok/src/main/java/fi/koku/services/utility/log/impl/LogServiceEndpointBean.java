@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.koku.services.utility.log.v1.AuditInfoType;
-import fi.koku.services.utility.log.v1.IntType;
+import fi.koku.services.utility.log.v1.ArchivalResultsType;
 import fi.koku.services.utility.log.v1.LogArchivalParametersType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 import fi.koku.services.utility.log.v1.LogEntryType;
@@ -56,6 +56,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
   private LogConverter logConverter;
 
+ // LogUtils lu = new LogUtils();
+  
   public LogServiceEndpointBean() {
     logConverter = new LogConverter();
   }
@@ -132,7 +134,6 @@ public class LogServiceEndpointBean implements LogServicePortType {
         throw new ServiceFault(e.getMessage(), sfdt);
       }
       
-      // log this query to admin log 
       logger.debug("write to admin log");
       AdminLogEntry adminLogEntry = new AdminLogEntry();
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
@@ -152,8 +153,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
     } else if(LogConstants.LOG_ADMIN.equals(criteriaType.getLogType())){
       List<AdminLogEntry> entries;
       
-      try {
-        
+      try {     
         // call to the log database
         entries = logService.queryAdmin(logConverter.fromWsType(criteriaType));
         logger.debug("entries: " + entries.size());
@@ -210,7 +210,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
    */
   @Override
 //  public VoidType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
-  public IntType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
+  public ArchivalResultsType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
       throws ServiceFault {
     logger.info("opArchiveLog");
    
@@ -230,14 +230,10 @@ public class LogServiceEndpointBean implements LogServicePortType {
       AdminLogEntry adminLogEntry = new AdminLogEntry();
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
       adminLogEntry.setUserPic(auditInfoType.getUserId());
-      adminLogEntry.setOperation("delete");
+      adminLogEntry.setOperation("archive");
       //TODO: Pitääkö servicen selvittää aikaisin log:n tieto ja kirjata tähän myös alkupäivä?
-      
-      // set end date back to 1 day earlier so that the archival date given by the user is written to admin log
-      Calendar end = archivalParameters.getEndDate();
-      end.set(Calendar.DATE, end.get(Calendar.DATE) -1);
-      
-      adminLogEntry.setMessage("archive log up to "+df.format(end.getTime()));
+        
+      adminLogEntry.setMessage("archive log up to "+df.format(archivalParameters.getEndDate().getTime()));
 
       logService.writeAdmin(adminLogEntry); 
     }catch(ServiceFault f){
@@ -245,8 +241,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
       throw f;
     }
     
-    IntType count = new IntType();
-    count.setArchiveCount(entryCount);
+    ArchivalResultsType count = new ArchivalResultsType();
+    count.setLogEntryCount(entryCount);
     
     return count;
   }
@@ -261,6 +257,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
     SimpleDateFormat df = new SimpleDateFormat(LogConstants.DATE_FORMAT);
 
+    LogUtils lu = new LogUtils();
+    
     public LogConverter() {
     }
 
@@ -274,11 +272,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
 
     public LogEntryType toWsFromAdminType(AdminLogEntry entry) throws ParseException {
- /*     logger.debug("toWsFromAdminType pic: " + entry.getCustomerPic());
-      logger.debug("userpic: "+entry.getUserPic());
-      logger.debug("operation: "+entry.getOperation());
-      logger.debug("message: "+entry.getMessage());
-      */
+ 
       logger.debug("toWsFromAdminType timestamp: "+entry.getTimestamp().toString());
                       
       LogEntryType entryType = new LogEntryType();
@@ -286,7 +280,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       entryType.setUserPic(entry.getUserPic());
       entryType.setOperation(entry.getOperation());
       entryType.setMessage(entry.getMessage());
-      entryType.setTimestamp(parseToCal(entry.getTimestamp()));
+      entryType.setTimestamp(lu.parseToCal(entry.getTimestamp()));
       return entryType;
     }
 
@@ -301,7 +295,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       et.setDataItemType(entry.getDataItemType());
       et.setMessage(entry.getMessage());
       et.setOperation(entry.getOperation());
-      et.setTimestamp(parseToCal(entry.getTimestamp()));
+      et.setTimestamp(lu.parseToCal(entry.getTimestamp()));
       et.setUserPic(entry.getUserPic());
 
       return et;
@@ -349,32 +343,6 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
       return entry;
     }
-
-    /**
-     * Helper method for parsing a Date to a Calendar
-     * 
-     * @param date
-     * @return
-     */
-    public Calendar parseToCal(Date date) {
-      Calendar cal = null;
-
-      if (date != null) { // if it's null, return a null value
-        cal = Calendar.getInstance();
-        cal.setTime(date);
-      }
-
-      return cal;
-    }
-
- 
-    // TODO: Voiko tässä tulla joku format-error??
-    private String calendarToString(Calendar cal) {
-      String str = df.format(cal.getTime());
-
-      return str;
-    }
-
   
   }
 

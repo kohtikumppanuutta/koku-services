@@ -117,7 +117,6 @@ public class LogEntry {
   }
 
   public void setMessage(String message) {
-    logger.debug("LogEntryn setMessage(): "+message);
     this.message = message;
   }
 
@@ -137,10 +136,10 @@ public class LogEntry {
   }
   
   public String getMessage() {
-   message = "logentryn message";
+ //  message = "logentryn message";
  //   message = id +" "+ timestamp +" "+ userPic +" "+ customerPic +" "+ dataItemType +" "+ 
   //    operation +" "+ clientSystemId;
-    logger.debug("LogEntryn getMessage(): "+message);
+   
     
     return message;
   }

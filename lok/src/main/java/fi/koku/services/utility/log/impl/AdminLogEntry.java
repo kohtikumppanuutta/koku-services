@@ -87,12 +87,10 @@ public class AdminLogEntry {
   }
 
   public String getMessage() {
-    logger.debug("AdminLogEntryn getMessage(): "+message);
     return message;
   }
 
   public void setMessage(String message) {
-    logger.debug("AdminLogEntryn setMessage(): "+message);
     this.message = message;
   }
   
