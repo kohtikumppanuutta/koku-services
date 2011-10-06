@@ -58,6 +58,8 @@ CREATE TABLE kks_collection (
   status VARCHAR(15) NOT NULL,
   created DATETIME NOT NULL,
   creator VARCHAR(15) NOT NULL,
+  modified DATETIME NOT NULL,
+  modifier VARCHAR(15) NOT NULL,
   version INT NOT NULL,
   prev_version VARCHAR(50),
   next_version VARCHAR(50),
@@ -94,7 +96,7 @@ CREATE TABLE kks_entry_tags (
 
 CREATE TABLE kks_value (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  value VARCHAR(500) NOT NULL,
+  value VARCHAR(2000) NOT NULL,
   entry_id BIGINT UNSIGNED NOT NULL,
   modified DATETIME NOT NULL,
   modifier VARCHAR(15) NOT NULL,

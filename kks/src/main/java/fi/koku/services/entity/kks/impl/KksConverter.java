@@ -155,6 +155,14 @@ public class KksConverter {
     kksCollectionType.setVersion(new BigInteger("" + collection.getVersion()));
     kksCollectionType.setVersioned(collection.getNextVersion() != null);
 
+    if (collection.getModified() != null) {
+      Calendar cal = new GregorianCalendar();
+      cal.setTime(collection.getModified());
+
+      kksCollectionType.setModified(cal);
+    }
+    kksCollectionType.setModifier(collection.getModifier());
+
     KksEntriesType kksEntriesType = new KksEntriesType();
 
     if (collection.getEntries() != null) {
@@ -192,6 +200,13 @@ public class KksConverter {
       KksEntryValueType kksEv = new KksEntryValueType();
       kksEv.setId("" + v.getId());
       kksEv.setValue(v.getValue());
+
+      if (v.getModified() != null) {
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(v.getModified());
+        kksEv.setModified(cal);
+      }
+      kksEv.setModifier(v.getModifier());
       entryValuesType.getEntryValue().add(kksEv);
     }
 
@@ -214,6 +229,8 @@ public class KksConverter {
     kksCollection.setStatus(collection.getStatus());
     kksCollection.setCollectionClass(Integer.parseInt(collection.getCollectionClassId()));
     kksCollection.setVersion(collection.getVersion().intValue());
+    kksCollection.setModified(collection.getModified().getTime());
+    kksCollection.setModifier(collection.getModifier());
 
     List<KksEntry> tmp = new ArrayList<KksEntry>();
     for (KksEntryType et : collection.getKksEntries().getEntries()) {
@@ -246,6 +263,8 @@ public class KksConverter {
       KksValue v = new KksValue();
       v.setId(parseNullableLong(value.getId()));
       v.setValue(value.getValue());
+      v.setModified(value.getModified().getTime());
+      v.setModifier(value.getModifier());
       v.setEntry(entry);
       tmp.add(v);
     }

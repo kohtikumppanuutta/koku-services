@@ -62,6 +62,13 @@ public class KksCollection implements Serializable {
   @Column(nullable = false)
   private String creator;
 
+  @Column
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date modified;
+
+  @Column
+  private String modifier;
+
   @Version
   private int version;
 
@@ -183,6 +190,22 @@ public class KksCollection implements Serializable {
 
   public void setCreator(String creator) {
     this.creator = creator;
+  }
+
+  public Date getModified() {
+    return modified;
+  }
+
+  public void setModified(Date modified) {
+    this.modified = modified;
+  }
+
+  public String getModifier() {
+    return modifier;
+  }
+
+  public void setModifier(String modifier) {
+    this.modifier = modifier;
   }
 
   public List<KksTag> getTags() {

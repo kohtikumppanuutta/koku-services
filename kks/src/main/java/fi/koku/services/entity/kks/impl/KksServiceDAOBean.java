@@ -116,8 +116,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   public List<KksCollection> getAuthorizedCollections(String pic, String user, List<String> registers) {
     Query q = em
-        .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:creator OR c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers)))");
-    q.setParameter("customer", pic).setParameter("creator", user).setParameter("registers", registers);
+        .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers))");
+    q.setParameter("customer", pic).setParameter("registers", registers);
 
     @SuppressWarnings("unchecked")
     List<KksCollection> list = (List<KksCollection>) q.getResultList();
@@ -208,7 +208,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
       KksEntry e = new KksEntry();
       e.setCustomer(creation.getPic());
-      e.setModified(new Date());
+      e.setModified(creation.getModified());
       e.setCreator(creation.getCreator());
       e.setKksCollection(collection);
       e.setEntryClassId(creation.getEntryClassId());
@@ -243,12 +243,14 @@ public class KksServiceDAOBean implements KksServiceDAO {
   private Long handleExistingEntryValue(String user, KksCollection collection, KksCollectionClass metadata,
       KksEntryCreation creation, KksEntry e) {
     e.setCustomer(creation.getPic());
-    e.setCreator(creation.getCreator());
+    e.setCreator(user);
     e.setModified(new Date());
 
     if (creation.getValue().getId() == null) {
       KksValue v = creation.getValue();
       v.setEntry(e);
+      v.setModified(new Date());
+      v.setModifier(user);
       em.persist(v);
 
       Log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
@@ -262,9 +264,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
               creation.getValue());
 
           v.setValue(creation.getValue().getValue());
-
-          // todo: tänne uudet arvot
-
+          v.setModified(new Date());
+          v.setModifier(user);
         }
       }
     }
@@ -442,8 +443,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setPrevVersion(collection.getPrevVersion());
     tmp.setStatus(collection.getStatus());
     tmp.setName(collection.getName());
-    // tmp.setCreated(new Date());
-    // tmp.setCreator(collection.getCreator());
+    tmp.setModifier(collection.getModifier());
+    tmp.setModified(collection.getModified());
     tmp.setDescription(collection.getDescription());
 
     em.merge(tmp);
