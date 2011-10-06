@@ -10,7 +10,7 @@ CREATE TABLE log (
   timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11),
-  data_item_type VARCHAR(30) NOT NULL,
+  data_item_type VARCHAR(100) NOT NULL,
   operation VARCHAR(20) NOT NULL,
   client_system_id VARCHAR(20) NOT NULL,
   message TEST
@@ -31,7 +31,7 @@ CREATE TABLE log_archive (
   timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11),
-  data_item_type VARCHAR(30) NOT NULL,
+  data_item_type VARCHAR(100) NOT NULL,
   operation VARCHAR(20) NOT NULL,
   client_system_id VARCHAR(20) NOT NULL,
   message TEST
