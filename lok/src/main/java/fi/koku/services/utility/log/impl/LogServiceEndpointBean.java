@@ -95,17 +95,15 @@ public class LogServiceEndpointBean implements LogServicePortType {
   public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) throws ServiceFault {
     logger.info("opQueryLog");
     LogEntriesType logEntriesType = new LogEntriesType();
-   
 
     if(LogConstants.LOG_NORMAL.equals(criteriaType.getLogType())){
       List<LogEntry> entries;
     
-      try {
-       
+      try {    
         // call to the log database
         entries = logService.query(logConverter.fromWsType(criteriaType));
         logger.debug("entries: " + entries.size());
-        logger.debug("normal log");
+     
         if (entries == null) {
           logger.debug("No entries found in log table!");
         } else {
@@ -118,7 +116,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
           }
         }
 
-      } catch (ParseException e) {
+      } catch (ParseException e) { //TODO: Tuleeko tällaista jostain?
         ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
         sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
         sfdt.setMessage("TODO. Message: String to calendar epäonnistui.");
@@ -131,7 +129,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
       adminLogEntry.setUserPic(auditInfoType.getUserId());
       adminLogEntry.setCustomerPic(criteriaType.getCustomerPic());
-      adminLogEntry.setOperation("view log");
+      adminLogEntry.setOperation("view log"); //TODO: static parameter?
      
       // set end date back to 1 day earlier so that the search criteria given by the user is written to admin log
       Calendar end = criteriaType.getEndTime();
@@ -150,20 +148,16 @@ public class LogServiceEndpointBean implements LogServicePortType {
         entries = logService.queryAdmin(logConverter.fromWsType(criteriaType));
         logger.debug("entries: " + entries.size());
 
-        logger.debug("Admin log");
-
         if (entries == null) {
           logger.debug("No entries found in log_admin table!");
         } else {
           Iterator<AdminLogEntry> j = entries.iterator();
 
-          // Iterator<AdminLogEntry> i = entries.iterator();
           while (j.hasNext()) {
 
             // convert log entry to AdminLog Web Service type and 
             // add it to the collection
-            AdminLogEntry entry = (AdminLogEntry)j.next();  //logConverter.convertToAdminLogEntry(j.next());
-            logger.debug("adminlogentryn message: "+entry.getMessage());
+            AdminLogEntry entry = (AdminLogEntry)j.next();  
             logEntriesType.getLogEntry().add(logConverter.toWsFromAdminType(entry));
           }
         }
@@ -176,13 +170,14 @@ public class LogServiceEndpointBean implements LogServicePortType {
       }
       
       // log the query to normal log
-      logger.debug("write to log");
       LogEntry logEntry = new LogEntry();
       logEntry.setUserPic(auditInfoType.getUserId());
-      // LOK-4: "Tapahtumatietona hakuehdot"
+     
       // set end date back to 1 day earlier so that the real query end date given by the user is written to log
       Calendar end = criteriaType.getEndTime();
       end.set(Calendar.DATE, end.get(Calendar.DATE) -1);
+      
+      // LOK-4: "Tapahtumatietona hakuehdot"
       logEntry.setMessage("start: "+df.format(criteriaType.getStartTime().getTime())+", end: "+df.format(end.getTime()));
       logEntry.setTimestamp(Calendar.getInstance().getTime());
       logEntry.setOperation("search");
@@ -191,8 +186,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
       logEntry.setDataItemId("adminlogid");
       // call to lok service
       logService.write(logEntry);
-      
     }
+    
     return logEntriesType;
   }
 
@@ -254,8 +249,13 @@ public class LogServiceEndpointBean implements LogServicePortType {
     public LogConverter() {
     }
 
+    /**
+     * Method converts the query criteria from WS type to service type.
+     * @param type
+     * @return
+     */
     public LogQueryCriteria fromWsType(LogQueryCriteriaType type) {
-      // TODO: onko null-tsekkaus tehty jo aiemmin?
+      //criteria parameters have been null-checked on the portlet side
       LogQueryCriteria criteria = new LogQueryCriteria(type.getLogType(), type.getCustomerPic(),
           type.getDataItemType(), type.getStartTime().getTime(), type.getEndTime().getTime());
 
