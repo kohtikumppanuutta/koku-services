@@ -61,4 +61,14 @@ public interface Authorization {
    */
   public boolean hasAuthorizedRegisters(List<String> registers, String user);
 
+  /**
+   * Removes unauthorized content from given collection
+   * 
+   * @param collection
+   * @param entryRegisters
+   * @param user
+   * @return authorized collection
+   */
+  public KksCollection removeUnauthorizedContent(KksCollection c, Map<Integer, String> entryRegisters, String user);
+
 }

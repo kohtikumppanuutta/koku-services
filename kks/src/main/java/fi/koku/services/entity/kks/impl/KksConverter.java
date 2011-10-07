@@ -136,6 +136,11 @@ public class KksConverter {
   }
 
   public static KksCollectionType toWsType(KksCollection collection) {
+
+    if (collection == null) {
+      return new KksCollectionType();
+    }
+
     KksCollectionType kksCollectionType = new KksCollectionType();
     kksCollectionType.setCollectionClassId("" + collection.getCollectionClass());
     Date created = collection.getCreated();

@@ -116,8 +116,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   public List<KksCollection> getAuthorizedCollections(String pic, String user, List<String> registers) {
     Query q = em
-        .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers))");
-    q.setParameter("customer", pic).setParameter("registers", registers);
+        .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:user OR c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers)))  ");
+    q.setParameter("customer", pic).setParameter("user", user).setParameter("registers", registers);
 
     @SuppressWarnings("unchecked")
     List<KksCollection> list = (List<KksCollection>) q.getResultList();
@@ -293,6 +293,34 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
+  public Map<Integer, String> getEntryClassRegistriesForCollectionClass(int classId) {
+    List<KksGroup> groups = getCollectionClassGroups(classId);
+
+    Map<Integer, String> groupRegisters = new HashMap<Integer, String>();
+    for (KksGroup g : groups) {
+      groupRegisters.put(g.getGroupId(), g.getRegister());
+    }
+
+    List<KksEntryClass> entryClasses = getEntryClassesForGroups(groupRegisters.keySet());
+    Map<Integer, String> entryRegisters = new HashMap<Integer, String>();
+
+    for (KksEntryClass kec : entryClasses) {
+      entryRegisters.put(kec.getEntryClassId(), groupRegisters.get(kec.getGroupId()));
+    }
+
+    return entryRegisters;
+  }
+
+  @Override
+  public List<KksEntryClass> getEntryClassesForGroups(Set<Integer> groupIds) {
+    Query q = em.createNamedQuery(KksEntryClass.NAMED_QUERY_GET_ENTRY_CLASSES_FOR_GROUPS).setParameter("ids", groupIds);
+
+    @SuppressWarnings("unchecked")
+    List<KksEntryClass> tmp = q.getResultList();
+    return tmp;
+  }
+
+  @Override
   public List<KksCollection> query(String user, KksQueryCriteria criteria) {
 
     List<String> tagNames = criteria.getTagNames();
@@ -353,30 +381,43 @@ public class KksServiceDAOBean implements KksServiceDAO {
     return tmp;
   }
 
-  private List<KksCollection> handleAuthorizedQuery(String user, KksQueryCriteria criteria, List<Long> entryIdsList) {
-    List<String> registrys = authorization.getAuthorizedRegistryNames(user);
-    Query q = em
-        .createQuery("SELECT DISTINCT c.id FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:creator OR c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers)))");
-    q.setParameter("customer", criteria.getPic()).setParameter("creator", user).setParameter("registers", registrys);
+  @Override
+  public List<KksGroup> getCollectionClassGroups(int classId) {
+
+    Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS).setParameter("id", classId);
 
     @SuppressWarnings("unchecked")
-    List<Integer> tmp = q.getResultList();
+    List<KksGroup> tmp = q.getResultList();
+    return tmp;
+  }
 
-    if (tmp.size() > 0) {
-      Query entryQ = em.createNamedQuery(KksEntry.NAMED_QUERY_GET_ENTRIES_BY_IDS_WITH_COLLECTIONS);
-      entryQ.setParameter("customer", criteria.getPic()).setParameter("ids", entryIdsList).setParameter("cIds", tmp);
+  private List<KksCollection> handleAuthorizedQuery(String user, KksQueryCriteria criteria, List<Long> entryIdsList) {
+    List<String> registrys = authorization.getAuthorizedRegistryNames(user);
+
+    if (registrys.size() > 0) {
+      Query q = em
+          .createQuery("SELECT DISTINCT c.id FROM KksCollection c WHERE c.customer =:customer AND c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers))");
+      q.setParameter("customer", criteria.getPic()).setParameter("registers", registrys);
 
       @SuppressWarnings("unchecked")
-      List<KksEntry> entries = (List<KksEntry>) entryQ.getResultList();
+      List<Integer> tmp = q.getResultList();
 
-      if (entries.isEmpty()) {
-        return new ArrayList<KksCollection>();
+      if (tmp.size() > 0) {
+        Query entryQ = em.createNamedQuery(KksEntry.NAMED_QUERY_GET_ENTRIES_BY_IDS_WITH_COLLECTIONS);
+        entryQ.setParameter("customer", criteria.getPic()).setParameter("ids", entryIdsList).setParameter("cIds", tmp);
+
+        @SuppressWarnings("unchecked")
+        List<KksEntry> entries = (List<KksEntry>) entryQ.getResultList();
+
+        if (entries.isEmpty()) {
+          return new ArrayList<KksCollection>();
+        }
+
+        Set<KksCollection> tmpCollections = createCollectionSet(user, criteria.getPic(), entries);
+
+        List<KksCollection> collections = new ArrayList<KksCollection>(tmpCollections);
+        return collections;
       }
-
-      Set<KksCollection> tmpCollections = createCollectionSet(user, criteria.getPic(), entries);
-
-      List<KksCollection> collections = new ArrayList<KksCollection>(tmpCollections);
-      return collections;
     }
     return new ArrayList<KksCollection>();
   }

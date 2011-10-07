@@ -82,6 +82,33 @@ public class AuthorizationBean implements Authorization {
     return false;
   }
 
+  @Override
+  public KksCollection removeUnauthorizedContent(KksCollection c, Map<Integer, String> entryRegisters, String user) {
+
+    if (isParent(user, c.getCustomer())) {
+      return c;
+    }
+
+    List<KksEntry> allowed = new ArrayList<KksEntry>();
+    List<String> registries = getAuthorizedRegistryNames(user);
+    for (KksEntry ke : c.getEntries()) {
+
+      String register = entryRegisters.get(ke.getEntryClassId());
+      if (registries.contains(register)) {
+        allowed.add(ke);
+      }
+    }
+
+    c.setEntries(allowed);
+
+    if (allowed.size() == 0 && !c.getCreator().equals(user)) {
+      // no auth content and user is not the collection creator => no rights for
+      // the collection
+      return null;
+    }
+    return c;
+  }
+
   /**
    * Gets user childs
    * 
@@ -131,4 +158,5 @@ public class AuthorizationBean implements Authorization {
     a.setUserId(user);
     return a;
   }
+
 }

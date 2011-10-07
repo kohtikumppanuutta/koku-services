@@ -23,11 +23,14 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@NamedQueries({ @NamedQuery(name = KksEntryClass.NAMED_QUERY_GET_ALL_ENTRY_CLASSES, query = "SELECT DISTINCT k FROM KksEntryClass k LEFT OUTER JOIN FETCH k.tags") })
+@NamedQueries({
+    @NamedQuery(name = KksEntryClass.NAMED_QUERY_GET_ALL_ENTRY_CLASSES, query = "SELECT DISTINCT k FROM KksEntryClass k LEFT OUTER JOIN FETCH k.tags"),
+    @NamedQuery(name = KksEntryClass.NAMED_QUERY_GET_ENTRY_CLASSES_FOR_GROUPS, query = "SELECT DISTINCT k FROM KksEntryClass k WHERE k.groupId IN (:ids)") })
 @Table(name = "kks_entry_class")
 public class KksEntryClass implements Serializable {
 
   public static final String NAMED_QUERY_GET_ALL_ENTRY_CLASSES = "getAllEntryClasses";
+  public static final String NAMED_QUERY_GET_ENTRY_CLASSES_FOR_GROUPS = "getAllEntryClassesForGroups";
 
   private static final long serialVersionUID = 4568034252182971307L;
 

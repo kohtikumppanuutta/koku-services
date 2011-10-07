@@ -23,13 +23,15 @@ import javax.persistence.Transient;
 @NamedQueries({
     @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_GROUPS, query = "FROM KksGroup k"),
     @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASSES_WITH_GROUP_REGISTERS, query = "SELECT DISTINCT k.collectionClassId FROM KksGroup k WHERE k.register IN (:registers)"),
-    @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_REGISTERS, query = "SELECT DISTINCT k.register FROM KksGroup k WHERE k.collectionClassId =:id") })
+    @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_REGISTERS, query = "SELECT DISTINCT k.register FROM KksGroup k WHERE k.collectionClassId =:id"),
+    @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS, query = "SELECT DISTINCT k FROM KksGroup k WHERE k.collectionClassId =:id") })
 @Table(name = "kks_group")
 public class KksGroup implements Serializable, Comparable<KksGroup> {
 
   public static final String NAMED_QUERY_GET_ALL_GROUPS = "getAllGroups";
   public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASSES_WITH_GROUP_REGISTERS = "getAllCollectionClassesWithGroupRegisters";
   public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASS_REGISTERS = "getAllCollectionClassRegisters";
+  public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS = "getAllCollectionClassGroups";
 
   private static final long serialVersionUID = -9141086962336862170L;
 

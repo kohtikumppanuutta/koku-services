@@ -84,7 +84,7 @@ public class KksCollection implements Serializable {
   @Column(name = "collection_class_id")
   private int collectionClass;
 
-  @OneToMany(mappedBy = "kksCollection", cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "kksCollection", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
   private List<KksEntry> entries;
 
   @ManyToMany(fetch = FetchType.LAZY)

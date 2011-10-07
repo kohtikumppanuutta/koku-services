@@ -51,6 +51,13 @@ public class KksServiceBean implements KksService {
     } else {
       tmp = serviceDAO.getAuthorizedCollections(customer, audit.getUserId());
     }
+
+    if (tmp != null) {
+      for (KksCollection c : tmp) {
+        c.setEntries(new ArrayList<KksEntry>());
+      }
+    }
+
     return tmp;
   }
 
@@ -66,14 +73,20 @@ public class KksServiceBean implements KksService {
   public KksCollection get(String collectionId, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
     KksCollection c = serviceDAO.getCollection(collectionId);
     KksCollectionClass cc = serviceDAO.getCollectionClass(c.getCollectionClass());
-    if (authorization.isMasterUser(audit.getUserId(), c)
-        || authorization.hasAuthorizedRegisters(serviceDAO.getCollectionClassRegisters(cc.getId()), audit.getUserId())) {
-      Log.logRead(c.getCustomer(), cc.getTypeCode(), audit.getUserId(), "Read person collection " + c.getName());
-      return c;
+    String customer = c.getCustomer();
+    String name = c.getName();
+
+    c = authorization.removeUnauthorizedContent(c, serviceDAO.getEntryClassRegistriesForCollectionClass(cc.getId()),
+        audit.getUserId());
+
+    if (c != null) {
+      Log.logRead(customer, cc.getTypeCode(), audit.getUserId(), "Read person collection " + name);
+    } else {
+
+      Log.logRead(customer, cc.getTypeCode(), audit.getUserId(), "Unauthorized read attempt to person collection "
+          + name);
     }
-    Log.logRead(c.getCustomer(), cc.getTypeCode(), audit.getUserId(), "Unauthorized read attempt to person collection "
-        + c.getName());
-    return null;
+    return c;
   }
 
   @Override

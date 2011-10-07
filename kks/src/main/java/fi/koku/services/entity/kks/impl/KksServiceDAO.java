@@ -1,6 +1,8 @@
 package fi.koku.services.entity.kks.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Local;
 
@@ -148,5 +150,29 @@ public interface KksServiceDAO {
    * @return collection registers
    */
   List<String> getCollectionClassRegisters(int classId);
+
+  /**
+   * Gets groups that are used in given collection class
+   * 
+   * @param classId
+   * @return collection groups
+   */
+  List<KksGroup> getCollectionClassGroups(int classId);
+
+  /**
+   * Gets entry classes for given groups
+   * 
+   * @param groupIds
+   * @return entry classes for given groups
+   */
+  List<KksEntryClass> getEntryClassesForGroups(Set<Integer> groupIds);
+
+  /**
+   * Gets entry class registers in given collection class
+   * 
+   * @param classId
+   * @return entry class registers
+   */
+  Map<Integer, String> getEntryClassRegistriesForCollectionClass(int classId);
 
 }
