@@ -328,29 +328,23 @@ public class KksServiceDAOBean implements KksServiceDAO {
       return new ArrayList<KksCollection>();
     }
 
-    StringBuilder qs = createQueryString(tagNames);
+    boolean parent = authorization.isParent(user, criteria.getPic());
 
-    @SuppressWarnings("unchecked")
-    List<BigInteger> entryIds = em.createNativeQuery(qs.toString()).getResultList();
+    List<String> registrys = null;
+
+    if (!parent) {
+      registrys = authorization.getAuthorizedRegistryNames(user);
+    }
+    List<Long> entryIds = searchTaggedEntries(tagNames, registrys);
 
     if (entryIds.isEmpty()) {
       return new ArrayList<KksCollection>();
     }
 
-    List<Long> entryIdsList = new ArrayList<Long>();
-
-    for (BigInteger b : entryIds) {
-      entryIdsList.add(b.longValue());
-    }
-
-    if (entryIds == null || entryIds.size() == 0) {
-      return new ArrayList<KksCollection>();
-    }
-
-    if (authorization.isParent(user, criteria.getPic())) {
-      return handleParentQuery(user, criteria, entryIdsList);
+    if (parent) {
+      return handleParentQuery(user, criteria, entryIds);
     } else {
-      return handleAuthorizedQuery(user, criteria, entryIdsList);
+      return handleAuthorizedQuery(user, criteria, entryIds);
     }
   }
 
@@ -403,6 +397,14 @@ public class KksServiceDAOBean implements KksServiceDAO {
       List<Integer> tmp = q.getResultList();
 
       if (tmp.size() > 0) {
+
+        Query q2 = em
+            .createNativeQuery("SELECT id FROM kks_entry WHERE id IN(:ids) AND entry_class_id IN( SELECT entry_class_id FROM kks_entry_class WHERE entry_group IN (select distinct  group_id from kks_group where register IN (:registers)))");
+        q2.setParameter("ids", entryIdsList).setParameter("registers", registrys);
+
+        @SuppressWarnings("unchecked")
+        List<Long> res = q2.getResultList();
+
         Query entryQ = em.createNamedQuery(KksEntry.NAMED_QUERY_GET_ENTRIES_BY_IDS_WITH_COLLECTIONS);
         entryQ.setParameter("customer", criteria.getPic()).setParameter("ids", entryIdsList).setParameter("cIds", tmp);
 
@@ -452,7 +454,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     return tmpCollections;
   }
 
-  private StringBuilder createQueryString(List<String> tagNames) {
+  private List<Long> searchTaggedEntries(List<String> tagNames, List<String> registers) {
     StringBuilder tmp = new StringBuilder();
 
     for (int i = 0; i < tagNames.size(); i++) {
@@ -470,7 +472,30 @@ public class KksServiceDAOBean implements KksServiceDAO {
     qs.append("SELECT DISTINCT entry_id FROM kks_entry_tags WHERE tag_id IN (SELECT tag_id FROM kks_tag WHERE");
     qs.append(tmp.toString());
     qs.append(")");
-    return qs;
+
+    Query q = null;
+    if (registers != null && registers.size() > 0) {
+      qs.append(" AND entry_id IN(SELECT id FROM kks_entry WHERE entry_class_id IN( SELECT entry_class_id FROM kks_entry_class WHERE entry_group IN (select distinct  group_id from kks_group where register IN (:registers))))");
+
+      q = em.createNativeQuery(qs.toString()).setParameter("registers", registers);
+    } else {
+      q = em.createNativeQuery(qs.toString());
+    }
+
+    @SuppressWarnings("unchecked")
+    List<BigInteger> entryIds = q.getResultList();
+
+    if (entryIds.size() == 0) {
+      return new ArrayList<Long>();
+    }
+
+    List<Long> list = new ArrayList<Long>();
+
+    for (BigInteger bi : entryIds) {
+      list.add(bi.longValue());
+    }
+
+    return list;
   }
 
   @Override
