@@ -20,6 +20,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    70   -- group_id
@@ -27,6 +28,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,6
 );
 
@@ -36,6 +38,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -44,6 +47,7 @@ insert into kks_group (
   ,'Oppilaan terveystarkastuksen tiedot'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,70   -- parent_id
   ,6
 );

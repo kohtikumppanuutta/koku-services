@@ -24,7 +24,8 @@ import javax.persistence.Transient;
     @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_GROUPS, query = "FROM KksGroup k"),
     @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASSES_WITH_GROUP_REGISTERS, query = "SELECT DISTINCT k.collectionClassId FROM KksGroup k WHERE k.register IN (:registers)"),
     @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_REGISTERS, query = "SELECT DISTINCT k.register FROM KksGroup k WHERE k.collectionClassId =:id"),
-    @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS, query = "SELECT DISTINCT k FROM KksGroup k WHERE k.collectionClassId =:id") })
+    @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS, query = "SELECT DISTINCT k FROM KksGroup k WHERE k.collectionClassId =:id"),
+    @NamedQuery(name = KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUP_IDS, query = "SELECT DISTINCT k.groupId FROM KksGroup k WHERE k.collectionClassId=:classId") })
 @Table(name = "kks_group")
 public class KksGroup implements Serializable, Comparable<KksGroup> {
 
@@ -32,6 +33,7 @@ public class KksGroup implements Serializable, Comparable<KksGroup> {
   public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASSES_WITH_GROUP_REGISTERS = "getAllCollectionClassesWithGroupRegisters";
   public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASS_REGISTERS = "getAllCollectionClassRegisters";
   public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS = "getAllCollectionClassGroups";
+  public static final String NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUP_IDS = "getAllCollectionClassGroupIdsById";
 
   private static final long serialVersionUID = -9141086962336862170L;
 
@@ -57,7 +59,9 @@ public class KksGroup implements Serializable, Comparable<KksGroup> {
   @Column(name = "parent_id", nullable = true)
   private Integer parentId;
 
-  // @OneToMany(mappedBy = "group")
+  @Column
+  private String accountable;
+
   @Transient
   private List<KksEntryClass> entryClasses;
 
@@ -148,6 +152,14 @@ public class KksGroup implements Serializable, Comparable<KksGroup> {
 
   public void setGroupId(int groupId) {
     this.groupId = groupId;
+  }
+
+  public String getAccountable() {
+    return accountable;
+  }
+
+  public void setAccountable(String accountable) {
+    this.accountable = accountable;
   }
 
   public List<KksGroup> getSubGroups() {

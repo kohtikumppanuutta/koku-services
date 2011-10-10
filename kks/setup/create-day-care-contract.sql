@@ -18,6 +18,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    30   -- group_id
@@ -25,6 +26,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,3
 );
 
@@ -34,6 +36,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    31   -- group_id
@@ -41,6 +44,7 @@ insert into kks_group (
   ,'Ilta- ja vuorohoitosopimuksessa lisäksi'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,3
 );
 
@@ -50,6 +54,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    32   -- group_id
@@ -57,6 +62,7 @@ insert into kks_group (
   ,'Perhepäivähoidon sopimuksessa lisäksi'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,3
 );
 
@@ -66,6 +72,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -74,6 +81,7 @@ insert into kks_group (
   ,'Vanhempi'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,30   -- parent_id
   ,3
 );
@@ -84,6 +92,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -92,6 +101,7 @@ insert into kks_group (
   ,'Hoitoaika'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,30   -- parent_id
   ,3
 );
@@ -102,6 +112,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -110,6 +121,7 @@ insert into kks_group (
   ,'Lapsen hyvinvointi'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,30   -- parent_id
   ,3
 );
@@ -120,6 +132,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -128,6 +141,7 @@ insert into kks_group (
   ,'Päiväkodin johtaja'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,30   -- parent_id
   ,3
 );
@@ -138,6 +152,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -146,6 +161,7 @@ insert into kks_group (
   ,'Lapsen sairastuminen'  -- name
   ,'Huoltajat itse järjestävät sairaan lapsen hoidon. Päivähoidon henkilökunnalla on oikeus kirjoittaa todistus lapsen sairastumisesta työnantajalle sairastumispäivän osalta (Kvtes: perhevapaat § 10).'  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,30   -- parent_id
   ,3
 );
@@ -156,6 +172,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -164,6 +181,7 @@ insert into kks_group (
   ,'Luvat'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,30   -- parent_id
   ,3
 );
@@ -174,6 +192,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -182,6 +201,7 @@ insert into kks_group (
   ,'Uskontokasvatus'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,30   -- parent_id
   ,3
 );
@@ -192,6 +212,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -200,6 +221,7 @@ insert into kks_group (
   ,'Päivähoitomatkat'  -- name
   ,'Henkilöt, jotka voivat hakea lapseni hoitopaikasta huoltajien lisäksi. Pääsääntöisesti aikuinen hakee lapsen päivähoidosta. Päivähoitohenkilökunnan velvollisuus on varmistaa, että lasta noutavalla henkilöllä on oikeus noutaa lapsi. Mikäli joku muu kuin huoltaja tai alla mainittu varahakija hakee lapsen päivähoidosta, huoltajat ilmoittavat siitä päivähoidon henkilökunnalle kirjallisesti. Erityistapauksissa, joissa huoltajat esittävät lapsen hakijaksi alaikäistä sisarusta tai muuta vastaavaa henkilöä tai toivovat lapsen kulkevan yksin, päivähoitohenkilökunta arvioi yhdessä huoltajien kanssa keskustellen lapsen kotimatkan turvallisuuden ja sopii siitä kirjallisesti'  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,30   -- parent_id
   ,3
 );
@@ -210,6 +232,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -218,6 +241,7 @@ insert into kks_group (
   ,'Hoitoaika'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,31   -- parent_id
   ,3
 );
@@ -228,6 +252,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -236,6 +261,7 @@ insert into kks_group (
   ,'Hoitaja'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,32   -- parent_id
   ,3
 );
@@ -246,6 +272,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -254,6 +281,7 @@ insert into kks_group (
   ,'Varahoitopaikka'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,32   -- parent_id
   ,3
 );

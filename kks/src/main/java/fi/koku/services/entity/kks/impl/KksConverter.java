@@ -96,7 +96,7 @@ public class KksConverter {
     if (entryClass.getValueSpaces() != null) {
       String tmp[] = entryClass.getValueSpaces().split(",");
       for (String s : tmp) {
-        valueSpacesType.getValueSpace().add(s);
+        valueSpacesType.getValueSpace().add(s.trim());
       }
     } else {
       valueSpacesType.getValueSpace().add("");
@@ -113,6 +113,7 @@ public class KksConverter {
     kksGroupType.setName(group.getName());
     kksGroupType.setOrder(new BigInteger("" + group.getSortOrder()));
     kksGroupType.setRegister(group.getRegister());
+    kksGroupType.setAccountable(group.getAccountable());
 
     KksEntryClassesType kksEntryClassesType = new KksEntryClassesType();
 
@@ -257,7 +258,6 @@ public class KksConverter {
     }
 
     entry.setEntryClassId(Integer.parseInt(entryType.getEntryClassId()));
-
     entry.setId(parseNullableLong(entryType.getId()));
     entry.setModified(entryType.getModified().getTime());
     entry.setVersion(entryType.getVersion().intValue());
@@ -268,7 +268,7 @@ public class KksConverter {
       KksValue v = new KksValue();
       v.setId(parseNullableLong(value.getId()));
       v.setValue(value.getValue());
-      v.setModified(value.getModified().getTime());
+      v.setModified(value.getModified() == null ? new Date() : value.getModified().getTime());
       v.setModifier(value.getModifier());
       v.setEntry(entry);
       tmp.add(v);

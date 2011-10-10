@@ -1,5 +1,3 @@
-use koku1
-
 insert into kks_collection_class (
   id
   ,type_code
@@ -20,6 +18,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    10   -- group_id
@@ -27,6 +26,7 @@ insert into kks_group (
   ,'Huoltaja'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,1
 );
 
@@ -38,6 +38,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    11   -- group_id
@@ -45,6 +46,7 @@ insert into kks_group (
   ,'Päivähoito'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,1
 );
 
@@ -54,6 +56,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -62,6 +65,7 @@ insert into kks_group (
   ,'Lapsen hyvinvointi'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,10   -- parent_id
   ,1
 );
@@ -72,6 +76,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -80,6 +85,7 @@ insert into kks_group (
   ,'Vuorovaikutus'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,10   -- parent_id
   ,1
 );
@@ -90,6 +96,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -98,6 +105,7 @@ insert into kks_group (
   ,'Kodin ja päivähoidon yhteistyö'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,10   -- parent_id
   ,1
 );
@@ -108,6 +116,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -116,6 +125,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,11 -- group id
   ,1
 );

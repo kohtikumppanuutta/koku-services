@@ -24,6 +24,7 @@ CREATE TABLE kks_group (
   name VARCHAR(200) NOT NULL,
   description VARCHAR(1000),
   register VARCHAR(500) NOT NULL,
+  accountable VARCHAR(200) NOT NULL,
   parent_id INT UNSIGNED,
   collection_class_id INT UNSIGNED NOT NULL,
   CONSTRAINT UNIQUE (group_id),
@@ -102,16 +103,4 @@ CREATE TABLE kks_value (
   modifier VARCHAR(15) NOT NULL,
   FOREIGN KEY (entry_id) REFERENCES kks_entry(id) 
 );
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -18,6 +18,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    20   -- group_id
@@ -25,6 +26,7 @@ insert into kks_group (
   ,'Huoltaja'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,2
 );
 
@@ -34,6 +36,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    21   -- group_id
@@ -41,6 +44,7 @@ insert into kks_group (
   ,'Päivähoito'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,2
 );
 
@@ -50,6 +54,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    22   -- group_id
@@ -57,6 +62,7 @@ insert into kks_group (
   ,'Neuvola'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,2
 );
 
@@ -66,6 +72,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -74,6 +81,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,20   -- parent_id
   ,2
 );
@@ -84,6 +92,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -92,6 +101,7 @@ insert into kks_group (
   ,'Päivittäistoiminnot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,21   -- parent_id
   ,2
 );
@@ -102,6 +112,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -110,6 +121,7 @@ insert into kks_group (
   ,'Liikkuminen ja hahmottaminen'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,21   -- parent_id
   ,2
 );
@@ -121,6 +133,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -129,6 +142,7 @@ insert into kks_group (
   ,'Kieli ja kommunikaatio'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,21   -- parent_id
   ,2
 );
@@ -139,6 +153,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -147,6 +162,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,21   -- parent_id
   ,2
 );
@@ -157,6 +173,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -165,6 +182,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,22   -- parent_id
   ,2
 );
@@ -175,6 +193,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -183,6 +202,7 @@ insert into kks_group (
   ,'Mittaukset'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'municipal_employee' -- accountable
   ,22   -- parent_id
   ,2
 );

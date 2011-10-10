@@ -184,11 +184,7 @@ public class KksEntry implements Serializable {
     for (int i = 0; i < tmp.size(); i++) {
       KksValue t = tmp.get(i);
       if (t != null && t.getId().equals(val.getId())) {
-        int size = values.size();
         values.remove(i);
-
-        size = values.size();
-        int a = 0;
         break;
       }
     }

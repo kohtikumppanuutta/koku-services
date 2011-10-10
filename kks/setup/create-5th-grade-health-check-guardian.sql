@@ -18,6 +18,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,collection_class_id
 ) VALUES (
    50   -- group_id
@@ -25,6 +26,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,4
 );
 
@@ -34,6 +36,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -42,6 +45,7 @@ insert into kks_group (
   ,'Koulunkäynti/Kaverit'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,50   -- parent_id
   ,4
 );
@@ -52,6 +56,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -60,6 +65,7 @@ insert into kks_group (
   ,'Oppilaan ja hänen perheensä nykytilanne'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,50   -- parent_id
   ,4
 );
@@ -70,6 +76,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -78,6 +85,7 @@ insert into kks_group (
   ,'Oppilaan ja perheen elämäntavat ja terveystottumukset'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,50   -- parent_id
   ,4
 );
@@ -88,6 +96,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -96,6 +105,7 @@ insert into kks_group (
   ,'Terveydentila'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,50   -- parent_id
   ,4
 );
@@ -106,6 +116,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -114,6 +125,7 @@ insert into kks_group (
   ,'Murrosikä'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,50   -- parent_id
   ,4
 );
@@ -124,6 +136,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -132,6 +145,7 @@ insert into kks_group (
   ,'Perheen terveys'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,50   -- parent_id
   ,4
 );
@@ -142,6 +156,7 @@ insert into kks_group (
   ,name
   ,description
   ,register
+  ,accountable
   ,parent_id
   ,collection_class_id
 ) VALUES (
@@ -150,6 +165,7 @@ insert into kks_group (
   ,'Toiveet'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
   ,50   -- parent_id
   ,4
 );

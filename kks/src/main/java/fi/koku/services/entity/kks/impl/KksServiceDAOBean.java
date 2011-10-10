@@ -146,7 +146,50 @@ public class KksServiceDAOBean implements KksServiceDAO {
     k.setCustomer(creation.getCustomer());
     k.setCreated(new Date());
     k.setCreator(creation.getCreator());
+    k.setModified(new Date());
+    k.setModifier(creation.getCreator());
     k.setStatus(ACTIVE);
+
+    Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS).setParameter("id",
+        k.getCollectionClass());
+
+    @SuppressWarnings("unchecked")
+    List<KksGroup> tmp = q.getResultList();
+
+    Set<Integer> groups = new HashSet<Integer>();
+
+    for (KksGroup g : tmp) {
+      groups.add(g.getGroupId());
+    }
+
+    List<KksEntryClass> entryClasses = getEntryClassesForGroups(groups);
+    List<KksEntry> entrys = new ArrayList<KksEntry>();
+    for (KksEntryClass ec : entryClasses) {
+
+      if (!ec.isMultiValue()) {
+        // multivalues are created by user
+        KksEntry e = new KksEntry();
+        e.setCreator(creation.getCreator());
+        e.setCustomer(creation.getCustomer());
+        e.setEntryClassId(ec.getEntryClassId());
+        e.setKksCollection(k);
+        e.setModified(new Date());
+
+        List<KksValue> values = new ArrayList<KksValue>();
+
+        KksValue value = new KksValue();
+        value.setEntry(e);
+        value.setModified(new Date());
+        value.setModifier(creation.getCreator());
+        value.setValue("");
+        values.add(value);
+        e.setValues(values);
+        entrys.add(e);
+      }
+    }
+
+    k.setEntries(entrys);
+
     em.persist(k);
     return k.getId();
   }
@@ -208,15 +251,19 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
       KksEntry e = new KksEntry();
       e.setCustomer(creation.getPic());
-      e.setModified(creation.getModified());
+      e.setModified(new Date());
       e.setCreator(creation.getCreator());
       e.setKksCollection(collection);
       e.setEntryClassId(creation.getEntryClassId());
       List<KksValue> tmp = new ArrayList<KksValue>();
-      creation.getValue().setEntry(e);
-      tmp.add(creation.getValue());
+      KksValue v = creation.getValue();
+      v.setEntry(e);
+      v.setModified(new Date());
+      v.setModifier(user);
+      tmp.add(v);
       e.setValues(tmp);
       em.persist(e);
+      em.flush();
 
       Log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
           creation.getValue());
@@ -402,9 +449,6 @@ public class KksServiceDAOBean implements KksServiceDAO {
             .createNativeQuery("SELECT id FROM kks_entry WHERE id IN(:ids) AND entry_class_id IN( SELECT entry_class_id FROM kks_entry_class WHERE entry_group IN (select distinct  group_id from kks_group where register IN (:registers)))");
         q2.setParameter("ids", entryIdsList).setParameter("registers", registrys);
 
-        @SuppressWarnings("unchecked")
-        List<Long> res = q2.getResultList();
-
         Query entryQ = em.createNamedQuery(KksEntry.NAMED_QUERY_GET_ENTRIES_BY_IDS_WITH_COLLECTIONS);
         entryQ.setParameter("customer", criteria.getPic()).setParameter("ids", entryIdsList).setParameter("cIds", tmp);
 
@@ -510,9 +554,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setStatus(collection.getStatus());
     tmp.setName(collection.getName());
     tmp.setModifier(collection.getModifier());
-    tmp.setModified(collection.getModified());
+    tmp.setModified(new Date());
     tmp.setDescription(collection.getDescription());
-
     em.merge(tmp);
     em.flush();
     em.refresh(tmp);
@@ -588,8 +631,17 @@ public class KksServiceDAOBean implements KksServiceDAO {
   private void syncFields(String user, KksCollection newCollection, KksCollection oldCollection) {
     Map<String, Registry> registers = authorization.getAuthorizedRegistries(user);
     boolean master = authorization.isMasterUser(user, newCollection);
+
+    List<KksGroup> groups = getCollectionClassGroups(newCollection.getCollectionClass());
+
+    Set<Integer> ids = new HashSet<Integer>();
+    for (KksGroup group : groups) {
+      ids.add(group.getGroupId());
+    }
+    List<KksEntryClass> entryClasses = getEntryClassesForGroups(ids);
+
     CollectionUpdateHelper helper = new CollectionUpdateHelper(user, registers, master, newCollection, oldCollection,
-        getCollectionClass(newCollection.getCollectionClass()));
+        getCollectionClass(newCollection.getCollectionClass()), groups, entryClasses);
     deleteRemovedFields(helper);
   }
 

@@ -32,10 +32,11 @@ public class CollectionUpdateHelper {
   private KksCollection newCollection;
   private KksCollection oldCollection;
   private KksCollectionClass metadata;
+  private Map<Integer, KksEntryClass> entryMetadata;
   private String user;
 
   public CollectionUpdateHelper(String user, Map<String, Registry> registers, boolean master, KksCollection newCol,
-      KksCollection oldCol, KksCollectionClass metadata) {
+      KksCollection oldCol, KksCollectionClass metadata, List<KksGroup> groups, List<KksEntryClass> entryClasses) {
     this.user = user;
     this.registers = registers;
     this.master = master;
@@ -47,37 +48,35 @@ public class CollectionUpdateHelper {
     this.oldValues = new HashMap<Long, KksValue>();
     this.newTags = new HashMap<Integer, KksTag>();
     this.oldTags = new HashMap<Integer, KksTag>();
+    this.entryMetadata = new HashMap<Integer, KksEntryClass>();
     this.removableEntries = new ArrayList<Long>();
     this.removableValues = new ArrayList<Long>();
     this.newCollection = newCol;
     this.oldCollection = oldCol;
     this.metadata = metadata;
-    initMaps();
-    createRegistryMap();
+    initMaps(entryClasses);
+    createRegistryMap(groups, entryClasses);
     combineEntries();
     generateRemovableIds();
   }
 
-  private void initMaps() {
+  private void initMaps(List<KksEntryClass> entryClasses) {
+
+    for (KksEntryClass kec : entryClasses) {
+      entryMetadata.put(kec.getEntryClassId(), kec);
+    }
+
     createCollectionMaps(newCollection, newEntries, newValues, newTags);
     createCollectionMaps(oldCollection, oldEntries, oldValues, oldTags);
   }
 
-  private void createRegistryMap() {
-    for (KksGroup group : metadata.getGroups()) {
+  private void createRegistryMap(List<KksGroup> groups, List<KksEntryClass> entryClasses) {
+    for (KksGroup group : groups) {
       groupRegisters.put(group.getGroupId(), group.getRegister());
+    }
 
-      for (KksEntryClass entryClass : group.getEntryClasses()) {
-        entryGroupMap.put(entryClass.getId(), entryClass.getGroupId());
-      }
-
-      for (KksGroup subGroup : group.getSubGroups()) {
-        groupRegisters.put(subGroup.getGroupId(), subGroup.getRegister());
-
-        for (KksEntryClass entryClass : subGroup.getEntryClasses()) {
-          entryGroupMap.put(entryClass.getId(), entryClass.getGroupId());
-        }
-      }
+    for (KksEntryClass entryClass : entryClasses) {
+      entryGroupMap.put(entryClass.getEntryClassId(), entryClass.getGroupId());
     }
   }
 
@@ -105,12 +104,19 @@ public class CollectionUpdateHelper {
 
   private void combineEntries() {
     for (KksEntry e : newCollection.getEntries()) {
-      if (hasRightForEntry(e.getEntryClassId())) {
+      if (!entryMetadata.get(e.getEntryClassId()).isMultiValue() && hasRightForEntry(e.getEntryClassId())) {
         KksEntry old = getOldEntries().get(e.getId());
         if (old == null) {
           // add new entry to old
           e.setKksCollection(oldCollection);
           e.setModified(new Date());
+
+          if (e.getValues() != null) {
+            for (KksValue v : e.getValues()) {
+              v.setModified(new Date());
+              v.setModifier(e.getCreator());
+            }
+          }
           Log.logCreate(oldCollection.getCustomer(), metadata.getTypeCode(), user, oldCollection.getName()
               + " added entry class " + e.toString());
           oldCollection.addKksEntry(e);
@@ -118,7 +124,8 @@ public class CollectionUpdateHelper {
           // modify old
           old.setCreator(e.getCreator());
           old.setCustomer(e.getCustomer());
-          old.setModified(e.getModified());
+          old.setModified(new Date());
+          old.setVersion(e.getVersion());
           combineValues(e, old);
           combineTags(e, old);
         }
@@ -153,6 +160,10 @@ public class CollectionUpdateHelper {
               oldValue, v);
           oldValue.setValue(v.getValue());
           oldValue.setModified(new Date());
+
+          if (v.getModifier() == null) {
+            System.out.println("TULEE");
+          }
           oldValue.setModifier(v.getModifier());
         }
       }
@@ -160,7 +171,7 @@ public class CollectionUpdateHelper {
   }
 
   private void generateRemovableIds() {
-    List<KksEntry> entries = oldCollection.getEntries();
+    List<KksEntry> entries = new ArrayList<KksEntry>(oldCollection.getEntries());
     if (entries != null) {
       for (KksEntry e : entries) {
         if (hasRightForEntry(e.getEntryClassId())) {
@@ -171,34 +182,21 @@ public class CollectionUpdateHelper {
   }
 
   private void handlePossibleRemoval(KksEntry e) {
-    if (getNewEntries().get(e.getId()) == null) {
-      oldCollection.removeKksEntry(e);
-      removableEntries.add(e.getId());
-
-      if (e.getValues() != null) {
-        for (KksValue v : e.getValues()) {
+    if (e.getValues() != null) {
+      List<KksValue> vList = new ArrayList<KksValue>(e.getValues());
+      for (KksValue v : vList) {
+        if (v.getId() != null && getNewValues().get(v.getId()) == null) {
+          e.removeKksValue(v);
           removableValues.add(v.getId());
         }
       }
+    }
 
-    } else {
-
-      if (e.getValues() != null) {
-        List<KksValue> vList = new ArrayList<KksValue>(e.getValues());
-        for (KksValue v : vList) {
-          if (v.getId() != null && getNewValues().get(v.getId()) == null) {
-            e.removeKksValue(v);
-            removableValues.add(v.getId());
-          }
-        }
-      }
-
-      if (e.getTags() != null) {
-        List<KksTag> tList = new ArrayList<KksTag>(e.getTags());
-        for (KksTag t : tList) {
-          if (getNewTags().get(t.getId()) == null) {
-            e.removeKksTag(t);
-          }
+    if (e.getTags() != null) {
+      List<KksTag> tList = new ArrayList<KksTag>(e.getTags());
+      for (KksTag t : tList) {
+        if (getNewTags().get(t.getId()) == null) {
+          e.removeKksTag(t);
         }
       }
     }

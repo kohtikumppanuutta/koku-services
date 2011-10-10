@@ -63,7 +63,7 @@ public class AuthorizationBean implements Authorization {
 
   @Override
   public boolean isMasterUser(String user, KksCollection collection) {
-    return collection.getCreator().equals(user) || isParent(user, collection.getCustomer());
+    return isParent(user, collection.getCustomer());
   }
 
   @Override
