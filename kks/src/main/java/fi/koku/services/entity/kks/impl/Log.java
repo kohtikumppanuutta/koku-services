@@ -93,7 +93,6 @@ public class Log {
   }
 
   private static LogServicePortType getLogService() {
-    String a = KoKuPropertiesUtil.get("lok.service.endpointaddress");
     LogServiceFactory log = new LogServiceFactory(Log.LOG_SERVICE_USER_ID, Log.LOG_SERVICE_PASSWORD, Log.ENDPOINT);
     return log.getLogService();
   }

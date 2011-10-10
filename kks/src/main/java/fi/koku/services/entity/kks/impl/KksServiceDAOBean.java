@@ -556,9 +556,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setModifier(collection.getModifier());
     tmp.setModified(new Date());
     tmp.setDescription(collection.getDescription());
+    tmp.setVersion(collection.getVersion());
     em.merge(tmp);
-    em.flush();
-    em.refresh(tmp);
     setTags(collection, tmp);
   }
 
@@ -642,26 +641,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
     CollectionUpdateHelper helper = new CollectionUpdateHelper(user, registers, master, newCollection, oldCollection,
         getCollectionClass(newCollection.getCollectionClass()), groups, entryClasses);
-    deleteRemovedFields(helper);
-  }
-
-  private void deleteRemovedFields(CollectionUpdateHelper helper) {
-    List<Long> removableEntries = helper.getRemovableEntries();
-    List<Long> removableValues = helper.getRemovableValues();
-
-    if (removableValues.size() > 0) {
-      em.createNamedQuery(KksValue.NAMED_QUERY_DELETE_VALUES_BY_IDS).setParameter("ids", removableValues)
-          .executeUpdate();
-      em.flush();
-    }
-
-    if (removableEntries.size() > 0) {
-      removeTags(removableEntries);
-      em.createNamedQuery(KksEntry.NAMED_QUERY_DELETE_ENTRIES_BY_IDS).setParameter("ids", removableEntries)
-          .executeUpdate();
-      em.flush();
-    }
-
+    helper.combineEntries();
   }
 
   public void insertTags(List<Integer> tagIds, Long entryId) {
