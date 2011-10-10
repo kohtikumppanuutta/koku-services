@@ -10,6 +10,9 @@ import javax.ejb.Stateless;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.services.entity.authorizationinfo.v1.AuthorizationInfoService;
+import fi.koku.services.entity.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
+import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
 import fi.koku.services.entity.community.v1.CommunitiesType;
 import fi.koku.services.entity.community.v1.CommunityQueryCriteriaType;
 import fi.koku.services.entity.community.v1.CommunityServiceFactory;
@@ -19,9 +22,7 @@ import fi.koku.services.entity.community.v1.MemberPicsType;
 import fi.koku.services.entity.community.v1.MemberType;
 import fi.koku.services.entity.community.v1.MembersType;
 import fi.koku.services.entity.community.v1.ServiceFault;
-import fi.koku.services.entity.userinfo.v1.UserInfoService;
-import fi.koku.services.entity.userinfo.v1.impl.UserInfoServiceDummyImpl;
-import fi.koku.services.entity.userinfo.v1.model.Registry;
+import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
  * Authorization services for KKS
@@ -31,7 +32,7 @@ import fi.koku.services.entity.userinfo.v1.model.Registry;
 @Stateless
 public class AuthorizationBean implements Authorization {
 
-  final public static String ENDPOINT = "http://localhost:8180";
+  final public static String ENDPOINT = KoKuPropertiesUtil.get("community.service.endpointaddress");
   final public static String COMMUNITY_SERVICE_USER_ID = "marko";
   final public static String COMMUNITY_SERVICE_PASSWORD = "marko";
   final public static String ROLE_GUARDIAN = "guardian";
@@ -41,7 +42,7 @@ public class AuthorizationBean implements Authorization {
 
   @Override
   public Map<String, Registry> getAuthorizedRegistries(String user) {
-    UserInfoService uis = new UserInfoServiceDummyImpl();
+    AuthorizationInfoService uis = new AuthorizationInfoServiceDummyImpl();
     Map<String, Registry> tmp = new HashMap<String, Registry>();
     List<Registry> register = uis.getUsersAuthorizedRegistries(user);
     for (Registry r : register) {
@@ -52,7 +53,7 @@ public class AuthorizationBean implements Authorization {
 
   @Override
   public List<String> getAuthorizedRegistryNames(String user) {
-    UserInfoService uis = new UserInfoServiceDummyImpl();
+    AuthorizationInfoService uis = new AuthorizationInfoServiceDummyImpl();
     List<String> tmp = new ArrayList<String>();
     List<Registry> register = uis.getUsersAuthorizedRegistries(user);
     for (Registry r : register) {

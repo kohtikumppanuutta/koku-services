@@ -12,6 +12,7 @@ import fi.koku.services.utility.log.v1.LogEntryType;
 import fi.koku.services.utility.log.v1.LogServiceFactory;
 import fi.koku.services.utility.log.v1.LogServicePortType;
 import fi.koku.services.utility.log.v1.ServiceFault;
+import fi.koku.settings.KoKuPropertiesUtil;
 
 public class Log {
 
@@ -28,8 +29,7 @@ public class Log {
   public static final String QUERY = "query";
 
   public static final String KKS = "KKS";
-  public static final String ENDPOINT = "http://localhost:8180/lok-service-0.0.1-SNAPSHOT/LogServiceEndpointBean?wsdl";
-  // final public static String ENDPOINT = "http://localhost:8180";
+  public static final String ENDPOINT = KoKuPropertiesUtil.get("lok.service.endpointaddress");
   public static final String LOG_SERVICE_USER_ID = "marko";
   public static final String LOG_SERVICE_PASSWORD = "marko";
 
@@ -93,6 +93,7 @@ public class Log {
   }
 
   private static LogServicePortType getLogService() {
+    String a = KoKuPropertiesUtil.get("lok.service.endpointaddress");
     LogServiceFactory log = new LogServiceFactory(Log.LOG_SERVICE_USER_ID, Log.LOG_SERVICE_PASSWORD, Log.ENDPOINT);
     return log.getLogService();
   }

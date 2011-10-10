@@ -13,24 +13,24 @@
 	<properties>
 		<kksservice-api.version>0.2.1</kksservice-api.version>
 	</properties>
+	
 	<dependencies>
 		<dependency>  
 		    <groupId>kohti-kumppanuutta</groupId>  
-		    <artifactId>userinfoservice</artifactId>  
-		    <version>0.0.3</version>  
-		</dependency> 
-		
-    <dependency>
-      <groupId>kohti-kumppanuutta</groupId>
-      <artifactId>lokservice-api</artifactId>
-      <version>0.0.12</version>
-    </dependency>    
-    
-    <dependency>
-      <groupId>kohti-kumppanuutta</groupId>
-      <artifactId>customerservice-api</artifactId>
-      <version>0.0.13</version>
-    </dependency>  
+		    <artifactId>authorizationinfoservice-api</artifactId>  
+		    <version>0.0.4</version>  
+		</dependency> 	
+	    <dependency>
+	      <groupId>kohti-kumppanuutta</groupId>
+	      <artifactId>lokservice-api</artifactId>
+	      <version>0.0.12</version>
+	    </dependency>    
+	    
+	    <dependency>
+	      <groupId>kohti-kumppanuutta</groupId>
+	      <artifactId>customerservice-api</artifactId>
+	      <version>0.0.13</version>
+	    </dependency>  
    
 	</dependencies>
 	<build>

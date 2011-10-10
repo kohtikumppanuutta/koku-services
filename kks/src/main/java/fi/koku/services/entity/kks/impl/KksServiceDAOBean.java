@@ -17,7 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import fi.koku.services.entity.userinfo.v1.model.Registry;
+import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
 
 @Stateless
 public class KksServiceDAOBean implements KksServiceDAO {
