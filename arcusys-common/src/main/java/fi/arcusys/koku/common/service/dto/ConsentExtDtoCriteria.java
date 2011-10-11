@@ -1,37 +1,19 @@
-package fi.arcusys.koku.tiva.soa;
+package fi.arcusys.koku.common.service.dto;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-import fi.arcusys.koku.common.service.dto.ConsentExtDtoCriteria;
-
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
- * Oct 3, 2011
+ * Oct 11, 2011
  */
-@XmlType(name = "ConsentSearchCriteria", namespace = "http://services.koku.fi/entity/tiva/v1", 
-propOrder = {"targetPerson", "templateNamePrefix", "informationTargetId", "givenTo"})
-public class ConsentSearchCriteria {
+public class ConsentExtDtoCriteria {
     private String targetPerson;
     private String templateNamePrefix;
     private String informationTargetId;
     private List<String> givenTo;
-    
-    public ConsentExtDtoCriteria toDtoCriteria() {
-        final ConsentExtDtoCriteria dtoCriteria = new ConsentExtDtoCriteria();
-        dtoCriteria.setGivenTo(givenTo);
-        dtoCriteria.setInformationTargetId(informationTargetId);
-        dtoCriteria.setTargetPerson(targetPerson);
-        dtoCriteria.setTemplateNamePrefix(templateNamePrefix);
-        return dtoCriteria;
-    }
-    
     /**
      * @return the targetPerson
      */
-    @XmlElement(required = true)
     public String getTargetPerson() {
         return targetPerson;
     }
@@ -44,7 +26,6 @@ public class ConsentSearchCriteria {
     /**
      * @return the templateNamePrefix
      */
-    @XmlElement(required = true)
     public String getTemplateNamePrefix() {
         return templateNamePrefix;
     }
@@ -69,7 +50,6 @@ public class ConsentSearchCriteria {
     /**
      * @return the givenTo
      */
-    @XmlElement(required = true)
     public List<String> getGivenTo() {
         return givenTo;
     }
@@ -79,6 +59,4 @@ public class ConsentSearchCriteria {
     public void setGivenTo(List<String> givenTo) {
         this.givenTo = givenTo;
     }
-    
-    
 }

@@ -12,7 +12,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Aug 9, 2011
  */
 @XmlType (name = "suostumusForReply", namespace = "http://soa.tiva.koku.arcusys.fi/",
-propOrder={"consentId", "alreadyReplied", "template", "actionReplies", "replierUid" , "replyTillDate", "endDate", "endDateMandatory", "replyComment"})
+propOrder={"consentId", "alreadyReplied", "template", "actionReplies", "replierUid" , "replyTillDate", 
+        "endDate", "endDateMandatory", "replyComment", "informationTarget", "givenToParties"})
 public class ConsentForReplyTO {
     private Long consentId;
     private ConsentTemplateTO template;
@@ -24,8 +25,33 @@ public class ConsentForReplyTO {
     private boolean alreadyReplied;
     private List<ActionPermittedTO> actionReplies;
     
+    private String informationTarget;
+    private List<ConsentExternalGivenTo> givenToParties;
     
-    
+    /**
+     * @return the informationTarget
+     */
+    public String getInformationTarget() {
+        return informationTarget;
+    }
+    /**
+     * @param informationTarget the informationTarget to set
+     */
+    public void setInformationTarget(String informationTarget) {
+        this.informationTarget = informationTarget;
+    }
+    /**
+     * @return the givenToParties
+     */
+    public List<ConsentExternalGivenTo> getGivenToParties() {
+        return givenToParties;
+    }
+    /**
+     * @param givenToParties the givenToParties to set
+     */
+    public void setGivenToParties(List<ConsentExternalGivenTo> givenToParties) {
+        this.givenToParties = givenToParties;
+    }
     /**
      * @return the replyTillDate
      */

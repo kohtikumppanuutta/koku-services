@@ -42,7 +42,7 @@ public class RequestDAOTest {
 		Request request = new Request();
 		final String subject = "test subject for request";
 		request.setSubject(subject);
-		request.setFrom(testUtil.getUserByUid("testRequestSender"));
+		request.setFromUser(testUtil.getUserByUid("testRequestSender"));
 		request.setReceipients(Collections.singleton(testUtil.getUserByUid("testRequestReplier")));
 		request = service.create(request);
 		assertNotNull(request.getId());

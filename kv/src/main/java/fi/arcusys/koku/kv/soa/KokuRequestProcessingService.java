@@ -25,7 +25,8 @@ public interface KokuRequestProcessingService {
 					 @WebParam(name = "notifyBeforeDays") final Integer notifyBeforeDays);
 	
 	void receiveRequest(@WebParam(name = "toUser") final String toUserUid, 
-						@WebParam(name = "requestId") final Long requestId);
+						@WebParam(name = "requestId") final Long requestId,
+						@WebParam(name = "content") final String content);
 
 	void replyToRequest(@WebParam(name = "user") final String userUid, 
 						@WebParam(name = "requestId") final Long requestId,

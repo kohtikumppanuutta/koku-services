@@ -70,30 +70,11 @@ public class KokuRequestServiceImpl implements KokuRequestService {
 	 */
 	@Override
 	public List<RequestSummary> getRequests(final String user, final RequestType requestType, final String subQuery, final int startNum, final int maxNum) {
-		// TODO make real implementation
-		if (RequestType.Valid != requestType) {
-			return Collections.emptyList();
+		if (RequestType.Valid == requestType) {
+	        return kvFacade.getRequests(user, startNum, maxNum);
+		} else {
+	        return kvFacade.getOldRequests(user, startNum, maxNum);
 		}
-		return kvFacade.getRequests(user, startNum, maxNum);
-//		final List<RequestSummary> result = new ArrayList<RequestSummary>();
-//		final RequestSummary request = new RequestSummary();
-//		fillTestRequest(request);
-//		result.add(request);
-//		return result;
-	}
-
-	private void fillTestRequest(final RequestSummary request) {
-		request.setRequestId(-1);
-		try {
-			request.setCreationDate(DatatypeFactory.newInstance().newXMLGregorianCalendar((GregorianCalendar)GregorianCalendar.getInstance()));
-			request.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar((GregorianCalendar)GregorianCalendar.getInstance()));
-		} catch (DatatypeConfigurationException e) {
-			logger.error(null, e);
-		}
-		request.setMissedAmout(0);
-		request.setRespondedAmount(1);
-		request.setSender("Ville Virkamies");
-		request.setSubject("Testing requests");
 	}
 
 	/**
@@ -103,15 +84,11 @@ public class KokuRequestServiceImpl implements KokuRequestService {
 	 */
 	@Override
 	public int getTotalRequests(String user, RequestType requestType) {
-//		// TODO make real implementation
-//		if ("Ville Virkamies".equals(user) && RequestType.Valid == requestType) {
-//			return 1;
-//		}
-//		return 0;
-		if (RequestType.Valid != requestType) {
-			return 0;
+		if (RequestType.Valid == requestType) {
+	        return kvFacade.getTotalRequests(user);
+		} else {
+            return kvFacade.getTotalOldRequests(user);
 		}
-		return kvFacade.getRequests(user, 1, Integer.MAX_VALUE).size();
 	}
 
 }

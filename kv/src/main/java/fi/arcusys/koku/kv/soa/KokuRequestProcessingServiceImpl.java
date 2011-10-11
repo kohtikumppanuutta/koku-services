@@ -34,9 +34,9 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 	 * @param requestId
 	 */
 	@Override
-	public void receiveRequest(String toUserUid, Long requestId) {
+	public void receiveRequest(String toUserUid, Long requestId, final String content) {
 		logger.debug("receiveRequest: [toUserUid,requestId] = [" + toUserUid + "," + requestId + "]");
-		final Long receivedRequest = kvFacade.receiveRequest(toUserUid, requestId);
+		final Long receivedRequest = kvFacade.receiveRequest(toUserUid, requestId, content);
 		logger.debug("request received: " + receivedRequest);
 	}
 

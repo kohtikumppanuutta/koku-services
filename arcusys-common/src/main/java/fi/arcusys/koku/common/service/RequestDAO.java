@@ -18,7 +18,7 @@ public interface RequestDAO extends AbstractEntityDAO<Request> {
 	 * @param maxNum
 	 * @return
 	 */
-	List<Request> getRequestsByUser(User user, int startNum, int maxNum);
+	List<Request> getRequestsByUser(User user, int startNum, int maxResults);
 
     /**
      * @param template
@@ -26,4 +26,23 @@ public interface RequestDAO extends AbstractEntityDAO<Request> {
      */
     Long getTotalByTemplate(RequestTemplate template);
 
+    /**
+     * @param user
+     * @return
+     */
+    Long getTotalRequestsByUser(User user);
+
+    /**
+     * @param userByUid
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    List<Request> getOldRequestsByUser(User userByUid, int startNum, int maxResults);
+
+    /**
+     * @param userByUid
+     * @return
+     */
+    Long getTotalOldRequestsByUser(User userByUid);
 }

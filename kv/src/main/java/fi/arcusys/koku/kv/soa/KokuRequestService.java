@@ -17,10 +17,11 @@ public interface KokuRequestService {
 	 * @param requestType Request type such as valid, outdated
 	 * @return
 	 */
-	public int getTotalRequests(@WebParam(name = "user") final String user, 
-								@WebParam(name = "requestType") final RequestType requestType);
-	
-	/**
+	public int getTotalRequests(
+	        @WebParam(name = "user") final String user, 
+			@WebParam(name = "requestType") final RequestType requestType);
+
+    /**
 	 * Gets list of request summary
 	 * @param user
 	 * @param requestType Request type such as valid, outdated
@@ -29,13 +30,14 @@ public interface KokuRequestService {
 	 * @param maxNum The maximum amount of requests that fulfill the condition
 	 * @return List of requests
 	 */
-	public List<RequestSummary> getRequests(@WebParam(name = "user") final String user, 
-											@WebParam(name = "requestType") final RequestType requestType, 
-											@WebParam(name = "subQuery") final String subQuery, 
-											@WebParam(name = "startNum") final int startNum, 
-											@WebParam(name = "maxNum") final int maxNum);
-	
-	/**
+	public List<RequestSummary> getRequests(
+	        @WebParam(name = "user") final String user, 
+			@WebParam(name = "requestType") final RequestType requestType, 
+			@WebParam(name = "subQuery") final String subQuery, 
+			@WebParam(name = "startNum") final int startNum, 
+			@WebParam(name = "maxNum") final int maxNum);
+
+    /**
 	 * Gets the detailed request with content by requestId
 	 * @param requestId
 	 * @return The detailed request

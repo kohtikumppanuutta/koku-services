@@ -2,10 +2,15 @@ package fi.arcusys.koku.tiva.soa;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 17, 2011
  */
+@XmlRootElement(name = "record")
 public class InformationCategoryTO {
     private Long categoryId;
     private String name;
@@ -19,6 +24,7 @@ public class InformationCategoryTO {
     /**
      * @return the categoryId
      */
+    @XmlAttribute(name = "jsxid")
     public Long getCategoryId() {
         return categoryId;
     }
@@ -33,6 +39,7 @@ public class InformationCategoryTO {
     /**
      * @return the name
      */
+    @XmlAttribute(name = "jsxtext")
     public String getName() {
         return name;
     }
@@ -47,6 +54,7 @@ public class InformationCategoryTO {
     /**
      * @return the description
      */
+    @XmlAttribute
     public String getDescription() {
         return description;
     }
@@ -61,6 +69,7 @@ public class InformationCategoryTO {
     /**
      * @return the subcategories
      */
+    @XmlElement(name = "record")
     public List<InformationCategoryTO> getSubcategories() {
         return subcategories;
     }

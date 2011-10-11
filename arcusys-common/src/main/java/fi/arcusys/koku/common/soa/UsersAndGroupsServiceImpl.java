@@ -28,6 +28,7 @@ import fi.arcusys.koku.common.external.LogMessage;
 import fi.arcusys.koku.common.external.LogServiceDAO;
 import fi.arcusys.koku.common.external.LoggedOperation;
 import fi.arcusys.koku.common.external.SystemArea;
+import fi.koku.services.entity.family.v1.FamilyService;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -89,7 +90,20 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
                 "liisa,lahtinen,050-1234567,esimerkkiposti@testi.fi",
                 "sami,salminen,050-1234567,esimerkkiposti@testi.fi",
                 "sanni,suhonen,050-1234567,esimerkkiposti@testi.fi",
-                "sulo,simonen,050-1234567,esimerkkiposti@testi.fi"
+                "sulo,simonen,050-1234567,esimerkkiposti@testi.fi",
+                
+                "lasse,lahtinen,050-1234567,esimerkkiposti@testi.fi",
+                "lauri,lahtinen,050-1234567,esimerkkiposti@testi.fi",
+                "malla,mieho,050-1234567,esimerkkiposti@testi.fi",
+                "martti,mieho,050-1234567,esimerkkiposti@testi.fi",
+                "minna,mieho,050-1234567,esimerkkiposti@testi.fi",
+                "niina,neuvola,050-1234567,esimerkkiposti@testi.fi",
+                "petra,paivakoti,050-1234567,esimerkkiposti@testi.fi",
+                "saana,salminen,050-1234567,esimerkkiposti@testi.fi",
+                "saara,salminen,050-1234567,esimerkkiposti@testi.fi",
+                "sampo,suhonen,050-1234567,esimerkkiposti@testi.fi",
+                "santtu,suhonen,050-1234567,esimerkkiposti@testi.fi"
+
         };
         for (final String userData : usersData) {
             final String[] data = userData.split(",");
@@ -190,9 +204,20 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
     // NOTE: injected through ejb-jar.xml
 //    @Resource(name = "userSearchFilter")
     private String userSearchFilter;
+    
+//    private FamilyService familyService;
 
     @PostConstruct
     public void loadUsers() {
+        try {
+//            familyService = new FamilyService();
+        } catch (RuntimeException e) {
+            logger.error("Failed to init FamilyService: " + e.getMessage());
+            if (logger.isDebugEnabled()) {
+                logger.debug(e.getMessage(), e);
+            }
+        }
+        
         if (dirContext != null) {
             try {
                 SearchControls controls = new SearchControls();
@@ -239,17 +264,38 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
             }
             groupWithUsers.put(group.getGroupUid(), groupUsers);
         }
+        
         // fill children
         final Child kaisa = new Child("kaisa.kuntalainen", "kaisa.kuntalainen");
         kaisa.setFirstname("kaisa");
         kaisa.setLastname("kuntalainen");
         kaisa.setParents(Arrays.asList(getUserByUid("kirsi.kuntalainen"), getUserByUid("kalle.kuntalainen")));
+        children.add(kaisa);
         final Child kauko = new Child("kauko.kuntalainen", "kauko.kuntalainen");
         kauko.setFirstname("kauko");
         kauko.setLastname("kuntalainen");
         kauko.setParents(Arrays.asList(getUserByUid("kirsi.kuntalainen"), getUserByUid("keijo.keinonen")));
-        children.add(kaisa);
         children.add(kauko);
+        final Child lasse = new Child("lasse.lahtinen", "lasse.lahtinen");
+        lasse.setFirstname("lasse");
+        lasse.setLastname("lahtinen");
+        lasse.setParents(Arrays.asList(getUserByUid("liisa.lahtinen"), getUserByUid("lauri.lahtinen")));
+        children.add(lasse);
+        final Child saana = new Child("saana.salminen", "saana.salminen");
+        saana.setFirstname("saana");
+        saana.setLastname("salminen");
+        saana.setParents(Arrays.asList(getUserByUid("saara.salminen"), getUserByUid("sami.salminen")));
+        children.add(saana);
+        final Child santtu = new Child("santtu.suhonen", "santtu.suhonen");
+        santtu.setFirstname("santtu");
+        santtu.setLastname("suhonen");
+        santtu.setParents(Arrays.asList(getUserByUid("sanni.suhonen"), getUserByUid("sampo.suhonen")));
+        children.add(santtu);
+        final Child malla = new Child("malla.mieho", "malla.mieho");
+        malla.setFirstname("malla");
+        malla.setLastname("mieho");
+        malla.setParents(Arrays.asList(getUserByUid("martti.mieho"), getUserByUid("minna.mieho")));
+        children.add(malla);
     }
 
     private String[][] getGroupsData() {
@@ -516,6 +562,17 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         return result;
     }
     
+    /**
+     * @param searchString
+     * @param limit
+     * @return
+     */
+    @Override
+    public List<User> searchEmployees(String searchString, int limit) {
+        // TODO Auto-generated method stub
+        return searchUsers(searchString, limit);
+    }
+
     @Override
     public String getUserUid(final String ssn) {
         if (ssn == null || ssn.trim().isEmpty()) {
@@ -605,13 +662,36 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public List<Child> searchChildren(String searchString, int limit) {
-        // TODO Auto-generated method stub
+        try {
+            final List<Child> resultFromPyh = new ArrayList<Child>();
+            // search users
+            for (final User user : searchUsers(searchString, limit)) {
+                final Child child = new Child(user.getUid(), user.getDisplayName());
+                child.setFirstname(user.getFirstname());
+                child.setLastname(user.getLastname());
+                child.setEmail(user.getEmail());
+                child.setPhoneNumber(user.getPhoneNumber());
+                // get parents info from PYH
+                final List<User> parents = getParents(user);
+                if (!parents.isEmpty()) {
+                    child.setParents(parents);
+                    resultFromPyh.add(child);
+                }
+            }
+            if (!resultFromPyh.isEmpty()) {
+                return resultFromPyh;
+            }
+        } catch (RuntimeException e) {
+            logger.error("Children's search failed, use static configuration. Error: " + e.getMessage());
+            if (logger.isDebugEnabled()) {
+                logger.debug(null, e);
+            }
+        }
+        
+        // retreive static data
         final List<Child> result = new ArrayList<Child>();
         for (final Child child : children) {
-            if (
-                    checkUserBySearchString(searchString, child)
-//                    child.getLastname().toLowerCase().startsWith(searchString.toLowerCase())
-                    ) {
+            if (checkUserBySearchString(searchString, child)) {
                 result.add(child);
                 if (result.size() >= limit) {
                     return result;
@@ -619,6 +699,12 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
             }
         }
         return result;
+    }
+
+    private List<User> getParents(final User user) {
+//        final String hetu = getUserSsn(user.getDisplayName());
+//        familyService.
+        return new ArrayList<User>();
     }
 
     /**

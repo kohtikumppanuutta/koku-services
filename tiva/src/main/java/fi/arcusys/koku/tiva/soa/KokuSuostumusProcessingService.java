@@ -46,7 +46,9 @@ public interface KokuSuostumusProcessingService {
             @WebParam(name = "kohdehenkilo") final String targetPersonUid,
             @WebParam(name = "vastaanottaja") final List<String> receivers,
             @WebParam(name = "maaraaika") final XMLGregorianCalendar endDate,
+            @WebParam(name = "suostumusajankohta") final XMLGregorianCalendar givenDate,
             @WebParam(name = "vastaukset") final List<ActionPermittedTO> actions,
+            @WebParam(name = "suostumuksenLisaTiedot") final ConsentSourceInfo sourceInfo,
             @WebParam(name = "kommentti") final String comment);
 
     @WebMethod(operationName = "annaSuostumus")

@@ -9,8 +9,10 @@ import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.ConsentDAO;
 import fi.arcusys.koku.common.service.datamodel.Consent;
+import fi.arcusys.koku.common.service.datamodel.ConsentReplyStatus;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
+import fi.arcusys.koku.common.service.dto.ConsentExtDtoCriteria;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -18,6 +20,11 @@ import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
  */
 @Stateless
 public class ConsentDAOImpl extends AbstractEntityDAOImpl<Consent> implements ConsentDAO {
+
+    /**
+     * 
+     */
+    private static final int MAX_CONSENTS_RETREIVED = 50;
 
     public ConsentDAOImpl() {
         super(Consent.class);
@@ -100,5 +107,51 @@ public class ConsentDAOImpl extends AbstractEntityDAOImpl<Consent> implements Co
         query.append("SELECT COUNT (DISTINCT cn) FROM Consent cn ");
         final Map<String, Object> params = processCriteria(user, criteria, query);
         return executeQueryWithSingleResult(query.toString(), params);
+    }
+
+    /**
+     * @param dtoCriteria
+     * @return
+     */
+    @Override
+    public List<Consent> searchConsents(ConsentExtDtoCriteria criteria) {
+        final StringBuilder query = new StringBuilder();
+        // select
+        query.append("SELECT DISTINCT cn FROM Consent cn LEFT JOIN cn.givenTo givenTo_ ");
+        final Map<String, Object> params = new HashMap<String, Object>();
+        // where
+        
+        // only replied and valid consents will be retreived
+        query.append(" WHERE (NOT (:given_status != ANY (SELECT cr.status FROM ConsentReply cr WHERE cr.consent = cn ))) ");
+        params.put("given_status", ConsentReplyStatus.Given);
+        // criteria applied
+        final String templatePrefix = criteria.getTemplateNamePrefix();
+        if (templatePrefix != null && !"".equals(templatePrefix.trim())) {
+            query.append(" AND cn.template.title LIKE :templateNamePrefix " );
+            params.put("templateNamePrefix", getPrefixLike(templatePrefix));
+        }
+        final String targetPersonUid = criteria.getTargetPerson();
+        if (targetPersonUid != null && !"".equals(targetPersonUid.trim())) {
+            query.append(" AND cn.targetPerson.uid = :targetPersonUid ");
+            params.put("targetPersonUid", targetPersonUid);
+        } 
+        // getGivenTo
+        final List<String> givenTo = criteria.getGivenTo();
+        if (givenTo != null && !givenTo.isEmpty()) {
+            query.append(" AND givenTo_.partyId IN (:givenTo) ");
+            params.put("givenTo", givenTo);
+        }
+        // getInformationTargetId
+        final String informationTargetId = criteria.getInformationTargetId();
+        if (informationTargetId != null && !"".equals(informationTargetId.trim())) {
+            query.append(" AND (cn.informationTargetId = :informationTargetId OR cn.informationTargetId IS NULL) ");
+            params.put("informationTargetId", informationTargetId);
+        } else {
+            query.append(" AND cn.informationTargetId IS NULL ");
+        }
+        
+        // order by
+        query.append(" ORDER BY cn.id DESC");
+        return executeQuery(query.toString(), params, 1, ConsentDAOImpl.MAX_CONSENTS_RETREIVED);
     }
 }

@@ -5,8 +5,11 @@ import static junit.framework.Assert.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.CommonTestUtil;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.dto.Criteria;
@@ -26,9 +30,11 @@ import fi.arcusys.koku.kv.soa.MessageSummary;
 import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.QuestionType;
+import fi.arcusys.koku.kv.soa.RequestShortSummary;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
+import fi.arcusys.koku.kv.soa.ResponseSummary;
 
 /**
  * 
@@ -184,7 +190,7 @@ public class MessageServiceTest {
 		
 		assertEquals("Correct request retrieved: ", requestId, request.getRequestId());
 
-		serviceFacade.receiveRequest(toUserId, requestId);
+		serviceFacade.receiveRequest(toUserId, requestId, null);
 		messages = serviceFacade.getMessages(toUserId, FolderType.Inbox);
 		assertEquals("Message stored in Inbox: ", 1, messages.size());
 		assertEquals("Message is Request: ", "test request", messages.get(0).getSubject());
@@ -203,20 +209,11 @@ public class MessageServiceTest {
 		final Long requestId = serviceFacade.sendRequest(fromUserId, "test request", toUsers, "read-only form of request", questions, new ArrayList<MultipleChoiceTO>(), RequestTemplateVisibility.Creator, null, null);
 		assertEquals("No replies yet: ", 0, serviceFacade.getRequestById(requestId).getRespondedAmount());
 		
-		final List<Answer> answers = new ArrayList<Answer>();
-		final Answer yesAnswer = new Answer();
-		yesAnswer.setQuestionNumber(1);
-		yesAnswer.setComment("No comments");
-		yesAnswer.setValue(Boolean.TRUE);
-		answers.add(yesAnswer);
+		final List<Answer> answers = createTestAnswers();
 		
-		final Answer testAnswer = new Answer();
-		testAnswer.setQuestionNumber(2);
-		testAnswer.setComment("No comments for this also");
-		testAnswer.setTextValue("Text respose to question");
-		answers.add(testAnswer);
-		
+        assertNull(getByRequestId(serviceFacade.getRepliedRequests(toUserId, 1, 10), requestId));
 		serviceFacade.replyToRequest(toUserId, requestId, answers);
+        assertNotNull(getByRequestId(serviceFacade.getRepliedRequests(toUserId, 1, 10), requestId));
 		
 		final RequestTO request = serviceFacade.getRequestById(requestId);
 		assertEquals("One reply got: ", 1, request.getRespondedAmount());
@@ -228,6 +225,66 @@ public class MessageServiceTest {
 		final List<RequestSummary> requests = serviceFacade.getRequests(fromUserId, 1, 10);
 		assertEquals(1, requests.size());
 	}
+
+    private List<Answer> createTestAnswers() {
+        final List<Answer> answers = new ArrayList<Answer>();
+		final Answer yesAnswer = new Answer();
+		yesAnswer.setQuestionNumber(1);
+		yesAnswer.setComment("No comments");
+		yesAnswer.setValue(Boolean.TRUE);
+		answers.add(yesAnswer);
+		
+		final Answer testAnswer = new Answer();
+		testAnswer.setQuestionNumber(2);
+		testAnswer.setComment("No comments for this also");
+		testAnswer.setTextValue("Text respose to question");
+		answers.add(testAnswer);
+        return answers;
+    }
+
+    private ResponseSummary getByRequestId(final List<ResponseSummary> repliedRequests, final Long requestId) {
+        ResponseSummary result = null; 
+        for (final ResponseSummary requestTO : repliedRequests) {
+		    if (requestId.equals(requestTO.getRequest().getRequestId())) {
+		        result = requestTO;
+		    }
+		}
+        return result;
+    }
+    
+    @Test
+    public void testTotals() {
+        final String fromUserId = "testSenderTotals";
+        final String toUserId = "testReplierTotals";
+        
+        final int oldRepliedTotal = serviceFacade.getTotalRepliedRequests(toUserId);
+        final int oldOldRepliedTotal = serviceFacade.getTotalOldRepliedRequests(toUserId);
+        final int oldSentTotal = serviceFacade.getTotalRequests(fromUserId);
+        final int oldOldSentTotal = serviceFacade.getTotalRequests(fromUserId);
+
+        final List<QuestionTO> questions = createTestQuestions();
+        final List<Answer> answers = createTestAnswers();
+        
+        final Long requestId = serviceFacade.sendRequest(fromUserId, "test request", Collections.singletonList(toUserId), "read-only form of request", 
+                questions, new ArrayList<MultipleChoiceTO>(), RequestTemplateVisibility.Creator, null, null);
+        assertEquals(oldSentTotal + 1, serviceFacade.getTotalRequests(fromUserId));
+        assertEquals(oldOldSentTotal, serviceFacade.getTotalOldRequests(fromUserId));
+        
+        final XMLGregorianCalendar oldDate = CalendarUtil.getXmlDate(new Date());
+        oldDate.setYear(oldDate.getYear() - 1);
+        final Long oldRequestId = serviceFacade.sendRequest(fromUserId, "test request", Collections.singletonList(toUserId), "read-only form of request", 
+                questions, new ArrayList<MultipleChoiceTO>(), RequestTemplateVisibility.Creator, oldDate, null);
+        assertEquals(oldSentTotal + 1, serviceFacade.getTotalRequests(fromUserId));
+        assertEquals(oldOldSentTotal + 1, serviceFacade.getTotalOldRequests(fromUserId));
+
+        serviceFacade.replyToRequest(toUserId, requestId, answers);
+        assertEquals(oldRepliedTotal + 1, serviceFacade.getTotalRepliedRequests(toUserId));
+        assertEquals(oldOldRepliedTotal, serviceFacade.getTotalOldRepliedRequests(toUserId));
+
+        serviceFacade.replyToRequest(toUserId, oldRequestId, answers);
+        assertEquals(oldRepliedTotal + 1, serviceFacade.getTotalRepliedRequests(toUserId));
+        assertEquals(oldOldRepliedTotal + 1, serviceFacade.getTotalOldRepliedRequests(toUserId));
+    }
 	
 	@Test
 	public void testRequestTemplateVisibility() {

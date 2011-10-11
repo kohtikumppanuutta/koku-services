@@ -1,8 +1,11 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -53,6 +57,71 @@ public class Consent extends AbstractEntity {
     
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> receipients;
+    
+    @Embedded
+    private SourceInfo sourceInfo;
+    
+    private String informationTargetId;
+    private String metaInfo;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "consent", fetch = FetchType.EAGER)
+    private Set<ConsentGivenTo> givenTo;
+    
+    /**
+     * @return the informationTargetId
+     */
+    public String getInformationTargetId() {
+        return informationTargetId;
+    }
+
+    /**
+     * @param informationTargetId the informationTargetId to set
+     */
+    public void setInformationTargetId(String informationTargetId) {
+        this.informationTargetId = informationTargetId;
+    }
+
+    /**
+     * @return the metaInfo
+     */
+    public String getMetaInfo() {
+        return metaInfo;
+    }
+
+    /**
+     * @param metaInfo the metaInfo to set
+     */
+    public void setMetaInfo(String metaInfo) {
+        this.metaInfo = metaInfo;
+    }
+
+    /**
+     * @return the givenTo
+     */
+    public Set<ConsentGivenTo> getGivenTo() {
+        return givenTo;
+    }
+
+    /**
+     * @param givenTo the givenTo to set
+     */
+    public void setGivenTo(Set<ConsentGivenTo> givenTo) {
+        this.givenTo = givenTo;
+    }
+
+    /**
+     * @return the sourceInfo
+     */
+    public SourceInfo getSourceInfo() {
+        return sourceInfo;
+    }
+
+    /**
+     * @param sourceInfo the sourceInfo to set
+     */
+    public void setSourceInfo(SourceInfo sourceInfo) {
+        this.sourceInfo = sourceInfo;
+    }
 
     /**
      * @return the receipientsType

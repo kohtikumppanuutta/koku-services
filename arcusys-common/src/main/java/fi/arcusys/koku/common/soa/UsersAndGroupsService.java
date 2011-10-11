@@ -35,6 +35,11 @@ public interface UsersAndGroupsService {
             @WebParam(name = "searchString") final String searchString, 
             @WebParam(name = "limit") final int limit);
     
+    @WebResult(name = "user")
+    List<User> searchEmployees(
+            @WebParam(name = "searchString") final String searchString, 
+            @WebParam(name = "limit") final int limit);
+
     @WebResult(name = "group")
     List<Group> searchGroups(
             @WebParam(name = "searchString") final String searchString, 

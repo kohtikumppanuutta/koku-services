@@ -7,6 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 
@@ -15,6 +17,18 @@ import javax.persistence.OneToMany;
  * Jun 23, 2011
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "findRequestResponsesByUser", query = "SELECT DISTINCT r FROM Response r WHERE r.replier = :user " +
+    		" AND (r.request.replyTill IS NULL OR r.request.replyTill >= CURRENT_DATE) " +
+    		" ORDER BY r.id DESC"),
+    @NamedQuery(name = "countRequestResponsesByUser", query = "SELECT COUNT(DISTINCT r) FROM Response r WHERE r.replier = :user " +
+    		" AND (r.request.replyTill IS NULL OR r.request.replyTill >= CURRENT_DATE)"),
+    @NamedQuery(name = "findOldRequestResponsesByUser", query = "SELECT DISTINCT r FROM Response r WHERE r.replier = :user " +
+            " AND (r.request.replyTill IS NOT NULL OR r.request.replyTill < CURRENT_DATE) " +
+            " ORDER BY r.id DESC"),
+    @NamedQuery(name = "countOldRequestResponsesByUser", query = "SELECT COUNT(DISTINCT r) FROM Response r WHERE r.replier = :user " +
+            " AND (r.request.replyTill IS NOT NULL AND r.request.replyTill < CURRENT_DATE)")
+})
 public class Response extends AbstractEntity {
 	@ManyToOne
 	private Request request;

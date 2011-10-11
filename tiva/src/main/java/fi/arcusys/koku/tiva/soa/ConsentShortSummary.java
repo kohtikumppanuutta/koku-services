@@ -1,5 +1,7 @@
 package fi.arcusys.koku.tiva.soa;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -11,11 +13,91 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 public class ConsentShortSummary {
     private Long consentId;
+    private Long templateId;
     private String templateName;
+    private String templateDescription;
+    private String targetPersonUid;
     private String anotherPermitterUid;
     private String requestor;
     private ConsentCreateType createType;
     private XMLGregorianCalendar replyTill;
+    
+    private String informationTargetId;
+    private String metaInfo;
+    private List<ConsentExternalGivenTo> givenToParties;
+    
+    /**
+     * @return the templateId
+     */
+    public Long getTemplateId() {
+        return templateId;
+    }
+    /**
+     * @param templateId the templateId to set
+     */
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
+    /**
+     * @return the targetPersonUid
+     */
+    public String getTargetPersonUid() {
+        return targetPersonUid;
+    }
+    /**
+     * @param targetPersonUid the targetPersonUid to set
+     */
+    public void setTargetPersonUid(String targetPersonUid) {
+        this.targetPersonUid = targetPersonUid;
+    }
+    /**
+     * @return the templateDescription
+     */
+    public String getTemplateDescription() {
+        return templateDescription;
+    }
+    /**
+     * @param templateDescription the templateDescription to set
+     */
+    public void setTemplateDescription(String templateDescription) {
+        this.templateDescription = templateDescription;
+    }
+    /**
+     * @return the informationTargetId
+     */
+    public String getInformationTargetId() {
+        return informationTargetId;
+    }
+    /**
+     * @param informationTargetId the informationTargetId to set
+     */
+    public void setInformationTargetId(String informationTargetId) {
+        this.informationTargetId = informationTargetId;
+    }
+    /**
+     * @return the metaInfo
+     */
+    public String getMetaInfo() {
+        return metaInfo;
+    }
+    /**
+     * @param metaInfo the metaInfo to set
+     */
+    public void setMetaInfo(String metaInfo) {
+        this.metaInfo = metaInfo;
+    }
+    /**
+     * @return the givenToParties
+     */
+    public List<ConsentExternalGivenTo> getGivenToParties() {
+        return givenToParties;
+    }
+    /**
+     * @param givenToParties the givenToParties to set
+     */
+    public void setGivenToParties(List<ConsentExternalGivenTo> givenToParties) {
+        this.givenToParties = givenToParties;
+    }
     /**
      * @return the consentId
      */

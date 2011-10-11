@@ -26,7 +26,7 @@ public interface KokuTietopyyntoProcessingService {
             @WebParam(name = "tietopyyntoId") final Long requestId, 
             @WebParam(name = "explanation") final String explanation);
     
-    @WebResult(name = "tietoelementti")
+    @WebResult(name = "record")
     @WebMethod(operationName = "getTietoelementit")
     InformationCategoryTO getCategories();
 }

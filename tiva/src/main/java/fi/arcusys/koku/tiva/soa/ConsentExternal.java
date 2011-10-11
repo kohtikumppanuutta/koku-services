@@ -12,19 +12,33 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Oct 3, 2011
  */
 @XmlType(name = "consent", namespace = "http://services.koku.fi/entity/tiva/v1", 
-    propOrder = {"consentId", "template", "targetPerson", "consentProviders", "informationTargetId", "givenAt", "validTill", "givenTo", "description", "status", "metaInfo"})
+    propOrder = {"consentId", "template", "consentRequestor", "targetPerson", "consentProviders", "informationTargetId", "givenAt", "validTill", "givenTo", "description", "status", "metaInfo"})
 public class ConsentExternal {
     private Long consentId;
     private ConsentTemplateShort template;
+    private String consentRequestor;
     private String targetPerson;
     private List<String> consentProviders;
     private String informationTargetId;
     private XMLGregorianCalendar givenAt;
     private XMLGregorianCalendar validTill;
-    private String givenTo;
+    private List<ConsentExternalGivenTo> givenTo;
     private String description;
     private ConsentStatus status;
     private String metaInfo;
+    
+    /**
+     * @return the consentRequestor
+     */
+    public String getConsentRequestor() {
+        return consentRequestor;
+    }
+    /**
+     * @param consentRequestor the consentRequestor to set
+     */
+    public void setConsentRequestor(String consentRequestor) {
+        this.consentRequestor = consentRequestor;
+    }
     /**
      * @return the consentId
      */
@@ -117,13 +131,14 @@ public class ConsentExternal {
     /**
      * @return the consentRequestor
      */
-    public String getGivenTo() {
+    @XmlElement(required = true)
+    public List<ConsentExternalGivenTo> getGivenTo() {
         return givenTo;
     }
     /**
      * @param consentRequestor the consentRequestor to set
      */
-    public void setGivenTo(String givenTo) {
+    public void setGivenTo(List<ConsentExternalGivenTo> givenTo) {
         this.givenTo = givenTo;
     }
     /**

@@ -54,12 +54,15 @@ import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.Questions;
 import fi.arcusys.koku.kv.soa.Receipients;
+import fi.arcusys.koku.kv.soa.RequestShortSummary;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateExistenceStatus;
 import fi.arcusys.koku.kv.soa.RequestTemplateSummary;
 import fi.arcusys.koku.kv.soa.RequestTemplateTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
+import fi.arcusys.koku.kv.soa.ResponseDetail;
+import fi.arcusys.koku.kv.soa.ResponseSummary;
 import fi.arcusys.koku.kv.soa.ResponseTO;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 
@@ -102,6 +105,13 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content) {
 		final User fromUser = getUserByUid(fromUserUid);
 		
+        final MessageRef storedMessage = createNewMessageInOutbox(subject, receipientUids, content, fromUser);
+		return storedMessage.getId();
+	}
+
+    protected MessageRef createNewMessageInOutbox(final String subject,
+            final List<String> receipientUids, final String content,
+            final User fromUser) {
         Message msg = new Message();
 		fillMessage(msg, fromUser, subject, receipientUids, content);
 		
@@ -110,21 +120,25 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		final MessageRef storedMessage = folderDAO.storeMessage(fromUser, FolderType.Outbox, msg);
 		storedMessage.setRead(true);
 		messageRefDao.update(storedMessage);
-		return storedMessage.getId();
-	}
+        return storedMessage;
+    }
 
 	private void fillMessage(Message msg,
 			final User fromUser, final String subject,
 			final List<String> receipientUids, final String content) {
-		final Set<User> receipients = new HashSet<User>();
+		msg.setFrom(fromUser);
+		msg.setSubject(subject);
+		msg.setReceipients(getUsersByUids(receipientUids));
+		msg.setText(content);
+	}
+
+    protected Set<User> getUsersByUids(final List<String> receipientUids) {
+        final Set<User> receipients = new HashSet<User>();
 		for (final String receipientUid : receipientUids) {
 			receipients.add(getUserByUid(receipientUid));
 		}
-		msg.setFrom(fromUser);
-		msg.setSubject(subject);
-		msg.setReceipients(receipients);
-		msg.setText(content);
-	}
+        return receipients;
+    }
 	
 	private User getUserByUid(final String userUid) {
 		return userDao.getOrCreateUser(userUid);
@@ -365,7 +379,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		final List<ResponseTO> responseTOs = new ArrayList<ResponseTO>();
 
 		fillRequestSummary(result, request, receipientsNotResponded, responseTOs);
-		result.setContent(request.getText());
+		result.setContent("");
 		result.setNotResponded(receipientsNotResponded);
 		result.setResponses(responseTOs);
 
@@ -395,31 +409,43 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	private void fillRequestSummary(final RequestSummary result, final Request request,
 			final List<String> receipientsNotResponded,
 			final List<ResponseTO> responseTOs) {
-		result.setRequestId(request.getId());
-		result.setSender(request.getUser().getUid());
+		fillRequestShortSummary(result, request);
+		
+		for (final Response response : request.getResponses()) {
+			final ResponseTO responseTO = new ResponseTO();
+            responseTO.setAnswers(convertAnswersToAnswerTO(response.getAnswers()));
+			responseTO.setName(response.getReplier().getUid());
+			receipientsNotResponded.remove(response.getReplier().getUid());
+			responseTOs.add(responseTO);
+		}
+		
+        result.setRespondedAmount(request.getResponses().size());
+		result.setMissedAmout(receipientsNotResponded.size());
+	}
+
+    protected List<AnswerTO> convertAnswersToAnswerTO(
+            final Set<fi.arcusys.koku.common.service.datamodel.Answer> answers) {
+        final List<AnswerTO> result = new ArrayList<AnswerTO>();
+        for (final fi.arcusys.koku.common.service.datamodel.Answer answer : answers) {
+        	final AnswerTO answerTO = new AnswerTO();
+        	answerTO.setAnswer(answer.getValueAsString());
+        	answerTO.setComment(answer.getComment());
+        	answerTO.setQuestionNumber(answer.getIndex());
+        	result.add(answerTO);
+        }
+        return result;
+    }
+
+    protected RequestShortSummary fillRequestShortSummary(final RequestShortSummary result,
+            final Request request) {
+        result.setRequestId(request.getId());
+		result.setSender(request.getFromUser().getUid());
 		result.setSubject(request.getSubject());
 		result.setCreationDate(CalendarUtil.getXmlGregorianCalendar(request.getCreatedDate()));
 		result.setEndDate(CalendarUtil.getXmlGregorianCalendar(request.getReplyTill()));
 		
-		result.setRespondedAmount(request.getResponses().size());
-		for (final Response response : request.getResponses()) {
-			final ResponseTO responseTO = new ResponseTO();
-			final List<AnswerTO> answers = new ArrayList<AnswerTO>();
-			for (final fi.arcusys.koku.common.service.datamodel.Answer answer : response.getAnswers()) {
-				final AnswerTO answerTO = new AnswerTO();
-				answerTO.setAnswer(answer.getValueAsString());
-				answerTO.setComment(answer.getComment());
-				answerTO.setQuestionNumber(answer.getIndex());
-				answers.add(answerTO);
-			}
-			responseTO.setAnswers(answers);
-			responseTO.setName(response.getReplier().getUid());
-			receipientsNotResponded.remove(responseTO.getName());
-			responseTOs.add(responseTO);
-		}
-		
-		result.setMissedAmout(receipientsNotResponded.size());
-	}
+		return result;
+    }
 
 	/**
 	 * @param fromUserId
@@ -441,19 +467,20 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     private Request doCreateRequest(final String fromUserId,
             final String subject, final List<String> receipients,
             final String content, final RequestTemplate template, XMLGregorianCalendar replyTill, Integer notifyBeforeDays) {
+        final User fromUser = getUserByUid(fromUserId);
+
         Request request = new Request();
         request.setTemplate(template);
         request.setReplyTill(CalendarUtil.getSafeDate(replyTill));
         request.setNotifyBeforeDays(notifyBeforeDays);
-		final User fromUser = getUserByUid(fromUserId);
-		
-		fillMessage(request, fromUser, subject, receipients, content);
-		
+        request.setSubject(subject);
+        request.setReceipients(getUsersByUids(receipients));
+        request.setFromUser(fromUser);
+
+        createNewMessageInOutbox(subject, receipients, content, fromUser);
+        
 		request = requestDAO.create(request);
 		
-		final MessageRef storedMessage = folderDAO.storeMessage(fromUser, FolderType.Outbox, request);
-		storedMessage.setRead(true);
-		messageRefDao.update(storedMessage);
         return request;
     }
 
@@ -509,19 +536,19 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	 * @return
 	 */
 	@Override
-	public Long receiveRequest(final String toUserId, final Long requestId) {
+	public Long receiveRequest(final String toUserId, final Long requestId, final String content) {
 		final Request sentRequest = requestDAO.getById(requestId);
 		if (sentRequest == null) {
 			throw new IllegalArgumentException("Request with ID " + requestId + " not found.");
 		}
 
 		final User toUser = getUserByUid(toUserId);
-		final MessageRef msgRef = new MessageRef();
-		Folder folder = getOrCreateFolder(toUser, FolderType.Inbox);
-
-		msgRef.setFolder(folder);
-		msgRef.setMessage(sentRequest);
-		return messageRefDao.create(msgRef).getId();
+		
+        Message msg = new Message();
+        fillMessage(msg, sentRequest.getFromUser(), sentRequest.getSubject(), Collections.singletonList(toUserId), content);
+        msg = messageDao.create(msg);
+        
+        return doReceiveNewMessage(toUser, msg).getId();
 	}
 
 	/**
@@ -569,11 +596,14 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	 */
 	@Override
 	public List<RequestSummary> getRequests(String userId, int startNum, int maxNum) {
-		validateStartAndMaxNum(startNum, maxNum);
+        validateStartAndMaxNum(startNum, maxNum);
 
-		final List<Request> requests = requestDAO.getRequestsByUser(getUserByUid(userId), startNum, maxNum);
-		
-		final List<RequestSummary> result = new ArrayList<RequestSummary>();
+        return convertRequestsToSummaryTO(requestDAO.getRequestsByUser(getUserByUid(userId), startNum, maxNum - startNum + 1));
+	}
+
+    protected List<RequestSummary> convertRequestsToSummaryTO(
+            final List<Request> requests) {
+        final List<RequestSummary> result = new ArrayList<RequestSummary>();
 		for (final Request request : requests) {
 			final RequestSummary requestSummary = new RequestSummary();
 			
@@ -584,7 +614,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 			result.add(requestSummary);
 		}
 		return result;
-	}
+    }
 
     /**
      * @param fromUserUid
@@ -777,5 +807,114 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 
         fillRequestTemplate(userUid, subject, questions, choices, visibility, template);
         requestTemplateDAO.update(template);
+    }
+
+    /**
+     * @param userUid
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<ResponseSummary> getRepliedRequests(String userUid, int startNum, int maxNum) {
+        return convertResponsesToSummaryTO(responseDAO.getResponsesByUser(getUserByUid(userUid), startNum, maxNum - startNum + 1));
+    }
+
+    protected List<ResponseSummary> convertResponsesToSummaryTO(
+            final List<Response> responses) {
+        final List<ResponseSummary> result = new ArrayList<ResponseSummary>();
+        for (final Response response : responses) {
+            final ResponseSummary responseSummary = new ResponseSummary();
+            fillResponseSummary(response, responseSummary);
+            result.add(responseSummary);
+        }
+        return result;
+    }
+
+    protected void fillResponseSummary(final Response response,
+            final ResponseSummary responseSummary) {
+        responseSummary.setRequest(fillRequestShortSummary(new RequestShortSummary(), response.getRequest()));
+        responseSummary.setResponseId(response.getId());
+        responseSummary.setReplierUid(response.getReplier().getUid());
+    }
+
+    /**
+     * @param userUid
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<ResponseSummary> getOldRepliedRequests(String userUid, int startNum, int maxNum) {
+        return convertResponsesToSummaryTO(responseDAO.getOldResponsesByUser(getUserByUid(userUid), startNum, maxNum - startNum + 1));
+    }
+
+    /**
+     * @param userUid
+     * @return
+     */
+    @Override
+    public int getTotalRepliedRequests(String userUid) {
+        return getIntValue(responseDAO.getTotalResponsesByUser(getUserByUid(userUid)));
+    }
+
+    /**
+     * @param userUid
+     * @return
+     */
+    @Override
+    public int getTotalOldRepliedRequests(String userUid) {
+        return getIntValue(responseDAO.getTotalOldResponsesByUser(getUserByUid(userUid)));
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public int getTotalRequests(String user) {
+        return getIntValue(requestDAO.getTotalRequestsByUser(getUserByUid(user)));
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<RequestSummary> getOldRequests(String user, int startNum, int maxNum) {
+        validateStartAndMaxNum(startNum, maxNum);
+
+        return convertRequestsToSummaryTO(requestDAO.getOldRequestsByUser(getUserByUid(user), startNum, maxNum - startNum + 1));
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public int getTotalOldRequests(String user) {
+        return getIntValue(requestDAO.getTotalOldRequestsByUser(getUserByUid(user)));
+    }
+
+    /**
+     * @param responseId
+     * @return
+     */
+    @Override
+    public ResponseDetail getResponseDetail(long responseId) {
+        final Response response = responseDAO.getById(responseId);
+        if (response == null) {
+            throw new IllegalArgumentException("Response is not found by ID " + responseId);
+        }
+        
+        final ResponseDetail responseDetail = new ResponseDetail();
+        
+        fillResponseSummary(response, responseDetail);
+        responseDetail.setQuestions(getQuestionsTObyDTO(response.getRequest().getTemplate().getQuestions()));
+        responseDetail.setAnswers(convertAnswersToAnswerTO(response.getAnswers()));
+        
+        return responseDetail;
     }
 }

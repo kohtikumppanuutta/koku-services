@@ -8,9 +8,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
 import fi.arcusys.koku.tiva.soa.ConsentCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
+import fi.arcusys.koku.tiva.soa.ConsentKksExtraInfo;
 import fi.arcusys.koku.tiva.soa.ConsentQuery;
 import fi.arcusys.koku.tiva.soa.ConsentReceipientsType;
+import fi.arcusys.koku.tiva.soa.ConsentSearchCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
+import fi.arcusys.koku.tiva.soa.ConsentSourceInfo;
 import fi.arcusys.koku.tiva.soa.ConsentSummary;
 import fi.arcusys.koku.tiva.soa.ConsentTO;
 import fi.arcusys.koku.tiva.soa.ConsentTemplateSummary;
@@ -46,12 +49,13 @@ public interface ConsentServiceFacade {
      * @param type 
      * @param isMandatory 
      * @param endDate 
+     * @param extraInfo 
      * @param string
      * @param string2
      * @param asList
      * @return
      */
-    Long requestForConsent(final Long templateId, String senderUid, String targetPersonUid, List<String> receipients, ConsentReceipientsType type, XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory);
+    Long requestForConsent(final Long templateId, String senderUid, String targetPersonUid, List<String> receipients, ConsentReceipientsType type, XMLGregorianCalendar replyTillDate, XMLGregorianCalendar endDate, Boolean isMandatory, ConsentKksExtraInfo extraInfo);
 
     
     /**
@@ -158,6 +162,8 @@ public interface ConsentServiceFacade {
     /**
      * @param templateId
      * @param employeeUid
+     * @param givenDate 
+     * @param sourceInfo 
      * @param string
      * @param string2
      * @param asList
@@ -166,7 +172,7 @@ public interface ConsentServiceFacade {
      */
     Long writeConsentOnBehalf(final Long templateId, final String employeeUid, final String consentType, 
             final String targetPersonUid, final List<String> receipientUids, final XMLGregorianCalendar endDate,
-            List<ActionPermittedTO> actions, final String comment);
+            XMLGregorianCalendar givenDate, List<ActionPermittedTO> actions, ConsentSourceInfo sourceInfo, final String comment);
 
     /**
      * @param user
@@ -175,4 +181,10 @@ public interface ConsentServiceFacade {
     int getTotalOldConsents(final String userUid);
 
     List<ConsentSummary> getOldConsents(final String userUid, final int startNum, final int maxNum);
+
+    /**
+     * @param query
+     * @return
+     */
+    List<ConsentTO> searchConsents(ConsentSearchCriteria query);
 }

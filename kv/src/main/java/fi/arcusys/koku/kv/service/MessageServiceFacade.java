@@ -18,12 +18,15 @@ import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.Questions;
 import fi.arcusys.koku.kv.soa.Receipients;
+import fi.arcusys.koku.kv.soa.RequestShortSummary;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateExistenceStatus;
 import fi.arcusys.koku.kv.soa.RequestTemplateSummary;
 import fi.arcusys.koku.kv.soa.RequestTemplateTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
+import fi.arcusys.koku.kv.soa.ResponseDetail;
+import fi.arcusys.koku.kv.soa.ResponseSummary;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
 
 /**
@@ -60,7 +63,7 @@ public interface MessageServiceFacade {
 	
 	RequestTO getRequestById(final Long requestId);
 
-	Long receiveRequest(final String toUserId, final Long requestId);
+	Long receiveRequest(final String toUserId, final Long requestId, final String content);
 
 	Long replyToRequest(final String toUserId, final Long requestId, final List<Answer> answers);
 
@@ -128,4 +131,48 @@ public interface MessageServiceFacade {
      * @return
      */
     void updateRequestTemplate(String userUid, String subject, List<QuestionTO> questions, List<MultipleChoiceTO> choices, RequestTemplateVisibility visibility);
+
+    /**
+     * @param userUid
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    List<ResponseSummary> getRepliedRequests(final String userUid, int startNum, int maxNum);
+
+    List<ResponseSummary> getOldRepliedRequests(final String userUid, int startNum, int maxNum);
+
+    /**
+     * @param toUserId
+     * @return
+     */
+    int getTotalRepliedRequests(String userUid);
+
+    int getTotalOldRepliedRequests(String userUid);
+
+    /**
+     * @param user
+     * @return
+     */
+    int getTotalRequests(String user);
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    List<RequestSummary> getOldRequests(String user, int startNum, int maxNum);
+
+    /**
+     * @param user
+     * @return
+     */
+    int getTotalOldRequests(String user);
+
+    /**
+     * @param responseId
+     * @return
+     */
+    ResponseDetail getResponseDetail(long responseId);
 }

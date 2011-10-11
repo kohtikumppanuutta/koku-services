@@ -26,11 +26,6 @@ public class RequestDAOImpl extends AbstractEntityDAOImpl<Request> implements Re
 	 */
 	@Override
 	public Request getById(final Long requestId) {
-//		final List<Request> requests = super.getListByIds(Collections.singletonList(requestId));
-//		if (requests == null || requests.isEmpty()) {
-//			return null;
-//		}
-//		return requests.get(0);
 		return super.getById(requestId);
 	}
 	
@@ -60,5 +55,34 @@ public class RequestDAOImpl extends AbstractEntityDAOImpl<Request> implements Re
     @Override
     public Long getTotalByTemplate(RequestTemplate template) {
         return getSingleResult("countRequestsByTemplate", Collections.singletonMap("template", template));
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    @Override
+    public Long getTotalRequestsByUser(User user) {
+        return getSingleResult("countRequestsByUserUid", Collections.singletonMap("user", user));
+    }
+
+    /**
+     * @param userByUid
+     * @param startNum
+     * @param maxResults
+     * @return
+     */
+    @Override
+    public List<Request> getOldRequestsByUser(User user, int startNum, int maxResults) {
+        return super.getResultList("findOldRequestsByUserUid", Collections.<String, Object>singletonMap("user", user), startNum, maxResults);
+    }
+
+    /**
+     * @param userByUid
+     * @return
+     */
+    @Override
+    public Long getTotalOldRequestsByUser(User user) {
+        return getSingleResult("countOldRequestsByUserUid", Collections.singletonMap("user", user));
     }
 }

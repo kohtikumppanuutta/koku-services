@@ -10,10 +10,12 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import fi.arcusys.koku.common.service.CalendarUtil;
 
@@ -24,12 +26,21 @@ import fi.arcusys.koku.common.service.CalendarUtil;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = Request.GET_REQUESTS_BY_IDS, query = "SELECT DISTINCT r FROM Request r WHERE r.id in (:ids) ORDER BY r.id DESC"),
-	@NamedQuery(name = Request.GET_REQUESTS_BY_USER_UID, query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user ORDER BY r.id DESC"),
+	@NamedQuery(name = Request.GET_REQUESTS_BY_USER_UID, query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user " +
+			" AND (r.replyTill IS NULL OR r.replyTill >= CURRENT_DATE) " +
+			" ORDER BY r.id DESC"),
+    @NamedQuery(name = "countRequestsByUserUid", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.fromUser = :user" +
+    		" AND (r.replyTill IS NULL OR r.replyTill >= CURRENT_DATE)"),
+    @NamedQuery(name = "findOldRequestsByUserUid", query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user " +
+            " AND (r.replyTill IS NOT NULL AND r.replyTill < CURRENT_DATE) " +
+            " ORDER BY r.id DESC"),
+    @NamedQuery(name = "countOldRequestsByUserUid", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.fromUser = :user" +
+            " AND (r.replyTill IS NOT NULL AND r.replyTill < CURRENT_DATE)"),
     @NamedQuery(name = "countRequestsByTemplate", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.template = :template")
 })
-public class Request extends Message {
-	public static final String GET_REQUESTS_BY_IDS = "getRequestsByIds";
-	public static final String GET_REQUESTS_BY_USER_UID = "getRequestsByUserUid";
+public class Request extends AbstractEntity {
+	public static final String GET_REQUESTS_BY_IDS = "findRequestsByIds";
+	public static final String GET_REQUESTS_BY_USER_UID = "findRequestsByUserUid";
 	
 	private Date replyTill;
 	private Integer notifyBeforeDays;
@@ -40,7 +51,57 @@ public class Request extends Message {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "request")
 	private Set<Response> responses;
 	
-	/**
+    private String subject;
+    
+    @ManyToOne
+    private User fromUser;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<User> receipients;
+    
+    /**
+     * @return the subject
+     */
+    public String getSubject() {
+        return subject;
+    }
+
+    /**
+     * @param subject the subject to set
+     */
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    /**
+     * @return the fromUser
+     */
+    public User getFromUser() {
+        return fromUser;
+    }
+
+    /**
+     * @param fromUser the fromUser to set
+     */
+    public void setFromUser(User fromUser) {
+        this.fromUser = fromUser;
+    }
+
+    /**
+     * @return the receipients
+     */
+    public Set<User> getReceipients() {
+        return receipients;
+    }
+
+    /**
+     * @param receipients the receipients to set
+     */
+    public void setReceipients(Set<User> receipients) {
+        this.receipients = receipients;
+    }
+
+    /**
      * @return the template
      */
     public RequestTemplate getTemplate() {
