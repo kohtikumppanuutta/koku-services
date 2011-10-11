@@ -31,9 +31,13 @@ public class CommunityServiceFaultInterceptor {
       
       ServiceFaultDetailType type = new ServiceFaultDetailType();
       String message = null;
-      // JBoss wraps runtime exceptions to EJBTransactionRolledbackException, we need to get the cause
-      if (e.getCause() instanceof KoKuFaultException) {
-        // KoKu specific exception
+      
+      if (e instanceof KoKuFaultException) {
+        KoKuFaultException kokuException = (KoKuFaultException) e;
+        type.setCode(kokuException.getErrorCode());
+        message = e.getMessage();      
+      } else if (e.getCause() instanceof KoKuFaultException) {
+        // JBoss wraps runtime exceptions to EJBTransactionRolledbackException, we need to get the cause
         KoKuFaultException kokuException = (KoKuFaultException) e.getCause();
         type.setCode(kokuException.getErrorCode());
         message = e.getCause().getMessage();

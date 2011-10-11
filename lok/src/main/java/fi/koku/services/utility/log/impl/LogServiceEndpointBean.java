@@ -24,6 +24,10 @@ import javax.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.services.entity.authorizationinfo.util.AuthUtils;
+import fi.koku.services.entity.authorizationinfo.v1.AuthorizationInfoService;
+import fi.koku.services.entity.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
+import fi.koku.services.entity.authorizationinfo.v1.model.Role;
 import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.ArchivalResultsType;
 import fi.koku.services.utility.log.v1.LogArchivalParametersType;
@@ -58,8 +62,11 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
  // LogUtils lu = new LogUtils();
   
+  private AuthorizationInfoService authInfoService;
+  
   public LogServiceEndpointBean() {
     logConverter = new LogConverter();
+    authInfoService = new AuthorizationInfoServiceDummyImpl();
   }
 
   /**
@@ -102,8 +109,10 @@ public class LogServiceEndpointBean implements LogServicePortType {
   public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) throws ServiceFault {
     logger.info("opQueryLog");
     LogEntriesType logEntriesType = new LogEntriesType();
-
-    if(LogConstants.LOG_NORMAL.equals(criteriaType.getLogType())){
+    
+    if(LogConstants.LOG_NORMAL.equals(criteriaType.getLogType())) {
+      AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles("lok", auditInfoType.getUserId()));
+      
       List<LogEntry> entries;
     
       try {    
@@ -147,7 +156,9 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
       logService.writeAdmin(adminLogEntry); 
       
-    } else if(LogConstants.LOG_ADMIN.equals(criteriaType.getLogType())){
+    } else if(LogConstants.LOG_ADMIN.equals(criteriaType.getLogType())) {
+      AuthUtils.requirePermission("ViewAdminLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles("lok", auditInfoType.getUserId()));
+
       List<AdminLogEntry> entries;
       
       try {     
@@ -206,8 +217,9 @@ public class LogServiceEndpointBean implements LogServicePortType {
 //  public VoidType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
   public ArchivalResultsType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
       throws ServiceFault {
-    logger.info("opArchiveLog");
-   
+    logger.info("opArchiveLog");   
+    AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles("lok", auditInfoType.getUserId()));
+
     int entryCount = 0;
     
     try{

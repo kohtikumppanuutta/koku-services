@@ -56,5 +56,12 @@
       <version>${lokservice-api.version}</version>
       <scope>compile</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>kohti-kumppanuutta</groupId>
+      <artifactId>authorizationinfoservice-api</artifactId>
+      <version>0.0.5</version>
+      <scope>compile</scope>
+    </dependency>    
   </dependencies>
 </project>
