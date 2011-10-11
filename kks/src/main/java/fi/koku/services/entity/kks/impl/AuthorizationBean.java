@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import fi.koku.services.entity.authorizationinfo.v1.AuthorizationInfoService;
 import fi.koku.services.entity.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
+import fi.koku.services.entity.authorizationinfo.v1.model.OrgUnit;
 import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
 import fi.koku.services.entity.community.v1.CommunitiesType;
 import fi.koku.services.entity.community.v1.CommunityQueryCriteriaType;
@@ -22,6 +23,11 @@ import fi.koku.services.entity.community.v1.MemberPicsType;
 import fi.koku.services.entity.community.v1.MemberType;
 import fi.koku.services.entity.community.v1.MembersType;
 import fi.koku.services.entity.community.v1.ServiceFault;
+import fi.koku.services.entity.tiva.v1.Consent;
+import fi.koku.services.entity.tiva.v1.ConsentSearchCriteria;
+import fi.koku.services.entity.tiva.v1.ConsentStatus;
+import fi.koku.services.entity.tiva.v1.ConsentTemplate;
+import fi.koku.services.entity.tiva.v1.KokuTivaToKksService;
 import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
@@ -32,13 +38,31 @@ import fi.koku.settings.KoKuPropertiesUtil;
 @Stateless
 public class AuthorizationBean implements Authorization {
 
-  final public static String ENDPOINT = KoKuPropertiesUtil.get("community.service.endpointaddress");
-  final public static String COMMUNITY_SERVICE_USER_ID = "marko";
-  final public static String COMMUNITY_SERVICE_PASSWORD = "marko";
-  final public static String ROLE_GUARDIAN = "guardian";
-  final public static String ROLE_DEPENDANT = "dependant";
-  final public static String COMMUNITY_TYPE_GUARDIAN_COMMUNITY = "guardian_community";
+  public static final String CUSTOMER_ENDPOINT = KoKuPropertiesUtil.get("community.service.endpointaddress");
+  public static final String TIVA_ENDPOINT = KoKuPropertiesUtil.get("tiva-kks.service.endpointaddress");
+  public static final String COMMUNITY_SERVICE_USER_ID = "marko";
+  public static final String COMMUNITY_SERVICE_PASSWORD = "marko";
+  public static final String ROLE_GUARDIAN = "guardian";
+  public static final String ROLE_DEPENDANT = "dependant";
+  public static final String COMMUNITY_TYPE_GUARDIAN_COMMUNITY = "guardian_community";
+
   private static final Logger LOG = LoggerFactory.getLogger(AuthorizationBean.class);
+
+  @Override
+  public Map<String, List<Consent>> getConsentMap(String customer, String user, List<KksCollectionClass> collectionTypes) {
+    Map<String, List<Consent>> tmp = new HashMap<String, List<Consent>>();
+
+    for (KksCollectionClass cc : collectionTypes) {
+      if (!tmp.containsKey(cc.getConsentType())) {
+        List<Consent> consents = getConsents(customer, user, cc.getConsentType());
+
+        if (consents != null) {
+          tmp.put(cc.getConsentType(), consents);
+        }
+      }
+    }
+    return tmp;
+  }
 
   @Override
   public Map<String, Registry> getAuthorizedRegistries(String user) {
@@ -60,6 +84,145 @@ public class AuthorizationBean implements Authorization {
       tmp.add(r.getId());
     }
     return tmp;
+  }
+
+  /**
+   * Checks does user has consent for given consent type
+   * 
+   * @param customer
+   * @param user
+   *          which consents are checked
+   * @param consentType
+   *          of the collection that is requested to see
+   * @return true if user has consent false if not
+   */
+  @Override
+  public boolean hasConsent(String customer, String user, String consentType) {
+    return getValidConsent(customer, user, consentType) != null;
+  }
+
+  /**
+   * Gets consent for user with given consent type
+   * 
+   * @param customer
+   * @param user
+   *          which consents are checked
+   * @param consentType
+   *          of the collection that is requested to see
+   * @return valid consent or NULL if no valid consent found
+   */
+  private Consent getValidConsent(String customer, String user, String consentType) {
+    List<Consent> consents = getConsents(customer, user, consentType);
+
+    if (consents.size() > 0) {
+      for (Consent c : consents) {
+        if (ConsentStatus.VALID.equals(c.getStatus())) {
+          return c;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets consent for user with given consent type
+   * 
+   * @param customer
+   * @param user
+   *          which consents are checked
+   * @param consentType
+   *          of the collection that is requested to see
+   * @return valid consent or NULL if no valid consent found
+   */
+  private List<Consent> getConsents(String customer, String user, String consentType) {
+    // TODO: take real auth service into use
+    AuthorizationInfoService uis = new AuthorizationInfoServiceDummyImpl();
+    List<OrgUnit> units = uis.getUsersOrgUnits("KKS", user);
+
+    List<String> orgNames = new ArrayList<String>();
+
+    if (units == null) {
+      return null;
+    }
+
+    for (OrgUnit unit : units) {
+      // TODO: Id, name or service area name?
+      orgNames.add(unit.getName());
+    }
+
+    ConsentSearchCriteria csc = new ConsentSearchCriteria();
+    csc.setTargetPerson(customer);
+    csc.setTemplateNamePrefix(consentType);
+
+    // TODO support for multiple org names?
+    csc.setGivenTo(orgNames.get(0));
+
+    KokuTivaToKksService tivaService = getTivaService();
+
+    return tivaService.queryConsents(csc);
+  }
+
+  /**
+   * Creates consent request for given customer and consentType
+   * 
+   * @param customer
+   * @param user
+   *          that requests the consent
+   * @param consentType
+   *          that is requested (example
+   *          kks.suostumus.4-vuotiaan.neuvolatarkastus)
+   * @return true if request is success false if failed
+   */
+  private boolean createConsentRequest(String customer, String user, String consentType) {
+    Consent consent = new Consent();
+    consent.setTargetPerson(customer);
+
+    // TODO: should we first query template by templatePrefix (consentType)
+    ConsentTemplate template = new ConsentTemplate();
+
+    // TODO: is this needed?
+    template.setConsentTemplateId(1L);
+
+    // TODO: if template query is not needed, should we set the consentType
+    // here?
+    template.setTemplateName(consentType);
+
+    consent.setTemplate(template);
+
+    List<String> guardians = getCustomerGuardians();
+
+    if (guardians == null) {
+      return false;
+    }
+
+    // TODO: change to contain id & name from organization?
+    consent.getGivenTo().addAll(getOrganizationNames(user));
+    consent.getConsentProviders().addAll(guardians);
+
+    // These are not going to be used
+    // consent.setConsentId(null);
+    // consent.setDescription(null);
+    // consent.setGivenAt(null);
+    // consent.setInformationTargetId(null);
+    // consent.setMetaInfo(null);
+    // consent.setValidTill(null);
+
+    KokuTivaToKksService tivaService = getTivaService();
+    tivaService.createConsent(consent);
+    return true;
+  }
+
+  private List<String> getCustomerGuardians() {
+
+    // TODO
+    return new ArrayList<String>();
+  }
+
+  private List<String> getOrganizationNames(String user) {
+
+    // TODO
+    return new ArrayList<String>();
   }
 
   @Override
@@ -84,9 +247,10 @@ public class AuthorizationBean implements Authorization {
   }
 
   @Override
-  public KksCollection removeUnauthorizedContent(KksCollection c, Map<Integer, String> entryRegisters, String user) {
+  public KksCollection removeUnauthorizedContent(KksCollection c, KksCollectionClass metadata,
+      Map<Integer, String> entryRegisters, String user) {
 
-    if (isParent(user, c.getCustomer())) {
+    if (isParent(user, c.getCustomer()) || hasConsent(c.getCustomer(), user, metadata.getConsentType())) {
       return c;
     }
 
@@ -149,8 +313,13 @@ public class AuthorizationBean implements Authorization {
 
   private CommunityServicePortType getCommunityService() {
     CommunityServiceFactory csf = new CommunityServiceFactory(COMMUNITY_SERVICE_USER_ID, COMMUNITY_SERVICE_PASSWORD,
-        ENDPOINT);
+        CUSTOMER_ENDPOINT);
     return csf.getCommunityService();
+  }
+
+  private KokuTivaToKksService getTivaService() {
+    ConsentServiceFactory csf = new ConsentServiceFactory("", "", TIVA_ENDPOINT);
+    return csf.getService();
   }
 
   public fi.koku.services.entity.community.v1.AuditInfoType getCommynityAuditInfo(String user) {

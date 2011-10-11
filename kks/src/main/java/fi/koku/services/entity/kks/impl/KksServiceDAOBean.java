@@ -49,6 +49,15 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
+  public List<KksCollectionClass> getCollectionClassesWithOutContent() {
+    Query q = em.createNamedQuery(KksCollectionClass.NAMED_QUERY_GET_ALL_COLLECTION_CLASSES);
+
+    @SuppressWarnings("unchecked")
+    List<KksCollectionClass> list = q.getResultList();
+    return list;
+  }
+
+  @Override
   public KksCollectionClass getCollectionClass(int id) {
     return (KksCollectionClass) em.find(KksCollectionClass.class, id);
   }
@@ -424,7 +433,6 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   @Override
   public List<KksGroup> getCollectionClassGroups(int classId) {
-
     Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS).setParameter("id", classId);
 
     @SuppressWarnings("unchecked")
@@ -629,7 +637,9 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   private void syncFields(String user, KksCollection newCollection, KksCollection oldCollection) {
     Map<String, Registry> registers = authorization.getAuthorizedRegistries(user);
-    boolean master = authorization.isMasterUser(user, newCollection);
+    boolean master = authorization.isParent(user, oldCollection.getCustomer())
+        || authorization.hasConsent(oldCollection.getCustomer(), user,
+            getCollectionClass(oldCollection.getCollectionClass()).getConsentType());
 
     List<KksGroup> groups = getCollectionClassGroups(newCollection.getCollectionClass());
 

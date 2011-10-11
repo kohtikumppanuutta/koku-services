@@ -108,6 +108,13 @@ public interface KksServiceDAO {
   List<KksCollectionClass> getCollectionClasses();
 
   /**
+   * Gets KKS collection classes without content (groups, entry classes)
+   * 
+   * @return collection classes
+   */
+  List<KksCollectionClass> getCollectionClassesWithOutContent();
+
+  /**
    * Gets collection class
    * 
    * @param id

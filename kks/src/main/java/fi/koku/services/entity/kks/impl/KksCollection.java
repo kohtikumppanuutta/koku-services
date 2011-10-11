@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 /**
@@ -91,9 +92,17 @@ public class KksCollection implements Serializable {
   @JoinTable(name = "kks_collection_tags", joinColumns = @JoinColumn(name = "collection_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "tag_id"))
   private List<KksTag> tags;
 
+  @Transient
+  private boolean consentRequested;
+
+  @Transient
+  private String userConsentStatus;
+
   public KksCollection() {
     entries = new ArrayList<KksEntry>();
     tags = new ArrayList<KksTag>();
+    consentRequested = false;
+    userConsentStatus = "";
   }
 
   public Long getId() {
@@ -229,6 +238,22 @@ public class KksCollection implements Serializable {
         break;
       }
     }
+  }
+
+  public boolean isConsentRequested() {
+    return consentRequested;
+  }
+
+  public void setConsentRequested(boolean consentRequested) {
+    this.consentRequested = consentRequested;
+  }
+
+  public String getUserConsentStatus() {
+    return userConsentStatus;
+  }
+
+  public void setUserConsentStatus(String userConsentStatus) {
+    this.userConsentStatus = userConsentStatus;
   }
 
 }

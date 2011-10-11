@@ -11,7 +11,7 @@
 	<name>kks-service</name>
 
 	<properties>
-		<kksservice-api.version>0.2.1</kksservice-api.version>
+		<kksservice-api.version>0.2.2</kksservice-api.version>
 	</properties>
 	
 	<dependencies>
@@ -24,14 +24,17 @@
 	      <groupId>kohti-kumppanuutta</groupId>
 	      <artifactId>lokservice-api</artifactId>
 	      <version>0.0.12</version>
-	    </dependency>    
-	    
+	    </dependency>  
 	    <dependency>
 	      <groupId>kohti-kumppanuutta</groupId>
 	      <artifactId>customerservice-api</artifactId>
 	      <version>0.0.13</version>
-	    </dependency>  
-   
+	    </dependency>  	    
+	    <dependency>  
+		    <groupId>kohti-kumppanuutta</groupId>  
+		    <artifactId>tivaservice-api</artifactId>  
+		    <version>0.0.1</version>  
+		</dependency> 
 	</dependencies>
 	<build>
 		<plugins>

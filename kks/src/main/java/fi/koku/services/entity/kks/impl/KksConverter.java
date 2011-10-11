@@ -56,7 +56,7 @@ public class KksConverter {
     tmp.setId("" + collectionClass.getId());
     tmp.setDescription(collectionClass.getDescription());
     tmp.setName(collectionClass.getName());
-    tmp.setConsessionType(collectionClass.getConsentType());
+    tmp.setConsentType(collectionClass.getConsentType());
     tmp.setTypeCode(collectionClass.getTypeCode());
 
     KksGroupsType kksGroupsType = new KksGroupsType();
@@ -168,6 +168,8 @@ public class KksConverter {
       kksCollectionType.setModified(cal);
     }
     kksCollectionType.setModifier(collection.getModifier());
+    kksCollectionType.setConsentRequested(collection.isConsentRequested());
+    kksCollectionType.setUserConsentStatus(collection.getUserConsentStatus());
 
     KksEntriesType kksEntriesType = new KksEntriesType();
 
