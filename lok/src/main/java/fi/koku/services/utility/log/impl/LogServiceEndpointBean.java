@@ -68,9 +68,15 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * @return
    */
   @Override
-  public VoidType opLog(LogEntryType logEntryType, AuditInfoType auditInfoType) throws ServiceFault {
+  public VoidType opLog(LogEntriesType logEntriesType, AuditInfoType auditInfoType) throws ServiceFault {
 
     logger.info("opLog");
+    List<LogEntryType> list = logEntriesType.getLogEntry();
+    
+    Iterator i = list.iterator();
+    while(i.hasNext()){
+      LogEntryType logEntryType = (LogEntryType)i.next();
+    
     logger.debug("got timestamp: " + logEntryType.getTimestamp().getTime().toString());
 
   
@@ -84,6 +90,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
     } else { 
       logger.debug("write to normal log");
       logService.write(logConverter.fromWsType(logEntryType));
+    }
     }
     return new VoidType();
   }
