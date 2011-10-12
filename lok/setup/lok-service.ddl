@@ -13,7 +13,7 @@ CREATE TABLE log (
   data_item_type VARCHAR(100) NOT NULL,
   operation VARCHAR(20) NOT NULL,
   client_system_id VARCHAR(20) NOT NULL,
-  message TEST
+  message TEXT
 );
 
 CREATE TABLE log_admin (
@@ -34,5 +34,5 @@ CREATE TABLE log_archive (
   data_item_type VARCHAR(100) NOT NULL,
   operation VARCHAR(20) NOT NULL,
   client_system_id VARCHAR(20) NOT NULL,
-  message TEST
+  message TEXT
 );
