@@ -23,11 +23,6 @@ import fi.koku.services.entity.community.v1.MemberPicsType;
 import fi.koku.services.entity.community.v1.MemberType;
 import fi.koku.services.entity.community.v1.MembersType;
 import fi.koku.services.entity.community.v1.ServiceFault;
-import fi.koku.services.entity.tiva.v1.Consent;
-import fi.koku.services.entity.tiva.v1.ConsentSearchCriteria;
-import fi.koku.services.entity.tiva.v1.ConsentStatus;
-import fi.koku.services.entity.tiva.v1.ConsentTemplate;
-import fi.koku.services.entity.tiva.v1.KokuTivaToKksService;
 import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
@@ -48,21 +43,22 @@ public class AuthorizationBean implements Authorization {
 
   private static final Logger LOG = LoggerFactory.getLogger(AuthorizationBean.class);
 
-  @Override
-  public Map<String, List<Consent>> getConsentMap(String customer, String user, List<KksCollectionClass> collectionTypes) {
-    Map<String, List<Consent>> tmp = new HashMap<String, List<Consent>>();
-
-    for (KksCollectionClass cc : collectionTypes) {
-      if (!tmp.containsKey(cc.getConsentType())) {
-        List<Consent> consents = getConsents(customer, user, cc.getConsentType());
-
-        if (consents != null) {
-          tmp.put(cc.getConsentType(), consents);
-        }
-      }
-    }
-    return tmp;
-  }
+  // @Override
+  // public Map<String, List<Consent>> getConsentMap(String customer, String
+  // user, List<KksCollectionClass> collectionTypes) {
+  // Map<String, List<Consent>> tmp = new HashMap<String, List<Consent>>();
+  //
+  // for (KksCollectionClass cc : collectionTypes) {
+  // if (!tmp.containsKey(cc.getConsentType())) {
+  // List<Consent> consents = getConsents(customer, user, cc.getConsentType());
+  //
+  // if (consents != null) {
+  // tmp.put(cc.getConsentType(), consents);
+  // }
+  // }
+  // }
+  // return tmp;
+  // }
 
   @Override
   public Map<String, Registry> getAuthorizedRegistries(String user) {
@@ -96,10 +92,11 @@ public class AuthorizationBean implements Authorization {
    *          of the collection that is requested to see
    * @return true if user has consent false if not
    */
-  @Override
-  public boolean hasConsent(String customer, String user, String consentType) {
-    return getValidConsent(customer, user, consentType) != null;
-  }
+  // @Override
+  // public boolean hasConsent(String customer, String user, String consentType)
+  // {
+  // return getValidConsent(customer, user, consentType) != null;
+  // }
 
   /**
    * Gets consent for user with given consent type
@@ -111,19 +108,20 @@ public class AuthorizationBean implements Authorization {
    *          of the collection that is requested to see
    * @return valid consent or NULL if no valid consent found
    */
-  private Consent getValidConsent(String customer, String user, String consentType) {
-    List<Consent> consents = getConsents(customer, user, consentType);
-
-    if (consents.size() > 0) {
-      for (Consent c : consents) {
-        if (ConsentStatus.VALID.equals(c.getStatus())) {
-          return c;
-        }
-      }
-    }
-
-    return null;
-  }
+  // private Consent getValidConsent(String customer, String user, String
+  // consentType) {
+  // List<Consent> consents = getConsents(customer, user, consentType);
+  //
+  // if (consents.size() > 0) {
+  // for (Consent c : consents) {
+  // if (ConsentStatus.VALID.equals(c.getStatus())) {
+  // return c;
+  // }
+  // }
+  // }
+  //
+  // return null;
+  // }
 
   /**
    * Gets consent for user with given consent type
@@ -135,83 +133,18 @@ public class AuthorizationBean implements Authorization {
    *          of the collection that is requested to see
    * @return valid consent or NULL if no valid consent found
    */
-  private List<Consent> getConsents(String customer, String user, String consentType) {
-    // TODO: take real auth service into use
-    AuthorizationInfoService uis = new AuthorizationInfoServiceDummyImpl();
-    List<OrgUnit> units = uis.getUsersOrgUnits("KKS", user);
-
-    List<String> orgNames = new ArrayList<String>();
-
-    if (units == null) {
-      return null;
-    }
-
-    for (OrgUnit unit : units) {
-      // TODO: Id, name or service area name?
-      orgNames.add(unit.getName());
-    }
-
-    ConsentSearchCriteria csc = new ConsentSearchCriteria();
-    csc.setTargetPerson(customer);
-    csc.setTemplateNamePrefix(consentType);
-
-    // TODO support for multiple org names?
-    csc.setGivenTo(orgNames.get(0));
-
-    KokuTivaToKksService tivaService = getTivaService();
-
-    return tivaService.queryConsents(csc);
-  }
-
-  /**
-   * Creates consent request for given customer and consentType
-   * 
-   * @param customer
-   * @param user
-   *          that requests the consent
-   * @param consentType
-   *          that is requested (example
-   *          kks.suostumus.4-vuotiaan.neuvolatarkastus)
-   * @return true if request is success false if failed
-   */
-  private boolean createConsentRequest(String customer, String user, String consentType) {
-    Consent consent = new Consent();
-    consent.setTargetPerson(customer);
-
-    // TODO: should we first query template by templatePrefix (consentType)
-    ConsentTemplate template = new ConsentTemplate();
-
-    // TODO: is this needed?
-    template.setConsentTemplateId(1L);
-
-    // TODO: if template query is not needed, should we set the consentType
-    // here?
-    template.setTemplateName(consentType);
-
-    consent.setTemplate(template);
-
-    List<String> guardians = getCustomerGuardians();
-
-    if (guardians == null) {
-      return false;
-    }
-
-    // TODO: change to contain id & name from organization?
-    consent.getGivenTo().addAll(getOrganizationNames(user));
-    consent.getConsentProviders().addAll(guardians);
-
-    // These are not going to be used
-    // consent.setConsentId(null);
-    // consent.setDescription(null);
-    // consent.setGivenAt(null);
-    // consent.setInformationTargetId(null);
-    // consent.setMetaInfo(null);
-    // consent.setValidTill(null);
-
-    KokuTivaToKksService tivaService = getTivaService();
-    tivaService.createConsent(consent);
-    return true;
-  }
+  // private List<Consent> getConsents(String customer, String user, String
+  // consentType) {
+  //
+  // ConsentSearchCriteria csc = new ConsentSearchCriteria();
+  // csc.setTargetPerson(customer);
+  // csc.setTemplateNamePrefix(consentType);
+  // csc.getGivenTo().addAll(getOrganizationNames(user));
+  //
+  // KokuTivaToKksService tivaService = getTivaService();
+  //
+  // return tivaService.queryConsents(csc);
+  // }
 
   private List<String> getCustomerGuardians() {
 
@@ -220,9 +153,16 @@ public class AuthorizationBean implements Authorization {
   }
 
   private List<String> getOrganizationNames(String user) {
+    // TODO: take real auth service into use
+    AuthorizationInfoService uis = new AuthorizationInfoServiceDummyImpl();
+    List<OrgUnit> units = uis.getUsersOrgUnits("KKS", user);
 
-    // TODO
-    return new ArrayList<String>();
+    List<String> orgNames = new ArrayList<String>();
+
+    for (OrgUnit ou : units) {
+      orgNames.add(ou.getServiceArea());
+    }
+    return orgNames;
   }
 
   @Override
@@ -317,16 +257,23 @@ public class AuthorizationBean implements Authorization {
     return csf.getCommunityService();
   }
 
-  private KokuTivaToKksService getTivaService() {
-    ConsentServiceFactory csf = new ConsentServiceFactory("", "", TIVA_ENDPOINT);
-    return csf.getService();
-  }
+  // private KokuTivaToKksService getTivaService() {
+  // ConsentServiceFactory csf = new ConsentServiceFactory("", "",
+  // TIVA_ENDPOINT);
+  // return csf.getService();
+  // }
 
   public fi.koku.services.entity.community.v1.AuditInfoType getCommynityAuditInfo(String user) {
     fi.koku.services.entity.community.v1.AuditInfoType a = new fi.koku.services.entity.community.v1.AuditInfoType();
     a.setComponent("KKS");
     a.setUserId(user);
     return a;
+  }
+
+  @Override
+  public boolean hasConsent(String customer, String user, String consentType) {
+    // TODO Auto-generated method stub
+    return false;
   }
 
 }

@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.ejb.Local;
 
 import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
-import fi.koku.services.entity.tiva.v1.Consent;
 
 /**
  * Authorization services for KKS
@@ -24,7 +23,8 @@ public interface Authorization {
    * @param collectionTypes
    * @return consent map containing consenst for each collection consent type
    */
-  public Map<String, List<Consent>> getConsentMap(String customer, String user, List<KksCollectionClass> collectionTypes);
+  // public Map<String, List<Consent>> getConsentMap(String customer, String
+  // user, List<KksCollectionClass> collectionTypes);
 
   /**
    * Creates authorized registries map for user

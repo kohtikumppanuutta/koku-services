@@ -8,9 +8,6 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import fi.koku.services.entity.tiva.v1.Consent;
-import fi.koku.services.entity.tiva.v1.ConsentStatus;
-
 /**
  * KKS service implementation class
  * 
@@ -50,7 +47,8 @@ public class KksServiceBean implements KksService {
       collectionClasses.put(c.getId(), c);
     }
 
-    Map<String, List<Consent>> consents = authorization.getConsentMap(customer, audit.getUserId(), classes);
+    // Map<String, List<Consent>> consents =
+    // authorization.getConsentMap(customer, audit.getUserId(), classes);
 
     if (parent) {
       return serviceDAO.getChildCollectionsForParent(customer);
@@ -74,7 +72,7 @@ public class KksServiceBean implements KksService {
         }
         c.setEntries(new ArrayList<KksEntry>());
 
-        setConsentStatus(collectionClasses, consents, c);
+        // setConsentStatus(collectionClasses, consents, c);
 
       }
     }
@@ -83,23 +81,25 @@ public class KksServiceBean implements KksService {
     return tmp;
   }
 
-  private void setConsentStatus(Map<Integer, KksCollectionClass> collectionClasses,
-      Map<String, List<Consent>> consents, KksCollection c) {
-    List<Consent> consentList = consents.get(collectionClasses.get(c.getCollectionClass()));
-
-    for (Consent con : consentList) {
-
-      if (ConsentStatus.VALID.equals(con.getStatus())) {
-        c.setConsentRequested(true);
-        c.setUserConsentStatus(ConsentStatus.VALID.toString());
-      } else if (ConsentStatus.PARTIALLY_GIVEN.equals(con.getStatus())) {
-        c.setConsentRequested(true);
-        c.setUserConsentStatus(con.getStatus().toString());
-      } else {
-        c.setConsentRequested(false);
-      }
-    }
-  }
+  // private void setConsentStatus(Map<Integer, KksCollectionClass>
+  // collectionClasses,
+  // Map<String, List<Consent>> consents, KksCollection c) {
+  // List<Consent> consentList =
+  // consents.get(collectionClasses.get(c.getCollectionClass()));
+  //
+  // for (Consent con : consentList) {
+  //
+  // if (ConsentStatus.VALID.equals(con.getStatus())) {
+  // c.setConsentRequested(true);
+  // c.setUserConsentStatus(ConsentStatus.VALID.toString());
+  // } else if (ConsentStatus.PARTIALLY_GIVEN.equals(con.getStatus())) {
+  // c.setConsentRequested(true);
+  // c.setUserConsentStatus(con.getStatus().toString());
+  // } else {
+  // c.setConsentRequested(false);
+  // }
+  // }
+  // }
 
   @Override
   public void update(KksCollection collection, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
