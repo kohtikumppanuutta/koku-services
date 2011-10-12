@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
+import fi.koku.services.utility.log.v1.LogEntriesType;
 
 /**
  * Helper class for collection updating
@@ -78,37 +79,23 @@ public class CollectionUpdateHelper {
     }
   }
 
-  public void combineEntries() {
+  public void combineEntries(Log log, LogEntriesType logEntries) {
     for (KksEntry e : newCollection.getEntries()) {
       if (!entryMetadata.get(e.getEntryClassId()).isMultiValue() && hasRightForEntry(e.getEntryClassId())) {
         KksEntry old = getOldEntries().get(e.getId());
-        if (old == null) {
-          // add new entry to old
-          e.setKksCollection(oldCollection);
-          e.setModified(new Date());
-
-          if (e.getValues() != null) {
-            for (KksValue v : e.getValues()) {
-              v.setModified(new Date());
-              v.setModifier(e.getCreator());
-            }
-          }
-          Log.logCreate(oldCollection.getCustomer(), metadata.getTypeCode(), user, oldCollection.getName()
-              + " added entry class " + e.toString());
-          oldCollection.addKksEntry(e);
-        } else {
+        if (old != null) {
           // modify old
           old.setCreator(e.getCreator());
           old.setCustomer(e.getCustomer());
           old.setModified(new Date());
           old.setVersion(e.getVersion());
-          combineValues(e, old);
+          combineValues(e, old, log, logEntries);
         }
       }
     }
   }
 
-  private void combineValues(KksEntry e, KksEntry old) {
+  private void combineValues(KksEntry e, KksEntry old, Log log, LogEntriesType logEntries) {
     if (e.getValues() != null) {
       for (KksValue v : e.getValues()) {
         KksValue oldValue = getOldValues().get(v.getId());
@@ -116,11 +103,11 @@ public class CollectionUpdateHelper {
         if (oldValue == null) {
           v.setEntry(old);
           old.addKksValue(v);
-          Log.logValueAddition(oldCollection.getName(), metadata.getTypeCode(), oldCollection.getCustomer(), user, old,
-              v);
+          log.logValueUpdate(oldCollection.getName(), metadata.getTypeCode(), oldCollection.getCustomer(), user, old,
+              oldValue, v, logEntries);
         } else {
-          Log.logValueUpdate(oldCollection.getName(), metadata.getTypeCode(), oldCollection.getCustomer(), user, old,
-              oldValue, v);
+          log.logValueUpdate(oldCollection.getName(), metadata.getTypeCode(), oldCollection.getCustomer(), user, old,
+              oldValue, v, logEntries);
           oldValue.setValue(v.getValue());
           oldValue.setModified(new Date());
           oldValue.setModifier(v.getModifier());

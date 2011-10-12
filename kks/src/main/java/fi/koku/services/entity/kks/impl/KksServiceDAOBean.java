@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
+import fi.koku.services.utility.log.v1.LogEntriesType;
 
 @Stateless
 public class KksServiceDAOBean implements KksServiceDAO {
@@ -31,6 +32,12 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   @PersistenceContext
   private EntityManager em;
+
+  private Log log;
+
+  public KksServiceDAOBean() {
+    log = new Log();
+  }
 
   @Override
   public List<KksCollectionClass> getCollectionClasses() {
@@ -123,10 +130,27 @@ public class KksServiceDAOBean implements KksServiceDAO {
     return list;
   }
 
-  public List<KksCollection> getAuthorizedCollections(String pic, String user, List<String> registers) {
-    Query q = em
-        .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:user OR c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers)))  ");
-    q.setParameter("customer", pic).setParameter("user", user).setParameter("registers", registers);
+  @Override
+  public List<KksCollection> getAuthorizedCollections(String pic, String user, List<String> registers,
+      Set<String> consents) {
+    Query q = null;
+    if (registers.size() > 0 && consents.size() == 0) {
+      q = em
+          .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:user OR c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers)))  ");
+      q.setParameter("customer", pic).setParameter("user", user).setParameter("registers", registers);
+    } else if (registers.size() > 0 && consents.size() > 0) {
+      q = em
+          .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:user OR c.collectionClass IN (SELECT DISTINCT g.collectionClassId FROM KksGroup g WHERE g.register IN (:registers))) OR c.collectionClass IN (SELECT DISTINCT kc.collectionClass FROM KksCollectionClass kc WHERE kc.consentType IN(:consents)");
+      q.setParameter("customer", pic).setParameter("user", user).setParameter("registers", registers)
+          .setParameter("consents", consents);
+    } else if (registers.size() == 0 && consents.size() > 0) {
+      q = em
+          .createQuery("SELECT c FROM KksCollection c WHERE c.customer =:customer AND (c.creator =:user OR c.collectionClass IN (SELECT DISTINCT kc.collectionClass FROM KksCollectionClass kc WHERE kc.consentType IN(:consents)");
+      q.setParameter("customer", pic).setParameter("user", user).setParameter("consents", consents);
+    } else {
+      q = em.createNamedQuery(KksCollection.NAMED_QUERY_GET_COLLECTIONS_BY_CUSTOMER_AND_CREATOR);
+      q.setParameter("creator", user).setParameter("customer", pic);
+    }
 
     @SuppressWarnings("unchecked")
     List<KksCollection> list = (List<KksCollection>) q.getResultList();
@@ -274,7 +298,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
       em.persist(e);
       em.flush();
 
-      Log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
+      log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
           creation.getValue());
       insertDefaultTags(creation, e);
 
@@ -309,14 +333,14 @@ public class KksServiceDAOBean implements KksServiceDAO {
       v.setModifier(user);
       em.persist(v);
 
-      Log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
+      log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
           creation.getValue());
       return e.getId();
     } else {
       for (KksValue v : e.getValues()) {
         if (v.getId().equals(creation.getValue().getId())) {
 
-          Log.logValueUpdate(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e, v,
+          log.logValueUpdate(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e, v,
               creation.getValue());
 
           v.setValue(creation.getValue().getValue());
@@ -344,7 +368,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     KksCollectionClass metadata = getCollectionClass(k.getCollectionClass());
     k.setStatus(status);
     em.merge(k);
-    Log.logUpdate(k.getCustomer(), metadata.getTypeCode(), user, k.getName() + " changed status from " + old + " to "
+    log.logUpdate(k.getCustomer(), metadata.getTypeCode(), user, k.getName() + " changed status from " + old + " to "
         + status);
   }
 
@@ -551,11 +575,11 @@ public class KksServiceDAOBean implements KksServiceDAO {
   }
 
   @Override
-  public void update(String user, KksCollection collection) {
+  public void update(String user, KksCollection collection, Log log, LogEntriesType logEntries) {
 
     KksCollection tmp = em.find(KksCollection.class, collection.getId());
 
-    syncFields(user, collection, tmp);
+    syncFields(user, collection, tmp, log, logEntries);
 
     tmp.setNextVersion(collection.getNextVersion());
     tmp.setPrevVersion(collection.getPrevVersion());
@@ -635,7 +659,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
     }
   }
 
-  private void syncFields(String user, KksCollection newCollection, KksCollection oldCollection) {
+  private void syncFields(String user, KksCollection newCollection, KksCollection oldCollection, Log log,
+      LogEntriesType logEntries) {
     Map<String, Registry> registers = authorization.getAuthorizedRegistries(user);
     boolean master = authorization.isParent(user, oldCollection.getCustomer())
         || authorization.hasConsent(oldCollection.getCustomer(), user,
@@ -651,7 +676,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
     CollectionUpdateHelper helper = new CollectionUpdateHelper(user, registers, master, newCollection, oldCollection,
         getCollectionClass(newCollection.getCollectionClass()), groups, entryClasses);
-    helper.combineEntries();
+    helper.combineEntries(log, logEntries);
   }
 
   public void insertTags(List<Integer> tagIds, Long entryId) {
@@ -733,7 +758,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
     em.persist(newVersion);
 
-    Log.logCreate(old.getCustomer(), metadata.getTypeCode(), user, "Created version " + newVersion.getName() + " from "
+    log.logCreate(old.getCustomer(), metadata.getTypeCode(), user, "Created version " + newVersion.getName() + " from "
         + old.getName());
 
     setTagsByEntryClass(old, newVersion);
@@ -742,7 +767,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     old.setStatus(LOCKED);
     em.merge(old);
 
-    Log.logUpdate(old.getCustomer(), metadata.getTypeCode(), user, "Changed " + old.getName() + " status from "
+    log.logUpdate(old.getCustomer(), metadata.getTypeCode(), user, "Changed " + old.getName() + " status from "
         + oldStatus + " to " + LOCKED);
 
     return newVersion.getId();

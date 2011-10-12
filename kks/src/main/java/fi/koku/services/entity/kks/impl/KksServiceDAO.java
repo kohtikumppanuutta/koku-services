@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.ejb.Local;
 
+import fi.koku.services.utility.log.v1.LogEntriesType;
+
 /**
  * Interface for KKS data access
  * 
@@ -26,15 +28,18 @@ public interface KksServiceDAO {
 
   /**
    * Gets customer (pic) collections where user is authorized to see the
-   * collection (either by collection owner or via collection registers)
+   * collection
    * 
    * @param pic
    * @param user
    * @param registers
    *          that are allowed for the user
+   * @param consents
+   *          that are valid for the user
    * @return collections that are authorized for the user
    */
-  public List<KksCollection> getAuthorizedCollections(String pic, String user, List<String> registers);
+  public List<KksCollection> getAuthorizedCollections(String pic, String user, List<String> registers,
+      Set<String> consents);
 
   /**
    * Gets customer (pic) collections where user is the creator of the collection
@@ -137,8 +142,12 @@ public interface KksServiceDAO {
    * 
    * @param collection
    * @param user
+   * @param log
+   *          for the update
+   * @param logEntries
+   *          for logging
    */
-  void update(String user, KksCollection collection);
+  void update(String user, KksCollection collection, Log log, LogEntriesType logEntries);
 
   /**
    * Copies and insert new version from given source
