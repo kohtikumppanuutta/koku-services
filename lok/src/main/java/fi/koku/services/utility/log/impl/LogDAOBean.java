@@ -1,23 +1,17 @@
 package fi.koku.services.utility.log.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import fi.koku.services.utility.log.v1.ServiceFault;
-import fi.koku.services.utility.log.v1.ServiceFaultDetailType;
 
 /**
  * LogDAOBean.
@@ -37,14 +31,14 @@ public class LogDAOBean implements LogDAO {
   public LogDAOBean() {
   }
 
-  // TODO: Missä ServiceFault heitetään?
+ // TODO: mahd. virheet:
   // 1) arkistoloki ei vastaa
   // 2) arkistoloki ei kuittaa onnistunutta tietojen kopiointia
   @Override
-  public int archiveLog(Date date) throws ServiceFault {
+  public int archiveLog(Date date){
 
     // set the end time 1 day later so that everything added on the last day
-    // will be archived
+    // will be archived. (Date has already been null-checked!)
     Date movedDate = lu.moveOneDay(date);
 
     // check if there is anything to archive
@@ -85,7 +79,7 @@ public class LogDAOBean implements LogDAO {
     }
   }
 
-  // TODO: entä jos write menee pieleen? Mistä ServiceFault heitetään?
+  
   /**
    * Write log (note: archive log is not written with this method!)
    */
@@ -106,7 +100,7 @@ public class LogDAOBean implements LogDAO {
    * showing to the user in the portlet. (LOK-3)
    * 
    * 
-   * @throws ServiceFault
+   * 
    */
   @Override
   public List<LogEntry> queryLog(LogQueryCriteria criteria) {
@@ -198,7 +192,7 @@ public class LogDAOBean implements LogDAO {
    * Makes a query to the admin log and returns a list of AdminLogEntries for
    * showing to the super user in the portlet. (LOK-4)
    * 
-   * @throws ServiceFault
+   * 
    */
   @Override
   public Collection<AdminLogEntry> queryAdminLog(LogQueryCriteria criteria) {
@@ -264,23 +258,4 @@ public class LogDAOBean implements LogDAO {
 
   }
 
-  /*
-  public List<LogEntry> adminListToLogList(List<AdminLogEntry> list) {
-    List<LogEntry> entryList = new ArrayList(); // TODO: onko oikein?
-    ListIterator<AdminLogEntry> i = list.listIterator();
-    while (i.hasNext()) {
-      AdminLogEntry aentry = (AdminLogEntry) i.next();
-      LogEntry entry = new LogEntry();
-      entry.setCustomerPic(aentry.getCustomerPic());
-      entry.setOperation(aentry.getOperation());
-      entry.setMessage(aentry.getMessage());
-      entry.setTimestamp(aentry.getTimestamp());
-      entry.setUserPic(aentry.getUserPic());
-
-      entryList.add(entry);
-    }
-
-    return entryList;
-  }
-  */
 }

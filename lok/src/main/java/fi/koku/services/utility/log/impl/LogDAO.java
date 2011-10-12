@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.ejb.Local;
 
-import fi.koku.services.utility.log.v1.ServiceFault;
-
 /**
  * LogDAO.
  * 
@@ -16,7 +14,7 @@ import fi.koku.services.utility.log.v1.ServiceFault;
 @Local
 public interface LogDAO {
   
-  int archiveLog(Date date) throws ServiceFault;
+  int archiveLog(Date date);
   
   void writeLog(LogEntry entry);
 

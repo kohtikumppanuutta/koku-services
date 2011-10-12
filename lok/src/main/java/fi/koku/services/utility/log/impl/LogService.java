@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.ejb.Local;
 
-import fi.koku.services.utility.log.v1.ServiceFault;
-
 /**
  * Service API for log service.
  * 
@@ -16,7 +14,7 @@ import fi.koku.services.utility.log.v1.ServiceFault;
 @Local
 public interface LogService {
 
-    int archive(Date date) throws ServiceFault;
+    int archive(Date date);
     
     void write(LogEntry entry);
     

@@ -3,12 +3,8 @@ package fi.koku.services.utility.log.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
@@ -16,27 +12,22 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.KoKuFaultException;
 import fi.koku.services.entity.authorizationinfo.util.AuthUtils;
 import fi.koku.services.entity.authorizationinfo.v1.AuthorizationInfoService;
 import fi.koku.services.entity.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
-import fi.koku.services.entity.authorizationinfo.v1.model.Role;
-import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.ArchivalResultsType;
+import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogArchivalParametersType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 import fi.koku.services.utility.log.v1.LogEntryType;
 import fi.koku.services.utility.log.v1.LogQueryCriteriaType;
 import fi.koku.services.utility.log.v1.LogServicePortType;
-import fi.koku.services.utility.log.v1.ServiceFault;
-import fi.koku.services.utility.log.v1.ServiceFaultDetailType;
 import fi.koku.services.utility.log.v1.VoidType;
 
 /**
@@ -60,7 +51,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
   private LogConverter logConverter;
 
- // LogUtils lu = new LogUtils();
+  LogUtils lu = new LogUtils();
   
   private AuthorizationInfoService authInfoService;
   
@@ -75,7 +66,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * @return
    */
   @Override
-  public VoidType opLog(LogEntriesType logEntriesType, AuditInfoType auditInfoType) throws ServiceFault {
+  public VoidType opLog(LogEntriesType logEntriesType, AuditInfoType auditInfoType) throws KoKuFaultException {
 
     logger.info("opLog");
     List<LogEntryType> list = logEntriesType.getLogEntry();
@@ -83,21 +74,27 @@ public class LogServiceEndpointBean implements LogServicePortType {
     Iterator i = list.iterator();
     while(i.hasNext()){
       LogEntryType logEntryType = (LogEntryType)i.next();
-    
-    logger.debug("got timestamp: " + logEntryType.getTimestamp().getTime().toString());
 
-  
-    // call to the actual writing
-    // TODO: tee "log":sta static
-    
-    // ClientSystemId tells to which log table we write!
-    if (("log").equalsIgnoreCase(logEntryType.getClientSystemId())) {
-      logger.debug("write to admin log");
-      logService.writeAdmin(logConverter.fromWsTypeToAdmin(logEntryType));
-    } else { 
-      logger.debug("write to normal log");
-      logService.write(logConverter.fromWsType(logEntryType));
-    }
+      if(logEntryType != null){
+ 
+        // call to the actual writing
+       
+
+        // Use ClientSystemId to tell in which log table we write!
+        if (LogConstants.LOG_WRITER_LOG.equalsIgnoreCase(logEntryType.getClientSystemId())) {
+          logger.debug("write to admin log");
+          if(lu.logInputOk(logEntryType, LogConstants.LOG_ADMIN)){
+
+            logService.writeAdmin(logConverter.fromWsTypeToAdmin(logEntryType));
+          }
+        } else { 
+          logger.debug("write to normal log");
+          if(lu.logInputOk(logEntryType, LogConstants.LOG_NORMAL)){
+            logService.write(logConverter.fromWsType(logEntryType));
+          }
+        }
+        logger.debug("got timestamp: " + logEntryType.getTimestamp().getTime().toString());
+      }
     }
     return new VoidType();
   }
@@ -106,12 +103,12 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * Implements the use cases LOK-3 (Etsi lokitieto) and LOK-4 (Tarkista lokin käsittelyloki). 
    */
   @Override
-  public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) throws ServiceFault {
+  public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) throws KoKuFaultException {
     logger.info("opQueryLog");
     LogEntriesType logEntriesType = new LogEntriesType();
     
     if(LogConstants.LOG_NORMAL.equals(criteriaType.getLogType())) {
-      AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles("lok", auditInfoType.getUserId()));
+      AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles(LogConstants.COMPONENT_LOK, auditInfoType.getUserId()));
       
       List<LogEntry> entries;
     
@@ -133,11 +130,11 @@ public class LogServiceEndpointBean implements LogServicePortType {
         }
 
       } catch (ParseException e) { //TODO: Tuleeko tällaista jostain?
-        ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
-        sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
-        sfdt.setMessage("TODO. Message: String to calendar epäonnistui.");
-
-        throw new ServiceFault(e.getMessage(), sfdt);
+        //TODO: heitä KokuException, jos tämä error edes tulee ikinä!
+     logger.debug("parseException: "+e.getMessage());
+     
+      //  sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
+      
       }
       
       logger.debug("write to admin log");
@@ -145,7 +142,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
       adminLogEntry.setUserPic(auditInfoType.getUserId());
       adminLogEntry.setCustomerPic(criteriaType.getCustomerPic());
-      adminLogEntry.setOperation("view log"); //TODO: static parameter?
+      adminLogEntry.setOperation(LogConstants.OPERATION_VIEW); //TODO: static parameter?
      
       // set end date back to 1 day earlier so that the search criteria given by the user is written to admin log
       Calendar end = criteriaType.getEndTime();
@@ -157,7 +154,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       logService.writeAdmin(adminLogEntry); 
       
     } else if(LogConstants.LOG_ADMIN.equals(criteriaType.getLogType())) {
-      AuthUtils.requirePermission("ViewAdminLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles("lok", auditInfoType.getUserId()));
+      AuthUtils.requirePermission("ViewAdminLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles(LogConstants.COMPONENT_LOK, auditInfoType.getUserId()));
 
       List<AdminLogEntry> entries;
       
@@ -180,11 +177,11 @@ public class LogServiceEndpointBean implements LogServicePortType {
           }
         }
       }catch (ParseException e) {
-        ServiceFaultDetailType sfdt = new ServiceFaultDetailType();
-        sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
-        sfdt.setMessage("TODO. Message: String to calendar epäonnistui.");
-
-        throw new ServiceFault(e.getMessage(), sfdt);
+        //TODO: heitä KokuException, jos tämä error edes tulee ikinä!
+        logger.debug("parseException: "+e.getMessage());
+        
+         //  sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
+    
       }
       
       // log the query to normal log
@@ -214,20 +211,23 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * Implements the use case LOK-2 (Arkistoi lokitietoa).
    */
   @Override
-//  public VoidType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
   public ArchivalResultsType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
-      throws ServiceFault {
+      throws KoKuFaultException {
     logger.info("opArchiveLog");   
-    AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles("lok", auditInfoType.getUserId()));
+    AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles(LogConstants.COMPONENT_LOK, auditInfoType.getUserId()));
 
     int entryCount = 0;
     
+    if(archivalParameters.getEndDate() == null || archivalParameters.getEndDate().getTime() == null){
+      logger.error("archival end date not found!");
+    }else{
+      
     try{
       // call to the actual archiving
       entryCount = logService.archive(archivalParameters.getEndDate().getTime());
 
       if(entryCount < 1) {
-        // do not throw a servicefault
+        // do not throw a KoKuFaultException
         logger.info("Ei arkistoitavaa ennen päivää "+archivalParameters.getEndDate().getTime());
       }
       
@@ -237,19 +237,20 @@ public class LogServiceEndpointBean implements LogServicePortType {
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
       adminLogEntry.setUserPic(auditInfoType.getUserId());
       adminLogEntry.setOperation("archive");
-      //TODO: Pitääkö servicen selvittää aikaisin log:n tieto ja kirjata tähän myös alkupäivä?
+      //TODO: KOKU-579: Selvitä aikaisin log:n tieto ja kirjata tähän myös alkupäivä?
         
       adminLogEntry.setMessage("archive log up to "+df.format(archivalParameters.getEndDate().getTime()));
 
       logService.writeAdmin(adminLogEntry); 
-    }catch(ServiceFault f){
-      logger.debug("endpoint: ei arkistoitavaa, throw ServiceFault");
+    }catch(KoKuFaultException f){
+      logger.debug("endpoint: ei arkistoitavaa, throw KoKuFaultException");
       throw f;
     }
     
+    }
     ArchivalResultsType count = new ArchivalResultsType();
     count.setLogEntryCount(entryCount);
-    
+     
     return count;
   }
 
