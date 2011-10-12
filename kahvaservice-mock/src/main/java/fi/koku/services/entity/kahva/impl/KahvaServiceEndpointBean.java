@@ -114,8 +114,11 @@ public class KahvaServiceEndpointBean implements LdapService {
 
   @Override
   public User getUserBySSN(String ssn) {
-    // TODO Auto-generated method stub
-    return null;
+    log.info("GetUserByPIC called with userid="+ssn);
+    User u = null;
+    KahvaServiceMockImpl m = new KahvaServiceMockImpl();
+    u = m.getUserByPic(ssn);
+    return u;
   }
 
   @Override
