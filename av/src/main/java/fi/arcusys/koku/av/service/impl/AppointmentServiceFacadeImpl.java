@@ -3,6 +3,7 @@ package fi.arcusys.koku.av.service.impl;
 import static fi.arcusys.koku.common.service.AbstractEntityDAO.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,10 +13,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -94,6 +98,22 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	private KokuSystemNotificationsService notificationService;
 
 	private String notificationsBundleName = "appointment.msg";
+	private Properties messageTemplates;
+	
+	@PostConstruct
+	public void init() {
+	    messageTemplates = new Properties();
+	    try {
+	        final InputStream in = getClass().getClassLoader().getResourceAsStream(notificationsBundleName + ".properties");
+	        try {
+	            messageTemplates.load(in);
+	        } finally {
+	            in.close();
+	        }
+	    } catch (IOException e) {
+	        throw new EJBException("Incorrect configuration, failed to load message templates:", e);
+	    }
+	} 
 	
 	/**
 	 * @param appointmentId
@@ -627,14 +647,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
     }
 
     protected String getValueFromBundle(final String bundleKey) {
-//        return ResourceBundle.getBundle("appointment.msg").getString(bundleKey);
-        final java.util.Properties props = new java.util.Properties();
-        try {
-            props.load(getClass().getClassLoader().getResourceAsStream(notificationsBundleName + ".properties"));
-            return props.getProperty(bundleKey);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return messageTemplates.getProperty(bundleKey);
     }
 
     /**

@@ -103,34 +103,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     @EJB
 	private ResponseDAO responseDAO;
 
-    final String notificationTemplate = 
-            ""  
-//            "<html>\n" + 
-//"<head>\n" +
-//"  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" +
-//"  <title>KOKU-Käyttäjäviestintä</title><body>\n" +
-//"     <h1 id=\"Header\"></h1>\n" +
-//"     <div class=\"Content1\">\n" +
-//"        <h1>KÄYTTÄJÄVIESTINTÄ</h1>\n" +
-//"     </div>\n" +
-//"     <div class=\"main\">\n" +
-//"        <h2 class=\"old\">LÄHETTÄJÄ</h2>\n" +
-//"        <p>KohtiKumppanuutta</p>\n" +
-//"        <h2 class=\"old\">VASTAANOTTAJA</h2>\n" +
-//"        <p>{0}</p>\n" +
-//"        <div class=\"innerContent\">\n" +
-//"           <h2 class=\"old\">{1}</h2>\n" +
-//"        </div>\n" +
-//"        <div class=\"innerContent\">\n" +
-//"           <div class=\"old\">\n" +
-//"              <p>{2}</p>\n" +
-//"           </div>\n" +
-//"        </div>\n" +
-//"     </div>\n" +
-//"  </body>\n" +
-//"</head>\n" +
-//"</html>"
-;
+    private String notificationTemplate = "{2}";
 
     public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content) {
 		final User fromUser = getUserByUid(fromUserUid);

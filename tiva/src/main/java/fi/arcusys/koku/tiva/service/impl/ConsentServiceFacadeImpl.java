@@ -1,5 +1,7 @@
 package fi.arcusys.koku.tiva.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,9 +10,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -64,20 +69,20 @@ import fi.arcusys.koku.tiva.soa.ConsentTemplateTO;
 @Stateless
 public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     
-    private static final String NEW_CONSENT_REQUEST_BODY = "Sinulle on toimenpidepyyntö \"{0}\".";
-    private static final String NEW_CONSENT_REQUEST_SUBJECT = "Uusi toimenpidepyyntö";
+    private static final String NEW_CONSENT_REQUEST_BODY = "new_consent.request.body";
+    private static final String NEW_CONSENT_REQUEST_SUBJECT = "new_consent.request.subject";
 
-    private static final String CONSENT_GIVEN_BODY = "Suostumus on antanut: \"{0}\".";
-    private static final String CONSENT_GIVEN_SUBJECT = "Suostumus on antanut";
+    private static final String CONSENT_GIVEN_BODY = "consent.given.body";
+    private static final String CONSENT_GIVEN_SUBJECT = "consent.given.subject";
 
-    private static final String CONSENT_DECLINED_BODY = "Suostumus on evännyt: \"{0}\".";
-    private static final String CONSENT_DECLINED_SUBJECT = "Suostumus on evännyt";
+    private static final String CONSENT_DECLINED_BODY = "consent.declined.body";
+    private static final String CONSENT_DECLINED_SUBJECT = "consent.declined.subject";
 
-    private static final String CONSENT_REVOKED_BODY = "Suostumus on mitätöinyt: \"{0}\".";
-    private static final String CONSENT_REVOKED_SUBJECT = "Suostumus on mitätöinyt";
+    private static final String CONSENT_REVOKED_BODY = "consent.revoked.body";
+    private static final String CONSENT_REVOKED_SUBJECT = "consent.revoked.subject";
 
-    private static final String CONSENT_UPDATED_BODY = "Suostumus on muokkanut: \"{0}\".";
-    private static final String CONSENT_UPDATED_SUBJECT = "Suostumus on muokkanut";
+    private static final String CONSENT_UPDATED_BODY = "consent.updated.body";
+    private static final String CONSENT_UPDATED_SUBJECT = "consent.updated.subject";
 
     private static final Logger logger = LoggerFactory.getLogger(ConsentServiceFacadeImpl.class); 
 
@@ -95,6 +100,28 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
 
     @EJB
     private KokuSystemNotificationsService notificationService;
+
+    private String notificationsBundleName = "consent.msg";
+    private Properties messageTemplates;
+    
+    @PostConstruct
+    public void init() {
+        messageTemplates = new Properties();
+        try {
+            final InputStream in = getClass().getClassLoader().getResourceAsStream(notificationsBundleName + ".properties");
+            try {
+                messageTemplates.load(in);
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            throw new EJBException("Incorrect configuration, failed to load message templates:", e);
+        }
+    } 
+
+    private String getValueFromBundle(final String key) {
+        return messageTemplates.getProperty(key);
+    }
 
     /**
      * @param template
@@ -218,8 +245,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
 
         final Consent newConsent = doConsentCreation(templateId, ConsentType.Electronic,
                 senderUid, targetPersonUid, receipientUids, type, replyTillDate, endDate, isMandatory, null, extraInfo);
-        notificationService.sendNotification(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_SUBJECT, receipientUids, 
-                MessageFormat.format(ConsentServiceFacadeImpl.NEW_CONSENT_REQUEST_BODY, new Object[] {newConsent.getTemplate().getTitle()}));
+        notificationService.sendNotification(getValueFromBundle(NEW_CONSENT_REQUEST_SUBJECT), receipientUids, 
+                MessageFormat.format(getValueFromBundle(NEW_CONSENT_REQUEST_BODY), new Object[] {newConsent.getTemplate().getTitle()}));
         return newConsent.getId();
     }
 
@@ -295,6 +322,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         final ConsentForReplyTO consentTO = new ConsentForReplyTO();
         consentTO.setConsentId(consent.getId());
         consentTO.setReplierUid(replierUid);
+        consentTO.setTargetPersonUid(consent.getTargetPerson().getUid());
         consentTO.setTemplate(convertConsentTemplateToDTO(consent.getTemplate()));
         consentTO.setEndDateMandatory(consent.getEndDateMandatory());
         
@@ -398,8 +426,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         final User replier = userDao.getOrCreateUser(userUid);
         
         doGiveConsent(actions, validTill, null, comment, consent, replier);
-        notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_GIVEN_SUBJECT, Collections.singletonList(consent.getCreator().getUid()), 
-                MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_GIVEN_BODY, new Object[] {consent.getTemplate().getTitle()}));
+        notificationService.sendNotification(getValueFromBundle(CONSENT_GIVEN_SUBJECT), Collections.singletonList(consent.getCreator().getUid()), 
+                MessageFormat.format(getValueFromBundle(CONSENT_GIVEN_BODY), new Object[] {consent.getTemplate().getTitle()}));
     }
 
     private void doGiveConsent(List<ActionPermittedTO> actions,
@@ -456,8 +484,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             oldReply.setStatus(ConsentReplyStatus.Declined);
 
             consentReplyDao.update(oldReply);
-            notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_DECLINED_SUBJECT, Collections.singletonList(consent.getCreator().getUid()), 
-                    MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_DECLINED_BODY, new Object[] {consent.getTemplate().getTitle()}));
+            notificationService.sendNotification(getValueFromBundle(CONSENT_DECLINED_SUBJECT), Collections.singletonList(consent.getCreator().getUid()), 
+                    MessageFormat.format(getValueFromBundle(CONSENT_DECLINED_BODY), new Object[] {consent.getTemplate().getTitle()}));
         } else {
             final ConsentReply reply = new ConsentReply();
             reply.setConsent(consent);
@@ -466,8 +494,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             reply.setStatus(ConsentReplyStatus.Declined);
 
             consentReplyDao.create(reply);
-            notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_DECLINED_SUBJECT, Collections.singletonList(consent.getCreator().getUid()), 
-                    MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_DECLINED_BODY, new Object[] {consent.getTemplate().getTitle()}));
+            notificationService.sendNotification(getValueFromBundle(CONSENT_DECLINED_SUBJECT), Collections.singletonList(consent.getCreator().getUid()), 
+                    MessageFormat.format(getValueFromBundle(CONSENT_DECLINED_BODY), new Object[] {consent.getTemplate().getTitle()}));
         }
     }
 
@@ -549,8 +577,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         reply.setComment(comment);
         
         consentReplyDao.update(reply);
-        notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_UPDATED_SUBJECT, Collections.singletonList(reply.getConsent().getCreator().getUid()), 
-                MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_UPDATED_BODY, new Object[] {reply.getConsent().getTemplate().getTitle()}));
+        notificationService.sendNotification(getValueFromBundle(CONSENT_UPDATED_SUBJECT), Collections.singletonList(reply.getConsent().getCreator().getUid()), 
+                MessageFormat.format(getValueFromBundle(CONSENT_UPDATED_BODY), new Object[] {reply.getConsent().getTemplate().getTitle()}));
     }
 
     /**
@@ -605,8 +633,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         reply.setStatus(ConsentReplyStatus.Revoked);
         
         consentReplyDao.update(reply);
-        notificationService.sendNotification(ConsentServiceFacadeImpl.CONSENT_REVOKED_SUBJECT, Collections.singletonList(consent.getCreator().getUid()), 
-                MessageFormat.format(ConsentServiceFacadeImpl.CONSENT_REVOKED_BODY, new Object[] {consent.getTemplate().getTitle()}));
+        notificationService.sendNotification(getValueFromBundle(CONSENT_REVOKED_SUBJECT), Collections.singletonList(consent.getCreator().getUid()), 
+                MessageFormat.format(getValueFromBundle(CONSENT_REVOKED_BODY), new Object[] {consent.getTemplate().getTitle()}));
     }
 
     /**

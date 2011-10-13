@@ -17,7 +17,7 @@
 
     <properties>
         <aspectj.weaver.version>1.6.9</aspectj.weaver.version>
-        <hsqldb.version>2.0.0</hsqldb.version>
+        <hsqldb.version>2.2.4</hsqldb.version>
         <openjpa.version>1.2.2</openjpa.version>
         <cglib.version>2.2</cglib.version>
     </properties>

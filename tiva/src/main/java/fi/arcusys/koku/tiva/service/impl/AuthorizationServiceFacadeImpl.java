@@ -1,12 +1,17 @@
 package fi.arcusys.koku.tiva.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -40,21 +45,22 @@ import fi.arcusys.koku.tiva.soa.AuthorizationTemplateTO;
 @Stateless
 public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacade {
 
-    private final static String AUTHORIZATION_CREATED_SUBJECT = "Uusi valtakirja";
-    private final static String AUTHORIZATION_CREATED_BODY = "Sinulle on uusi valtakirja kumppanuustililla.";
+    private final static String AUTHORIZATION_CREATED_SUBJECT = "authorization.created.subject";
+    private final static String AUTHORIZATION_CREATED_BODY = "authorization.created.body";
     
-    private final static String AUTHORIZATION_APPROVED_SUBJECT = "Valtakirja on hyväksynnyt";
-    private final static String AUTHORIZATION_APPROVED_BODY = "Valtakirja on hyväksynnyt: \"{0}\".";
+    private final static String AUTHORIZATION_APPROVED_SUBJECT = "authorization.approved.subject";
+    private final static String AUTHORIZATION_APPROVED_BODY = "authorization.approved.body";
 
-    private final static String AUTHORIZATION_DECLINED_SUBJECT = "Valtakirja on hylkännyt";
-    private final static String AUTHORIZATION_DECLINED_BODY = "Valtakirja on hylkännyt: \"{0}\".";
+    private final static String AUTHORIZATION_DECLINED_SUBJECT = "authorization.declinded.subject";
+    private final static String AUTHORIZATION_DECLINED_BODY = "authorization.declinded.body";
 
-    private final static String AUTHORIZATION_UPDATED_SUBJECT = "Valtakirja on muokkanut";
-    private final static String AUTHORIZATION_UPDATED_BODY = "Valtakirja on muokkanut: \"{0}\".";
+    private final static String AUTHORIZATION_UPDATED_SUBJECT = "authorization.updated.subject";
+    private final static String AUTHORIZATION_UPDATED_BODY = "authorization.updated.body";
 
-    private final static String AUTHORIZATION_REVOKED_SUBJECT = "Valtakirja on mitätöinyt";
-    private final static String AUTHORIZATION_REVOKED_BODY = "Valtakirja on mitätöinyt: \"{0}\".";
+    private final static String AUTHORIZATION_REVOKED_SUBJECT = "authorization.revoked.subject";
+    private final static String AUTHORIZATION_REVOKED_BODY = "authorization.revoked.body";
 
+    
     private final static Logger logger = LoggerFactory.getLogger(AuthorizationServiceFacadeImpl.class);
 
     @EJB
@@ -68,6 +74,28 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
     
     @EJB
     private KokuSystemNotificationsService notificationService;
+
+    private String notificationsBundleName = "authorization.msg";
+    private Properties messageTemplates;
+    
+    @PostConstruct
+    public void init() {
+        messageTemplates = new Properties();
+        try {
+            final InputStream in = getClass().getClassLoader().getResourceAsStream(notificationsBundleName + ".properties");
+            try {
+                messageTemplates.load(in);
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            throw new EJBException("Incorrect configuration, failed to load message templates:", e);
+        }
+    } 
+    
+    private String getValueFromBundle(final String key) {
+        return messageTemplates.getProperty(key);
+    }
 
     /**
      * @param searchString
@@ -116,9 +144,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         authorization.setValidTill(getSafeDate(endDate));
         
         final Authorization newAuthorization = authorizationDAO.create(authorization);
-        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_CREATED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(AUTHORIZATION_CREATED_SUBJECT), 
                 Collections.singletonList(receiverUid), 
-                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_CREATED_BODY, 
+                MessageFormat.format(getValueFromBundle(AUTHORIZATION_CREATED_BODY), 
                         new Object[] {}));
         return newAuthorization.getId();
     }
@@ -229,9 +257,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
     @Override
     public void approveAuthorization(long authorizationId, String replierUid, String comment) {
         final Authorization authorization = replyToAuthorization(authorizationId, replierUid, comment, AuthorizationReplyStatus.Approved);
-        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_APPROVED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(AUTHORIZATION_APPROVED_SUBJECT), 
                 Collections.singletonList(authorization.getFromUser().getUid()), 
-                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_APPROVED_BODY, 
+                MessageFormat.format(getValueFromBundle(AUTHORIZATION_APPROVED_BODY), 
                         new Object[] {authorization.getTemplate().getName()}));
     }
 
@@ -261,9 +289,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
     @Override
     public void declineAuthorization(long authorizationId, String replierUid, String comment) {
         final Authorization authorization = replyToAuthorization(authorizationId, replierUid, comment, AuthorizationReplyStatus.Declined);
-        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_DECLINED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(AUTHORIZATION_DECLINED_SUBJECT), 
                 Collections.singletonList(authorization.getFromUser().getUid()), 
-                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_DECLINED_BODY, 
+                MessageFormat.format(getValueFromBundle(AUTHORIZATION_DECLINED_BODY), 
                         new Object[] {authorization.getTemplate().getName()}));
     }
 
@@ -281,9 +309,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         authorization.setComment(comment);
         authorizationDAO.update(authorization);
         
-        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_UPDATED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(AUTHORIZATION_UPDATED_SUBJECT), 
                 Collections.singletonList(authorization.getToUser().getUid()), 
-                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_UPDATED_BODY, 
+                MessageFormat.format(getValueFromBundle(AUTHORIZATION_UPDATED_BODY), 
                         new Object[] {authorization.getTemplate().getName()}));
     }
 
@@ -308,9 +336,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         authorization.setStatus(AuthorizationReplyStatus.Revoked);
         authorizationDAO.update(authorization);
 
-        notificationService.sendNotification(AuthorizationServiceFacadeImpl.AUTHORIZATION_REVOKED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(AUTHORIZATION_REVOKED_SUBJECT), 
                 Collections.singletonList(authorization.getToUser().getUid()), 
-                MessageFormat.format(AuthorizationServiceFacadeImpl.AUTHORIZATION_REVOKED_BODY, 
+                MessageFormat.format(getValueFromBundle(AUTHORIZATION_REVOKED_BODY), 
                         new Object[] {authorization.getTemplate().getName()}));
     }
 

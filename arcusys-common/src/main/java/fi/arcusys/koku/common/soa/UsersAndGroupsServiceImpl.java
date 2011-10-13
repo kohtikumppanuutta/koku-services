@@ -479,8 +479,9 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByKunpoName(String username) {
+        final User userByDisplayName = getUserByDisplayName(username);
         final String userUid = userDao.getOrCreateUserByCitizenPortalName(username).getUid();
-        getUserByDisplayName(username).setUid(userUid);
+        userByDisplayName.setUid(userUid);
         return userUid;
     }
 
@@ -490,8 +491,9 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByLooraName(String username) {
+        final User userByDisplayName = getUserByDisplayName(username);
         final String userUid = userDao.getOrCreateUserByEmployeePortalName(username).getUid();
-        getUserByDisplayName(username).setUid(userUid);
+        userByDisplayName.setUid(userUid);
         return userUid;
     }
 

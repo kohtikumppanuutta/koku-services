@@ -3,4 +3,43 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
          version="3.0">
+    <enterprise-beans>
+
+        <session>
+            <ejb-name>MessageServiceFacadeImpl</ejb-name>
+            <env-entry>
+                <env-entry-name>notificationTemplate</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value><![CDATA[<html> 
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>KOKU-Käyttäjäviestintä</title><body>
+     <h1 id="Header"></h1>
+     <div class="Content1">
+        <h1>KÄYTTÄJÄVIESTINTÄ</h1>
+     </div>
+     <div class="main">
+        <h2 class="old">LÄHETTÄJÄ</h2>
+        <p>KohtiKumppanuutta</p>
+        <h2 class="old">VASTAANOTTAJA</h2>
+        <p>{0}</p>
+        <div class="innerContent">
+           <h2 class="old">{1}</h2>
+        </div>
+        <div class="innerContent">
+           <div class="old">
+              <p>{2}</p> 
+           </div>
+        </div>
+     </div>
+  </body>
+</head>
+</html>]]></env-entry-value>
+                <injection-target>
+                    <injection-target-class>fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl</injection-target-class>
+                    <injection-target-name>notificationTemplate</injection-target-name>
+                </injection-target>
+            </env-entry>
+        </session>
+    </enterprise-beans>
 </ejb-jar>

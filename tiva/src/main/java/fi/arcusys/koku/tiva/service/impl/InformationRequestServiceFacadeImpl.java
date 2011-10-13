@@ -1,14 +1,19 @@
 package fi.arcusys.koku.tiva.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -40,14 +45,14 @@ import fi.arcusys.koku.tiva.soa.InformationRequestTO;
 @Stateless
 public class InformationRequestServiceFacadeImpl implements InformationRequestServiceFacade {
 
-    private final static String INFORMATION_REQUEST_CREATED_SUBJECT = "Uusi tietopyyntö";
-    private final static String INFORMATION_REQUEST_CREATED_BODY = "Sinulle on uusi tietopyyntö: \"{0}\".";
+    private final static String INFORMATION_REQUEST_CREATED_SUBJECT = "information_request.created.subject";
+    private final static String INFORMATION_REQUEST_CREATED_BODY = "information_request.created.body";
     
-    private final static String INFORMATION_REQUEST_APPROVED_SUBJECT = "Tietopyyntö on hyväksynnyt";
-    private final static String INFORMATION_REQUEST_APPROVED_BODY = "Tietopyyntö on hyväksynnyt: \"{0}\".";
+    private final static String INFORMATION_REQUEST_APPROVED_SUBJECT = "information_request.approved.subject";
+    private final static String INFORMATION_REQUEST_APPROVED_BODY = "information_request.approved.body";
 
-    private final static String INFORMATION_REQUEST_REJECTED_SUBJECT = "Tietopyyntö on hylkännyt";
-    private final static String INFORMATION_REQUEST_REJECTED_BODY = "Tietopyyntö on hylkännyt: \"{0}\".";
+    private final static String INFORMATION_REQUEST_REJECTED_SUBJECT = "information_request.rejected.subject";
+    private final static String INFORMATION_REQUEST_REJECTED_BODY = "information_request.rejected.body";
 
     @EJB
     private InformationRequestDAO informationRequestDao;
@@ -57,6 +62,28 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
     
     @EJB
     private KokuSystemNotificationsService notificationService;
+
+    private String notificationsBundleName = "information_request.msg";
+    private Properties messageTemplates;
+    
+    @PostConstruct
+    public void init() {
+        messageTemplates = new Properties();
+        try {
+            final InputStream in = getClass().getClassLoader().getResourceAsStream(notificationsBundleName + ".properties");
+            try {
+                messageTemplates.load(in);
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            throw new EJBException("Incorrect configuration, failed to load message templates:", e);
+        }
+    } 
+
+    private String getValueFromBundle(final String key) {
+        return messageTemplates.getProperty(key);
+    }
 
     /**
      * @param request

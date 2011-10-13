@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.CommonTestUtil;
+import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
@@ -48,7 +49,10 @@ public class MessageServiceTest {
 	@Autowired
 	private MessageServiceFacade serviceFacade;
 
-	@Autowired
+    @Autowired
+    private KokuSystemNotificationsService notificationService;
+
+    @Autowired
 	private CommonTestUtil testUtil;
 	
 	@Test
@@ -337,6 +341,18 @@ public class MessageServiceTest {
 		criteria.setKeywords(new HashSet<String>(Arrays.asList(toUserId)));
 		assertMessageFound(fromUserId, FolderType.Outbox, query, subject);
 		assertMessageFound(toUserId, FolderType.Inbox, query, subject);
+	}
+	
+	@Test
+	public void sendNotification() {
+        final String toUserId = "notificationReceiver";
+        
+        final String content = "content";
+        notificationService.sendNotification("subject", Collections.singletonList(toUserId), content);
+        
+        final List<MessageSummary> messages = serviceFacade.getMessages(toUserId, FolderType.Inbox);
+        assertFalse(messages.isEmpty());
+        assertTrue(serviceFacade.getMessageById(messages.get(0).getMessageId()).getContent().contains(content));
 	}
 
 	private void assertMessageFound(final String userId, FolderType folderType, final MessageQuery query, final String subject) {
