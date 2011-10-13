@@ -93,7 +93,7 @@
     <bean id="requestDao" class="fi.arcusys.koku.common.service.impl.RequestDAOImpl" />
     <bean id="requestTemplateDao" class="fi.arcusys.koku.common.service.impl.RequestTemplateDAOImpl" />
     <bean id="responseDao" class="fi.arcusys.koku.common.service.impl.ResponseDAOImpl" />
-    <bean id="userDao" class="fi.arcusys.koku.common.service.impl.UserDAOImpl" />
+    <bean id="userDao" class="fi.arcusys.koku.common.service.UserDAOTestImpl" />
     <bean id="targetPersonDao" class="fi.arcusys.koku.common.service.impl.TargetPersonDAOImpl" />
     <bean id="appointmentDao" class="fi.arcusys.koku.common.service.impl.AppointmentDAOImpl" />
     <bean id="consentTemplateDao" class="fi.arcusys.koku.common.service.impl.ConsentTemplateDAOImpl" />

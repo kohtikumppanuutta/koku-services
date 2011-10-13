@@ -50,7 +50,7 @@ public class KokuTivaToKksServiceImpl implements KokuTivaToKksService {
     public void createConsent(ConsentExternal consent) {
         final List<String> receipients = new ArrayList<String>();
         for (final String hetu : consent.getConsentProviders()) {
-            receipients.add(usersService.getUserUid(hetu));
+            receipients.add(usersService.getUserUidByKunpoSsn(hetu));
         }
         
         final ConsentKksExtraInfo extraInfo = new ConsentKksExtraInfo();
@@ -60,8 +60,8 @@ public class KokuTivaToKksServiceImpl implements KokuTivaToKksService {
         
         consentServiceFacade.requestForConsent(
                 consent.getTemplate().getConsentTemplateId(), 
-                usersService.getUserUid(consent.getConsentRequestor()), 
-                usersService.getUserUid(consent.getTargetPerson()),
+                usersService.getUserUidByEmployeeSsn(consent.getConsentRequestor()), 
+                usersService.getUserUidByKunpoSsn(consent.getTargetPerson()),
                 receipients, ConsentReceipientsType.BothParents, 
                 null, consent.getValidTill(), Boolean.TRUE, extraInfo);
     }

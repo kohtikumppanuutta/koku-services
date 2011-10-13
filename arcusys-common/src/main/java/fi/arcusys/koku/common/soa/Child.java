@@ -12,8 +12,12 @@ public class Child extends User {
     public Child() {
     }
     
-    public Child(final String uid, final String displayName) {
-        super(uid, displayName);
+    public Child(User user) {
+        super(user.getUid(), user.getDisplayName());
+        setFirstname(user.getFirstname());
+        setLastname(user.getLastname());
+        setEmail(user.getEmail());
+        setPhoneNumber(user.getPhoneNumber());
     }
     
     /**

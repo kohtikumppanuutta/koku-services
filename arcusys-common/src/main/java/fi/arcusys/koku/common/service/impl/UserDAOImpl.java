@@ -22,9 +22,6 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
 
     private final static Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);
     
-    @EJB
-    private UsersAndGroupsService usersService;
-    
 	public UserDAOImpl() {
 		super(User.class);
 	}
@@ -49,39 +46,67 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
 		User fromUser = getUserByUid(uid);
 		
 		if (fromUser == null) {
-			fromUser = new User();
-			fromUser.setUid(uid);
-			fromUser = super.create(fromUser);
-			logger.warn("Creation of the user by UID - should be used for test purposes only.");
+		    if (allowCreationByUid()) {
+	            fromUser = new User();
+	            fromUser.setUid(uid);
+	            fromUser = super.create(fromUser);
+		    } else {
+	            throw new IllegalArgumentException("Creation of the user by UID '" + uid + "' - should be used for test purposes only.");
+		    }
 		}
 		return fromUser;
 	}
+	
+	protected boolean allowCreationByUid() {
+	    return false;
+	}
+
+    private String generateUid() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
+     * @param looraName
+     * @return
+     */
+    @Override
+    public User getOrCreateUserByEmployeePortalName(String looraName) {
+        final User existingUser = getUserByPortalName(looraName, "findUserByEmployeePortalName");
+        if (existingUser != null) {
+            return existingUser;
+        } else {
+            return createNewUser(looraName, null);
+        }
+    }
+
+    private User createNewUser(String looraName, final String kunpoName) {
+        final User user = new User();
+        user.setUid(generateUid());
+        user.setEmployeePortalName(looraName);
+        user.setCitizenPortalName(kunpoName);
+        return super.create(user);
+    }
+
+    private User getUserByPortalName(String looraName, final String queryName) {
+        if (looraName == null) {
+            throw new IllegalArgumentException("Can't retrieve user with empty name.");
+        }
+
+        final User existingUser = getSingleResultOrNull(queryName, Collections.singletonMap("portalName", looraName));
+        return existingUser;
+    }
 
     /**
      * @param kunpoName
      * @return
      */
     @Override
-    public User getOrCreateUserByPortalName(String portalName) {
-        if (portalName == null) {
-            throw new IllegalArgumentException("Can't retrieve user with empty name.");
-        }
-
-        final User existingUser = getSingleResultOrNull("findUserByPortalName", Collections.singletonMap("portalName", portalName));
+    public User getOrCreateUserByCitizenPortalName(String kunpoName) {
+        final User existingUser = getUserByPortalName(kunpoName, "findUserByCitizenPortalName");
         if (existingUser != null) {
             return existingUser;
+        } else {
+            return createNewUser(null, kunpoName);
         }
-        
-        final String ssn = usersService.getSsnByLdapName(portalName);
-        // get some extra info from CustomerService
-        final User user = new User();
-        user.setSsn(ssn);
-        user.setUid(generateUid());
-        user.setPortalName(portalName);
-        return super.create(user);
-    }
-    
-    private String generateUid() {
-        return UUID.randomUUID().toString();
     }
 }

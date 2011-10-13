@@ -2,6 +2,7 @@ package fi.arcusys.koku.av.service.impl;
 
 import static fi.arcusys.koku.common.service.AbstractEntityDAO.*;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -51,18 +53,31 @@ import fi.arcusys.koku.common.service.datamodel.User;
 @Stateless
 public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 
-    private static final String APPOINTMENT_CANCELLED_FOR_TARGET_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on peruuttu käyttäjän {2} toimesta";
-    private static final String APPOINTMENT_CANCELLED_WHOLE_BODY = "Tapaaminen \"{0}\" on peruutettu";
-    private static final String APPOINTMENT_CANCELLED_SUBJECT = "Tapaaminen on peruutettu";
+//    private static final String APPOINTMENT_CANCELLED_FOR_TARGET_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on peruuttu käyttäjän {2} toimesta";
+//    private static final String APPOINTMENT_CANCELLED_WHOLE_BODY = "Tapaaminen \"{0}\" on peruutettu";
+//    private static final String APPOINTMENT_CANCELLED_SUBJECT = "Tapaaminen on peruutettu";
+//
+//    private static final String APPOINTMENT_APPROVED_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on hyväksytty käyttäjän {2} toimesta.";
+//    private static final String APPOINTMENT_APPROVED_SUBJECT = "Tapaaminen on hyväksytty";
+//
+//    private static final String APPOINTMENT_DECLINED_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on hylätty käyttäjän {2} toimesta.";
+//    private static final String APPOINTMENT_DECLINED_SUBJECT = "Tapaaminen on hylätty";
+//
+//    private static final String APPOINTMENT_RECEIVED_BODY = "Sinulle on uusi tapaaminen. Aihe: {0}.";
+//    private static final String APPOINTMENT_RECEIVED_SUBJECT = "Uusi tapaaminen";
 
-    private static final String APPOINTMENT_APPROVED_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on hyväksytty käyttäjän {2} toimesta.";
-    private static final String APPOINTMENT_APPROVED_SUBJECT = "Tapaaminen on hyväksytty";
+    private static final String APPOINTMENT_CANCELLED_FOR_TARGET_BODY = "appointment.cancelled_for_target.body";
+    private static final String APPOINTMENT_CANCELLED_WHOLE_BODY = "appointment.cancelled_whole.body";
+    private static final String APPOINTMENT_CANCELLED_SUBJECT = "appointment.cancelled.subject";
 
-    private static final String APPOINTMENT_DECLINED_BODY = "Aihe: {0}. Henkilön {1} tapaaminen on hylätty käyttäjän {2} toimesta.";
-    private static final String APPOINTMENT_DECLINED_SUBJECT = "Tapaaminen on hylätty";
+    private static final String APPOINTMENT_APPROVED_BODY = "appointment.approved.body";
+    private static final String APPOINTMENT_APPROVED_SUBJECT = "appointment.approved.subject";
 
-    private static final String APPOINTMENT_RECEIVED_BODY = "Sinulle on uusi tapaaminen. Aihe: {0}.";
-    private static final String APPOINTMENT_RECEIVED_SUBJECT = "Uusi tapaaminen";
+    private static final String APPOINTMENT_DECLINED_BODY = "appointment.declined.body";
+    private static final String APPOINTMENT_DECLINED_SUBJECT = "appointment.declined.subject";
+
+    private static final String APPOINTMENT_RECEIVED_BODY = "appointment.received.body";
+    private static final String APPOINTMENT_RECEIVED_SUBJECT = "appointment.received.subject";
 
     private final static Logger logger = LoggerFactory.getLogger(AppointmentServiceFacadeImpl.class);
     
@@ -78,6 +93,8 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	@EJB
 	private KokuSystemNotificationsService notificationService;
 
+	private String notificationsBundleName = "appointment.msg";
+	
 	/**
 	 * @param appointmentId
 	 * @param slotNumber
@@ -96,9 +113,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         response.setStatus(AppointmentResponseStatus.Accepted);
 		
 		appointmentDAO.update(appointment);
-        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_APPROVED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(APPOINTMENT_APPROVED_SUBJECT), 
                 Collections.singletonList(response.getAppointment().getSender().getUid()), 
-                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_APPROVED_BODY, 
+                MessageFormat.format(getValueFromBundle(APPOINTMENT_APPROVED_BODY), 
                         new Object[] {response.getAppointment().getSubject(), targetPersonUid, userUid}));
 	}
 
@@ -114,9 +131,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         response.setStatus(AppointmentResponseStatus.Rejected);
 		
 		appointmentDAO.update(appointment);
-        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_DECLINED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(APPOINTMENT_DECLINED_SUBJECT), 
                 Collections.singletonList(response.getAppointment().getSender().getUid()), 
-                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_DECLINED_BODY, 
+                MessageFormat.format(getValueFromBundle(APPOINTMENT_DECLINED_BODY), 
                         new Object[] {response.getAppointment().getSubject(), targetPersonUid, userUid}));
 	}
 
@@ -362,9 +379,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 			result = appointmentDAO.update(appointment);
 		}
 		
-        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_RECEIVED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(APPOINTMENT_RECEIVED_SUBJECT), 
                 getReceipienUids(appointment.getRecipients()), 
-                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_RECEIVED_BODY, new Object[] {result}));
+                MessageFormat.format(getValueFromBundle(APPOINTMENT_RECEIVED_BODY), new Object[] {result.getSubject()}));
 
         return result.getId();
 	}
@@ -604,9 +621,20 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         response.setStatus(AppointmentResponseStatus.Rejected);
         response.setComment(comment);
         appointmentDAO.update(response.getAppointment());
-        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(APPOINTMENT_CANCELLED_SUBJECT), 
                 Collections.singletonList(response.getAppointment().getSender().getUid()), 
-                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_FOR_TARGET_BODY, new Object[] {response.getAppointment().getSubject(), targetUser, user}));
+                MessageFormat.format(getValueFromBundle(APPOINTMENT_CANCELLED_FOR_TARGET_BODY), new Object[] {response.getAppointment().getSubject(), targetUser, user}));
+    }
+
+    protected String getValueFromBundle(final String bundleKey) {
+//        return ResourceBundle.getBundle("appointment.msg").getString(bundleKey);
+        final java.util.Properties props = new java.util.Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(notificationsBundleName + ".properties"));
+            return props.getProperty(bundleKey);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -631,9 +659,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
                 }
             }
         }
-        notificationService.sendNotification(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(APPOINTMENT_CANCELLED_SUBJECT), 
                 new ArrayList<String>(notificationReceivers), 
-                MessageFormat.format(AppointmentServiceFacadeImpl.APPOINTMENT_CANCELLED_WHOLE_BODY, new Object[] {appointment.getSubject()}));
+                MessageFormat.format(getValueFromBundle(APPOINTMENT_CANCELLED_WHOLE_BODY), new Object[] {appointment.getSubject()}));
     }
 
     /**

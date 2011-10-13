@@ -14,8 +14,9 @@ public class ChildWithHetu extends Child {
      * @param uid
      * @param displayName
      */
-    public ChildWithHetu(String uid, String displayName) {
-        super(uid, displayName);
+    public ChildWithHetu(Child child) {
+        super(child);
+        setParents(child.getParents());
     }
 
     /**

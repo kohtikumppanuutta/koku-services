@@ -1,5 +1,6 @@
 package fi.arcusys.koku.kv.service.impl;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -102,7 +103,36 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     @EJB
 	private ResponseDAO responseDAO;
 
-	public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content) {
+    final String notificationTemplate = 
+            ""  
+//            "<html>\n" + 
+//"<head>\n" +
+//"  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" +
+//"  <title>KOKU-Käyttäjäviestintä</title><body>\n" +
+//"     <h1 id=\"Header\"></h1>\n" +
+//"     <div class=\"Content1\">\n" +
+//"        <h1>KÄYTTÄJÄVIESTINTÄ</h1>\n" +
+//"     </div>\n" +
+//"     <div class=\"main\">\n" +
+//"        <h2 class=\"old\">LÄHETTÄJÄ</h2>\n" +
+//"        <p>KohtiKumppanuutta</p>\n" +
+//"        <h2 class=\"old\">VASTAANOTTAJA</h2>\n" +
+//"        <p>{0}</p>\n" +
+//"        <div class=\"innerContent\">\n" +
+//"           <h2 class=\"old\">{1}</h2>\n" +
+//"        </div>\n" +
+//"        <div class=\"innerContent\">\n" +
+//"           <div class=\"old\">\n" +
+//"              <p>{2}</p>\n" +
+//"           </div>\n" +
+//"        </div>\n" +
+//"     </div>\n" +
+//"  </body>\n" +
+//"</head>\n" +
+//"</html>"
+;
+
+    public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content) {
 		final User fromUser = getUserByUid(fromUserUid);
 		
         final MessageRef storedMessage = createNewMessageInOutbox(subject, receipientUids, content, fromUser);
@@ -629,12 +659,30 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 
     private void doDeliverMessage(final String fromUser,
             List<String> receipients, String subject, String content) {
-        final Long messageId = sendNewMessage(fromUser, subject, receipients, content);
+        final String contentByTemplate = MessageFormat.format(notificationTemplate, new Object[] {getReceipientNames(receipients), subject, content});
+        final Long messageId = sendNewMessage(fromUser, subject, receipients, contentByTemplate);
         for (final String receipient : receipients) {
             receiveMessage(receipient, messageId);
         }
     }
     
+    /**
+     * @param receipients
+     * @return
+     */
+    private String getReceipientNames(List<String> receipients) {
+        final StringBuilder result = new StringBuilder();
+        for (final String receipient : receipients) {
+            final User user = getUserByUid(receipient);
+            final String displayName = user.getCitizenPortalName() != null ? user.getCitizenPortalName() : user.getEmployeePortalName();
+            result.append(displayName).append(",");
+        }
+        if (result.length() > 0) {
+            result.setLength(result.length() - 1);
+        }
+        return result.toString();
+    }
+
     public void deliverMessage(final String fromUser, final List<String> toUsers, final String subject, final String content) {
         doDeliverMessage(fromUser, toUsers, subject, content);
     }

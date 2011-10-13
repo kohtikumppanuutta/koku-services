@@ -65,9 +65,7 @@ public interface UsersAndGroupsService {
 
     String getSsnByLdapName(final String username);
 
-    /**
-     * @param searchString
-     * @return
-     */
-    String getUserUid(@WebParam(name = "ssn") final String ssn);
+    String getUserUidByKunpoSsn(@WebParam(name = "ssn") final String ssn);
+
+    String getUserUidByEmployeeSsn(@WebParam(name = "ssn") final String ssn);
 }

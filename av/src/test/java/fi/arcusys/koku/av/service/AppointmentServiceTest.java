@@ -12,6 +12,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -50,6 +51,13 @@ public class AppointmentServiceTest {
 
 	@Autowired
 	private CommonTestUtil testUtil;
+	
+//	@Test
+	public void testLoadBundle() {
+        final String bundleName = "appointment.msg";
+        assertNotNull(getClass().getResource("/" + bundleName + ".properties"));
+        assertNotNull(ResourceBundle.getBundle("/" + bundleName));
+	}
 	
 	@Test
 	public void testMessageTemplate() {

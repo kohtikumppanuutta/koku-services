@@ -2,7 +2,6 @@ package fi.arcusys.koku.common.soa;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +23,7 @@ import javax.naming.directory.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.common.external.LogMessage;
-import fi.arcusys.koku.common.external.LogServiceDAO;
-import fi.arcusys.koku.common.external.LoggedOperation;
-import fi.arcusys.koku.common.external.SystemArea;
-import fi.koku.services.entity.family.v1.FamilyService;
+import fi.arcusys.koku.common.service.UserDAO;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -205,6 +200,9 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
 //    @Resource(name = "userSearchFilter")
     private String userSearchFilter;
     
+    @EJB
+    private UserDAO userDao;
+    
 //    private FamilyService familyService;
 
     @PostConstruct
@@ -231,7 +229,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
                         final String firstName = getAttributeValue(attributes, "givenName");
                         final String lastName = getAttributeValue(attributes, "sn");
                         final String displayName = getAttributeValue(attributes, "cn");
-                        final String uid = displayName;
+                        final String uid = "";
                         final String phone = getAttributeValue(attributes, "telephoneNumber");
                         final String email = getAttributeValue(attributes, "mail");
                         final User user = new User(uid, displayName);
@@ -260,42 +258,34 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
             groups.add(group);
             final List<User> groupUsers = new ArrayList<User>();
             for (int j = 1; j < groupsData[i].length; j++) {
-                groupUsers.add(getUserByUid(groupsData[i][j]));
+                groupUsers.add(getUserByDisplayName(groupsData[i][j]));
             }
             groupWithUsers.put(group.getGroupUid(), groupUsers);
         }
         
         // fill children
-        final Child kaisa = new Child("kaisa.kuntalainen", "kaisa.kuntalainen");
-        kaisa.setFirstname("kaisa");
-        kaisa.setLastname("kuntalainen");
-        kaisa.setParents(Arrays.asList(getUserByUid("kirsi.kuntalainen"), getUserByUid("kalle.kuntalainen")));
+        final Child kaisa = new Child(getUserByKunpoName("kaisa.kuntalainen"));
+        kaisa.setParents(Arrays.asList(getUserByKunpoName("kirsi.kuntalainen"), getUserByKunpoName("kalle.kuntalainen")));
         children.add(kaisa);
-        final Child kauko = new Child("kauko.kuntalainen", "kauko.kuntalainen");
-        kauko.setFirstname("kauko");
-        kauko.setLastname("kuntalainen");
-        kauko.setParents(Arrays.asList(getUserByUid("kirsi.kuntalainen"), getUserByUid("keijo.keinonen")));
+        final Child kauko = new Child(getUserByKunpoName("kauko.kuntalainen"));
+        kauko.setParents(Arrays.asList(getUserByKunpoName("kirsi.kuntalainen"), getUserByKunpoName("keijo.keinonen")));
         children.add(kauko);
-        final Child lasse = new Child("lasse.lahtinen", "lasse.lahtinen");
-        lasse.setFirstname("lasse");
-        lasse.setLastname("lahtinen");
-        lasse.setParents(Arrays.asList(getUserByUid("liisa.lahtinen"), getUserByUid("lauri.lahtinen")));
+        final Child lasse = new Child(getUserByKunpoName("lasse.lahtinen"));
+        lasse.setParents(Arrays.asList(getUserByKunpoName("liisa.lahtinen"), getUserByKunpoName("lauri.lahtinen")));
         children.add(lasse);
-        final Child saana = new Child("saana.salminen", "saana.salminen");
-        saana.setFirstname("saana");
-        saana.setLastname("salminen");
-        saana.setParents(Arrays.asList(getUserByUid("saara.salminen"), getUserByUid("sami.salminen")));
+        final Child saana = new Child(getUserByKunpoName("saana.salminen"));
+        saana.setParents(Arrays.asList(getUserByKunpoName("saara.salminen"), getUserByKunpoName("sami.salminen")));
         children.add(saana);
-        final Child santtu = new Child("santtu.suhonen", "santtu.suhonen");
-        santtu.setFirstname("santtu");
-        santtu.setLastname("suhonen");
-        santtu.setParents(Arrays.asList(getUserByUid("sanni.suhonen"), getUserByUid("sampo.suhonen")));
+        final Child santtu = new Child(getUserByKunpoName("santtu.suhonen"));
+        santtu.setParents(Arrays.asList(getUserByKunpoName("sanni.suhonen"), getUserByKunpoName("sampo.suhonen")));
         children.add(santtu);
-        final Child malla = new Child("malla.mieho", "malla.mieho");
-        malla.setFirstname("malla");
-        malla.setLastname("mieho");
-        malla.setParents(Arrays.asList(getUserByUid("martti.mieho"), getUserByUid("minna.mieho")));
+        final Child malla = new Child(getUserByKunpoName("malla.mieho"));
+        malla.setParents(Arrays.asList(getUserByKunpoName("martti.mieho"), getUserByKunpoName("minna.mieho")));
         children.add(malla);
+    }
+
+    private User getUserByKunpoName(final String kunpoName) {
+        return getUserByUid(getUserUidByKunpoName(kunpoName));
     }
 
     private String[][] getGroupsData() {
@@ -323,7 +313,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
                         final Matcher matcher = pattern.matcher(member);
                         if (matcher.find()) {
                             final String ldapName = matcher.group(1);
-                            if (isUserExistsByUid(ldapName)) {
+                            if (isUserExistsByDisplayName(ldapName)) {
                                 groupWithUserNames.add(ldapName);
                             }
                         } else {
@@ -435,6 +425,15 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         return "unknown";
     }
     
+    private  User getUserByDisplayName(final String displayName) {
+        for (final User user : users ) {
+            if (user.getDisplayName().equalsIgnoreCase(displayName) ) {
+                return user;
+            }
+        }
+        throw new IllegalArgumentException("User with displayName " + displayName + " is not found.");
+    }
+    
     private  User getUserByUid(final String userUid) {
         for (final User user : users ) {
             if (user.getUid().equalsIgnoreCase(userUid) ) {
@@ -443,10 +442,10 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         }
         throw new IllegalArgumentException("User with uid " + userUid + " is not found.");
     }
-    
-    private boolean isUserExistsByUid(final String userUid) {
+
+    private boolean isUserExistsByDisplayName(final String displayName) {
         for (final User user : users ) {
-            if (user.getUid().equalsIgnoreCase(userUid) ) {
+            if (user.getDisplayName().equalsIgnoreCase(displayName) ) {
                 return true;
             }
         }
@@ -480,8 +479,9 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByKunpoName(String username) {
-        // TODO Auto-generated method stub
-        return username;
+        final String userUid = userDao.getOrCreateUserByCitizenPortalName(username).getUid();
+        getUserByDisplayName(username).setUid(userUid);
+        return userUid;
     }
 
     /**
@@ -490,8 +490,9 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByLooraName(String username) {
-        // TODO Auto-generated method stub
-        return username;
+        final String userUid = userDao.getOrCreateUserByEmployeePortalName(username).getUid();
+        getUserByDisplayName(username).setUid(userUid);
+        return userUid;
     }
 
     /**
@@ -503,11 +504,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         // TODO Auto-generated method stub
         final List<ChildWithHetu> result = new ArrayList<ChildWithHetu>();
         for (final Child child : getChildrenByParentUid(userUid)) {
-            final ChildWithHetu resultChild = new ChildWithHetu(child.getUid(), child.getDisplayName());
-            resultChild.setEmail(child.getEmail());
-            resultChild.setFirstname(child.getFirstname());
-            resultChild.setLastname(child.getLastname());
-            resultChild.setPhoneNumber(child.getPhoneNumber());
+            final ChildWithHetu resultChild = new ChildWithHetu(child);
             resultChild.setHetu(getSsnByLdapName(child.getDisplayName()));
             final List<User> parents = new ArrayList<User>();
             for (final User parent : child.getParents()) {
@@ -528,8 +525,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getKunpoNameByUserUid(String userUid) {
-        // TODO Auto-generated method stub
-        return userUid;
+        return userDao.getUserByUid(userUid).getCitizenPortalName();
     }
 
     /**
@@ -538,8 +534,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getLooraNameByUserUid(String userUid) {
-        // TODO Auto-generated method stub
-        return userUid;
+        return userDao.getUserByUid(userUid).getEmployeePortalName();
     }
 
     /**
@@ -553,6 +548,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         final List<User> result = new ArrayList<User>();
         for (final User user : users) {
             if (checkUserBySearchString(searchString, user)    ) {
+                user.setUid(getUserUidByKunpoName(user.getDisplayName()));
                 result.add(user);
                 if (result.size() >= limit) {
                     return result;
@@ -570,16 +566,26 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
     @Override
     public List<User> searchEmployees(String searchString, int limit) {
         // TODO Auto-generated method stub
-        return searchUsers(searchString, limit);
+        final List<User> result = new ArrayList<User>();
+        for (final User user : users) {
+            if (checkUserBySearchString(searchString, user)    ) {
+                user.setUid(getUserUidByLooraName(user.getDisplayName()));
+                result.add(user);
+                if (result.size() >= limit) {
+                    return result;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
-    public String getUserUid(final String ssn) {
+    public String getUserUidByKunpoSsn(final String ssn) {
         if (ssn == null || ssn.trim().isEmpty()) {
             return null;
         }
         
-        final List<User> users = searchUsers(ssn, 1);
+        final List<User> users = searchUsers(ssn, 2);
         if (users == null || users.isEmpty()) {
             logger.info("Users not found by by uniq id: " + ssn);
             return ssn;
@@ -651,8 +657,11 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public List<User> getUsersByGroupUid(String groupUid) {
-        // TODO Auto-generated method stub
-        return groupWithUsers.get(groupUid);
+        final List<User> result = groupWithUsers.get(groupUid);
+        for (final User user : result) {
+            userDao.getOrCreateUserByCitizenPortalName(user.getDisplayName());
+        }
+        return result;
     }
 
     /**
@@ -666,7 +675,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
             final List<Child> resultFromPyh = new ArrayList<Child>();
             // search users
             for (final User user : searchUsers(searchString, limit)) {
-                final Child child = new Child(user.getUid(), user.getDisplayName());
+                final Child child = new Child(user);
                 child.setFirstname(user.getFirstname());
                 child.setLastname(user.getLastname());
                 child.setEmail(user.getEmail());
@@ -692,6 +701,10 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         final List<Child> result = new ArrayList<Child>();
         for (final Child child : children) {
             if (checkUserBySearchString(searchString, child)) {
+                child.setUid(getUserUidByKunpoName(child.getDisplayName()));
+                for (final User parent : child.getParents()) {
+                    parent.setUid(getUserUidByKunpoName(parent.getDisplayName()));
+                }
                 result.add(child);
                 if (result.size() >= limit) {
                     return result;
@@ -714,7 +727,12 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
     @Override
     public Child getChildInfo(String childUid) {
         // TODO Auto-generated method stub
-        return getChildByUid(childUid);
+        final Child child = getChildByUid(childUid);
+        child.setUid(userDao.getOrCreateUserByCitizenPortalName(child.getDisplayName()).getUid());
+        for (final User parent : child.getParents()) {
+            parent.setUid(userDao.getOrCreateUserByCitizenPortalName(parent.getDisplayName()).getUid());
+        }
+        return child;
     }
 
     /**
@@ -724,7 +742,27 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
     @Override
     public User getUserInfo(String userUid) {
         // TODO Auto-generated method stub
-        return getUserByUid(userUid);
+        final User user = getUserByUid(userUid);
+        user.setUid(userDao.getOrCreateUserByCitizenPortalName(user.getDisplayName()).getUid());
+        return user;
+    }
+
+    /**
+     * @param ssn
+     * @return
+     */
+    @Override
+    public String getUserUidByEmployeeSsn(String ssn) {
+        final List<User> users = searchEmployees(ssn, 2);
+        if (users == null || users.isEmpty()) {
+            logger.info("Users not found by by uniq id: " + ssn);
+            return ssn;
+        } else if (users.size() > 1) {
+            logger.warn("Found many users by the same uniq id: " + ssn);
+            return ssn;
+        } else {
+            return users.get(0).getUid();
+        }
     }
 
 }

@@ -56,9 +56,9 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
         if (criteria == null) {
             return null;
         }
-        criteria.setReceiverUid(userService.getUserUid(criteria.getReceiverUid()));
-        criteria.setSenderUid(userService.getUserUid(criteria.getSenderUid()));
-        criteria.setTargetPersonUid(userService.getUserUid(criteria.getTargetPersonUid()));
+        criteria.setReceiverUid(userService.getUserUidByEmployeeSsn(criteria.getReceiverUid()));
+        criteria.setSenderUid(userService.getUserUidByEmployeeSsn(criteria.getSenderUid()));
+        criteria.setTargetPersonUid(userService.getUserUidByKunpoSsn(criteria.getTargetPersonUid()));
         return criteria;
     }
 

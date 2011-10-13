@@ -167,9 +167,20 @@ public class UsersAndGroupsServiceIntegratedImpl implements UsersAndGroupsServic
      * @return
      */
     @Override
-    public String getUserUid(String ssn) {
+    public String getUserUidByKunpoSsn(String ssn) {
         // TODO Auto-generated method stub
         // searchUser(ssn, 1).get(0).getUid()
+        return null;
+    }
+
+    /**
+     * @param ssn
+     * @return
+     */
+    @Override
+    public String getUserUidByEmployeeSsn(String ssn) {
+        // TODO Auto-generated method stub
+        // searchEmployee(ssn, 1).get(0).getUid()
         return null;
     }
 

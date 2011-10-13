@@ -15,7 +15,8 @@ import javax.persistence.UniqueConstraint;
 @Entity(name = "User_")
 @NamedQueries({
 	@NamedQuery(name = "findUserByUid", query = "SELECT DISTINCT u FROM User_ u WHERE u.uid = :uid"),
-    @NamedQuery(name = "findUserByKunpoName", query = "SELECT DISTINCT u FROM User_ u WHERE u.portalName = :portalName")
+    @NamedQuery(name = "findUserByEmployeePortalName", query = "SELECT DISTINCT u FROM User_ u WHERE u.employeePortalName = :portalName"),
+    @NamedQuery(name = "findUserByCitizenPortalName", query = "SELECT DISTINCT u FROM User_ u WHERE u.citizenPortalName = :portalName")
 }) 
 @Table(uniqueConstraints = {
     @UniqueConstraint(columnNames = {"uid"})
@@ -26,35 +27,35 @@ public class User extends AbstractEntity {
 	 */
 	private String uid;
 	
-	private String portalName;
-	private String ssn;
+	private String employeePortalName;
+    private String citizenPortalName;
 	
-	/**
-     * @return the ssn
+    /**
+     * @return the employeePortalName
      */
-    public String getSsn() {
-        return ssn;
+    public String getEmployeePortalName() {
+        return employeePortalName;
     }
 
     /**
-     * @param ssn the ssn to set
+     * @param employeePortalName the employeePortalName to set
      */
-    public void setSsn(String ssn) {
-        this.ssn = ssn;
+    public void setEmployeePortalName(String employeePortalName) {
+        this.employeePortalName = employeePortalName;
     }
 
     /**
      * @return the citizenPortalName
      */
-    public String getPortalName() {
-        return portalName;
+    public String getCitizenPortalName() {
+        return citizenPortalName;
     }
 
     /**
      * @param citizenPortalName the citizenPortalName to set
      */
-    public void setPortalName(String portalName) {
-        this.portalName = portalName;
+    public void setCitizenPortalName(String citizenPortalName) {
+        this.citizenPortalName = citizenPortalName;
     }
 
     /**

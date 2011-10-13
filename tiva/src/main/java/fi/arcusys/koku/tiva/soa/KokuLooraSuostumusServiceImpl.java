@@ -45,7 +45,7 @@ public class KokuLooraSuostumusServiceImpl implements KokuLooraSuostumusService 
         if (criteria == null) {
             return null;
         }
-        criteria.setReceipientUid(userService.getUserUid(criteria.getReceipientUid()));
+        criteria.setReceipientUid(userService.getUserUidByKunpoSsn(criteria.getReceipientUid()));
         return criteria;
     }
 

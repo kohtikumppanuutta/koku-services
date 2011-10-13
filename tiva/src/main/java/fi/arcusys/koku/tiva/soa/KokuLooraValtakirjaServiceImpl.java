@@ -40,9 +40,9 @@ public class KokuLooraValtakirjaServiceImpl implements KokuLooraValtakirjaServic
         if (criteria == null) {
             return null;
         }
-        criteria.setReceipientUid(userService.getUserUid(criteria.getReceipientUid()));
-        criteria.setSenderUid(userService.getUserUid(criteria.getSenderUid()));
-        criteria.setTargetPersonUid(userService.getUserUid(criteria.getTargetPersonUid()));
+        criteria.setReceipientUid(userService.getUserUidByKunpoSsn(criteria.getReceipientUid()));
+        criteria.setSenderUid(userService.getUserUidByKunpoSsn(criteria.getSenderUid()));
+        criteria.setTargetPersonUid(userService.getUserUidByKunpoSsn(criteria.getTargetPersonUid()));
         return criteria;
     }
 
