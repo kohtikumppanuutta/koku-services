@@ -178,7 +178,7 @@ public class KksGroup implements Serializable, Comparable<KksGroup> {
   public int compareTo(KksGroup o) {
 
     if (o != null) {
-      return new Integer(getSortOrder()).compareTo(new Integer(o.getSortOrder()));
+      return Integer.valueOf(getSortOrder()).compareTo(Integer.valueOf(o.getSortOrder()));
     }
     return 1;
   }

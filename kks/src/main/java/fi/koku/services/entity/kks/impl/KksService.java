@@ -76,11 +76,12 @@ public interface KksService {
   /**
    * Removes KKS entry
    * 
+   * @param collectionId
    * @param id
    *          of the removed entry
    * @param audit
    */
-  void removeEntryValue(String customer, Long id, AuditInfoType audit);
+  void removeEntryValue(String collectionId, String customer, Long id, AuditInfoType audit);
 
   /**
    * Updates given collection

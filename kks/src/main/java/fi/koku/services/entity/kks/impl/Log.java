@@ -10,17 +10,11 @@ import org.slf4j.LoggerFactory;
 import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 import fi.koku.services.utility.log.v1.LogEntryType;
-import fi.koku.services.utility.log.v1.LogServiceFactory;
-import fi.koku.services.utility.log.v1.LogServicePortType;
 import fi.koku.services.utility.log.v1.ServiceFault;
-import fi.koku.settings.KoKuPropertiesUtil;
 
-public class Log {
-
-  private LogServicePortType logPort;
+public final class Log {
 
   public Log() {
-    logPort = getLogService();
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(Log.class);
@@ -33,9 +27,6 @@ public class Log {
   public static final String QUERY = "query";
 
   public static final String KKS = "KKS";
-  public static final String ENDPOINT = KoKuPropertiesUtil.get("lok.service.endpointaddress");
-  public static final String LOG_SERVICE_USER_ID = "marko";
-  public static final String LOG_SERVICE_PASSWORD = "marko";
 
   public void logRead(String customer, String dataType, String userId, String message) {
     log(Log.READ, dataType, customer, userId, message);
@@ -91,7 +82,7 @@ public class Log {
         System.out.println("LOG " + lt.getCustomerPic() + " MESSAGE " + lt.getMessage());
       }
 
-      logPort.opLog(entries, getLogAuditInfo(userId));
+      KksServiceContainer.getService().log().opLog(entries, getLogAuditInfo(userId));
     } catch (ServiceFault e) {
 
       LOG.error("Failed to log entries set", e);
@@ -124,11 +115,6 @@ public class Log {
     return a;
   }
 
-  private LogServicePortType getLogService() {
-    LogServiceFactory log = new LogServiceFactory(Log.LOG_SERVICE_USER_ID, Log.LOG_SERVICE_PASSWORD, Log.ENDPOINT);
-    return log.getLogService();
-  }
-
   private void log(String operation, String dataType, String customer, String userId, String message) {
 
     try {
@@ -147,7 +133,7 @@ public class Log {
 
       LogEntriesType entries = new LogEntriesType();
       entries.getLogEntry().add(l);
-      logPort.opLog(entries, getLogAuditInfo(userId));
+      KksServiceContainer.getService().log().opLog(entries, getLogAuditInfo(userId));
     } catch (ServiceFault e) {
 
       LOG.error("Failed to log operation " + operation + " for data type " + dataType, e);

@@ -11,7 +11,7 @@
 	<name>kks-service</name>
 
 	<properties>
-		<kksservice-api.version>0.2.2</kksservice-api.version>
+		<kksservice-api.version>0.2.3</kksservice-api.version>
 	</properties>
 	
 	<dependencies>

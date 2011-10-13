@@ -24,7 +24,7 @@ public interface Authorization {
    * @param collectionTypes
    * @return consent map containing consenst for each collection consent type
    */
-  public Map<String, List<Consent>> getConsentMap(String customer, String user, List<KksCollectionClass> collectionTypes);
+  Map<String, List<Consent>> getConsentMap(String customer, String user, List<KksCollectionClass> collectionTypes);
 
   /**
    * Creates authorized registries map for user
@@ -40,7 +40,7 @@ public interface Authorization {
    * @param user
    * @return authorized registries list
    */
-  public List<String> getAuthorizedRegistryNames(String user);
+  List<String> getAuthorizedRegistryNames(String user);
 
   /**
    * Checks does user has consent for given consent type

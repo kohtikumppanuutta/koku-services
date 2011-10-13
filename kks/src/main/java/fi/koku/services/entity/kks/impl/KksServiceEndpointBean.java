@@ -161,8 +161,9 @@ public class KksServiceEndpointBean implements KksServicePortType {
 
   @Override
   public VoidType opDeleteEntry(KksEntryCriteriaType kksEntryDeleteType, AuditInfoType auditHeader) throws ServiceFault {
-    kksService.removeEntryValue(kksEntryDeleteType.getPic(), Long.parseLong(kksEntryDeleteType.getValue().getId()),
-        auditHeader);
+
+    kksService.removeEntryValue(kksEntryDeleteType.getCollectionId(), kksEntryDeleteType.getPic(),
+        Long.parseLong(kksEntryDeleteType.getValue().getId()), auditHeader);
     return new VoidType();
   }
 

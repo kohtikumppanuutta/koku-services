@@ -28,7 +28,7 @@ import fi.koku.services.entity.kks.v1.ValueSpacesType;
  * @author Ixonos / tuomape
  * 
  */
-public class KksConverter {
+public final class KksConverter {
 
   private KksConverter() {
 

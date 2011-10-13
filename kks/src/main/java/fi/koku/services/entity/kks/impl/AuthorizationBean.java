@@ -11,13 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.koku.services.entity.authorizationinfo.v1.AuthorizationInfoService;
-import fi.koku.services.entity.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
 import fi.koku.services.entity.authorizationinfo.v1.model.OrgUnit;
 import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
 import fi.koku.services.entity.community.v1.CommunitiesType;
 import fi.koku.services.entity.community.v1.CommunityQueryCriteriaType;
-import fi.koku.services.entity.community.v1.CommunityServiceFactory;
-import fi.koku.services.entity.community.v1.CommunityServicePortType;
 import fi.koku.services.entity.community.v1.CommunityType;
 import fi.koku.services.entity.community.v1.MemberPicsType;
 import fi.koku.services.entity.community.v1.MemberType;
@@ -26,8 +23,6 @@ import fi.koku.services.entity.community.v1.ServiceFault;
 import fi.koku.services.entity.tiva.v1.Consent;
 import fi.koku.services.entity.tiva.v1.ConsentSearchCriteria;
 import fi.koku.services.entity.tiva.v1.ConsentStatus;
-import fi.koku.services.entity.tiva.v1.KokuTivaToKksService;
-import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
  * Authorization services for KKS
@@ -37,14 +32,9 @@ import fi.koku.settings.KoKuPropertiesUtil;
 @Stateless
 public class AuthorizationBean implements Authorization {
 
-  public static final String CUSTOMER_ENDPOINT = KoKuPropertiesUtil.get("community.service.endpointaddress");
-  public static final String TIVA_ENDPOINT = KoKuPropertiesUtil.get("tiva-kks.service.endpointaddress");
-  public static final String COMMUNITY_SERVICE_USER_ID = "marko";
-  public static final String COMMUNITY_SERVICE_PASSWORD = "marko";
   public static final String ROLE_GUARDIAN = "guardian";
   public static final String ROLE_DEPENDANT = "dependant";
   public static final String COMMUNITY_TYPE_GUARDIAN_COMMUNITY = "guardian_community";
-
   private static final Logger LOG = LoggerFactory.getLogger(AuthorizationBean.class);
 
   @Override
@@ -69,7 +59,7 @@ public class AuthorizationBean implements Authorization {
 
   @Override
   public Map<String, Registry> getAuthorizedRegistries(String user) {
-    AuthorizationInfoService uis = new AuthorizationInfoServiceDummyImpl();
+    AuthorizationInfoService uis = KksServiceContainer.getService().authorization();
     Map<String, Registry> tmp = new HashMap<String, Registry>();
     List<Registry> register = uis.getUsersAuthorizedRegistries(user);
     for (Registry r : register) {
@@ -80,7 +70,7 @@ public class AuthorizationBean implements Authorization {
 
   @Override
   public List<String> getAuthorizedRegistryNames(String user) {
-    AuthorizationInfoService uis = new AuthorizationInfoServiceDummyImpl();
+    AuthorizationInfoService uis = KksServiceContainer.getService().authorization();
     List<String> tmp = new ArrayList<String>();
     List<Registry> register = uis.getUsersAuthorizedRegistries(user);
     for (Registry r : register) {
@@ -148,16 +138,11 @@ public class AuthorizationBean implements Authorization {
     csc.setTargetPerson(customer);
     csc.setTemplateNamePrefix(consentType);
     csc.getGivenTo().addAll(getOrganizationNames(user));
-
-    KokuTivaToKksService tivaService = getTivaService();
-
-    return tivaService.queryConsents(csc);
+    return KksServiceContainer.getService().tiva().queryConsents(csc);
   }
 
   private List<String> getOrganizationNames(String user) {
-    // TODO: take real auth service into use
-    AuthorizationInfoService uis = new AuthorizationInfoServiceDummyImpl();
-    List<OrgUnit> units = uis.getUsersOrgUnits("KKS", user);
+    List<OrgUnit> units = KksServiceContainer.getService().authorization().getUsersOrgUnits("KKS", user);
 
     List<String> orgNames = new ArrayList<String>();
 
@@ -232,7 +217,8 @@ public class AuthorizationBean implements Authorization {
       mpt.getMemberPic().add(user);
       communityQueryCriteria.setMemberPics(mpt);
       CommunitiesType communitiesType = null;
-      communitiesType = getCommunityService().opQueryCommunities(communityQueryCriteria, getCommynityAuditInfo(user));
+      communitiesType = KksServiceContainer.getService().community()
+          .opQueryCommunities(communityQueryCriteria, getCommynityAuditInfo(user));
 
       if (communitiesType != null) {
         List<CommunityType> communities = communitiesType.getCommunity();
@@ -251,17 +237,6 @@ public class AuthorizationBean implements Authorization {
       LOG.error("Failed to get user childs", e);
     }
     return childs;
-  }
-
-  private CommunityServicePortType getCommunityService() {
-    CommunityServiceFactory csf = new CommunityServiceFactory(COMMUNITY_SERVICE_USER_ID, COMMUNITY_SERVICE_PASSWORD,
-        CUSTOMER_ENDPOINT);
-    return csf.getCommunityService();
-  }
-
-  private KokuTivaToKksService getTivaService() {
-    ConsentServiceFactory csf = new ConsentServiceFactory("", "", TIVA_ENDPOINT);
-    return csf.getService();
   }
 
   public fi.koku.services.entity.community.v1.AuditInfoType getCommynityAuditInfo(String user) {

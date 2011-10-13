@@ -28,10 +28,10 @@ import fi.koku.services.utility.log.v1.LogEntryType;
 public class KksServiceBean implements KksService {
 
   @EJB
-  KksServiceDAO serviceDAO;
+  private KksServiceDAO serviceDAO;
 
   @EJB
-  Authorization authorization;
+  private Authorization authorization;
 
   private Log log;
 
@@ -144,7 +144,7 @@ public class KksServiceBean implements KksService {
     KksCollectionClass c = serviceDAO.getCollectionClass(collection.getCollectionClass());
     LogEntriesType logEntries = new LogEntriesType();
     LogEntryType lt = getCollectionUpdateLogEntry(collection.getCustomer(), c.getTypeCode(), audit.getUserId(),
-        "Updating person collection " + collection.getId());
+        "Updating person collection (" + collection.getId() + ") " + collection.getName());
     logEntries.getLogEntry().add(lt);
     serviceDAO.update(audit.getUserId(), collection, log, logEntries);
     log.logEntries(logEntries, audit.getUserId());
@@ -216,8 +216,14 @@ public class KksServiceBean implements KksService {
   }
 
   @Override
-  public void removeEntryValue(String customer, Long id, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
-    log.logDelete(customer, "" + id, audit.getUserId(), "Removing entry " + id);
+  public void removeEntryValue(String collectionId, String customer, Long id,
+      fi.koku.services.entity.kks.v1.AuditInfoType audit) {
+
+    KksCollection c = serviceDAO.getCollection(collectionId);
+    KksCollectionClass cc = serviceDAO.getCollectionClass(c.getCollectionClass());
+
+    log.logDelete(customer, cc.getTypeCode(), audit.getUserId(),
+        "Removing entry " + id + " from collection (" + c.getId() + ") " + c.getName());
     serviceDAO.deleteValue(id);
   }
 

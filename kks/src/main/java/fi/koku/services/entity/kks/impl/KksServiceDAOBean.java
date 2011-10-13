@@ -28,7 +28,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
   public static final String COMMENT_FIELD_TAG = "kks.kehitysasia.kommentti";
 
   @EJB
-  Authorization authorization;
+  private Authorization authorization;
 
   @PersistenceContext
   private EntityManager em;
@@ -300,7 +300,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
       log.logValueAddition(collection.getName(), metadata.getTypeCode(), collection.getCustomer(), user, e,
           creation.getValue());
-      insertDefaultTags(creation, e);
+      insertDefaultTags(e);
 
       return e.getId();
 
@@ -310,7 +310,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     }
   }
 
-  private void insertDefaultTags(KksEntryCreation creation, KksEntry e) {
+  private void insertDefaultTags(KksEntry e) {
 
     @SuppressWarnings("unchecked")
     List<Integer> ids = (List<Integer>) em
@@ -439,7 +439,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
       return new ArrayList<KksCollection>();
     }
 
-    Set<KksCollection> tmpCollections = createCollectionSet(user, criteria.getPic(), entries);
+    Set<KksCollection> tmpCollections = createCollectionSet(entries);
 
     List<KksCollection> collections = new ArrayList<KksCollection>(tmpCollections);
     return collections;
@@ -491,7 +491,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
           return new ArrayList<KksCollection>();
         }
 
-        Set<KksCollection> tmpCollections = createCollectionSet(user, criteria.getPic(), entries);
+        Set<KksCollection> tmpCollections = createCollectionSet(entries);
 
         List<KksCollection> collections = new ArrayList<KksCollection>(tmpCollections);
         return collections;
@@ -507,7 +507,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
    *          containing collections
    * @return set of collections used in entries
    */
-  private Set<KksCollection> createCollectionSet(String user, String customer, List<KksEntry> entries) {
+  private Set<KksCollection> createCollectionSet(List<KksEntry> entries) {
     Set<KksCollection> tmpCollections = new HashSet<KksCollection>();
     Map<Long, List<KksEntry>> entryMap = new HashMap<Long, List<KksEntry>>();
 
