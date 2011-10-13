@@ -2,7 +2,7 @@
 <datasources>
 
   <local-tx-datasource>
-    <jndi-name>jdbc/kokuDS</jndi-name>
+    <jndi-name>jdbc/kokuCustomerServiceDS</jndi-name>
     <connection-url>jdbc:mysql://localhost:3306/koku1</connection-url>
     <driver-class>com.mysql.jdbc.Driver</driver-class>
     <user-name>koku1</user-name>
