@@ -102,6 +102,7 @@
     <bean id="informationRequestDao" class="fi.arcusys.koku.common.service.impl.InformationRequestDAOImpl" />
     <bean id="authorizationTemplateDao" class="fi.arcusys.koku.common.service.impl.AuthorizationTemplateDAOImpl" />
     <bean id="authorizationDao" class="fi.arcusys.koku.common.service.impl.AuthorizationDAOImpl" />
+    <bean id="daycareRequestDao" class="fi.arcusys.koku.common.service.impl.DaycareRequestDAOImpl" />
 
     <bean id="usersAndGroupsService" class="fi.arcusys.koku.common.soa.UsersAndGroupsServiceImpl" />
     

@@ -38,5 +38,6 @@
         <class>fi.arcusys.koku.common.service.datamodel.InformationRequestReply</class>
         <class>fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate</class>
         <class>fi.arcusys.koku.common.service.datamodel.Authorization</class>
+        <class>fi.arcusys.koku.common.service.datamodel.DaycareRequest</class>
 	</persistence-unit>
 </persistence>
