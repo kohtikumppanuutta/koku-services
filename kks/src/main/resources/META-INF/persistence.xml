@@ -7,7 +7,7 @@
 
   <persistence-unit name="kksServicePU" transaction-type="JTA">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <jta-data-source>jdbc/kokuKksServiceDS</jta-data-source>
+    <jta-data-source>java:jdbc/kokuKksServiceDS</jta-data-source>
     <properties>
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
       <property name="hibernate.show_sql" value="true" />
