@@ -6,10 +6,10 @@ insert into kks_collection_class (
   ,consent_type
 ) VALUES (
 	5
-  ,'kks.kehitysasialaji.5lk.koulu.terveystarkastus.oppilas'   -- type_code
+  ,'kks.kehitysasialaji.5lk_koulu_terveystarkastus.oppilas'   -- type_code
   ,'5. Luokan kouluterveystarkastus, Oppilaan lomake'  -- name
   ,''  -- description
-  ,'kks.suostumus.5lk.koulu.terveystarkastus'  -- consent_type
+  ,'kks.suostumus.5lk_koulu_terveystarkastus'  -- consent_type
 );
 
 insert into kks_group (

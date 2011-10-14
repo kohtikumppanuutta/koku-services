@@ -79,16 +79,6 @@ public class AuthorizationBean implements Authorization {
     return tmp;
   }
 
-  /**
-   * Checks does user has consent for given consent type
-   * 
-   * @param customer
-   * @param user
-   *          which consents are checked
-   * @param consentType
-   *          of the collection that is requested to see
-   * @return true if user has consent false if not
-   */
   @Override
   public boolean hasConsent(String customer, String user, String consentType) {
     return getValidConsent(customer, user, consentType) != null;
@@ -141,6 +131,12 @@ public class AuthorizationBean implements Authorization {
     return KksServiceContainer.getService().tiva().queryConsents(csc);
   }
 
+  /**
+   * Gets organization names for the user
+   * 
+   * @param user
+   * @return organization names
+   */
   private List<String> getOrganizationNames(String user) {
     List<OrgUnit> units = KksServiceContainer.getService().authorization().getUsersOrgUnits("KKS", user);
 
@@ -239,6 +235,12 @@ public class AuthorizationBean implements Authorization {
     return childs;
   }
 
+  /**
+   * Gets audit info for the community
+   * 
+   * @param user
+   * @return audit info for the community
+   */
   public fi.koku.services.entity.community.v1.AuditInfoType getCommynityAuditInfo(String user) {
     fi.koku.services.entity.community.v1.AuditInfoType a = new fi.koku.services.entity.community.v1.AuditInfoType();
     a.setComponent("KKS");

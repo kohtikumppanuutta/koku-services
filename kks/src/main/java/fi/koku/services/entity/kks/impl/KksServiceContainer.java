@@ -35,8 +35,6 @@ public class KksServiceContainer {
     tivaService = createTivaService();
     communityService = createCommunityService();
     logService = createLogService();
-
-    // TODO: change to real impl when available
     authorizationService = new AuthorizationInfoServiceDummyImpl();
   }
 

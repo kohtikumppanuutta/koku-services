@@ -6,10 +6,10 @@ insert into kks_collection_class (
   ,consent_type
 ) VALUES (
 	3
-  ,'kks.kehitysasialaji.sopimus.päiväkotihoito'   -- type_code
+  ,'kks.kehitysasialaji.sopimus_paivakotihoito'   -- type_code
   ,'Päiväkotihoidon Hoitosopimus'  -- name
   ,''  -- description
-  ,'kks.suostumus.päivähoito.sopimus'  -- concent_type
+  ,'kks.suostumus.sopimus_paivakotihoito'  -- concent_type
 );
 
 insert into kks_group (

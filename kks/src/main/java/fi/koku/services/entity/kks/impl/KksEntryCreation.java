@@ -2,6 +2,12 @@ package fi.koku.services.entity.kks.impl;
 
 import java.util.Date;
 
+/**
+ * Wrapper class for entry level creation
+ * 
+ * @author Ixonos / tuomape
+ * 
+ */
 public class KksEntryCreation {
 
   private Long id;

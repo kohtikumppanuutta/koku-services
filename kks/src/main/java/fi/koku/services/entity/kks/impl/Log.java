@@ -12,20 +12,24 @@ import fi.koku.services.utility.log.v1.LogEntriesType;
 import fi.koku.services.utility.log.v1.LogEntryType;
 import fi.koku.services.utility.log.v1.ServiceFault;
 
+/**
+ * Helper class for audit logs
+ * 
+ * @author Ixonos / tuomape
+ * 
+ */
 public final class Log {
 
   public Log() {
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(Log.class);
-
   public static final String CLIENT_ID = "kks";
   public static final String READ = "read";
   public static final String CREATE = "create";
   public static final String DELETE = "delete";
   public static final String UPDATE = "update";
   public static final String QUERY = "query";
-
   public static final String KKS = "KKS";
 
   public void logRead(String customer, String dataType, String userId, String message) {
@@ -135,7 +139,6 @@ public final class Log {
       entries.getLogEntry().add(l);
       KksServiceContainer.getService().log().opLog(entries, getLogAuditInfo(userId));
     } catch (ServiceFault e) {
-
       LOG.error("Failed to log operation " + operation + " for data type " + dataType, e);
     }
   }

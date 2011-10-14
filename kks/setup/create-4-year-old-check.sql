@@ -6,10 +6,10 @@ insert into kks_collection_class (
   ,consent_type
 ) VALUES (
 	2
-  ,'kks.kehitysasialaji.4-vuotiaan.neuvolatarkastus'   -- type_code
+  ,'kks.kehitysasialaji.4-vuotiaan_neuvolatarkastus'   -- type_code
   ,'4-vuotiaan neuvolatarkastus'  -- name
   ,''  -- description
-  ,'kks.suostumus.4-vuotiaan.neuvolatarkastus'  -- concent_type
+  ,'kks.suostumus.4-vuotiaan_neuvolatarkastus'  -- concent_type
 );
 
 insert into kks_group (

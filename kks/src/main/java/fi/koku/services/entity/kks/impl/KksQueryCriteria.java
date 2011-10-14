@@ -3,6 +3,12 @@ package fi.koku.services.entity.kks.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Query criteria
+ * 
+ * @author Ixonos / tuomape
+ * 
+ */
 public class KksQueryCriteria {
 
   private String pic;

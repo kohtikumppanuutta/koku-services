@@ -9,9 +9,15 @@ import fi.koku.services.entity.tiva.v1.KokuTivaToKksService;
 import fi.koku.services.entity.tiva.v1.KokuTivaToKksService_Service;
 import fi.koku.settings.KoKuPropertiesUtil;
 
+/**
+ * Factory class for consents
+ * 
+ * @author Ixonos / tuomape
+ * 
+ */
 public class ConsentServiceFactory {
 
-  private final URL wsdlLocation = getClass().getClassLoader().getResource("wsdl/communityService.wsdl");
+  private final URL wsdlLocation = getClass().getClassLoader().getResource("wsdl/tivaService.wsdl");
 
   public ConsentServiceFactory() {
 
