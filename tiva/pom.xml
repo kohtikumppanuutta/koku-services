@@ -21,42 +21,13 @@
         <cglib.version>2.2</cglib.version>
     </properties>
 
-    <build>
-        <!--plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ejb-plugin</artifactId>
-                <configuration>
-                    <ejbVersion>3.0</ejbVersion>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeGroupIds>fi.arcusys.koku</includeGroupIds>
-                            <includeArtifactIds>arcusys-common</includeArtifactIds>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins-->
-    </build>
 
 	<dependencies>
+        <dependency>
+            <groupId>kohti-kumppanuutta</groupId>
+            <artifactId>kksservice-api</artifactId>
+            <version>0.2.3-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>fi.arcusys.koku</groupId>
             <artifactId>arcusys-common</artifactId>

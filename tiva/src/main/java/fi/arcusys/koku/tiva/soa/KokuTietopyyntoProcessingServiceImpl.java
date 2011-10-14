@@ -58,32 +58,33 @@ public class KokuTietopyyntoProcessingServiceImpl implements KokuTietopyyntoProc
      * @return
      */
     @Override
-    public InformationCategoryTO getCategories() {
-        // TODO Auto-generated method stub
-        final InformationCategoryTO rootCategory = new InformationCategoryTO();
-        rootCategory.setCategoryId(1L);
-        rootCategory.setName("Root");
-        rootCategory.setDescription("Root category for information classification");
-        final List<InformationCategoryTO> rootSubcategories = new ArrayList<InformationCategoryTO>();
-        final InformationCategoryTO childOne = new InformationCategoryTO();
-        childOne.setCategoryId(2L);
-        childOne.setName("childOne");
-        childOne.setDescription("childOne description");
-        rootSubcategories.add(childOne);
-        final InformationCategoryTO childTwo = new InformationCategoryTO();
-        childTwo.setCategoryId(3L);
-        childTwo.setName("childTwo");
-        childTwo.setDescription("childTwo description");
-        final InformationCategoryTO childTwoOne = new InformationCategoryTO();
-        childTwoOne.setCategoryId(4L);
-        childTwoOne.setName("childTwoOne");
-        childTwoOne.setDescription("childTwoOne description");
-        final List<InformationCategoryTO> childTwoSubcategories = new ArrayList<InformationCategoryTO>();
-        childTwoSubcategories.add(childTwoOne);
-        childTwo.setSubcategories(childTwoSubcategories);
-        rootSubcategories.add(childTwo);
-        rootCategory.setSubcategories(rootSubcategories);
-        return rootCategory;
+    public InformationCategoryTO getCategories(final String employeeUid) {
+        return serviceFacade.getCategories(employeeUid);
+//        // TODO Auto-generated method stub
+//        final InformationCategoryTO rootCategory = new InformationCategoryTO();
+//        rootCategory.setCategoryId(1L);
+//        rootCategory.setName("Root");
+//        rootCategory.setDescription("Root category for information classification");
+//        final List<InformationCategoryTO> rootSubcategories = new ArrayList<InformationCategoryTO>();
+//        final InformationCategoryTO childOne = new InformationCategoryTO();
+//        childOne.setCategoryId(2L);
+//        childOne.setName("childOne");
+//        childOne.setDescription("childOne description");
+//        rootSubcategories.add(childOne);
+//        final InformationCategoryTO childTwo = new InformationCategoryTO();
+//        childTwo.setCategoryId(3L);
+//        childTwo.setName("childTwo");
+//        childTwo.setDescription("childTwo description");
+//        final InformationCategoryTO childTwoOne = new InformationCategoryTO();
+//        childTwoOne.setCategoryId(4L);
+//        childTwoOne.setName("childTwoOne");
+//        childTwoOne.setDescription("childTwoOne description");
+//        final List<InformationCategoryTO> childTwoSubcategories = new ArrayList<InformationCategoryTO>();
+//        childTwoSubcategories.add(childTwoOne);
+//        childTwo.setSubcategories(childTwoSubcategories);
+//        rootSubcategories.add(childTwo);
+//        rootCategory.setSubcategories(rootSubcategories);
+//        return rootCategory;
     }
 
 }

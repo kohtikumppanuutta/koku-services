@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "record")
 public class InformationCategoryTO {
-    private Long categoryId;
+    private String categoryId;
     private String name;
     private String description;
     private List<InformationCategoryTO> subcategories;
@@ -25,14 +25,14 @@ public class InformationCategoryTO {
      * @return the categoryId
      */
     @XmlAttribute(name = "jsxid")
-    public Long getCategoryId() {
+    public String getCategoryId() {
         return categoryId;
     }
 
     /**
      * @param categoryId the categoryId to set
      */
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
     }
 

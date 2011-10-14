@@ -13,7 +13,7 @@ public class InformationRequestTO {
     private Long requestId;
     private String title;
     private String targetPersonUid;
-    private List<Long> categories;
+    private List<String> categories;
     private String senderUid;
     private String receiverUid;
     private String description;
@@ -86,13 +86,13 @@ public class InformationRequestTO {
      * @return the categories
      */
     @XmlElement (name = "category")
-    public List<Long> getCategories() {
+    public List<String> getCategories() {
         return categories;
     }
     /**
      * @param categories the categories to set
      */
-    public void setCategories(List<Long> categories) {
+    public void setCategories(List<String> categories) {
         this.categories = categories;
     }
     /**

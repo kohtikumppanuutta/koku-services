@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.koku.services.utility.log.v1.AuditInfoType;
+import fi.koku.services.utility.log.v1.LogEntriesType;
 import fi.koku.services.utility.log.v1.LogEntryType;
 import fi.koku.services.utility.log.v1.LogServiceFactory;
 
@@ -57,7 +58,9 @@ public class LogServiceDAOImpl implements LogServiceDAO {
         auditHeader.setUserId(logEntry.getUserPic());
         
         try {
-            logServiceFactory.getLogService().opLog(logEntry, auditHeader);
+            final LogEntriesType logEntries = new LogEntriesType();
+            logEntries.getLogEntry().add(logEntry);
+            logServiceFactory.getLogService().opLog(logEntries, auditHeader);
         } catch (Exception e) {
             logger.error("logMessage failed with error: " + e.getMessage());
             if (logger.isDebugEnabled()) {

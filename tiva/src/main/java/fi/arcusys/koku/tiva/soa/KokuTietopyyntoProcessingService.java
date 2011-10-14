@@ -28,5 +28,6 @@ public interface KokuTietopyyntoProcessingService {
     
     @WebResult(name = "record")
     @WebMethod(operationName = "getTietoelementit")
-    InformationCategoryTO getCategories();
+    InformationCategoryTO getCategories(
+            @WebParam(name = "userUid") final String employeeUid);
 }

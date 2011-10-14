@@ -12,7 +12,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 public class InformationRequestReplyTO {
     private Long requestId;
-    private List<Long> categoryIds;
+    private List<String> categoryIds;
     private XMLGregorianCalendar validTill;
     private String description;
     private String informationDetails;
@@ -47,13 +47,13 @@ public class InformationRequestReplyTO {
     /**
      * @return the categoryId
      */
-    public List<Long> getCategoryIds() {
+    public List<String> getCategoryIds() {
         return categoryIds;
     }
     /**
      * @param categoryId the categoryId to set
      */
-    public void setCategoryIds(List<Long> categoryIds) {
+    public void setCategoryIds(List<String> categoryIds) {
         this.categoryIds = categoryIds;
     }
     /**

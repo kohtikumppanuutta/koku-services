@@ -28,6 +28,7 @@ import fi.arcusys.koku.common.service.datamodel.InformationRequestCategory;
 import fi.arcusys.koku.common.service.datamodel.InformationRequestReply;
 import fi.arcusys.koku.common.service.dto.InformationRequestDTOCriteria;
 import fi.arcusys.koku.tiva.service.InformationRequestServiceFacade;
+import fi.arcusys.koku.tiva.service.KksCollectionsDAO;
 import fi.arcusys.koku.tiva.soa.InformationAccessType;
 import fi.arcusys.koku.tiva.soa.InformationCategoryTO;
 import fi.arcusys.koku.tiva.soa.InformationRequestCriteria;
@@ -37,6 +38,7 @@ import fi.arcusys.koku.tiva.soa.InformationRequestReplyTO;
 import fi.arcusys.koku.tiva.soa.InformationRequestStatus;
 import fi.arcusys.koku.tiva.soa.InformationRequestSummary;
 import fi.arcusys.koku.tiva.soa.InformationRequestTO;
+import fi.koku.services.entity.kks.v1.InfoGroup;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -59,6 +61,9 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
     
     @EJB
     private UserDAO userDao; 
+    
+    @EJB
+    private KksCollectionsDAO kksDao;
     
     @EJB
     private KokuSystemNotificationsService notificationService;
@@ -94,9 +99,9 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         final InformationRequest request = new InformationRequest();
         request.setAdditionalInfo(requestTO.getAdditionalInfo());
         final Set<InformationRequestCategory> categories = new HashSet<InformationRequestCategory>();
-        for (final Long categoryUid : requestTO.getCategories()) {
+        for (final String categoryUid : requestTO.getCategories()) {
             final InformationRequestCategory category = new InformationRequestCategory();
-            category.setCategoryUid("" + categoryUid);
+            category.setCategoryUid(categoryUid);
             category.setRequest(request);
             categories.add(category);
         }
@@ -111,9 +116,9 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         request.setValidTill(getSafeDate(requestTO.getValidTill()));
         final InformationRequest result = informationRequestDao.create(request);
         
-        notificationService.sendNotification(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_CREATED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(INFORMATION_REQUEST_CREATED_SUBJECT), 
                 Collections.singletonList(request.getReceiver().getUid()), 
-                MessageFormat.format(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_CREATED_BODY, 
+                MessageFormat.format(getValueFromBundle(INFORMATION_REQUEST_CREATED_BODY), 
                         new Object[] {request.getDescription()}));
 
         return result.getId();
@@ -144,9 +149,9 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         reply.setReplyCreatedDate(new Date());
         request.setValidTill(getSafeDate(replyTO.getValidTill()));
         final Set<InformationRequestCategory> categories = new HashSet<InformationRequestCategory>();
-        for (final Long categoryUid : replyTO.getCategoryIds()) {
+        for (final String categoryUid : replyTO.getCategoryIds()) {
             final InformationRequestCategory category = new InformationRequestCategory();
-            category.setCategoryUid("" + categoryUid);
+            category.setCategoryUid(categoryUid);
             category.setRequest(request);
             categories.add(category);
         }
@@ -154,9 +159,9 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         request.setReply(reply);
         informationRequestDao.update(request);
 
-        notificationService.sendNotification(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_APPROVED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(INFORMATION_REQUEST_APPROVED_SUBJECT), 
                 Collections.singletonList(request.getSender().getUid()), 
-                MessageFormat.format(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_APPROVED_BODY, 
+                MessageFormat.format(getValueFromBundle(INFORMATION_REQUEST_APPROVED_BODY), 
                         new Object[] {request.getDescription()}));
     }
 
@@ -190,9 +195,9 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         request.setReply(reply);
         informationRequestDao.update(request);
 
-        notificationService.sendNotification(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_REJECTED_SUBJECT, 
+        notificationService.sendNotification(getValueFromBundle(INFORMATION_REQUEST_REJECTED_SUBJECT), 
                 Collections.singletonList(request.getSender().getUid()), 
-                MessageFormat.format(InformationRequestServiceFacadeImpl.INFORMATION_REQUEST_REJECTED_BODY, 
+                MessageFormat.format(getValueFromBundle(INFORMATION_REQUEST_REJECTED_BODY), 
                         new Object[] {request.getDescription()}));
     }
 
@@ -200,9 +205,31 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
      * @return
      */
     @Override
-    public InformationCategoryTO getCategories() {
-        // TODO Auto-generated method stub
-        return null;
+    public InformationCategoryTO getCategories(final String employeeUid) {
+        final InformationCategoryTO rootCategoryTO = new InformationCategoryTO();
+        rootCategoryTO.setCategoryId("root");
+        rootCategoryTO.setDescription("Root category");
+        rootCategoryTO.setName("root");
+        final List<InfoGroup> infoGroups = kksDao.getInfoGroups(employeeUid);
+        rootCategoryTO.setSubcategories(convertInfoGroupsToCategories(infoGroups));
+        return rootCategoryTO;
+    }
+
+    private List<InformationCategoryTO> convertInfoGroupsToCategories(final List<InfoGroup> infoGroups) {
+        if (infoGroups == null || infoGroups.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        final List<InformationCategoryTO> subcategories = new ArrayList<InformationCategoryTO>();
+        for (final InfoGroup group : infoGroups) {
+            final InformationCategoryTO subcategoryTO = new InformationCategoryTO();
+            subcategoryTO.setCategoryId(group.getId());
+            subcategoryTO.setName(group.getName());
+            subcategoryTO.setDescription(group.getName());
+            subcategoryTO.setSubcategories(convertInfoGroupsToCategories(group.getSubGroups()));
+            subcategories.add(subcategoryTO);
+        }
+        return subcategories;
     }
 
     /**

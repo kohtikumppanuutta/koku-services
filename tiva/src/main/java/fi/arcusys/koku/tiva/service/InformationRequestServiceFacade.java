@@ -21,7 +21,7 @@ public interface InformationRequestServiceFacade {
     
     void declineRequest(final Long requestId, final String explanation);
     
-    InformationCategoryTO getCategories();
+    InformationCategoryTO getCategories(final String employeeUid);
 
     /**
      * @param receiverUid

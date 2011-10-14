@@ -755,6 +755,10 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByEmployeeSsn(String ssn) {
+        if (ssn == null || ssn.trim().isEmpty()) {
+            return null;
+        }
+        
         final List<User> users = searchEmployees(ssn, 2);
         if (users == null || users.isEmpty()) {
             logger.info("Users not found by by uniq id: " + ssn);
