@@ -727,6 +727,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
     newVersion.setName(creation.getName());
     newVersion.setCreator(creation.getCreator());
     newVersion.setCreated(new Date());
+    newVersion.setModified(new Date());
+    newVersion.setModifier(creation.getCreator());
     newVersion.setCustomer(creation.getCustomer());
     newVersion.setPrevVersion("" + old.getId());
     newVersion.setStatus(ACTIVE);
@@ -748,6 +750,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
           for (KksValue value : e.getValues()) {
             KksValue newVal = new KksValue();
             newVal.setEntry(newE);
+            newVal.setModified(value.getModified());
+            newVal.setModifier(value.getModifier());
             newVal.setValue(value.getValue());
             newVal.setEntry(newE);
             newE.addKksValue(newVal);
