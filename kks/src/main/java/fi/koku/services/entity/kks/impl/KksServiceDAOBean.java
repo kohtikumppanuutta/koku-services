@@ -645,9 +645,8 @@ public class KksServiceDAOBean implements KksServiceDAO {
       tagMap.put(t.getTagId(), t);
     }
 
-    for (KksEntry e : newCollection.getEntries()) {
+    for (KksEntry e : collection.getEntries()) {
       // handle tag deletion & insertion manually
-      e.clearTags();
       removeTags(e.getId());
 
       List<Integer> values = entryTagMap.get(e.getId());
