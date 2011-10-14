@@ -124,17 +124,19 @@ public class KksServiceBean implements KksService {
       Map<String, List<Consent>> consents, KksCollection c) {
     List<Consent> consentList = consents.get(collectionClasses.get(c.getCollectionClass()));
 
-    for (Consent con : consentList) {
+    if (consentList != null) {
+      for (Consent con : consentList) {
 
-      if (ConsentStatus.VALID.equals(con.getStatus())) {
-        c.setConsentRequested(true);
-        c.setUserConsentStatus(ConsentStatus.VALID.toString());
-      } else if (ConsentStatus.PARTIALLY_GIVEN.equals(con.getStatus())) {
-        c.setConsentRequested(true);
-        c.setUserConsentStatus(con.getStatus().toString());
-      } else {
-        c.setConsentRequested(false);
-        c.setUserConsentStatus(ConsentStatus.DECLINED.toString());
+        if (ConsentStatus.VALID.equals(con.getStatus())) {
+          c.setConsentRequested(true);
+          c.setUserConsentStatus(ConsentStatus.VALID.toString());
+        } else if (ConsentStatus.PARTIALLY_GIVEN.equals(con.getStatus())) {
+          c.setConsentRequested(true);
+          c.setUserConsentStatus(con.getStatus().toString());
+        } else {
+          c.setConsentRequested(false);
+          c.setUserConsentStatus(ConsentStatus.DECLINED.toString());
+        }
       }
     }
   }
