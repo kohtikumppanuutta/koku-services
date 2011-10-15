@@ -68,7 +68,12 @@ public class KahvaServiceMockImpl {
 		User u = new User();
 		if (props != null) {
 		  LOG.info("props=" + props.toString());
-		  String property = props.getProperty(pic).trim(); // id is key in properties
+		  String property = props.getProperty(pic); // id is key in properties
+		  if(property == null) {
+			LOG.info("could not find person with pic "+pic);
+		  } else{
+			property = property.trim();
+			}
 		  LOG.info("used property=" + property);
 		  if (property != null && !"".equals(property)) {
 
