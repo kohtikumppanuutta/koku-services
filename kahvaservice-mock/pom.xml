@@ -8,6 +8,7 @@
   </parent>
   <artifactId>kahvaservice-mock</artifactId>
   <name>kahvaservice-mock</name>
+  <version>0.0.3-SNAPSHOT</version> 
   <description>kahvaservice mockup</description>
   
   <properties>
