@@ -34,6 +34,7 @@ public class LogDAOBean implements LogDAO {
  // TODO: mahd. virheet:
   // 1) arkistoloki ei vastaa
   // 2) arkistoloki ei kuittaa onnistunutta tietojen kopiointia
+  //Virhe taltioituu käsittelylokiin!
   @Override
   public int archiveLog(Date date){
 
@@ -49,11 +50,15 @@ public class LogDAOBean implements LogDAO {
 
     logger.debug("archive list size: " + logEntryCount);
 
-    // there is nothing to archive
+    // there is nothing to archive, the portlet user will see an error message
     if (logEntryCount == 0) {
       return 0;
     } else {
-
+      //KOKU-579: Aikaisimman arkistoitavan entryn timestamp haetaan tässä
+      //TODO: toteuta!
+      // Set hard coded value for now here and in the LogServiceEndpointBean
+      String startdate = "2011-10-16";
+   
       logger.info("insert log entries to archive log (date=" + date);
       Query archiveQuery = em
           .createNativeQuery("INSERT INTO "
@@ -62,18 +67,25 @@ public class LogDAOBean implements LogDAO {
               + "FROM log WHERE timestamp < :date");
       // set the moved end date
       archiveQuery.setParameter("date", movedDate);
+      
+      // execute the query
       int updateCount = archiveQuery.executeUpdate();
 
-      logger.info("Archived " + updateCount + "lines of log to log_archive table up to " + date);
+      logger.info("Archived " + updateCount + "lines of log to log_archive table from "+startdate+" to " + date);
 
-      // jos arkistointi onnistui, ajetaan tämä
-      Query deleteQuery = em.createNativeQuery("DELETE FROM log WHERE timestamp < :date");
-      // set the moved end date
-      deleteQuery.setParameter("date", movedDate);
-      int deletedRows = deleteQuery.executeUpdate();
-      logger.info("Deleted " + deletedRows + " rows from log table");
-      if (deletedRows != updateCount) {
-        logger.error("poistettiin eri määrä rivejä kuin siirrettiin admin_logiin.");
+      // If there is a Runtime error in archiving, no entries will be deleted from the database.
+      // The portlet user will see an error message.
+      
+      // If the archiving went ok, delete the entries
+      if(updateCount > 0){
+        Query deleteQuery = em.createNativeQuery("DELETE FROM log WHERE timestamp < :date");
+        // set the moved end date
+        deleteQuery.setParameter("date", movedDate);
+        int deletedRows = deleteQuery.executeUpdate();
+        logger.info("Deleted " + deletedRows + " rows from log table");
+        if (deletedRows != updateCount) {
+          logger.error("the number of entries moved to archive is not the same as the number of deleted entries!");
+        }
       }
       return updateCount;
     }
@@ -252,7 +264,7 @@ public class LogDAOBean implements LogDAO {
         // TODO
       } catch (IllegalArgumentException ex) {
         // TODO
-      }
+      } 
     }
     return null;
 
