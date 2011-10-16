@@ -1,4 +1,4 @@
-package i.koku.services.utility.authorization.impl;
+package fi.koku.services.utility.authorization.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,8 +42,10 @@ public class AuthorizationInfoServiceMockImpl {
       groupsList = roles.get(uid);
     } else if("unit".equals(grpClass)) {
       groupsList = units.get(uid);
+      groupsList.add(createGroup("unit", "kk.servicearea.childHealth", "Health care unit of Porolahti", uid));
     } else if("group".equals(grpClass)) {
       groupsList = groups.get(uid);
+      groupsList.add(createGroup("group", "gid1", "City region wide day care workgroup - consists of people from serveral organization units", uid));
     } else {
       throw new KoKuFaultException(3001, "unsupported group type");
     }
@@ -55,7 +57,6 @@ public class AuthorizationInfoServiceMockImpl {
   private Map<String, List<GroupType>> initRegistries() {
     Map<String, List<GroupType>> r = new HashMap<String, List<GroupType>>();
     String groupClass = "registry";
-
     r.put("777777-7777", Arrays.asList(createGroup(groupClass, "daycareregistry", "Paivahoidon rekisteri", "777777-7777")));
     r.put("888888-8888", Arrays.asList(createGroup(groupClass, "healthcareregistry", "Potilastietorekisteri", "888888-8888")));
     return r;
@@ -64,18 +65,23 @@ public class AuthorizationInfoServiceMockImpl {
   private Map<String, List<GroupType>> initRoles() {
     Map<String, List<GroupType>> r = new HashMap<String, List<GroupType>>();
     String groupClass = "role";
+    r.put("101010-1010", Arrays.asList(createGroup(groupClass, "ROLE_LOK_ADMIN", "ROLE_LOK_ADMIN", "101010-1010")));
+    r.put("121212-1212", Arrays.asList(createGroup(groupClass, "ROLE_LOK_LOG_ADMIN", "ROLE_LOK_LOG_ADMIN", "121212-1212")));
     return r;
   }
 
   private Map<String, List<GroupType>> initUnits() {
     Map<String, List<GroupType>> r = new HashMap<String, List<GroupType>>();
     String groupClass = "unit";
+    r.put("777777-7777", Arrays.asList(createGroup(groupClass, "kk.servicearea.daycare", "Day care unit of Porolahti", "777777-7777")));
+    r.put("888888-8888", Arrays.asList(createGroup(groupClass, "kk.servicearea.childHealth", "Health care unit of Porolahti", "888888-8888")));
     return r;
   }
 
   private Map<String, List<GroupType>> initGroups() {
     Map<String, List<GroupType>> r = new HashMap<String, List<GroupType>>();
     String groupClass = "group";
+    
     return r;
   }
 

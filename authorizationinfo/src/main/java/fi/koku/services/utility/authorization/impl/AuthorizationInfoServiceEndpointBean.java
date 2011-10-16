@@ -1,4 +1,4 @@
-package i.koku.services.utility.authorization.impl;
+package fi.koku.services.utility.authorization.impl;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
