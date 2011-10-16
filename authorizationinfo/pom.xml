@@ -4,9 +4,8 @@
     <artifactId>koku-services</artifactId>
     <groupId>kohti-kumppanuutta</groupId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>..</relativePath>
   </parent>
-  <artifactId>authorizationinfo</artifactId>
+  <artifactId>authorizationinfo-service</artifactId>
   <packaging>ejb</packaging>
   <name>authorizationinfo-service</name>
 
