@@ -76,7 +76,19 @@
           <sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <defaultLibBundleDir>lib</defaultLibBundleDir>
+          <generateApplicationXml>true</generateApplicationXml>
+        </configuration>
+      </plugin>
+
     </plugins>
+
     <resources>
       <resource>
         <directory>${basedir}/src/main/resources</directory>
@@ -148,6 +160,9 @@
     <module>hak</module>
     <module>arcusys-ear</module>
     <!--module>gatein</module-->
+    <module>authorizationinfo</module>
+    <module>authorizationinfo-ear</module>
+    <module>kahvaservice-mock</module>
   </modules>
 
   <repositories>
