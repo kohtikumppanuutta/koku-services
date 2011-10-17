@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import fi.koku.KoKuFaultException;
 import fi.koku.services.utility.authorizationinfo.util.AuthUtils;
 import fi.koku.services.utility.authorizationinfo.v1.AuthorizationInfoService;
-import fi.koku.services.utility.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
+import fi.koku.services.utility.authorizationinfo.v1.AuthorizationInfoServiceFactory;
 import fi.koku.services.utility.log.v1.ArchivalResultsType;
 import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogArchivalParametersType;
@@ -29,6 +29,7 @@ import fi.koku.services.utility.log.v1.LogEntryType;
 import fi.koku.services.utility.log.v1.LogQueryCriteriaType;
 import fi.koku.services.utility.log.v1.LogServicePortType;
 import fi.koku.services.utility.log.v1.VoidType;
+import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
  * KoKu log service implementation class.
@@ -38,7 +39,11 @@ import fi.koku.services.utility.log.v1.VoidType;
  */
 @Stateless
 @Interceptors({LogServiceFaultInterceptor.class})
-@WebService(wsdlLocation = "META-INF/wsdl/logService.wsdl", endpointInterface = "fi.koku.services.utility.log.v1.LogServicePortType", targetNamespace = "http://services.koku.fi/utility/log/v1", portName = "logService-soap11-port", serviceName = "logService")
+@WebService(wsdlLocation = "META-INF/wsdl/logService.wsdl",
+  endpointInterface = "fi.koku.services.utility.log.v1.LogServicePortType",
+  targetNamespace = "http://services.koku.fi/utility/log/v1",
+  portName = "logService-soap11-port",
+  serviceName = "logService")
 @RolesAllowed("koku-role")
 public class LogServiceEndpointBean implements LogServicePortType {
   private static final Logger logger = LoggerFactory.getLogger(LogServiceEndpointBean.class);
@@ -57,7 +62,11 @@ public class LogServiceEndpointBean implements LogServicePortType {
   
   public LogServiceEndpointBean() {
     logConverter = new LogConverter();
-    authInfoService = new AuthorizationInfoServiceDummyImpl();
+    AuthorizationInfoServiceFactory f = new AuthorizationInfoServiceFactory(
+        KoKuPropertiesUtil.get("lok.authorizationinfo.service.user.id"),
+        KoKuPropertiesUtil.get("lok.authorizationinfo.service.password"),
+        KoKuPropertiesUtil.get("authorizationinfo.service.endpointaddress"));
+    authInfoService = f.getAuthorizationInfoService();
   }
 
   /**
@@ -67,14 +76,12 @@ public class LogServiceEndpointBean implements LogServicePortType {
    */
   @Override
   public VoidType opLog(LogEntriesType logEntriesType, AuditInfoType auditInfoType) throws KoKuFaultException {
-
     logger.info("opLog");
     List<LogEntryType> list = logEntriesType.getLogEntry();
     
     Iterator i = list.iterator();
     while(i.hasNext()){
       LogEntryType logEntryType = (LogEntryType)i.next();
-
       if(logEntryType != null){
  
         // call to the actual writing
