@@ -122,8 +122,7 @@ public class KahvaServiceEndpointBean implements LdapService {
   }
 
   @Override
-  public List<User> getUsersByIds(List<String> userId) {
-    // TODO Auto-generated method stub
+  public List<User> getUsersByIds(List<String> userIdlist) {
     return null;
   }
 
