@@ -2,6 +2,7 @@ package fi.koku.services.utility.authorization.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,23 +39,28 @@ public class AuthorizationInfoServiceMockImpl {
     String grpClass = gqc.getGroupClass();
     String uid = gqc.getMemberPics().getMemberPic().get(0);
     if("registry".equals(grpClass)) {
-      groupsList = registries.get(uid);
+      groupsList = getGroups(registries, uid);
     } else if("role".equals(grpClass)) {
-      groupsList = roles.get(uid);
+      groupsList = getGroups(roles, uid);
     } else if("unit".equals(grpClass)) {
-      groupsList = units.get(uid);
+      groupsList = getGroups(units, uid);
       groupsList.add(createGroup("unit", "kk.servicearea.childHealth", "Health care unit of Porolahti", uid));
     } else if("group".equals(grpClass)) {
-      groupsList = groups.get(uid);
+      groupsList = getGroups(groups, uid);
       groupsList.add(createGroup("group", "gid1", "City region wide day care workgroup - consists of people from serveral organization units", uid));
     } else {
       throw new KoKuFaultException(3001, "unsupported group type");
     }
     
-    if(groupsList != null) {
-      res.getGroup().addAll(groupsList);
-    }
+    res.getGroup().addAll(groupsList);
     return res;
+  }
+  
+  private List<GroupType> getGroups(Map<String, List<GroupType>> groupMap, String key) {
+    List<GroupType> r = groupMap.get(key);
+    if(r == null)
+      r = Collections.emptyList();
+    return r;
   }
 
   private Map<String, List<GroupType>> initRegistries() {
