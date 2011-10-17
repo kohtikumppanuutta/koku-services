@@ -10,9 +10,6 @@ import javax.ejb.Stateless;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.koku.services.entity.authorizationinfo.v1.AuthorizationInfoService;
-import fi.koku.services.entity.authorizationinfo.v1.model.OrgUnit;
-import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
 import fi.koku.services.entity.community.v1.CommunitiesType;
 import fi.koku.services.entity.community.v1.CommunityQueryCriteriaType;
 import fi.koku.services.entity.community.v1.CommunityType;
@@ -23,6 +20,9 @@ import fi.koku.services.entity.community.v1.ServiceFault;
 import fi.koku.services.entity.tiva.v1.Consent;
 import fi.koku.services.entity.tiva.v1.ConsentSearchCriteria;
 import fi.koku.services.entity.tiva.v1.ConsentStatus;
+import fi.koku.services.utility.authorizationinfo.v1.AuthorizationInfoService;
+import fi.koku.services.utility.authorizationinfo.v1.model.OrgUnit;
+import fi.koku.services.utility.authorizationinfo.v1.model.Registry;
 
 /**
  * Authorization services for KKS
@@ -143,7 +143,7 @@ public class AuthorizationBean implements Authorization {
     List<String> orgNames = new ArrayList<String>();
 
     for (OrgUnit ou : units) {
-      orgNames.add(ou.getServiceArea());
+      orgNames.add(ou.getId());
     }
     return orgNames;
   }

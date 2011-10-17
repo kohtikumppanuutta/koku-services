@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.ejb.Local;
 
-import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
 import fi.koku.services.entity.tiva.v1.Consent;
+import fi.koku.services.utility.authorizationinfo.v1.model.Registry;
 
 /**
  * Authorization services for KKS

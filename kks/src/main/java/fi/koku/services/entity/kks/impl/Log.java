@@ -1,12 +1,11 @@
 package fi.koku.services.entity.kks.impl;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 import fi.koku.services.utility.log.v1.LogEntryType;
@@ -130,9 +129,7 @@ public final class Log {
       l.setDataItemType(dataType);
       l.setMessage(message);
       l.setOperation(operation);
-      Calendar c = new GregorianCalendar();
-      c.setTime(new Date());
-      l.setTimestamp(c);
+      l.setTimestamp(CalendarUtil.getXmlDate(new Date()));
       l.setUserPic(userId);
 
       LogEntriesType entries = new LogEntriesType();
@@ -153,9 +150,7 @@ public final class Log {
     l.setDataItemType(dataType);
     l.setMessage(message);
     l.setOperation(operation);
-    Calendar c = new GregorianCalendar();
-    c.setTime(new Date());
-    l.setTimestamp(c);
+    l.setTimestamp(CalendarUtil.getXmlDate(new Date()));
     l.setUserPic(userId);
     entries.getLogEntry().add(l);
   }

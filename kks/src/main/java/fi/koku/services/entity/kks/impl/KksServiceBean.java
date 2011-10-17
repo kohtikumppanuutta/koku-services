@@ -1,9 +1,7 @@
 package fi.koku.services.entity.kks.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +11,7 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.tiva.v1.Consent;
 import fi.koku.services.entity.tiva.v1.ConsentStatus;
 import fi.koku.services.utility.log.v1.LogEntriesType;
@@ -162,9 +161,7 @@ public class KksServiceBean implements KksService {
     l.setDataItemType(type);
     l.setMessage(message);
     l.setOperation(Log.UPDATE);
-    Calendar c = new GregorianCalendar();
-    c.setTime(new Date());
-    l.setTimestamp(c);
+    l.setTimestamp(CalendarUtil.getXmlDate(new Date()));
     l.setUserPic(customer);
     return l;
   }

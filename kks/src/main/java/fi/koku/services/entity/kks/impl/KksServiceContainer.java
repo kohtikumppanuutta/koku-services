@@ -1,10 +1,10 @@
 package fi.koku.services.entity.kks.impl;
 
-import fi.koku.services.entity.authorizationinfo.v1.AuthorizationInfoService;
-import fi.koku.services.entity.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
 import fi.koku.services.entity.community.v1.CommunityServiceFactory;
 import fi.koku.services.entity.community.v1.CommunityServicePortType;
 import fi.koku.services.entity.tiva.v1.KokuTivaToKksService;
+import fi.koku.services.utility.authorizationinfo.v1.AuthorizationInfoService;
+import fi.koku.services.utility.authorizationinfo.v1.AuthorizationInfoServiceFactory;
 import fi.koku.services.utility.log.v1.LogServiceFactory;
 import fi.koku.services.utility.log.v1.LogServicePortType;
 import fi.koku.settings.KoKuPropertiesUtil;
@@ -23,6 +23,11 @@ public class KksServiceContainer {
   public static final String LOG_ENDPOINT = KoKuPropertiesUtil.get("lok.service.endpointaddress");
   public static final String LOG_SERVICE_USER_ID = KoKuPropertiesUtil.get("kks.lok.service.user.id");
   public static final String LOG_SERVICE_PASSWORD = KoKuPropertiesUtil.get("kks.lok.service.password");
+  public static final String AUTH_ENDPOINT = KoKuPropertiesUtil.get("authentication.service.endpointaddress");
+  public static final String AUTH_SERVICE_USER_ID = KoKuPropertiesUtil
+      .get("kks.authentication.community.service.user.id");
+  public static final String AUTH_SERVICE_PASSWORD = KoKuPropertiesUtil
+      .get("kks.authentication.community.service.password");
 
   private KokuTivaToKksService tivaService;
   private CommunityServicePortType communityService;
@@ -35,7 +40,7 @@ public class KksServiceContainer {
     tivaService = createTivaService();
     communityService = createCommunityService();
     logService = createLogService();
-    authorizationService = new AuthorizationInfoServiceDummyImpl();
+    authorizationService = getAuthorizationService();
   }
 
   public static synchronized KksServiceContainer getService() {
@@ -79,5 +84,12 @@ public class KksServiceContainer {
 
   public AuthorizationInfoService authorization() {
     return authorizationService;
+  }
+
+  private AuthorizationInfoService getAuthorizationService() {
+    AuthorizationInfoServiceFactory f = new AuthorizationInfoServiceFactory(AUTH_SERVICE_USER_ID,
+        AUTH_SERVICE_PASSWORD, AUTH_ENDPOINT);
+    AuthorizationInfoService s = f.getAuthorizationInfoService();
+    return s;
   }
 }

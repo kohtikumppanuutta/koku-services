@@ -18,12 +18,12 @@
 		<dependency>  
 		    <groupId>kohti-kumppanuutta</groupId>  
 		    <artifactId>authorizationinfoservice-api</artifactId>  
-		    <version>0.0.6</version>  
+		    <version>0.0.7</version>  
 		</dependency> 	
 	    <dependency>
 	      <groupId>kohti-kumppanuutta</groupId>
 	      <artifactId>lokservice-api</artifactId>
-	      <version>0.0.15</version>
+	      <version>0.0.16</version>
 	    </dependency>  
 	    <dependency>
 	      <groupId>kohti-kumppanuutta</groupId>

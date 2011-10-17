@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
+import fi.koku.services.utility.authorizationinfo.v1.model.Registry;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 
 /**

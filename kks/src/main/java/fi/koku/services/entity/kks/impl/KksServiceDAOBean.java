@@ -17,7 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import fi.koku.services.entity.authorizationinfo.v1.model.Registry;
+import fi.koku.services.utility.authorizationinfo.v1.model.Registry;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 
 @Stateless
