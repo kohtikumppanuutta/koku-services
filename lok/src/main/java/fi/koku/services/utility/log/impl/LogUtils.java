@@ -20,14 +20,13 @@ public class LogUtils {
    * @return
    */
   public Calendar parseToCal(Date date) {
-    logger.debug("parseToCal original date: "+date.toString());
     Calendar cal = null;
 
     if (date != null) { // if it's null, return a null value
       cal = Calendar.getInstance();
       cal.setTime(date);
     }
-    logger.debug("parseToCal new date: "+cal.getTime().toString());
+   
     return cal;
   }
   
@@ -43,11 +42,8 @@ public class LogUtils {
     
     if(date!=null){
       // set the end time 1 day later so that everything added on the last day will be found
-      Calendar endday = parseToCal(date);
-      logger.debug("alkuperäinen endday: "+endday.getTime().toString());
+      Calendar endday = parseToCal(date); 
       endday.set(Calendar.DATE, endday.get(Calendar.DATE) +1);
-      logger.debug("uusi endday: "+endday.getTime().toString());
-
       newday = endday.getTime();
     }
     

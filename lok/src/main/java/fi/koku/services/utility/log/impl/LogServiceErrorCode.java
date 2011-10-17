@@ -8,8 +8,7 @@ package fi.koku.services.utility.log.impl;
  */
 public enum LogServiceErrorCode {
 
-  LOG_ERROR_PARSING(2000, "Error in parsing."), // TODO: TÄTÄ EI VÄLTTÄMÄTTÄ TARVITA!
- // LOG_ERROR_QUERY(2010, ) tarvitaanko??
+  LOG_ERROR_PARSING(2000, "Error in parsing."), 
 //  LOG_NOTHING_TO_ARCHIVE(2020, "Nothing to archive"),
   LOG_ERROR_MISSING_TIMESTAMP(2100, "Timestamp missing when writing to log"),
   LOG_ERROR_MISSING_USERPIC(2110, "User pic missing when writing to log"),

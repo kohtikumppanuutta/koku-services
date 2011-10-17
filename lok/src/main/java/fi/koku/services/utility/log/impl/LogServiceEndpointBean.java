@@ -91,7 +91,6 @@ public class LogServiceEndpointBean implements LogServicePortType {
             logService.write(logConverter.fromWsType(logEntryType));
           }
         }
-       // logger.debug("got timestamp: " + logEntryType.getTimestamp().getTime().toString());
       }
     }
     return new VoidType();
@@ -131,7 +130,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
         //TODO: heitä KokuException, jos tämä error edes tulee ikinä!
      logger.debug("parseException: "+e.getMessage());
      
-      //  sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
+    
       
       }
       
@@ -140,7 +139,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
       adminLogEntry.setUserPic(auditInfoType.getUserId());
       adminLogEntry.setCustomerPic(criteriaType.getCustomerPic());
-      adminLogEntry.setOperation(LogConstants.OPERATION_VIEW); //TODO: static parameter?
+      adminLogEntry.setOperation(LogConstants.OPERATION_VIEW); 
      
       // set end date back to 1 day earlier so that the search criteria given by the user is written to admin log
       Calendar end = criteriaType.getEndTime();
@@ -174,19 +173,11 @@ public class LogServiceEndpointBean implements LogServicePortType {
           }
         }
       }catch (ParseException e) {
-        //TODO: heitä KokuException, jos tämä error edes tulee ikinä!
         logger.debug("parseException: "+e.getMessage());
-        
-         //  sfdt.setCode(LogConstants.LOG_ERROR_PARSING);
-    
+        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_PARSING;
+        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());   
       }
-      // TODO: poista tämä: (debug KOKU-583 varten)
     
-   if(!logEntriesType.getLogEntry().isEmpty()){
-     logger.debug("aentry: "+logEntriesType.getLogEntry().get(0).getTimestamp().getTime());
-   } 
-      // ---
-      
       // end of the actual query
       
       // log the query to normal log
@@ -236,15 +227,16 @@ public class LogServiceEndpointBean implements LogServicePortType {
           logger.info("Nothing to archive before date "+archivalParameters.getEndDate().getTime());
         } else{ // write to admin log about the archive only if there was something to archive
 
+          logger.info("Log was archived. Now try to write in admin log.");
+          
           // log this query to admin log 
           logger.debug("write to admin log");
           AdminLogEntry adminLogEntry = new AdminLogEntry();
           adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
           adminLogEntry.setUserPic(auditInfoType.getUserId());
-          adminLogEntry.setOperation("archive");
+          adminLogEntry.setOperation("archive");       
          
-         
-          //TODO: KOKU-579: Selvitä aikaisin log:n tieto ja kirjata tähän myös alkupäivä?
+          //TODO: KOKU-579: Selvitä aikaisin log:n tieto ja kirjaa tähän myös alkupäivä!
           // Use the hardcoded value now:
           String startdate = "2011-10-16";
             
@@ -257,36 +249,11 @@ public class LogServiceEndpointBean implements LogServicePortType {
         throw f;
       }catch(Exception e){
         logger.debug("Error in archiving: "+e.getMessage());
+     
         LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_ARCHIVE_LOG_NOT_AVAILABLE;
-        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
-        
+        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
       }
- /*     
-      try{
-          logger.debug("write to admin log about the error");
-  
-          /*   
-           * TODO: KOKU-575
-           * Tästä tulee virhe: "EntityManager must be access within a transaction"
-          // try to write to admin log about the error in archiving
-          AdminLogEntry adminLogEntry = new AdminLogEntry();
-          adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
-          adminLogEntry.setUserPic(auditInfoType.getUserId());
-          adminLogEntry.setOperation("archive");
-          adminLogEntry.setMessage("error in archive to"+df.format(archivalParameters.getEndDate().getTime()));
-
-          logService.writeAdmin(adminLogEntry);
-           
-
-         
-        }catch(Exception ee){
-          logger.error("Error in writing to Admin log: "+ee.getMessage());
-          LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_ADMIN_LOG;
-          throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
-        }*/
-
-      
-    
+ 
     }
     ArchivalResultsType count = new ArchivalResultsType();
     count.setLogEntryCount(entryCount);
@@ -294,6 +261,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
     return count;
   }
 
+ 
   /**
    * Convert from internal object representation (LogEntry) to webservice type
    * (LogEntryType).
@@ -324,8 +292,6 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
 
     public LogEntryType toWsFromAdminType(AdminLogEntry entry) throws ParseException {
- 
-      logger.debug("toWsFromAdminType timestamp: "+entry.getTimestamp().toString());
                       
       LogEntryType entryType = new LogEntryType();
       entryType.setCustomerPic(entry.getCustomerPic());
@@ -333,8 +299,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       entryType.setOperation(entry.getOperation());
       entryType.setMessage(entry.getMessage());
       entryType.setTimestamp(lu.parseToCal(entry.getTimestamp()));
-      logger.debug("entryType timestamp: "+entryType.getTimestamp().get(Calendar.HOUR_OF_DAY)+":"+entryType.getTimestamp().get(Calendar.MINUTE)+":"+entryType.getTimestamp().get(Calendar.SECOND));
-      logger.debug("entryType timestamp: "+entryType.getTimestamp().getTime());
+    
       return entryType;
     }
 

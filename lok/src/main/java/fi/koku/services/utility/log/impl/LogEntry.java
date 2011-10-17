@@ -37,7 +37,6 @@ public class LogEntry {
  
   @Column(name="timestamp")
   @Temporal(TemporalType.TIMESTAMP)
-  //yllä oli TemporalType.DATE
   private Date timestamp; // timestamp
   
   @Column(name="user_pic")
@@ -66,13 +65,11 @@ public class LogEntry {
   }
   
   public Date getTimestamp() {
-    logger.debug("service get timestamp: "+timestamp);
     return timestamp;
   }
 
   // format for timestamp: yyyy-mm-dd
   public void setTimestamp(Date timestamp) {
-    logger.debug("service set timestamp: "+timestamp);
     this.timestamp = timestamp;
   }
 

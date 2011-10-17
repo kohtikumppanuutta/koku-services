@@ -45,12 +45,10 @@ public class AdminLogEntry {
   private String message;
   
   public Date getTimestamp() {
-    logger.debug("service get timestamp: "+timestamp);
     return timestamp;
   }
   
   public void setTimestamp(Date timestamp) {
-    logger.debug("service set timestamp: "+timestamp);
     this.timestamp = timestamp;
   }
   

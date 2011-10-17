@@ -59,7 +59,7 @@ public class LogDAOBean implements LogDAO {
       // Set hard coded value for now here and in the LogServiceEndpointBean
       String startdate = "2011-10-16";
    
-      logger.info("insert log entries to archive log (date=" + date);
+      logger.info("insert log entries to archive log (date=" + date+")");
       Query archiveQuery = em
           .createNativeQuery("INSERT INTO "
               + "log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) "
@@ -102,17 +102,13 @@ public class LogDAOBean implements LogDAO {
 
   @Override
   public void writeAdminLog(AdminLogEntry entry) {
-    logger.debug("writeAdminLog: " + entry.getTimestamp().toString());
-    logger.debug("customerPic: " + entry.getCustomerPic());
+   logger.debug("write to Admin Log");
     em.persist(entry);
   }
 
   /**
    * Makes a query to the "normal" log and returns a list of LogEntries for
    * showing to the user in the portlet. (LOK-3)
-   * 
-   * 
-   * 
    */
   @Override
   public List<LogEntry> queryLog(LogQueryCriteria criteria) {
