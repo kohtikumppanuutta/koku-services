@@ -62,6 +62,7 @@ public class AppointmentServiceTest {
 	@Test
 	public void testMessageTemplate() {
 	    assertEquals("Sinulle on tietopyynto \"ABC\"", MessageFormat.format("Sinulle on tietopyynto \"{0}\"", "ABC"));
+        assertEquals("'app_inbox_citizen'", MessageFormat.format("''app_inbox_citizen''", new Object[] {}));
 	}
 	
 	@Test

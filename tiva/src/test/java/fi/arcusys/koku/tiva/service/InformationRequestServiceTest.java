@@ -67,7 +67,7 @@ public class InformationRequestServiceTest {
         final InformationRequestReplyTO reply = new InformationRequestReplyTO();
         reply.setAdditionalInfo("additional info");
         reply.setAttachmentURL("attachment URL");
-        reply.setCategoryIds(Arrays.asList(3L, 4L));
+        reply.setCategoryIds(Arrays.asList("3", "4"));
         reply.setDescription("description");
         reply.setInformationAccessType(InformationAccessType.Portal);
         reply.setInformationDetails("information details");
@@ -94,7 +94,7 @@ public class InformationRequestServiceTest {
         request.setSenderUid(senderUid);
         request.setTargetPersonUid(targetPersonUid);
         request.setValidTill(CalendarUtil.getXmlDate(new Date()));
-        request.setCategories(Arrays.asList(1L, 2L));
+        request.setCategories(Arrays.asList("1", "2"));
         final Long requestId = service.createInformationRequest(request);
         return requestId;
     }
