@@ -32,6 +32,7 @@ import fi.koku.services.utility.log.v1.LogQueryCriteriaType;
 import fi.koku.services.utility.log.v1.LogServicePortType;
 import fi.koku.services.utility.log.v1.VoidType;
 import fi.koku.settings.KoKuPropertiesUtil;
+import static fi.koku.services.utility.log.impl.LogServiceErrorCode.*;
 
 /**
  * KoKu log service implementation class.
@@ -64,10 +65,10 @@ public class LogServiceEndpointBean implements LogServicePortType {
   
   public LogServiceEndpointBean() {
     logConverter = new LogConverter();
-    AuthorizationInfoServiceFactory f = new AuthorizationInfoServiceFactory(
-        KoKuPropertiesUtil.get("lok.authorizationinfo.service.user.id"),
-        KoKuPropertiesUtil.get("lok.authorizationinfo.service.password"),
-        KoKuPropertiesUtil.get("authorizationinfo.service.endpointaddress"));
+    String uid = KoKuPropertiesUtil.get("lok.authorizationinfo.service.user.id");
+    String pwd = KoKuPropertiesUtil.get("lok.authorizationinfo.service.password");
+    String ep = KoKuPropertiesUtil.get("authorizationinfo.service.endpointaddress");
+    AuthorizationInfoServiceFactory f = new AuthorizationInfoServiceFactory(uid, pwd, ep);
     authInfoService = f.getAuthorizationInfoService();
   }
 
@@ -206,6 +207,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
       logEntry.setDataItemId("adminlogid");
       // call to lok service
       logService.write(logEntry);
+    } else {
+      throw new KoKuFaultException(LOG_ERROR_INVALID_QUERY_CRITERIA.getValue(), LOG_ERROR_INVALID_QUERY_CRITERIA.getDescription()); 
     }
     
     return logEntriesType;
