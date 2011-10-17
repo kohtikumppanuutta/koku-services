@@ -31,7 +31,7 @@ public class LogServiceDAOImpl implements LogServiceDAO {
     private LogServiceFactory logServiceFactory;
     
     @EJB
-    private UsersAndGroupsService usersDao;
+    private CustomerServiceDAO customerDao;
     
     @PostConstruct
     void init() {
@@ -70,6 +70,9 @@ public class LogServiceDAOImpl implements LogServiceDAO {
     }
 
     private String getHetuByUserUid(String userUid) {
-        return usersDao.getSsnByLdapName(userUid);
+        if (userUid == null || userUid.isEmpty()) {
+            return "";
+        } 
+        return customerDao.getSsnByUserUid(userUid);
     }
 }
