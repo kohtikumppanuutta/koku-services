@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.koku.KoKuFaultException;
+
+import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.utility.authorizationinfo.util.AuthUtils;
 import fi.koku.services.utility.authorizationinfo.v1.AuthorizationInfoService;
 import fi.koku.services.utility.authorizationinfo.v1.AuthorizationInfoServiceFactory;
@@ -149,11 +151,12 @@ public class LogServiceEndpointBean implements LogServicePortType {
       adminLogEntry.setOperation(LogConstants.OPERATION_VIEW); 
      
       // set end date back to 1 day earlier so that the search criteria given by the user is written to admin log
-      Calendar end = criteriaType.getEndTime();
+      Calendar end = criteriaType.getEndTime().toGregorianCalendar();
+
       end.set(Calendar.DATE, end.get(Calendar.DATE) -1);
-      criteriaType.setEndTime(end);
+      criteriaType.setEndTime(CalendarUtil.getXmlDateTime(end.getTime()));
       // LOK-3: "tapahtumatietona hakuehdot"
-      adminLogEntry.setMessage(criteriaType.getCustomerPic()+" "+criteriaType.getDataItemType()+" "+df.format(criteriaType.getStartTime().getTime())+" - "+df.format(criteriaType.getEndTime().getTime()));
+      adminLogEntry.setMessage(criteriaType.getCustomerPic()+" "+criteriaType.getDataItemType()+" "+df.format(CalendarUtil.getDate(criteriaType.getStartTime()))+" - "+df.format(CalendarUtil.getDate(criteriaType.getEndTime())));
 
       logService.writeAdmin(adminLogEntry); 
       
@@ -184,7 +187,6 @@ public class LogServiceEndpointBean implements LogServicePortType {
         LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_PARSING;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());   
       }
-    
       // end of the actual query
       
       // log the query to normal log
@@ -192,11 +194,11 @@ public class LogServiceEndpointBean implements LogServicePortType {
       logEntry.setUserPic(auditInfoType.getUserId());
      
       // set end date back to 1 day earlier so that the real query end date given by the user is written to log
-      Calendar end = criteriaType.getEndTime();
+      Calendar end = criteriaType.getEndTime().toGregorianCalendar();
       end.set(Calendar.DATE, end.get(Calendar.DATE) -1);
       
       // LOK-4: "Tapahtumatietona hakuehdot"
-      logEntry.setMessage("start: "+df.format(criteriaType.getStartTime().getTime())+", end: "+df.format(end.getTime()));
+      logEntry.setMessage("start: "+df.format(CalendarUtil.getDate(criteriaType.getStartTime()))+", end: "+df.format(end.getTime()));
       logEntry.setTimestamp(Calendar.getInstance().getTime());
       logEntry.setOperation("search");
       logEntry.setClientSystemId("adminlog");
@@ -221,17 +223,17 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
     int entryCount = 0;
     
-    if(archivalParameters.getEndDate() == null || archivalParameters.getEndDate().getTime() == null){
+    if(archivalParameters.getEndDate() == null){
       logger.error("archival end date not found!");
     }else{
 
       try{
         // call to the actual archiving
-        entryCount = logService.archive(archivalParameters.getEndDate().getTime());
+        entryCount = logService.archive(CalendarUtil.getDate(archivalParameters.getEndDate()));
 
         if(entryCount < 1) {
           // do not throw a KoKuFaultException
-          logger.info("Nothing to archive before date "+archivalParameters.getEndDate().getTime());
+          logger.info("Nothing to archive before date "+CalendarUtil.getDate(archivalParameters.getEndDate()));
         } else{ // write to admin log about the archive only if there was something to archive
 
           logger.info("Log was archived. Now try to write in admin log.");
@@ -247,7 +249,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
           // Use the hardcoded value now:
           String startdate = "2011-10-16";
             
-          adminLogEntry.setMessage("archive log from "+startdate+" to "+df.format(archivalParameters.getEndDate().getTime()));
+          adminLogEntry.setMessage("archive log from "+startdate+" to "+df.format(CalendarUtil.getDate(archivalParameters.getEndDate())));
 
           logService.writeAdmin(adminLogEntry);
         }
@@ -292,7 +294,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
     public LogQueryCriteria fromWsType(LogQueryCriteriaType type) {
       //criteria parameters have been null-checked on the portlet side
       LogQueryCriteria criteria = new LogQueryCriteria(type.getLogType(), type.getCustomerPic(),
-          type.getDataItemType(), type.getStartTime().getTime(), type.getEndTime().getTime());
+          type.getDataItemType(), CalendarUtil.getDate(type.getStartTime()), CalendarUtil.getDate(type.getEndTime()));
 
       return criteria;
     }
@@ -305,8 +307,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       entryType.setUserPic(entry.getUserPic());
       entryType.setOperation(entry.getOperation());
       entryType.setMessage(entry.getMessage());
-      entryType.setTimestamp(lu.parseToCal(entry.getTimestamp()));
-    
+      entryType.setTimestamp(CalendarUtil.getXmlDateTime(entry.getTimestamp()));
       return entryType;
     }
 
@@ -321,7 +322,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       et.setDataItemType(entry.getDataItemType());
       et.setMessage(entry.getMessage());
       et.setOperation(entry.getOperation());
-      et.setTimestamp(lu.parseToCal(entry.getTimestamp()));
+      et.setTimestamp(CalendarUtil.getXmlDateTime(entry.getTimestamp()));
       et.setUserPic(entry.getUserPic());
 
       return et;
@@ -345,7 +346,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       entry.setDataItemId(logt.getDataItemId());
       entry.setMessage(logt.getMessage());
       entry.setOperation(logt.getOperation());
-      entry.setTimestamp(logt.getTimestamp().getTime());
+      entry.setTimestamp(CalendarUtil.getDate(logt.getTimestamp()));
       entry.setUserPic(logt.getUserPic());
 
       return entry;
@@ -362,8 +363,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
       entry.setMessage(logt.getMessage());
       entry.setOperation(logt.getOperation());
-      logger.debug("timestamp: " + logt.getTimestamp().getTime().toString());
-      entry.setTimestamp(logt.getTimestamp().getTime());
+      entry.setTimestamp(CalendarUtil.getDate(logt.getTimestamp()));
       entry.setUserPic(logt.getUserPic());
       entry.setCustomerPic(logt.getCustomerPic());
 

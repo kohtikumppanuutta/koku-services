@@ -4,10 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.junit.Test;
 
 import fi.koku.KoKuFaultException;
+import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.utility.log.v1.LogEntryType;
 
 public class LogUtilsTest {
@@ -144,7 +146,7 @@ public class LogUtilsTest {
     entry.setDataItemType("kks.vasu");
     entry.setMessage("viesti");
     entry.setOperation("write");
-    entry.setTimestamp(Calendar.getInstance());
+    entry.setTimestamp(CalendarUtil.getXmlDateTime(new Date()));
     entry.setUserPic("222222-2222");
     
     return entry;

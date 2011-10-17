@@ -19,7 +19,7 @@ public class LogUtils {
    * @param date
    * @return
    */
-  public Calendar parseToCal(Date date) {
+  private Calendar parseToCal(Date date) {
     Calendar cal = null;
 
     if (date != null) { // if it's null, return a null value
