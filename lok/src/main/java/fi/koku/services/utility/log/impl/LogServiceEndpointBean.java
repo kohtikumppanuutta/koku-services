@@ -18,9 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.koku.KoKuFaultException;
-import fi.koku.services.entity.authorizationinfo.util.AuthUtils;
-import fi.koku.services.entity.authorizationinfo.v1.AuthorizationInfoService;
-import fi.koku.services.entity.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
+import fi.koku.services.utility.authorizationinfo.util.AuthUtils;
+import fi.koku.services.utility.authorizationinfo.v1.AuthorizationInfoService;
+import fi.koku.services.utility.authorizationinfo.v1.impl.AuthorizationInfoServiceDummyImpl;
 import fi.koku.services.utility.log.v1.ArchivalResultsType;
 import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogArchivalParametersType;

@@ -60,7 +60,7 @@
     <dependency>
       <groupId>kohti-kumppanuutta</groupId>
       <artifactId>authorizationinfoservice-api</artifactId>
-      <version>0.0.6</version>
+      <version>0.0.7</version>
     </dependency>    
   </dependencies>
   <version>0.0.1-SNAPSHOT</version>
