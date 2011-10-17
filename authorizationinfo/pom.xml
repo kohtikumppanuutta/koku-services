@@ -10,7 +10,7 @@
   <name>authorizationinfo-service</name>
 
   <properties>
-    <authorizationinfoservice-api.version>0.0.1</authorizationinfoservice-api.version>
+    <authorizationinfoservice-api.version>0.0.7</authorizationinfoservice-api.version>
   </properties>
 
   <build>
