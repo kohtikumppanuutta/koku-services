@@ -18,6 +18,7 @@ import javax.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.customer.v1.AddressType;
 import fi.koku.services.entity.customer.v1.AddressesType;
 import fi.koku.services.entity.customer.v1.ElectronicContactInfoType;
@@ -143,9 +144,9 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
       CustomerType ct = new CustomerType();
       ct.setId(c.getId().toString());
       ct.setStatus(c.getStatus());
-      ct.setStatusDate(dateToCalendar(c.getStatusDate()));
+      ct.setStatusDate(CalendarUtil.getXmlDate(c.getStatusDate()));
       ct.setHenkiloTunnus(c.getPic());
-      ct.setSyntymaPvm(dateToCalendar(c.getBirthDate()));
+      ct.setSyntymaPvm(CalendarUtil.getXmlDate(c.getBirthDate()));
       ct.setSukuNimi(c.getLastName());
       ct.setEtuNimi(c.getFirstName());
 	    ct.setEtunimetNimi(c.getFirstNames());
@@ -166,9 +167,9 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	        at.setPostilokeroTeksti(a.getPoBox());
 	        at.setMaatunnusKoodi(a.getCountryCode());
 	        if(a.getValidFrom() != null)
-	          at.setAlkuPvm(dateToCalendar(a.getValidFrom()));
+	          at.setAlkuPvm(CalendarUtil.getXmlDate(a.getValidFrom()));
 	        if(a.getValidTo() != null)
-	          at.setLoppuPvm(dateToCalendar(a.getValidTo()));
+	          at.setLoppuPvm(CalendarUtil.getXmlDate(a.getValidTo()));
 	        ct.getAddresses().getAddress().add(at);
 	      }
 
@@ -204,9 +205,9 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	  public Customer fromWsType(CustomerType ct) {
 	    Customer c = new Customer();
       c.setStatus(ct.getStatus());
-      c.setStatusDate(ct.getStatusDate().getTime());
+      c.setStatusDate(CalendarUtil.getDate(ct.getStatusDate()));
       c.setPic(ct.getHenkiloTunnus());
-	    c.setBirthDate(ct.getSyntymaPvm().getTime());
+	    c.setBirthDate(CalendarUtil.getDate(ct.getSyntymaPvm()));
       c.setLastName(ct.getSukuNimi());
 	    c.setFirstName(ct.getEtuNimi());
 	    c.setFirstNames(ct.getEtunimetNimi());
@@ -225,9 +226,9 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
           a.setPoBox(at.getPostilokeroTeksti());
           a.setCountryCode(at.getMaatunnusKoodi());
           if(at.getAlkuPvm() != null)
-            a.setValidFrom(at.getAlkuPvm().getTime());
+            a.setValidFrom(CalendarUtil.getDate(at.getAlkuPvm()));
           if(at.getLoppuPvm() != null)
-            a.setValidTo(at.getLoppuPvm().getTime());
+            a.setValidTo(CalendarUtil.getDate(at.getLoppuPvm()));
           c.getAddresses().add(a);
           a.setCustomer(c);
         }
