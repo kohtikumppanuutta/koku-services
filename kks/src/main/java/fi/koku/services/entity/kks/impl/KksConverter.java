@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.kks.v1.EntryValuesType;
 import fi.koku.services.entity.kks.v1.KksCollectionClassType;
 import fi.koku.services.entity.kks.v1.KksCollectionType;
@@ -144,11 +145,8 @@ public final class KksConverter {
 
     KksCollectionType kksCollectionType = new KksCollectionType();
     kksCollectionType.setCollectionClassId("" + collection.getCollectionClass());
-    Date created = collection.getCreated();
-    Calendar c = new GregorianCalendar();
-    c.setTime(created);
 
-    kksCollectionType.setCreated(c);
+    kksCollectionType.setCreated(CalendarUtil.getXmlDateTime(collection.getCreated()));
     kksCollectionType.setCreator(collection.getCreator());
     kksCollectionType.setCustomerId(collection.getCustomer());
     kksCollectionType.setDescription(collection.getDescription());
@@ -162,10 +160,7 @@ public final class KksConverter {
     kksCollectionType.setVersioned(collection.getNextVersion() != null);
 
     if (collection.getModified() != null) {
-      Calendar cal = new GregorianCalendar();
-      cal.setTime(collection.getModified());
-
-      kksCollectionType.setModified(cal);
+      kksCollectionType.setModified(CalendarUtil.getXmlDateTime(collection.getModified()));
     }
     kksCollectionType.setModifier(collection.getModifier());
     kksCollectionType.setConsentRequested(collection.isConsentRequested());
@@ -189,9 +184,7 @@ public final class KksConverter {
     kksEntryType.setCreator(entry.getCreator());
     kksEntryType.setId("" + entry.getId());
 
-    Calendar c = new GregorianCalendar();
-    c.setTime(entry.getModified());
-    kksEntryType.setModified(c);
+    kksEntryType.setModified(CalendarUtil.getXmlDateTime(entry.getModified()));
     kksEntryType.setVersion(new BigInteger("" + entry.getVersion()));
 
     KksTagIdsType kksTagIdsType = new KksTagIdsType();
@@ -210,9 +203,7 @@ public final class KksConverter {
       kksEv.setValue(v.getValue());
 
       if (v.getModified() != null) {
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(v.getModified());
-        kksEv.setModified(cal);
+        kksEv.setModified(CalendarUtil.getXmlDateTime(v.getModified()));
       }
       kksEv.setModifier(v.getModifier());
       entryValuesType.getEntryValue().add(kksEv);
@@ -227,7 +218,7 @@ public final class KksConverter {
     KksCollection kksCollection = new KksCollection();
 
     kksCollection.setCustomer(collection.getCustomerId());
-    kksCollection.setCreated(collection.getCreated().getTime());
+    kksCollection.setCreated(CalendarUtil.getDate(collection.getCreated()));
     kksCollection.setCreator(collection.getCreator());
     kksCollection.setDescription(collection.getDescription());
     kksCollection.setId(Long.parseLong(collection.getId()));
@@ -237,7 +228,7 @@ public final class KksConverter {
     kksCollection.setStatus(collection.getStatus());
     kksCollection.setCollectionClass(Integer.parseInt(collection.getCollectionClassId()));
     kksCollection.setVersion(collection.getVersion().intValue());
-    kksCollection.setModified(collection.getModified().getTime());
+    kksCollection.setModified(CalendarUtil.getDate(collection.getModified()));
     kksCollection.setModifier(collection.getModifier());
 
     List<KksEntry> tmp = new ArrayList<KksEntry>();
@@ -261,7 +252,7 @@ public final class KksConverter {
 
     entry.setEntryClassId(Integer.parseInt(entryType.getEntryClassId()));
     entry.setId(parseNullableLong(entryType.getId()));
-    entry.setModified(entryType.getModified().getTime());
+    entry.setModified(CalendarUtil.getDate(entryType.getModified()));
     entry.setVersion(entryType.getVersion().intValue());
 
     List<KksValue> tmp = new ArrayList<KksValue>();
@@ -270,7 +261,7 @@ public final class KksConverter {
       KksValue v = new KksValue();
       v.setId(parseNullableLong(value.getId()));
       v.setValue(value.getValue());
-      v.setModified(value.getModified() == null ? new Date() : value.getModified().getTime());
+      v.setModified(value.getModified() == null ? new Date() : CalendarUtil.getDate(value.getModified()));
       v.setModifier(value.getModifier());
       v.setEntry(entry);
       tmp.add(v);

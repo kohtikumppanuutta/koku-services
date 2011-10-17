@@ -11,6 +11,7 @@ import javax.jws.WebService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.kks.v1.AuditInfoType;
 import fi.koku.services.entity.kks.v1.IdType;
 import fi.koku.services.entity.kks.v1.KksCollectionClassesType;
@@ -151,7 +152,7 @@ public class KksServiceEndpointBean implements KksServicePortType {
         : Long.parseLong(kksEntryAddType.getValue().getId()));
     value.setValue(kksEntryAddType.getValue().getValue());
     KksEntryCreation c = new KksEntryCreation(kksEntryAddType.getEntryId(), kksEntryAddType.getPic(),
-        kksEntryAddType.getCreator(), kksEntryAddType.getModified().getTime(), kksEntryAddType.getCollectionId(),
+        kksEntryAddType.getCreator(), CalendarUtil.getDate(kksEntryAddType.getModified()), kksEntryAddType.getCollectionId(),
         kksEntryAddType.getEntryClassId(), value);
 
     IdType id = new IdType();
