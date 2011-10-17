@@ -52,7 +52,7 @@ public class AuthorizationBean implements Authorization {
         }
       }
     } catch (Exception e) {
-      // ignore
+      LOG.error("Cannot get consents", e);
     }
     return tmp;
   }
@@ -106,7 +106,7 @@ public class AuthorizationBean implements Authorization {
         }
       }
     } catch (Exception e) {
-      // Ignore
+      LOG.error("Failed to check consents", e);
     }
 
     return null;
@@ -123,7 +123,7 @@ public class AuthorizationBean implements Authorization {
    * @return valid consent or NULL if no valid consent found
    */
   private List<Consent> getConsents(String customer, String user, String consentType) {
-
+    LOG.debug("Getting consents for consent type " + consentType);
     ConsentSearchCriteria csc = new ConsentSearchCriteria();
     csc.setTargetPerson(customer);
     csc.setTemplateNamePrefix(consentType);

@@ -65,10 +65,10 @@ public class KksServiceBean implements KksService {
 
     List<KksCollectionClass> classes = serviceDAO.getCollectionClassesWithOutContent();
     Map<Integer, KksCollectionClass> collectionClasses = getCollectionClassMap(classes);
-
     Map<String, List<Consent>> consentMap = authorization.getConsentMap(customer, audit.getUserId(), classes);
 
     Set<String> consents = getConsentSet(consentMap);
+
     List<String> registrys = authorization.getAuthorizedRegistryNames(audit.getUserId());
     List<KksCollection> tmp = serviceDAO.getAuthorizedCollections(customer, audit.getUserId(), registrys, consents);
 
@@ -122,9 +122,9 @@ public class KksServiceBean implements KksService {
 
   private void setConsentStatus(Map<Integer, KksCollectionClass> collectionClasses,
       Map<String, List<Consent>> consents, KksCollection c) {
-    List<Consent> consentList = consents.get(collectionClasses.get(c.getCollectionClass()));
+    List<Consent> consentList = consents.get(collectionClasses.get(c.getCollectionClass()).getConsentType());
 
-    if (consentList != null) {
+    if (consentList != null && consentList.size() > 0) {
       for (Consent con : consentList) {
 
         if (ConsentStatus.VALID.equals(con.getStatus())) {
@@ -133,6 +133,8 @@ public class KksServiceBean implements KksService {
         } else if (ConsentStatus.PARTIALLY_GIVEN.equals(con.getStatus())) {
           c.setConsentRequested(true);
           c.setUserConsentStatus(con.getStatus().toString());
+        } else if (ConsentStatus.OPEN.equals(con.getStatus())) {
+          c.setConsentRequested(false);
         } else {
           c.setConsentRequested(false);
           c.setUserConsentStatus(ConsentStatus.DECLINED.toString());
