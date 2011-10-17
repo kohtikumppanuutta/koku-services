@@ -1,5 +1,6 @@
 package fi.koku.services.utility.authorization.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,7 @@ public class AuthorizationInfoServiceMockImpl {
 
   public GroupsType getGroups(GroupQueryCriteriaType gqc) {
     GroupsType res = new GroupsType();
-    List<GroupType> groupsList = null;
+    List<GroupType> groupsList = new ArrayList<GroupType>();
     
     String grpClass = gqc.getGroupClass();
     String uid = gqc.getMemberPics().getMemberPic().get(0);
@@ -50,7 +51,9 @@ public class AuthorizationInfoServiceMockImpl {
       throw new KoKuFaultException(3001, "unsupported group type");
     }
     
-    res.getGroup().addAll(groupsList);
+    if(groupsList != null) {
+      res.getGroup().addAll(groupsList);
+    }
     return res;
   }
 
