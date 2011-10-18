@@ -31,10 +31,10 @@ public class GroupServiceLDAPImplTest {
       c.getMemberPics().getMemberPic().add("292929-2929");
       c.getMemberPics().getMemberPic().add("202020-2001");
       c.getMemberPics().getMemberPic().add("202020-2002");
-      GroupsType groups = cut.getGroups(c);
-      for(GroupType g : groups.getGroup()) {
-        System.out.println("g: "+g.getId()+": "+g.getMemberPics().getMemberPic().size());
-      }
+//      GroupsType groups = cut.getGroups(c);
+//      for(GroupType g : groups.getGroup()) {
+//        System.out.println("g: "+g.getId()+": "+g.getMemberPics().getMemberPic().size());
+//      }
   }
   
   @Test
