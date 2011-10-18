@@ -1,6 +1,7 @@
 package fi.arcusys.koku.common.external;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -9,6 +10,7 @@ import javax.ejb.Stateless;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
@@ -49,7 +51,7 @@ public class LogServiceDAOImpl implements LogServiceDAO {
         logEntry.setDataItemType(message.getDataItemType());
         logEntry.setMessage(message.getMessage());
         logEntry.setOperation(message.getOperation().name());
-        logEntry.setTimestamp(Calendar.getInstance());
+        logEntry.setTimestamp(CalendarUtil.getXmlGregorianCalendar(new Date()));
         logEntry.setCustomerPic(getHetuByUserUid(message.getCustomerPic()));
         logEntry.setUserPic(getHetuByUserUid(message.getUserPic()));
         

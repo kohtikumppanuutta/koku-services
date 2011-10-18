@@ -27,6 +27,7 @@ import fi.arcusys.koku.common.service.datamodel.Authorization;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationReplyStatus;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationType;
+import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.AuthorizationDTOCriteria;
 import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 import fi.arcusys.koku.tiva.soa.AuthorizationCreateType;
@@ -95,6 +96,17 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
     
     private String getValueFromBundle(final String key) {
         return messageTemplates.getProperty(key);
+    }
+
+    private String getDisplayName(final User user) {
+        if (user == null) {
+            return "";
+        }
+        if (user.getCitizenPortalName() != null && !user.getCitizenPortalName().isEmpty()) {
+            return user.getCitizenPortalName();
+        } else {
+            return user.getEmployeePortalName();
+        }
     }
 
     /**
@@ -170,9 +182,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         final AuthorizationDetailTO authorizationTO = new AuthorizationDetailTO();
         authorizationTO.setAuthorizationId(authorization.getId());
         authorizationTO.setCreateDate(CalendarUtil.getXmlDate(authorization.getCreatedDate()));
-        authorizationTO.setReceiverUid(authorization.getToUser().getUid());
-        authorizationTO.setSenderUid(authorization.getFromUser().getUid());
-        authorizationTO.setTargetPersonUid(authorization.getTargetPerson().getUid());
+        authorizationTO.setReceiverUid(getDisplayName(authorization.getToUser()));
+        authorizationTO.setSenderUid(getDisplayName(authorization.getFromUser()));
+        authorizationTO.setTargetPersonUid(getDisplayName(authorization.getTargetPerson()));
         authorizationTO.setTemplate(getTemplateTObyDM(authorization.getTemplate()));
         authorizationTO.setValidTill(CalendarUtil.getXmlDate(authorization.getValidTill()));
         return authorizationTO;

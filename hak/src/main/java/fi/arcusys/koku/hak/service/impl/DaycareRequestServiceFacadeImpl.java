@@ -3,7 +3,9 @@ package fi.arcusys.koku.hak.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -93,7 +95,7 @@ public class DaycareRequestServiceFacadeImpl implements DaycareRequestServiceFac
         
         final DaycareRequest entity = daycareRequestDao.create(newRequest);
         
-        notificationService.sendNotification(getValueFromBundle(NEW_DAYCARE_REQUEST_SUBJECT), Collections.singletonList(usersService.getUserUidByLooraName(defaultDaycareEmployeeName)), 
+        notificationService.sendNotification(getValueFromBundle(NEW_DAYCARE_REQUEST_SUBJECT), getEmployeeUidsForDaycareMessages(), 
                 MessageFormat.format(getValueFromBundle(NEW_DAYCARE_REQUEST_BODY), new Object[] {entity.getId()}));
         
         return entity.getId();
@@ -146,8 +148,19 @@ public class DaycareRequestServiceFacadeImpl implements DaycareRequestServiceFac
     public void rejectDaycarePlace(long requestId, String userUid, String comment) {
         final DaycareRequest request = loadRequest(requestId);
 
-        notificationService.sendNotification(getValueFromBundle(DAYCARE_DECLINED_SUBJECT), Collections.singletonList(usersService.getUserUidByLooraName(defaultDaycareEmployeeName)), 
+        notificationService.sendNotification(getValueFromBundle(DAYCARE_DECLINED_SUBJECT), getEmployeeUidsForDaycareMessages(), 
                 MessageFormat.format(getValueFromBundle(DAYCARE_DECLINED_BODY), new Object[] {comment}));
+    }
+
+    private List<String> getEmployeeUidsForDaycareMessages() {
+        final String[] names = defaultDaycareEmployeeName.split(",");
+        final List<String> uids = new ArrayList<String>();
+        for (final String name : names) {
+            if (name != null && !name.trim().isEmpty()) {
+                uids.add(usersService.getUserUidByLooraName(name.trim()));
+            }
+        }
+        return uids;
     }
 
     /**
@@ -162,7 +175,7 @@ public class DaycareRequestServiceFacadeImpl implements DaycareRequestServiceFac
             String location, boolean highestPrice, String comment) {
         final DaycareRequest request = loadRequest(requestId);
 
-        notificationService.sendNotification(getValueFromBundle(DAYCARE_ACCEPTED_SUBJECT), Collections.singletonList(usersService.getUserUidByLooraName(defaultDaycareEmployeeName)), 
+        notificationService.sendNotification(getValueFromBundle(DAYCARE_ACCEPTED_SUBJECT), getEmployeeUidsForDaycareMessages(), 
                 MessageFormat.format(getValueFromBundle(DAYCARE_ACCEPTED_BODY), new Object[] {comment}));
     }
 

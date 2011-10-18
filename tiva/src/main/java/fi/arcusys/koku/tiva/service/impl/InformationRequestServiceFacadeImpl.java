@@ -26,6 +26,7 @@ import fi.arcusys.koku.common.service.datamodel.InformationReplyStatus;
 import fi.arcusys.koku.common.service.datamodel.InformationRequest;
 import fi.arcusys.koku.common.service.datamodel.InformationRequestCategory;
 import fi.arcusys.koku.common.service.datamodel.InformationRequestReply;
+import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.InformationRequestDTOCriteria;
 import fi.arcusys.koku.tiva.service.InformationRequestServiceFacade;
 import fi.arcusys.koku.tiva.service.KksCollectionsDAO;
@@ -99,11 +100,14 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         final InformationRequest request = new InformationRequest();
         request.setAdditionalInfo(requestTO.getAdditionalInfo());
         final Set<InformationRequestCategory> categories = new HashSet<InformationRequestCategory>();
-        for (final String categoryUid : requestTO.getCategories()) {
-            final InformationRequestCategory category = new InformationRequestCategory();
-            category.setCategoryUid(categoryUid);
-            category.setRequest(request);
-            categories.add(category);
+        final List<String> categoryUids = requestTO.getCategories();
+        if (categoryUids != null) {
+            for (final String categoryUid : categoryUids) {
+                final InformationRequestCategory category = new InformationRequestCategory();
+                category.setCategoryUid(categoryUid);
+                category.setRequest(request);
+                categories.add(category);
+            }
         }
         request.setCategories(categories);
         request.setDescription(requestTO.getDescription());
@@ -149,11 +153,14 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         reply.setReplyCreatedDate(new Date());
         request.setValidTill(getSafeDate(replyTO.getValidTill()));
         final Set<InformationRequestCategory> categories = new HashSet<InformationRequestCategory>();
-        for (final String categoryUid : replyTO.getCategoryIds()) {
-            final InformationRequestCategory category = new InformationRequestCategory();
-            category.setCategoryUid(categoryUid);
-            category.setRequest(request);
-            categories.add(category);
+        final List<String> categoryIds = replyTO.getCategoryIds();
+        if (categoryIds != null) {
+            for (final String categoryUid : categoryIds) {
+                final InformationRequestCategory category = new InformationRequestCategory();
+                category.setCategoryUid(categoryUid);
+                category.setRequest(request);
+                categories.add(category);
+            }
         }
         request.setCategories(categories);
         request.setReply(reply);
@@ -272,6 +279,17 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
             }
         } 
         return requestTO;
+    }
+
+    private String getDisplayName(final User user) {
+        if (user == null) {
+            return "";
+        }
+        if (user.getCitizenPortalName() != null && !user.getCitizenPortalName().isEmpty()) {
+            return user.getCitizenPortalName();
+        } else {
+            return user.getEmployeePortalName();
+        }
     }
 
     /**

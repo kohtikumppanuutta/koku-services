@@ -78,7 +78,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
 
     @Override
     public String getSsnByUserUid(final String userUid) {
-        final fi.arcusys.koku.common.service.datamodel.User userByUid = userDao.getUserByUid(userUid);
+        final fi.arcusys.koku.common.service.datamodel.User userByUid = userDao.getOrCreateUser(userUid);
         final String ssn;
         if (userByUid.getCitizenPortalName() != null && !userByUid.getCitizenPortalName().trim().isEmpty()) {
             ssn = getSsnByKunpoName(userByUid.getCitizenPortalName());
@@ -126,7 +126,14 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      */
     @Override
     public User getKunpoUserInfoBySsn(String ssn) {
-        return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(getLdapNameBySsn(ssn)).getUid(), ssn);
+        if (ssn == null || ssn.isEmpty()) {
+            return null;
+        }
+        final String ldapNameBySsn = getLdapNameBySsn(ssn);
+        if (ldapNameBySsn == null || ldapNameBySsn.isEmpty()) {
+            return null;
+        }
+        return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(ldapNameBySsn).getUid(), ssn);
     }
 
     /**
@@ -135,8 +142,14 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      */
     @Override
     public User getEmployeeUserInfoBySsn(String ssn) {
-        final fi.arcusys.koku.common.service.datamodel.User employee = userDao.getOrCreateUserByEmployeePortalName(getLdapNameBySsn(ssn));
-        return getEmployeeUserInfo(employee);
+        if (ssn == null || ssn.isEmpty()) {
+            return null;
+        }
+        final String ldapNameBySsn = getLdapNameBySsn(ssn);
+        if (ldapNameBySsn == null || ldapNameBySsn.isEmpty()) {
+            return null;
+        }
+        return getEmployeeUserInfo(userDao.getOrCreateUserByEmployeePortalName(ldapNameBySsn));
     }
 
     private User getEmployeeUserInfo(
@@ -187,6 +200,6 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
             logger.error(null, e);
             throw new RuntimeException(e);
         }
-        return "unknown";
+        return null;
     }
 }

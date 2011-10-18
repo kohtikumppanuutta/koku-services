@@ -202,13 +202,14 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		
 		appointmentTO.setStatus(AppointmentSummaryStatus.valueOf(getSummaryAppointmentStatus(appointment)));
 
-        appointmentTO.setRecipients(getReceipientsDTOByAppointment(appointment));
+        appointmentTO.setRecipients(getReceipientsDTOByAppointment(appointment, true));
 
 		final HashMap<Integer, String> acceptedSlots = new HashMap<Integer, String>();
         final List<String> usersRejected = new ArrayList<String>();
 		
 		for (final AppointmentResponse response : appointment.getResponses()) {
-		    final String targetPersonUid = response.getTarget().getTargetUser().getUid();
+		    final User targetUser = response.getTarget().getTargetUser();
+            final String targetPersonUid = getDisplayName(targetUser);
             if (response.getStatus() == AppointmentResponseStatus.Accepted) {
 	            acceptedSlots.put(response.getSlotNumber(), targetPersonUid);
 		    } else {
@@ -223,15 +224,34 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		return appointmentTO;
 	}
 
+    private String getDisplayName(final User user) {
+        if (user == null) {
+            return "";
+        }
+        if (user.getCitizenPortalName() != null && !user.getCitizenPortalName().isEmpty()) {
+            return user.getCitizenPortalName();
+        } else {
+            return user.getEmployeePortalName();
+        }
+    }
+
     private List<AppointmentReceipientTO> getReceipientsDTOByAppointment(
-            final Appointment appointment) {
+            final Appointment appointment, final boolean displayName) {
         final List<AppointmentReceipientTO> recipients = new ArrayList<AppointmentReceipientTO>();
         for (final TargetPerson receipient : appointment.getRecipients()) {
             final AppointmentReceipientTO receipientTO = new AppointmentReceipientTO();
-            receipientTO.setTargetPerson(receipient.getTargetUser().getUid());
+            if (displayName) {
+                receipientTO.setTargetPerson(getDisplayName(receipient.getTargetUser()));
+            } else {
+                receipientTO.setTargetPerson(receipient.getTargetUser().getUid());
+            }
             final List<String> guardians = new ArrayList<String>();
             for (final User guardian : receipient.getGuardians()) {
-                guardians.add(guardian.getUid());
+                if (displayName) {
+                    guardians.add(getDisplayName(guardian));
+                } else {
+                    guardians.add(guardian.getUid());
+                }
             }
             receipientTO.setReceipients(guardians);
             recipients.add(receipientTO);
@@ -319,7 +339,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		appointmentSummary.setAppointmentId(appointment.getId());
 		appointmentSummary.setDescription(appointment.getDescription());
 		appointmentSummary.setSubject(appointment.getSubject());
-		appointmentSummary.setSender(appointment.getSender().getUid());
+		appointmentSummary.setSender(getDisplayName(appointment.getSender()));
 		appointmentSummary.setStatus(AppointmentSummaryStatus.valueOf(appointment.getStatus()));
 		
 		return appointmentSummary;
@@ -458,7 +478,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         final AppointmentForEditTO appointmentTO = new AppointmentForEditTO();
         final Appointment appointment = fillAppointmentTOForReply(appointmentId, appointmentTO);
         
-        appointmentTO.setReceipients(getReceipientsDTOByAppointment(appointment));
+        appointmentTO.setReceipients(getReceipientsDTOByAppointment(appointment, false));
 
         return appointmentTO;
     }
@@ -468,6 +488,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         
         convertAppointmentToDTO(appointment, appointmentTO);
         appointmentTO.setSlots(getSlotTOsByAppointment(appointment));
+        //userUid fix
+//        appointmentTO.setSender(appointment.getSender().getUid());
+        
         return appointment;
     }
 
@@ -595,9 +618,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         
         final AppointmentRespondedTO appointmentTO = new AppointmentRespondedTO();
         convertAppointmentToDTO(appointment, appointmentTO);
-        appointmentTO.setTargetPerson(targetPerson);
+        appointmentTO.setTargetPerson(getDisplayName(response.getTarget().getTargetUser()));
         appointmentTO.setStatus(getAppointmentStatusByResponse(response));
-        appointmentTO.setReplier(response.getReplier().getUid());
+        appointmentTO.setReplier(getDisplayName(response.getReplier()));
         appointmentTO.setReplierComment(response.getComment());
         if (appointmentTO.getStatus() == AppointmentSummaryStatus.Approved) {
             appointmentTO.setApprovedSlot(getSlotTOBySlot(appointment.getSlotByNumber(response.getSlotNumber())));

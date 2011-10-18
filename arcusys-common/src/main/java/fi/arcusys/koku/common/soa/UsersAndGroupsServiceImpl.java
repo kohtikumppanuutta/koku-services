@@ -91,7 +91,13 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public List<User> searchEmployees(String searchString, int limit) {
-        return getListBySingleValue(customerDao.getEmployeeUserInfoBySsn(searchString));
+        // searchString is username in portal
+        final String ssnByLooraName = customerDao.getSsnByLooraName(searchString);
+        if (ssnByLooraName != null && !ssnByLooraName.isEmpty()) {
+            return getListBySingleValue(customerDao.getEmployeeUserInfoBySsn(ssnByLooraName));
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private <E> List<E> getListBySingleValue(final E singleValue) {
@@ -176,7 +182,12 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByKunpoSsn(String ssn) {
-        return customerDao.getKunpoUserInfoBySsn(ssn).getUid();
+        final User user = customerDao.getKunpoUserInfoBySsn(ssn);
+        if (user != null) {
+            return user.getUid();
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -185,7 +196,12 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByEmployeeSsn(String ssn) {
-        return customerDao.getEmployeeUserInfoBySsn(ssn).getUid();
+        final User user = customerDao.getEmployeeUserInfoBySsn(ssn);
+        if (user != null) {
+            return user.getUid();
+        } else {
+            return "";
+        }
     }
 
     /**

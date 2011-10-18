@@ -155,7 +155,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         }        
         final ConsentTemplateTO templateTO = new ConsentTemplateTO();
         templateTO.setConsentTemplateId(template.getId());
-        templateTO.setCreatorUid(getSafeUserUid(template.getCreator()));
+        templateTO.setCreatorUid(template.getCreator().getUid());
         templateTO.setDescription(template.getDescription() == null ? "" : template.getDescription());
         templateTO.setTitle(template.getTitle());
         final List<ActionRequestTO> actionTOs = new ArrayList<ActionRequestTO>();
@@ -169,6 +169,17 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         
         templateTO.setActions(actionTOs);
         return templateTO;
+    }
+
+    private String getDisplayName(final User user) {
+        if (user == null) {
+            return "";
+        }
+        if (user.getCitizenPortalName() != null && !user.getCitizenPortalName().isEmpty()) {
+            return user.getCitizenPortalName();
+        } else {
+            return user.getEmployeePortalName();
+        }
     }
 
     private String getSafeUserUid(final User user) {
@@ -389,12 +400,12 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     private void fillShortSummaryByConsent(final String userUid,
             final Consent consent, final ConsentShortSummary consentTO) {
         consentTO.setConsentId(consent.getId());
-        consentTO.setRequestor(getSafeUserUid(consent.getCreator()));
-        consentTO.setTargetPersonUid(getSafeUserUid(consent.getTargetPerson()));
+        consentTO.setRequestor(getDisplayName(consent.getCreator()));
+        consentTO.setTargetPersonUid(getDisplayName(consent.getTargetPerson()));
         consentTO.setTemplateId(consent.getTemplate().getId());
         consentTO.setTemplateName(consent.getTemplate().getTitle());
         consentTO.setTemplateDescription(consent.getTemplate().getDescription());
-        consentTO.setAnotherPermitterUid(getAnotherUser(userUid, consent.getReceipients()));
+        consentTO.setAnotherPermitterUid(getAnotherUserName(userUid, consent.getReceipients()));
         consentTO.setCreateType(ConsentCreateType.valueOf(consent.getCreationType()));
         consentTO.setReplyTill(CalendarUtil.getXmlDate(consent.getReplyTill()));
         
@@ -403,10 +414,10 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         consentTO.setGivenToParties(getGivenToParties(consent));
     }
 
-    private String getAnotherUser(final String userUid, final Set<User> users) {
+    private String getAnotherUserName(final String userUid, final Set<User> users) {
         for (final User user : users) {
             if (!getSafeUserUid(user).equals(userUid)) {
-                return getSafeUserUid(user);
+                return getDisplayName(user);
             }
         }
         return "";
@@ -535,7 +546,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             final ConsentReply reply, final ConsentSummary consentSummary) {
         final Consent consent = reply.getConsent();
         fillShortSummaryByConsent(userUid, consent, consentSummary);
-        consentSummary.setReceipients(convertUsersToUids(consent.getReceipients()));
+        consentSummary.setReceipients(convertUsersToNames(consent.getReceipients()));
         consentSummary.setApprovalStatus(ConsentApprovalStatus.valueOf(reply.getStatus()));
         consentSummary.setGivenAt(CalendarUtil.getXmlDate(reply.getCreatedDate()));
         consentSummary.setValidTill(CalendarUtil.getXmlDate(reply.getValidTill()));
@@ -545,10 +556,10 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         }
     }
 
-    private List<String> convertUsersToUids(final Set<User> users) {
+    private List<String> convertUsersToNames(final Set<User> users) {
         final List<String> receipients = new ArrayList<String>();
         for (final User user : users) {
-            receipients.add(user.getUid());
+            receipients.add(getDisplayName(user));
         }
         return receipients;
     }
@@ -682,7 +693,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
 
     private void fillConsentSummaryCombined(final Consent consent, final List<ConsentReply> replies, final ConsentSummary consentTO) {
         fillShortSummaryByConsent(null, consent, consentTO);
-        consentTO.setReceipients(convertUsersToUids(consent.getReceipients()));
+        consentTO.setReceipients(convertUsersToNames(consent.getReceipients()));
 
         // default values
         consentTO.setApprovalStatus(ConsentApprovalStatus.Approved);

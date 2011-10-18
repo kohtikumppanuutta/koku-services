@@ -58,9 +58,13 @@ public class KokuSuostumusInterceptor extends AbstractLoggingInterceptor {
                 "writeConsentOnBehalf".equals(methodName)) {
             message.setOperation(LoggedOperation.Create);
             message.setUserPic(getParameterAsString(ctx, 1));
-            message.setCustomerPic(getParameterAsString(ctx, 2));
             if (result instanceof Long) {
                 message.setDataItemId(String.valueOf(result));
+            }
+            if ("requestForConsent".equals(methodName)) {
+                message.setCustomerPic(getParameterAsString(ctx, 2));
+            } else {
+                message.setCustomerPic(getParameterAsString(ctx, 3));
             }
         } else if ("giveConsent".equals(methodName) || 
                 "declineConsent".equals(methodName) || 

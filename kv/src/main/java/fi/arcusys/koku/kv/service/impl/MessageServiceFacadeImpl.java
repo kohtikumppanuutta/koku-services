@@ -167,7 +167,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	private <M extends MessageSummary> M convertMessageToDTO(final MessageRef messageRef, final M msg) {
 		final Message message = messageRef.getMessage();
 		msg.setMessageId(messageRef.getId());
-		msg.setSender(message.getUser().getUid());
+		msg.setSender(getDisplayName(message.getUser()));
 		msg.setSubject(message.getSubject());
 		msg.setCreationDate(CalendarUtil.getXmlGregorianCalendar(message.getCreatedDate()));
 		msg.setMessageStatus(MessageStatus.getStatus(messageRef.isRead()));
@@ -177,10 +177,21 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		return msg;
 	}
 
+    private String getDisplayName(final User user) {
+        if (user == null) {
+            return "";
+        }
+        if (user.getCitizenPortalName() != null && !user.getCitizenPortalName().isEmpty()) {
+            return user.getCitizenPortalName();
+        } else {
+            return user.getEmployeePortalName();
+        }
+    }
+
 	private List<String> getUidsListByUsers(final Set<User> receipients2) {
 		final List<String> receipients = new ArrayList<String>();
 		for (final User receipient : receipients2) {
-			receipients.add(receipient.getUid());
+			receipients.add(getDisplayName(receipient));
 		}
 		return receipients;
 	}
@@ -417,8 +428,8 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		for (final Response response : request.getResponses()) {
 			final ResponseTO responseTO = new ResponseTO();
             responseTO.setAnswers(convertAnswersToAnswerTO(response.getAnswers()));
-			responseTO.setName(response.getReplier().getUid());
-			receipientsNotResponded.remove(response.getReplier().getUid());
+			responseTO.setName(getDisplayName(response.getReplier()));
+			receipientsNotResponded.remove(getDisplayName(response.getReplier()));
 			responseTOs.add(responseTO);
 		}
 		
@@ -442,7 +453,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     protected RequestShortSummary fillRequestShortSummary(final RequestShortSummary result,
             final Request request) {
         result.setRequestId(request.getId());
-		result.setSender(request.getFromUser().getUid());
+		result.setSender(getDisplayName(request.getFromUser()));
 		result.setSubject(request.getSubject());
 		result.setCreationDate(CalendarUtil.getXmlGregorianCalendar(request.getCreatedDate()));
 		result.setEndDate(CalendarUtil.getXmlGregorianCalendar(request.getReplyTill()));
@@ -856,7 +867,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             final ResponseSummary responseSummary) {
         responseSummary.setRequest(fillRequestShortSummary(new RequestShortSummary(), response.getRequest()));
         responseSummary.setResponseId(response.getId());
-        responseSummary.setReplierUid(response.getReplier().getUid());
+        responseSummary.setReplierUid(getDisplayName(response.getReplier()));
     }
 
     /**
