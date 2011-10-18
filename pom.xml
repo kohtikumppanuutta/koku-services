@@ -148,9 +148,12 @@
 
   <modules>
     <module>kks</module>
+    <module>kks-ear</module>	
     <module>pyh</module>
     <module>lok</module>
+    <module>lok-ear</module>	
     <module>customer</module>
+    <module>customer-ear</module>	
     <module>arcusys-common</module>
     <module>arcusys-common-test</module>
     <module>kv</module>
@@ -163,6 +166,7 @@
     <module>authorizationinfo</module>
     <module>authorizationinfo-ear</module>
     <module>kahvaservice-mock</module>
+    <module>kahvaservice-mock-ear</module>	
   </modules>
 
   <repositories>
