@@ -59,7 +59,7 @@ public class AuthorizationInfoServiceMockImpl {
   private List<GroupType> getGroups(Map<String, List<GroupType>> groupMap, String key) {
     List<GroupType> r = groupMap.get(key);
     if(r == null)
-      r = Collections.emptyList();
+      r = new ArrayList<GroupType>();
     return r;
   }
 
