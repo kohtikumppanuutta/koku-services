@@ -16,7 +16,7 @@ import fi.koku.services.utility.authorization.v1.GroupType;
 import fi.koku.services.utility.authorization.v1.GroupsType;
 import fi.koku.services.utility.authorization.v1.MemberPicsType;
 
-public class AuthorizationInfoServiceMockImpl {
+public class AuthorizationInfoServiceMockImpl implements GroupService {
   private Logger logger = LoggerFactory.getLogger(AuthorizationInfoServiceMockImpl.class);
 
   private Map<String, List<GroupType>> registries = null;
@@ -31,6 +31,10 @@ public class AuthorizationInfoServiceMockImpl {
     groups = initGroups();
   }
 
+  /* (non-Javadoc)
+   * @see fi.koku.services.utility.authorization.impl.GroupService#getGroups(fi.koku.services.utility.authorization.v1.GroupQueryCriteriaType)
+   */
+  @Override
   public GroupsType getGroups(GroupQueryCriteriaType gqc) {
     GroupsType res = new GroupsType();
     List<GroupType> groupsList = new ArrayList<GroupType>();

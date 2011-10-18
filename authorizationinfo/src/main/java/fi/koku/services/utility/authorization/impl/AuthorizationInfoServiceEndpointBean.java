@@ -26,7 +26,7 @@ import fi.koku.services.utility.authorization.v1.ServiceFault;
 @RolesAllowed("koku-role")
 public class AuthorizationInfoServiceEndpointBean implements AuthorizationInfoServicePortType {
   private Logger logger = LoggerFactory.getLogger(AuthorizationInfoServiceEndpointBean.class);
-  private AuthorizationInfoServiceMockImpl srv = new AuthorizationInfoServiceMockImpl();
+  private GroupService srv = new AuthorizationInfoServiceMockImpl();
 
   public AuthorizationInfoServiceEndpointBean() {
   }
