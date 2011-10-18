@@ -62,8 +62,11 @@ public class AuthorizationBean implements Authorization {
     AuthorizationInfoService uis = KksServiceContainer.getService().authorization();
     Map<String, Registry> tmp = new HashMap<String, Registry>();
     List<Registry> register = uis.getUsersAuthorizedRegistries(user);
-    for (Registry r : register) {
-      tmp.put(r.getId(), r);
+
+    if (register != null) {
+      for (Registry r : register) {
+        tmp.put(r.getId(), r);
+      }
     }
     return tmp;
   }
@@ -73,8 +76,11 @@ public class AuthorizationBean implements Authorization {
     AuthorizationInfoService uis = KksServiceContainer.getService().authorization();
     List<String> tmp = new ArrayList<String>();
     List<Registry> register = uis.getUsersAuthorizedRegistries(user);
-    for (Registry r : register) {
-      tmp.add(r.getId());
+
+    if (register != null) {
+      for (Registry r : register) {
+        tmp.add(r.getId());
+      }
     }
     return tmp;
   }
@@ -142,8 +148,10 @@ public class AuthorizationBean implements Authorization {
 
     List<String> orgNames = new ArrayList<String>();
 
-    for (OrgUnit ou : units) {
-      orgNames.add(ou.getId());
+    if (units != null) {
+      for (OrgUnit ou : units) {
+        orgNames.add(ou.getId());
+      }
     }
     return orgNames;
   }

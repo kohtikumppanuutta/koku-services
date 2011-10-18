@@ -161,7 +161,7 @@ public class KksServiceBean implements KksService {
     l.setDataItemType(type);
     l.setMessage(message);
     l.setOperation(Log.UPDATE);
-    l.setTimestamp(CalendarUtil.getXmlDate(new Date()));
+    l.setTimestamp(CalendarUtil.getXmlDateTime(new Date()));
     l.setUserPic(customer);
     return l;
   }

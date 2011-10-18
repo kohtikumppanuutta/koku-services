@@ -129,7 +129,7 @@ public final class Log {
       l.setDataItemType(dataType);
       l.setMessage(message);
       l.setOperation(operation);
-      l.setTimestamp(CalendarUtil.getXmlDate(new Date()));
+      l.setTimestamp(CalendarUtil.getXmlDateTime(new Date()));
       l.setUserPic(userId);
 
       LogEntriesType entries = new LogEntriesType();
@@ -150,7 +150,7 @@ public final class Log {
     l.setDataItemType(dataType);
     l.setMessage(message);
     l.setOperation(operation);
-    l.setTimestamp(CalendarUtil.getXmlDate(new Date()));
+    l.setTimestamp(CalendarUtil.getXmlDateTime(new Date()));
     l.setUserPic(userId);
     entries.getLogEntry().add(l);
   }

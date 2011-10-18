@@ -2,9 +2,7 @@ package fi.koku.services.entity.kks.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import fi.koku.calendar.CalendarUtil;

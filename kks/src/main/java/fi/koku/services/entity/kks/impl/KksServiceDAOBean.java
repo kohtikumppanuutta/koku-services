@@ -734,29 +734,9 @@ public class KksServiceDAOBean implements KksServiceDAO {
     newVersion.setCollectionClass(old.getCollectionClass());
 
     if (!creation.isEmpty()) {
-
-      for (KksEntry e : old.getEntries()) {
-
-        if (isCopyable(e.getTags())) {
-          KksEntry newE = new KksEntry();
-          newE.setCreator(e.getCreator());
-          newE.setCustomer(creation.getCustomer());
-          newE.setEntryClassId(e.getEntryClassId());
-          newE.setModified(e.getModified());
-          newE.setKksCollection(newVersion);
-          newVersion.addKksEntry(newE);
-
-          for (KksValue value : e.getValues()) {
-            KksValue newVal = new KksValue();
-            newVal.setEntry(newE);
-            newVal.setModified(value.getModified());
-            newVal.setModifier(value.getModifier());
-            newVal.setValue(value.getValue());
-            newVal.setEntry(newE);
-            newE.addKksValue(newVal);
-          }
-        }
-      }
+      handleVersioning(creation, old, newVersion);
+    } else {
+      handleEmptyVersioning(user, creation, old, newVersion);
     }
 
     em.persist(newVersion);
@@ -774,6 +754,57 @@ public class KksServiceDAOBean implements KksServiceDAO {
         + oldStatus + " to " + LOCKED);
 
     return newVersion.getId();
+  }
+
+  private void handleVersioning(KksCollectionCreation creation, KksCollection old, KksCollection newVersion) {
+    for (KksEntry e : old.getEntries()) {
+
+      if (isCopyable(e.getTags())) {
+        KksEntry newE = new KksEntry();
+        newE.setCreator(e.getCreator());
+        newE.setCustomer(creation.getCustomer());
+        newE.setEntryClassId(e.getEntryClassId());
+        newE.setModified(e.getModified());
+        newE.setKksCollection(newVersion);
+        newVersion.addKksEntry(newE);
+
+        for (KksValue value : e.getValues()) {
+          KksValue newVal = new KksValue();
+          newVal.setEntry(newE);
+          newVal.setModified(value.getModified());
+          newVal.setModifier(value.getModifier());
+          newVal.setValue(value.getValue());
+          newVal.setEntry(newE);
+          newE.addKksValue(newVal);
+        }
+      }
+    }
+  }
+
+  private void handleEmptyVersioning(String user, KksCollectionCreation creation, KksCollection old,
+      KksCollection newVersion) {
+    for (KksEntry e : old.getEntries()) {
+
+      if (isCopyable(e.getTags())) {
+        KksEntry newE = new KksEntry();
+        newE.setCreator(user);
+        newE.setCustomer(creation.getCustomer());
+        newE.setEntryClassId(e.getEntryClassId());
+        newE.setModified(new Date());
+        newE.setKksCollection(newVersion);
+        newVersion.addKksEntry(newE);
+
+        for (KksValue value : e.getValues()) {
+          KksValue newVal = new KksValue();
+          newVal.setEntry(newE);
+          newVal.setModified(new Date());
+          newVal.setModifier(user);
+          newVal.setValue("");
+          newVal.setEntry(newE);
+          newE.addKksValue(newVal);
+        }
+      }
+    }
   }
 
   private boolean isCopyable(List<KksTag> tags) {
