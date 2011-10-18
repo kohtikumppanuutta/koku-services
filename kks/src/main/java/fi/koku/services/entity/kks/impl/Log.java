@@ -58,8 +58,8 @@ public final class Log {
 
       StringBuilder sb = new StringBuilder();
       sb.append(collection).append(" entry ").append(entry.getId().toString()).append(" (class id=")
-          .append(entry.getEntryClassId().toString()).append(") value changed from ")
-          .append(oldVal == null ? "" : oldVal.getValue()).append(" to ").append(newVal.getValue());
+          .append(entry.getEntryClassId().toString()).append(") value changed from [")
+          .append(oldVal == null ? "" : oldVal.getValue()).append("] to [").append(newVal.getValue() + "]");
 
       addLogEntry(UPDATE, collectionType, customer, user, sb.toString(), logEntries);
     }
