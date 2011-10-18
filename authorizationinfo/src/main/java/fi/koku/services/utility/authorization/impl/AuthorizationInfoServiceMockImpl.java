@@ -39,14 +39,14 @@ public class AuthorizationInfoServiceMockImpl {
     String grpClass = gqc.getGroupClass();
     String uid = gqc.getMemberPics().getMemberPic().get(0);
     if("registry".equals(grpClass)) {
-      groupsList = getGroups(registries, uid);
+      groupsList.addAll(getGroups(registries, uid));
     } else if("role".equals(grpClass)) {
-      groupsList = getGroups(roles, uid);
+      groupsList.addAll(getGroups(roles, uid));
     } else if("unit".equals(grpClass)) {
-      groupsList = getGroups(units, uid);
+      groupsList.addAll(getGroups(units, uid));
       groupsList.add(createGroup("unit", "kk.servicearea.childHealth", "Health care unit of Porolahti", uid));
     } else if("group".equals(grpClass)) {
-      groupsList = getGroups(groups, uid);
+      groupsList.addAll(getGroups(groups, uid));
       groupsList.add(createGroup("group", "gid1", "City region wide day care workgroup - consists of people from serveral organization units", uid));
     } else {
       throw new KoKuFaultException(3001, "unsupported group type");
@@ -59,7 +59,7 @@ public class AuthorizationInfoServiceMockImpl {
   private List<GroupType> getGroups(Map<String, List<GroupType>> groupMap, String key) {
     List<GroupType> r = groupMap.get(key);
     if(r == null)
-      r = new ArrayList<GroupType>();
+      r = Collections.emptyList();
     return r;
   }
 
@@ -93,7 +93,7 @@ public class AuthorizationInfoServiceMockImpl {
     
     return r;
   }
-
+  
   private GroupType createGroup(String groupClass, String id, String name, String memberUid) {
     GroupType g = new GroupType();
     g.setClazz(groupClass);
