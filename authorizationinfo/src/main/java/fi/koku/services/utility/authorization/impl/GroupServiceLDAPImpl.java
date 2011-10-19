@@ -47,12 +47,15 @@ public class GroupServiceLDAPImpl implements GroupService {
   
   @Override
   public GroupsType getGroups(GroupQueryCriteriaType gqc) {
+    GroupsType g = new GroupsType();
     String searchBase = groupTypeToDIT.get(gqc.getGroupClass());
     if(searchBase == null)
       throw new KoKuFaultException(12345, "Invalid group query criteria: group class: "+gqc.getGroupClass());
     searchBase += ",ou=KokuCommunities";
 
     List<LdapPerson> persons = getPersonDnsByPics(gqc.getMemberPics().getMemberPic());
+    if(persons.isEmpty())
+      return g;
     Map<String, String> dnToPic = new HashMap<String, String>();
     for(LdapPerson p : persons) {
       dnToPic.put(p.getDn().toLowerCase(), p.getUid());
@@ -62,7 +65,6 @@ public class GroupServiceLDAPImpl implements GroupService {
     logger.trace("getGroups: base: "+searchBase+", query: "+q.toString());
     List<GroupType> groups = ldapTemplate.search(searchBase, q, new GroupMapper(dnToPic));
     logger.trace("groups: "+groups.size());
-    GroupsType g = new GroupsType();
     g.getGroup().addAll(groups);
     return g;
   }
