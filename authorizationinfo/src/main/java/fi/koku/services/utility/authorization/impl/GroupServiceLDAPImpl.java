@@ -5,9 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 
 import org.slf4j.Logger;
@@ -15,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.simple.ParameterizedContextMapper;
-import org.springframework.ldap.core.support.LdapContextSource;
 
 import fi.koku.KoKuFaultException;
 import fi.koku.services.utility.authorization.v1.GroupQueryCriteriaType;
@@ -33,19 +29,10 @@ import fi.koku.services.utility.authorization.v1.MemberPicsType;
  */
 public class GroupServiceLDAPImpl implements GroupService {
   private Logger logger = LoggerFactory.getLogger(GroupServiceLDAPImpl.class);
-  private LdapTemplate tpl;
+  private LdapTemplate ldapTemplate;
   private Map<String, String> groupTypeToDIT;
   
-  public GroupServiceLDAPImpl() throws Exception {
-    LdapContextSource ctx = new LdapContextSource();
-    ctx.setUrl("ldap://localhost:389");
-    ctx.setBase("o=koku,dc=example,dc=org");
-    ctx.setUserDn("cn=manager,dc=example,dc=org");
-    ctx.setPassword("secret");
-    ctx.setAnonymousReadOnly(true);
-    ctx.afterPropertiesSet();
-    tpl = new LdapTemplate(ctx);
-    tpl.afterPropertiesSet();
+  public GroupServiceLDAPImpl() {
     groupTypeToDIT = getGroupTypeToDITMap();
   }
   
@@ -72,7 +59,9 @@ public class GroupServiceLDAPImpl implements GroupService {
     }
     
     String q = getGroupsQuery(persons);
-    List<GroupType> groups = tpl.search(searchBase, q, new GroupMapper(dnToPic));
+    logger.trace("getGroups: base: "+searchBase+", query: "+q.toString());
+    List<GroupType> groups = ldapTemplate.search(searchBase, q, new GroupMapper(dnToPic));
+    logger.trace("groups: "+groups.size());
     GroupsType g = new GroupsType();
     g.getGroup().addAll(groups);
     return g;
@@ -99,8 +88,9 @@ public class GroupServiceLDAPImpl implements GroupService {
     ctrl.setReturningAttributes(new String[] {"uid"});
     ctrl.setSearchScope(SearchControls.SUBTREE_SCOPE);
     String q = getPersonsQuery(pics);
-    logger.debug("getPersonDnsByPics: query: "+q.toString());
-    List<LdapPerson> persons = tpl.search("", q, ctrl, new LdapPersonMapper());
+    logger.trace("getPersonDnsByPics: query: "+q.toString());
+    List<LdapPerson> persons = ldapTemplate.search("", q, ctrl, new LdapPersonMapper());
+    logger.trace("persons: "+persons.size());
     return persons;
   }
 
@@ -170,6 +160,11 @@ public class GroupServiceLDAPImpl implements GroupService {
       }
       return gt;
     }
+  }
+
+  public void setLdapTemplate(LdapTemplate ldapTemplate) {
+    logger.debug("setLdapTemplate");
+    this.ldapTemplate = ldapTemplate;
   }
   
 }
