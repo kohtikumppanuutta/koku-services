@@ -33,9 +33,7 @@ import fi.koku.services.utility.authorization.v1.ServiceFault;
 public class AuthorizationInfoServiceEndpointBean implements AuthorizationInfoServicePortType {
   private Logger logger = LoggerFactory.getLogger(AuthorizationInfoServiceEndpointBean.class);
 
-  @Autowired
-  @Qualifier("groupService")
-  private GroupService srv;
+  private GroupService groupService;
 
   public AuthorizationInfoServiceEndpointBean() {
   }
@@ -46,8 +44,14 @@ public class AuthorizationInfoServiceEndpointBean implements AuthorizationInfoSe
   
   @Override
   public GroupsType opQueryGroups(GroupQueryCriteriaType groupQueryCriteria) throws ServiceFault {
-    logger.debug("opQueryGroups");
-    return srv.getGroups(groupQueryCriteria);
+    logger.debug("opQueryGroups (impl: "+groupService+")");
+    return groupService.getGroups(groupQueryCriteria);
+  }
+
+  @Autowired
+  @Qualifier("groupServiceHolder")
+  public void setGroupServiceHolder(GroupServiceHolder groupServiceHolder) {
+    this.groupService = groupServiceHolder.getGroupService();
   }
   
 }
