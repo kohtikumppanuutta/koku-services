@@ -43,4 +43,9 @@ public class LogServiceBean implements LogService{
    return (List<AdminLogEntry>) logDAO.queryAdminLog(criteria);
   }
 
+  @Override
+  public Date getEarliest(Date date) {
+    return (Date) logDAO.getEarliest(date);
+  }
+
 }

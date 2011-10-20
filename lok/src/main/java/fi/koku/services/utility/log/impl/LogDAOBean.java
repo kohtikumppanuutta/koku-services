@@ -31,10 +31,6 @@ public class LogDAOBean implements LogDAO {
   public LogDAOBean() {
   }
 
- // TODO: mahd. virheet:
-  // 1) arkistoloki ei vastaa
-  // 2) arkistoloki ei kuittaa onnistunutta tietojen kopiointia
-  //Virhe taltioituu käsittelylokiin!
   @Override
   public int archiveLog(Date date){
 
@@ -54,12 +50,8 @@ public class LogDAOBean implements LogDAO {
     if (logEntryCount == 0) {
       return 0;
     } else {
-      //KOKU-579: Aikaisimman arkistoitavan entryn timestamp haetaan tässä
-      //TODO: toteuta!
-      // Set hard coded value for now here and in the LogServiceEndpointBean
-      String startdate = "2011-10-16";
    
-      logger.info("insert log entries to archive log (date=" + date+")");
+      logger.info("insert log entries to archive log (enddate=" + date+")");
       Query archiveQuery = em
           .createNativeQuery("INSERT INTO "
               + "log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) "
@@ -71,7 +63,7 @@ public class LogDAOBean implements LogDAO {
       // execute the query
       int updateCount = archiveQuery.executeUpdate();
 
-      logger.info("Archived " + updateCount + "lines of log to log_archive table from "+startdate+" to " + date);
+      logger.info("Archived " + updateCount + " lines of log to log_archive table");//from "+startDate+" to " + date);
 
       // If there is a Runtime error in archiving, no entries will be deleted from the database.
       // The portlet user will see an error message.
@@ -91,6 +83,23 @@ public class LogDAOBean implements LogDAO {
     }
   }
 
+  /**
+   * Find out the earliest entry to be archived
+   */
+  @Override
+  public Date getEarliest(Date date){
+    // get the timestamp of the earliest entry to be archived
+    Query dateQuery = em.createNativeQuery("SELECT MIN(timestamp) FROM log WHERE timestamp <= :date");
+    dateQuery.setParameter("date", date);
+    Date earliestDate = (Date)dateQuery.getSingleResult();
+    logger.debug("got earliest date: "+earliestDate);
+   
+    if(earliestDate == null){
+      logger.error("Could not get the timestamp of the earliest entry to be archived.");
+    }
+    
+    return earliestDate;
+  }
   
   /**
    * Write log (note: archive log is not written with this method!)
@@ -156,7 +165,6 @@ public class LogDAOBean implements LogDAO {
       sb.append("e.customerPic = :pic");
       params.add(new Object[] { "pic", criteria.getCustomerPic() });
 
-      // TODO: ei pakollinen, jos vetovalikossa myös tyhjä vaihtoehto???
       if (criteria.getDataItemType() != null && !criteria.getDataItemType().isEmpty()) {
 
         sb.append(" AND ");
@@ -243,7 +251,6 @@ public class LogDAOBean implements LogDAO {
       }
 
       try {
-        logger.debug("query: " + sb.toString());
         Query q = em.createQuery(sb.toString());
 
         // TODO: lisää info-lokitus!

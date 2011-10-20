@@ -29,7 +29,7 @@ public class LogUtils {
    
     return cal;
   }
-  
+ 
   /**
    * Helper method that moves a given date one day ahead.
    * 

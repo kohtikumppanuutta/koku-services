@@ -28,7 +28,7 @@ public class AdminLogEntry {
   @Id
   @GeneratedValue
   @Column(name="id", unique=true, nullable=false)
-  private String id; // id given by the logging system
+  private String id; 
   
   @Column(name="timestamp")
   @Temporal(TemporalType.TIMESTAMP)

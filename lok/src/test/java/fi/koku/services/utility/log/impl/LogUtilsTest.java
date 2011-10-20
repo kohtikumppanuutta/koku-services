@@ -19,15 +19,7 @@ public class LogUtilsTest {
  
 
  
- /* @Test
-  public void testOkParseToCal(){
-    
-  }
-  
-  @Test
-  public void testWrongParseToCal(){
-    
-  }
+ /* 
   
   @Test
   public void testOkMoveOneDay(){

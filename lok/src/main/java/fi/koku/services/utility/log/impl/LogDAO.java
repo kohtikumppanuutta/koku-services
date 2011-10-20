@@ -23,5 +23,7 @@ public interface LogDAO {
   Collection<AdminLogEntry> queryAdminLog(LogQueryCriteria criteria);
 
   void writeAdminLog(AdminLogEntry entry);
+
+  Date getEarliest(Date date);
 }
 

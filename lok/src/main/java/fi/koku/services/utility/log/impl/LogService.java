@@ -23,5 +23,7 @@ public interface LogService {
     List<LogEntry> query(LogQueryCriteria criteria);
     
     List<AdminLogEntry> queryAdmin(LogQueryCriteria criteria);
+    
+    Date getEarliest(Date date);
   }
 

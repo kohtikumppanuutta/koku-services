@@ -3,6 +3,7 @@ package fi.koku.services.utility.log.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -91,12 +92,10 @@ public class LogServiceEndpointBean implements LogServicePortType {
 
         // Use ClientSystemId to tell in which log table we write!
         if (LogConstants.LOG_WRITER_LOG.equalsIgnoreCase(logEntryType.getClientSystemId())) {
-          logger.debug("write to admin log");
           if(lu.logInputOk(logEntryType, LogConstants.LOG_ADMIN)){
             logService.writeAdmin(logConverter.fromWsTypeToAdmin(logEntryType));
           }
         } else { 
-          logger.debug("write to normal log");
           if(lu.logInputOk(logEntryType, LogConstants.LOG_NORMAL)){
             logService.write(logConverter.fromWsType(logEntryType));
           }
@@ -122,7 +121,6 @@ public class LogServiceEndpointBean implements LogServicePortType {
       try {    
         // call to the log database
         entries = logService.query(logConverter.fromWsType(criteriaType));
-        logger.debug("entries: " + entries.size());
      
         if (entries == null) {
           logger.debug("No entries found in log table!");
@@ -136,15 +134,12 @@ public class LogServiceEndpointBean implements LogServicePortType {
           }
         }
 
-      } catch (ParseException e) { //TODO: Tuleeko tällaista jostain?
-        //TODO: heitä KokuException, jos tämä error edes tulee ikinä!
-     logger.debug("parseException: "+e.getMessage());
-     
-    
-      
+      } catch (ParseException e) { 
+        logger.debug("parseException: "+e.getMessage());
+        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_PARSING;
+        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());       
       }
       
-      logger.debug("write to admin log");
       AdminLogEntry adminLogEntry = new AdminLogEntry();
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
       adminLogEntry.setUserPic(auditInfoType.getUserId());
@@ -168,8 +163,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       
       try {     
         // call to the log database
-        entries = logService.queryAdmin(logConverter.fromWsType(criteriaType));
-        logger.debug("entries: " + entries.size());
+        entries = logService.queryAdmin(logConverter.fromWsType(criteriaType));       
 
         if (entries == null) {
           logger.debug("No entries found in log_admin table!");
@@ -231,15 +225,23 @@ public class LogServiceEndpointBean implements LogServicePortType {
     }else{
 
       try{
+        Date endDate = CalendarUtil.getDate(archivalParameters.getEndDate());
+        
+        // first, find out what is the earliest entry to be archived so that we can write 
+        // about this in the archive log
+        Date movedDate = lu.moveOneDay(endDate);
+        Date earliest = logService.getEarliest(movedDate);
+        
         // call to the actual archiving
-        entryCount = logService.archive(CalendarUtil.getDate(archivalParameters.getEndDate()));
+        entryCount = logService.archive(endDate);  
 
         if(entryCount < 1) {
           // do not throw a KoKuFaultException
-          logger.info("Nothing to archive before date "+CalendarUtil.getDate(archivalParameters.getEndDate()));
+          logger.info("Nothing to archive before date "+endDate);
         } else{ // write to admin log about the archive only if there was something to archive
 
           logger.info("Log was archived. Now try to write in admin log.");
+          // move the archive date one day ahead so that everything from the end date will be taken account
           
           // log this query to admin log 
           logger.debug("write to admin log");
@@ -248,14 +250,15 @@ public class LogServiceEndpointBean implements LogServicePortType {
           adminLogEntry.setUserPic(auditInfoType.getUserId());
           adminLogEntry.setOperation("archive");       
          
-          //TODO: KOKU-579: Selvitä aikaisin log:n tieto ja kirjaa tähän myös alkupäivä!
-          // Use the hardcoded value now:
-          String startdate = "2011-10-16";
-            
-          adminLogEntry.setMessage("archive log from "+startdate+" to "+df.format(CalendarUtil.getDate(archivalParameters.getEndDate())));
-
+          if(earliest==null){
+            logger.error("Could not get the date of the earliest entry that was archived.");
+            adminLogEntry.setMessage("archive log from ? to "+df.format(CalendarUtil.getDate(archivalParameters.getEndDate())));
+          } else{
+            adminLogEntry.setMessage("archive log from "+df.format(earliest)+" to "+df.format(endDate));
+          }
           logService.writeAdmin(adminLogEntry);
         }
+        
       }catch(KoKuFaultException f){
         logger.debug("endpoint: throw KoKuFaultException");
         throw f;
