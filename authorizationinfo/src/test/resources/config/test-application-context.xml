@@ -18,7 +18,7 @@
     <property name="port" value="3900" />
   </bean>
 
-  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+  <bean id="ldapTemplate" class="org.springframework.ldap.core.simple.SimpleLdapTemplate">
     <constructor-arg ref="contextSource" />
   </bean>
 

@@ -5,13 +5,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.DirContextAdapter;
-import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.DirContextProcessor;
 import org.springframework.ldap.core.simple.ParameterizedContextMapper;
+import org.springframework.ldap.core.simple.SimpleLdapTemplate;
 
 import fi.koku.KoKuFaultException;
 import fi.koku.services.utility.authorization.v1.GroupQueryCriteriaType;
@@ -31,7 +34,7 @@ import fi.koku.services.utility.authorization.v1.MemberPicsType;
  */
 public class GroupServiceLDAPImpl implements GroupService {
   private Logger logger = LoggerFactory.getLogger(GroupServiceLDAPImpl.class);
-  private LdapTemplate ldapTemplate;
+  private SimpleLdapTemplate ldapTemplate;
   private Map<String, String> groupTypeToDIT;
   private String groupSearchBase;
   
@@ -94,7 +97,7 @@ public class GroupServiceLDAPImpl implements GroupService {
     ctrl.setSearchScope(SearchControls.SUBTREE_SCOPE);
     String q = getPersonsQuery(pics);
     logger.debug("getPersonDnsByPics: query: "+q.toString());
-    List<LdapPerson> persons = ldapTemplate.search("", q, ctrl, new LdapPersonMapper());
+    List<LdapPerson> persons = ldapTemplate.search("", q, ctrl, new LdapPersonMapper(), new DirContextProcessorNoop());
     logger.debug("persons: "+persons.size());
     return persons;
   }
@@ -167,7 +170,16 @@ public class GroupServiceLDAPImpl implements GroupService {
     }
   }
 
-  public void setLdapTemplate(LdapTemplate ldapTemplate) {
+  private static class DirContextProcessorNoop implements DirContextProcessor {
+    @Override
+    public void postProcess(DirContext ctx) throws NamingException {
+    }
+    @Override
+    public void preProcess(DirContext ctx) throws NamingException {
+    }
+  }
+  
+  public void setLdapTemplate(SimpleLdapTemplate ldapTemplate) {
     this.ldapTemplate = ldapTemplate;
   }
 
