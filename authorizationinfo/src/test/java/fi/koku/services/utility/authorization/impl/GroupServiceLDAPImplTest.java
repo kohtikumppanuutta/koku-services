@@ -3,7 +3,9 @@ package fi.koku.services.utility.authorization.impl;
 import static junit.framework.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,9 +40,13 @@ public class GroupServiceLDAPImplTest {
       c.getMemberPics().getMemberPic().add("202020-2001");
       c.getMemberPics().getMemberPic().add("202020-2002");
       GroupsType groups = cut.getGroups(c);
+      Map<String, GroupType> grps = new HashMap<String, GroupType>();
       for(GroupType g : groups.getGroup()) {
-        System.out.println("g: "+g.getId()+": "+g.getMemberPics().getMemberPic().size());
+        grps.put(g.getId(), g);
       }
+      assertEquals(grps.keySet().containsAll(Arrays.asList("daycareregistry", "healthcareregistry")), true);
+      assertEquals(grps.get("daycareregistry").getMemberPics().getMemberPic().size(), 2);
+      assertEquals(grps.get("healthcareregistry").getMemberPics().getMemberPic().size(), 1);
   }
   
   @Test
