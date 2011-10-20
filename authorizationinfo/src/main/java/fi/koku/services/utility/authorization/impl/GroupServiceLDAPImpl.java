@@ -23,9 +23,8 @@ import fi.koku.services.utility.authorization.v1.GroupsType;
 import fi.koku.services.utility.authorization.v1.MemberPicsType;
 
 /**
- * TODO
- * - connection pooling
- *
+ * LDAP implementation of the group service interface.
+ * 
  * potential enhancements
  * - use OpenLDAP memberof overlay (long term)
  * - use Spring LDAP dynamic filters API

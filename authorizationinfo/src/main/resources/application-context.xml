@@ -20,17 +20,25 @@
     <property name="groupSearchBase" value="ou=KokuCommunities"/>
   </bean>
 
-  <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource" lazy-init="true">
-    <property name="url" value="${authorizationinfoservice.ldap.url}" />
-    <property name="base" value="${authorizationinfoservice.ldap.base}" />
-    <property name="userDn" value="${authorizationinfoservice.ldap.userDn}" />
-    <property name="password" value="${authorizationinfoservice.ldap.password}" />
-    <property name="pooled" value="${authorizationinfoservice.ldap.pooled}"/>
-  </bean>
-
   <bean id="ldapTemplate" class="org.springframework.ldap.core.simple.SimpleLdapTemplate" lazy-init="true">
     <constructor-arg ref="contextSource"/>
   </bean>
 
+  <bean id="contextSource" class="org.springframework.ldap.pool.factory.PoolingContextSource" lazy-init="true">
+    <property name="contextSource" ref="contextSourceTarget" />
+    <property name="dirContextValidator" ref="dirContextValidator" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testWhileIdle" value="true" />
+  </bean>
+
+  <bean id="dirContextValidator" class="org.springframework.ldap.pool.validation.DefaultDirContextValidator"/>
+
+  <bean id="contextSourceTarget" class="org.springframework.ldap.core.support.LdapContextSource" lazy-init="true">
+    <property name="url" value="${authorizationinfoservice.ldap.url}" />
+    <property name="base" value="${authorizationinfoservice.ldap.base}" />
+    <property name="userDn" value="${authorizationinfoservice.ldap.userDn}" />
+    <property name="password" value="${authorizationinfoservice.ldap.password}" />
+    <property name="pooled" value="false"/>
+  </bean>
+
 </beans>
-           
