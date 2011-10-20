@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="groupServiceLdapImpl" class="fi.koku.services.utility.authorization.impl.GroupServiceLDAPImpl">
+    <property name="ldapTemplate" ref="ldapTemplate"/>
+    <property name="groupSearchBase" value="ou=KokuCommunities,o=koku"/>
+  </bean>
+
+  <bean id="contextSource" class="org.springframework.ldap.test.TestContextSourceFactoryBean">
+    <property name="defaultPartitionSuffix" value="dc=example,dc=org" />
+    <property name="defaultPartitionName" value="koku" />
+    <property name="principal" value="uid=admin,ou=system" />
+    <property name="password" value="secret" />
+    <property name="ldifFile" value="/config/koku-ldap-data.ldif" />
+    <property name="port" value="3900" />
+  </bean>
+
+  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+    <constructor-arg ref="contextSource" />
+  </bean>
+
+
+</beans>
+           

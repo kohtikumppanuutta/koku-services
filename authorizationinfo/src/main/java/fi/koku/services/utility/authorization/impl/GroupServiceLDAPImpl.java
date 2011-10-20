@@ -21,9 +21,11 @@ import fi.koku.services.utility.authorization.v1.MemberPicsType;
 
 /**
  * TODO
- * - LDAP connection config + pooling
- * - user Spring LDAP dynamic filters API
- * - use OpenLDAP memberof overlay
+ * - connection pooling
+ *
+ * potential enhancements
+ * - use OpenLDAP memberof overlay (long term)
+ * - use Spring LDAP dynamic filters API
  * 
  * @author aspluma
  */
@@ -31,6 +33,7 @@ public class GroupServiceLDAPImpl implements GroupService {
   private Logger logger = LoggerFactory.getLogger(GroupServiceLDAPImpl.class);
   private LdapTemplate ldapTemplate;
   private Map<String, String> groupTypeToDIT;
+  private String groupSearchBase;
   
   public GroupServiceLDAPImpl() {
     groupTypeToDIT = getGroupTypeToDITMap();
@@ -51,7 +54,7 @@ public class GroupServiceLDAPImpl implements GroupService {
     String searchBase = groupTypeToDIT.get(gqc.getGroupClass());
     if(searchBase == null)
       throw new KoKuFaultException(12345, "Invalid group query criteria: group class: "+gqc.getGroupClass());
-    searchBase += ",ou=KokuCommunities";
+    searchBase += ","+groupSearchBase;
 
     List<LdapPerson> persons = getPersonDnsByPics(gqc.getMemberPics().getMemberPic());
     if(persons.isEmpty())
@@ -62,9 +65,9 @@ public class GroupServiceLDAPImpl implements GroupService {
     }
     
     String q = getGroupsQuery(persons);
-    logger.trace("getGroups: base: "+searchBase+", query: "+q.toString());
+    logger.debug("getGroups: base: "+searchBase+", query: "+q.toString());
     List<GroupType> groups = ldapTemplate.search(searchBase, q, new GroupMapper(dnToPic));
-    logger.trace("groups: "+groups.size());
+    logger.debug("groups: "+groups.size());
     g.getGroup().addAll(groups);
     return g;
   }
@@ -90,9 +93,9 @@ public class GroupServiceLDAPImpl implements GroupService {
     ctrl.setReturningAttributes(new String[] {"uid"});
     ctrl.setSearchScope(SearchControls.SUBTREE_SCOPE);
     String q = getPersonsQuery(pics);
-    logger.trace("getPersonDnsByPics: query: "+q.toString());
+    logger.debug("getPersonDnsByPics: query: "+q.toString());
     List<LdapPerson> persons = ldapTemplate.search("", q, ctrl, new LdapPersonMapper());
-    logger.trace("persons: "+persons.size());
+    logger.debug("persons: "+persons.size());
     return persons;
   }
 
@@ -165,8 +168,11 @@ public class GroupServiceLDAPImpl implements GroupService {
   }
 
   public void setLdapTemplate(LdapTemplate ldapTemplate) {
-    logger.debug("setLdapTemplate");
     this.ldapTemplate = ldapTemplate;
+  }
+
+  public void setGroupSearchBase(String groupSearchBase) {
+    this.groupSearchBase = groupSearchBase;
   }
   
 }

@@ -17,6 +17,7 @@
 
   <bean id="groupServiceLdapImpl" class="fi.koku.services.utility.authorization.impl.GroupServiceLDAPImpl" lazy-init="true">
     <property name="ldapTemplate" ref="ldapTemplate"/>
+    <property name="groupSearchBase" value="ou=KokuCommunities"/>
   </bean>
 
   <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource" lazy-init="true">

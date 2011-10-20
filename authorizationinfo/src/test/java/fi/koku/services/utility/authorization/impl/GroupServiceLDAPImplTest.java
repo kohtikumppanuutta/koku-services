@@ -7,6 +7,10 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.koku.services.utility.authorization.v1.GroupQueryCriteriaType;
 import fi.koku.services.utility.authorization.v1.GroupType;
@@ -14,12 +18,14 @@ import fi.koku.services.utility.authorization.v1.GroupsType;
 import fi.koku.services.utility.authorization.v1.MemberPicsType;
 
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:/config/test-application-context.xml"})
 public class GroupServiceLDAPImplTest {
-  private static GroupServiceLDAPImpl cut;
+  @Autowired
+  private GroupServiceLDAPImpl cut;
   
   @BeforeClass
   public static void init() throws Exception {
-    cut = new GroupServiceLDAPImpl();
   }
   
   @Test
@@ -31,10 +37,10 @@ public class GroupServiceLDAPImplTest {
       c.getMemberPics().getMemberPic().add("292929-2929");
       c.getMemberPics().getMemberPic().add("202020-2001");
       c.getMemberPics().getMemberPic().add("202020-2002");
-//      GroupsType groups = cut.getGroups(c);
-//      for(GroupType g : groups.getGroup()) {
-//        System.out.println("g: "+g.getId()+": "+g.getMemberPics().getMemberPic().size());
-//      }
+      GroupsType groups = cut.getGroups(c);
+      for(GroupType g : groups.getGroup()) {
+        System.out.println("g: "+g.getId()+": "+g.getMemberPics().getMemberPic().size());
+      }
   }
   
   @Test
