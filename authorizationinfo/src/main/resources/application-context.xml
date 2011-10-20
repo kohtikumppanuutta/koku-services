@@ -15,11 +15,11 @@
   <bean id="groupServiceMockImpl" class="fi.koku.services.utility.authorization.impl.AuthorizationInfoServiceMockImpl">
   </bean>
 
-  <bean id="groupServiceLdapImpl" class="fi.koku.services.utility.authorization.impl.GroupServiceLDAPImpl">
+  <bean id="groupServiceLdapImpl" class="fi.koku.services.utility.authorization.impl.GroupServiceLDAPImpl" lazy-init="true">
     <property name="ldapTemplate" ref="ldapTemplate"/>
   </bean>
 
-  <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+  <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource" lazy-init="true">
     <property name="url" value="${authorizationinfoservice.ldap.url}" />
     <property name="base" value="${authorizationinfoservice.ldap.base}" />
     <property name="userDn" value="${authorizationinfoservice.ldap.userDn}" />
@@ -27,7 +27,7 @@
     <property name="pooled" value="${authorizationinfoservice.ldap.pooled}"/>
   </bean>
 
-  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate" lazy-init="true">
     <constructor-arg ref="contextSource"/>
   </bean>
 
