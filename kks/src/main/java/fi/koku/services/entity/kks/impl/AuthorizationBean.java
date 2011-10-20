@@ -133,17 +133,17 @@ public class AuthorizationBean implements Authorization {
     ConsentSearchCriteria csc = new ConsentSearchCriteria();
     csc.setTargetPerson(customer);
     csc.setTemplateNamePrefix(consentType);
-    csc.getGivenTo().addAll(getOrganizationNames(user));
+    csc.getGivenTo().addAll(getOrganizationIds(user));
     return KksServiceContainer.getService().tiva().queryConsents(csc);
   }
 
   /**
-   * Gets organization names for the user
+   * Gets organization ids for the user
    * 
    * @param user
-   * @return organization names
+   * @return organization ids
    */
-  private List<String> getOrganizationNames(String user) {
+  private List<String> getOrganizationIds(String user) {
     List<OrgUnit> units = KksServiceContainer.getService().authorization().getUsersOrgUnits("KKS", user);
 
     List<String> orgNames = new ArrayList<String>();
@@ -179,9 +179,13 @@ public class AuthorizationBean implements Authorization {
 
   @Override
   public KksCollection removeUnauthorizedContent(KksCollection c, KksCollectionClass metadata,
-      Map<Integer, String> entryRegisters, String user) {
-
-    if (isParent(user, c.getCustomer()) || hasConsent(c.getCustomer(), user, metadata.getConsentType())) {
+    Map<Integer, String> entryRegisters, String user) {
+    boolean consent = hasConsent(c.getCustomer(), user, metadata.getConsentType());
+    if (isParent(user, c.getCustomer()) || consent ) {
+      if ( consent ) {
+        c.setConsentRequested(true);
+        c.setUserConsentStatus( "VALID" );
+      }
       return c;
     }
 
