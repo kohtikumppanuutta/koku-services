@@ -16,12 +16,8 @@
 
 <!-- 
   <webservices>
-    <context-root>/authorizationinfoservice</context-root>
-    <webservice-description>
-      <webservice-description-name/>
-      <wsdl-publish-location/>
-    </webservice-description>
+    <context-root>/authorizationinfo-service</context-root>
   </webservices>
  -->
- 
+
 </jboss>

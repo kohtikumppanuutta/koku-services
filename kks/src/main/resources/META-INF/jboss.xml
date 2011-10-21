@@ -14,4 +14,10 @@
     </session>
   </enterprise-beans>
 
+<!-- 
+  <webservices>
+    <context-root>/kks-service</context-root>
+  </webservices>
+ -->
+
 </jboss>

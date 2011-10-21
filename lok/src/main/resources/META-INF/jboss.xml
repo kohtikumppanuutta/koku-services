@@ -14,4 +14,10 @@
     </session>
   </enterprise-beans>
 
+<!-- 
+  <webservices>
+    <context-root>/lok-service</context-root>
+  </webservices>
+ -->
+
 </jboss>
