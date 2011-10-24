@@ -1,0 +1,1760 @@
+# extended LDIF
+#
+# LDAPv3
+# base <dc=example,dc=org> with scope subtree
+# filter: (|(objectclass=*))
+# requesting: ALL
+#
+
+# example.org
+dn: dc=example,dc=org
+objectClass: dcObject
+objectClass: organization
+o: ixonos
+dc: example
+
+# Manager, example.org
+dn: cn=Manager,dc=example,dc=org
+objectClass: organizationalRole
+cn: manager
+
+# koku, example.org
+dn: o=koku,dc=example,dc=org
+o: koku
+objectClass: top
+objectClass: organization
+
+# people, koku, example.org
+dn: ou=people,o=koku,dc=example,dc=org
+ou: people
+objectClass: top
+objectClass: organizationalUnit
+
+# KokuCommunities, koku, example.org
+dn: ou=KokuCommunities,o=koku,dc=example,dc=org
+ou: KokuCommunities
+objectClass: top
+objectClass: organizationalUnit
+
+# registries, KokuCommunities, koku, example.org
+dn: ou=registries,ou=KokuCommunities,o=koku,dc=example,dc=org
+ou: registries
+objectClass: top
+objectClass: organizationalUnit
+
+# orgunits, KokuCommunities, koku, example.org
+dn: ou=orgunits,ou=KokuCommunities,o=koku,dc=example,dc=org
+ou: orgunits
+objectClass: top
+objectClass: organizationalUnit
+
+# roles, KokuCommunities, koku, example.org
+dn: ou=roles,ou=KokuCommunities,o=koku,dc=example,dc=org
+ou: roles
+objectClass: top
+objectClass: organizationalUnit
+
+# groups-int, KokuCommunities, koku, example.org
+dn: ou=groups-int,ou=KokuCommunities,o=koku,dc=example,dc=org
+ou: groups-int
+objectClass: top
+objectClass: organizationalUnit
+
+# kalle.kuntalainen, People, koku, example.org
+dn: cn=kalle.kuntalainen,ou=People,o=koku,dc=example,dc=org
+cn: kalle.kuntalainen
+givenName: kalle
+objectClass: inetOrgPerson
+objectClass: top
+sn: kuntalainen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 111111-1111
+
+# daycareregistry, registries, KokuCommunities, koku, example.org
+dn: cn=daycareregistry,ou=registries,ou=KokuCommunities,o=koku,dc=example,dc=o
+ rg
+cn: daycareregistry
+objectClass: groupOfNames
+objectClass: top
+member: cn=paivakoti.1,ou=people,o=koku,dc=example,dc=org
+member: cn=paivakoti.2,ou=people,o=koku,dc=example,dc=org
+member: cn=paivakoti.3,ou=people,o=koku,dc=example,dc=org
+
+# healthcareregistry, registries, KokuCommunities, koku, example.org
+dn: cn=healthcareregistry,ou=registries,ou=KokuCommunities,o=koku,dc=example,d
+ c=org
+cn: healthcareregistry
+objectClass: groupOfNames
+objectClass: top
+member: cn=niina.neuvola,ou=people,o=koku,dc=example,dc=org
+member: cn=nelli.neuvola,ou=people,o=koku,dc=example,dc=org
+member: cn=neuvola.3,ou=people,o=koku,dc=example,dc=org
+
+# kk.servicearea.daycare, orgunits, KokuCommunities, koku, example.org
+dn: cn=kk.servicearea.daycare,ou=orgunits,ou=KokuCommunities,o=koku,dc=example
+ ,dc=org
+cn: kk.servicearea.daycare
+objectClass: groupOfNames
+objectClass: top
+member: cn=paivakoti.1,ou=people,o=koku,dc=example,dc=org
+member: cn=paivakoti.2,ou=people,o=koku,dc=example,dc=org
+member: cn=paivakoti.3,ou=people,o=koku,dc=example,dc=org
+member: cn=paivakoti.15,ou=people,o=koku,dc=example,dc=org
+
+# kk.servicearea.childHealth, orgunits, KokuCommunities, koku, example.org
+dn: cn=kk.servicearea.childHealth,ou=orgunits,ou=KokuCommunities,o=koku,dc=exa
+ mple,dc=org
+cn: kk.servicearea.childHealth
+objectClass: groupOfNames
+objectClass: top
+member: cn=nelli.neuvola,ou=people,o=koku,dc=example,dc=org
+member: cn=neuvola.3,ou=people,o=koku,dc=example,dc=org
+member: cn=niina.neuvola,ou=people,o=koku,dc=example,dc=org
+
+# Groups, koku, example.org
+dn: ou=Groups,o=koku,dc=example,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: Groups
+
+# Groups, KokuCommunities, koku, example.org
+dn: ou=Groups,ou=KokuCommunities,o=koku,dc=example,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: Groups
+
+# Aarne Asiakaspalvelukeskus, People, koku, example.org
+dn: cn=Aarne Asiakaspalvelukeskus,ou=People,o=koku,dc=example,dc=org
+cn: Aarne Asiakaspalvelukeskus
+description: 121212-1212
+givenName: Aarne
+objectClass: inetOrgPerson
+objectClass: top
+sn: Asiakaspalvelukeskus
+uid: Asiakaspalvelukeskus
+userPassword:: dGVzdA==
+
+# admin, People, koku, example.org
+dn: cn=admin,ou=People,o=koku,dc=example,dc=org
+cn: admin
+givenName: admin
+objectClass: inetOrgPerson
+objectClass: top
+sn: admin
+uid: admin
+userPassword:: YWRtaW4=
+
+# Kalle Kuntalainen, People, koku, example.org
+dn: cn=Kalle Kuntalainen,ou=People,o=koku,dc=example,dc=org
+cn: Kalle Kuntalainen
+description: 121212-1212
+givenName: Kalle
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kuntalainen
+uid: kakuntalainen
+userPassword:: dGVzdA==
+
+# Keijo Kuntalainen, People, koku, example.org
+dn: cn=Keijo Kuntalainen,ou=People,o=koku,dc=example,dc=org
+cn: Keijo Kuntalainen
+givenName: Keijo
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kuntalainen
+uid: kekuntalainen
+userPassword:: dGVzdA==
+
+# Kirsi Kuntalainen, People, koku, example.org
+dn: cn=Kirsi Kuntalainen,ou=People,o=koku,dc=example,dc=org
+cn: Kirsi Kuntalainen
+givenName: Kirsi
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kuntalainen
+uid: kikuntalainen
+userPassword:: dGVzdA==
+
+# Lassi Lapsi, People, koku, example.org
+dn: cn=Lassi Lapsi,ou=People,o=koku,dc=example,dc=org
+cn: Lassi Lapsi
+givenName: Lassi
+objectClass: inetOrgPerson
+objectClass: top
+sn: Lapsi
+uid: lalapsi
+userPassword:: dGVzdA==
+
+# Liisa Lapsi, People, koku, example.org
+dn: cn=Liisa Lapsi,ou=People,o=koku,dc=example,dc=org
+cn: Liisa Lapsi
+givenName: Liisa
+objectClass: inetOrgPerson
+objectClass: top
+sn: Lapsi
+uid: lilapsi
+userPassword:: dGVzdA==
+
+# Pirjo Paivakodinjohtaja, People, koku, example.org
+dn: cn=Pirjo Paivakodinjohtaja,ou=People,o=koku,dc=example,dc=org
+cn: Pirjo Paivakodinjohtaja
+objectClass: inetOrgPerson
+objectClass: top
+sn: Paivakodinjohtaja
+uid: ppaivakodinjohtaja
+userPassword:: dGVzdA==
+
+# Teija Testi, People, koku, example.org
+dn: cn=Teija Testi,ou=People,o=koku,dc=example,dc=org
+cn: Teija Testi
+givenName: Teija
+objectClass: inetOrgPerson
+objectClass: top
+sn: Testi
+uid: teitesti
+userPassword:: dGVzdA==
+
+# Teppo Testi, People, koku, example.org
+dn: cn=Teppo Testi,ou=People,o=koku,dc=example,dc=org
+cn: Teppo Testi
+givenName: Teppo
+objectClass: inetOrgPerson
+objectClass: top
+sn: Testi
+uid: teptesti
+userPassword:: dGVzdA==
+
+# Ville Virkamies, People, koku, example.org
+dn: cn=Ville Virkamies,ou=People,o=koku,dc=example,dc=org
+cn: Ville Virkamies
+description: 121212-1212
+givenName: Ville
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kuntalainen
+uid: Virkamies
+userPassword:: dGVzdA==
+
+# Yrjo Yllapito, People, koku, example.org
+dn: cn=Yrjo Yllapito,ou=People,o=koku,dc=example,dc=org
+cn: Yrjo Yllapito
+givenName: Yrjo
+objectClass: inetOrgPerson
+objectClass: top
+sn: Yllapito
+uid: yyllapito
+userPassword:: dGVzdA==
+
+# Kari Nurminen, People, koku, example.org
+dn: cn=Kari Nurminen,ou=People,o=koku,dc=example,dc=org
+cn: Kari Nurminen
+description: 121212-1212
+givenName: Kari
+objectClass: inetOrgPerson
+objectClass: top
+sn: Nurminen
+uid: Nurminen
+userPassword:: dGVzdA==
+
+# Matti Tuomiranta, People, koku, example.org
+dn: cn=Matti Tuomiranta,ou=People,o=koku,dc=example,dc=org
+cn: Matti Tuomiranta
+description: 121212-1212
+givenName: Matti
+objectClass: inetOrgPerson
+objectClass: top
+sn: Tuomiranta
+uid: Tuomiranta
+userPassword:: dGVzdA==
+
+# Paula Vanninmaja, People, koku, example.org
+dn: cn=Paula Vanninmaja,ou=People,o=koku,dc=example,dc=org
+cn: Paula Vanninmaja
+description: 121212-1212
+givenName: Paula
+objectClass: inetOrgPerson
+objectClass: top
+sn: Vanninmaja
+uid: Vanninmaja
+userPassword:: dGVzdA==
+
+# Minna Kronberg, People, koku, example.org
+dn: cn=Minna Kronberg,ou=People,o=koku,dc=example,dc=org
+cn: Minna Kronberg
+description: 121212-1212
+givenName: Minna
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kronberg
+uid: Kronberg
+userPassword:: dGVzdA==
+
+# Esa Hyvarinen, People, koku, example.org
+dn: cn=Esa Hyvarinen,ou=People,o=koku,dc=example,dc=org
+cn: Esa Hyvarinen
+description: 121212-1212
+givenName: Esa
+objectClass: inetOrgPerson
+objectClass: top
+sn: Hyvarinen
+uid: Hyvarinen
+userPassword:: dGVzdA==
+
+# Ville-Veikko Ahonen, People, koku, example.org
+dn: cn=Ville-Veikko Ahonen,ou=People,o=koku,dc=example,dc=org
+cn: Ville-Veikko Ahonen
+description: 121212-1212
+givenName: Ville-Veikko
+objectClass: inetOrgPerson
+objectClass: top
+sn: Ahonen
+uid: Ahonen
+userPassword:: dGVzdA==
+
+# Juhani Heikka, People, koku, example.org
+dn: cn=Juhani Heikka,ou=People,o=koku,dc=example,dc=org
+cn: Juhani Heikka
+description: 121212-1212
+givenName: Juhani
+objectClass: inetOrgPerson
+objectClass: top
+sn: Heikka
+uid: Heikka
+userPassword:: dGVzdA==
+
+# Pekka Kortelainen, People, koku, example.org
+dn: cn=Pekka Kortelainen,ou=People,o=koku,dc=example,dc=org
+cn: Pekka Kortelainen
+description: 121212-1212
+givenName: Pekka
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kortelainen
+uid: Kortelainen
+userPassword:: dGVzdA==
+
+# Asko Lippo, People, koku, example.org
+dn: cn=Asko Lippo,ou=People,o=koku,dc=example,dc=org
+cn: Asko Lippo
+description: 121212-1212
+givenName: Asko
+objectClass: inetOrgPerson
+objectClass: top
+sn: Lippo
+uid: Lippo
+userPassword:: dGVzdA==
+
+# Tarja Miikkulainen, People, koku, example.org
+dn: cn=Tarja Miikkulainen,ou=People,o=koku,dc=example,dc=org
+cn: Tarja Miikkulainen
+description: 121212-1212
+givenName: Tarja
+objectClass: inetOrgPerson
+objectClass: top
+sn: Miikkulainen
+uid: Miikkulainen
+userPassword:: dGVzdA==
+
+# Marko Monni, People, koku, example.org
+dn: cn=Marko Monni,ou=People,o=koku,dc=example,dc=org
+cn: Marko Monni
+description: 121212-1212
+givenName: Marko
+objectClass: inetOrgPerson
+objectClass: top
+sn: Monni
+uid: Monni
+userPassword:: dGVzdA==
+
+# Eeva-Riitta Pirhonen, People, koku, example.org
+dn: cn=Eeva-Riitta Pirhonen,ou=People,o=koku,dc=example,dc=org
+cn: Eeva-Riitta Pirhonen
+description: 121212-1212
+givenName: Eeva-Riitta
+objectClass: inetOrgPerson
+objectClass: top
+sn: Pirhonen
+uid: Pirhonen
+userPassword:: dGVzdA==
+
+# Majukka Saarijarvi, People, koku, example.org
+dn: cn=Majukka Saarijarvi,ou=People,o=koku,dc=example,dc=org
+cn: Majukka Saarijarvi
+description: 121212-1212
+givenName: Majukka
+objectClass: inetOrgPerson
+objectClass: top
+sn: Saarijarvi
+uid: Saarijarvi
+userPassword:: dGVzdA==
+
+# Minna Saario, People, koku, example.org
+dn: cn=Minna Saario,ou=People,o=koku,dc=example,dc=org
+cn: Minna Saario
+description: 121212-1212
+givenName: Minna
+objectClass: inetOrgPerson
+objectClass: top
+sn: Saario
+uid: Saario
+userPassword:: dGVzdA==
+
+# Marko Tanska, People, koku, example.org
+dn: cn=Marko Tanska,ou=People,o=koku,dc=example,dc=org
+cn: Marko Tanska
+description: 121212-1212
+givenName: Marko
+objectClass: inetOrgPerson
+objectClass: top
+sn: Tanska
+uid: Tanska
+userPassword:: dGVzdA==
+
+# Riitta Viitala, People, koku, example.org
+dn: cn=Riitta Viitala,ou=People,o=koku,dc=example,dc=org
+cn: Riitta Viitala
+description: 121212-1212
+givenName: Riitta
+objectClass: inetOrgPerson
+objectClass: top
+sn: Viitala
+uid: Viitala
+userPassword:: dGVzdA==
+
+# Pekka Vahakangas, People, koku, example.org
+dn: cn=Pekka Vahakangas,ou=People,o=koku,dc=example,dc=org
+cn: Pekka Vahakangas
+description: 121212-1212
+givenName: Pekka
+objectClass: inetOrgPerson
+objectClass: top
+sn: Vahakangas
+uid: Vahakangas
+userPassword:: dGVzdA==
+
+# Jarmo Hallikainen, People, koku, example.org
+dn: cn=Jarmo Hallikainen,ou=People,o=koku,dc=example,dc=org
+cn: Jarmo Hallikainen
+description: 121212-1212
+givenName: Jarmo
+objectClass: inetOrgPerson
+objectClass: top
+sn: Hallikainen
+uid: Hallikainen
+userPassword:: dGVzdA==
+
+# Marja Kanerva, People, koku, example.org
+dn: cn=Marja Kanerva,ou=People,o=koku,dc=example,dc=org
+cn: Marja Kanerva
+description: 121212-1212
+givenName: Marja
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kanerva
+uid: Kanerva
+userPassword:: dGVzdA==
+
+# Vesa Komonen, People, koku, example.org
+dn: cn=Vesa Komonen,ou=People,o=koku,dc=example,dc=org
+cn: Vesa Komonen
+description: 121212-1212
+givenName: Vesa
+objectClass: inetOrgPerson
+objectClass: top
+sn: Komonen
+uid: Komonen
+userPassword:: dGVzdA==
+
+# Niina Kuisma, People, koku, example.org
+dn: cn=Niina Kuisma,ou=People,o=koku,dc=example,dc=org
+cn: Niina Kuisma
+description: 121212-1212
+givenName: Niina
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kuisma
+uid: Kuisma
+userPassword:: dGVzdA==
+
+# Anna Karkkainen, People, koku, example.org
+dn: cn=Anna Karkkainen,ou=People,o=koku,dc=example,dc=org
+cn: Anna Karkkainen
+description: 121212-1212
+givenName: Anna
+objectClass: inetOrgPerson
+objectClass: top
+sn: Karkkainen
+uid: Karkkainen
+userPassword:: dGVzdA==
+
+# Krista Piippo, People, koku, example.org
+dn: cn=Krista Piippo,ou=People,o=koku,dc=example,dc=org
+cn: Krista Piippo
+description: 121212-1212
+givenName: Krista
+objectClass: inetOrgPerson
+objectClass: top
+sn: Piippo
+uid: Piippo
+userPassword:: dGVzdA==
+
+# Jaakko Rekola, People, koku, example.org
+dn: cn=Jaakko Rekola,ou=People,o=koku,dc=example,dc=org
+cn: Jaakko Rekola
+description: 121212-1212
+givenName: Jaakko
+objectClass: inetOrgPerson
+objectClass: top
+sn: Rekola
+uid: Rekola
+userPassword:: dGVzdA==
+
+# Tuukka Soini, People, koku, example.org
+dn: cn=Tuukka Soini,ou=People,o=koku,dc=example,dc=org
+cn: Tuukka Soini
+description: 121212-1212
+givenName: Tuukka
+objectClass: inetOrgPerson
+objectClass: top
+sn: Soini
+uid: Soini
+userPassword:: dGVzdA==
+
+# Ulla Soukainen, People, koku, example.org
+dn: cn=Ulla Soukainen,ou=People,o=koku,dc=example,dc=org
+cn: Ulla Soukainen
+description: 121212-1212
+givenName: Ulla
+objectClass: inetOrgPerson
+objectClass: top
+sn: Soukainen
+uid: Soukainen
+userPassword:: dGVzdA==
+
+# Minna Haasio, People, koku, example.org
+dn: cn=Minna Haasio,ou=People,o=koku,dc=example,dc=org
+cn: Minna Haasio
+description: 121212-1212
+givenName: Minna
+objectClass: inetOrgPerson
+objectClass: top
+sn: Haasio
+uid: Haasio
+userPassword:: dGVzdA==
+
+# Katja Jussila, People, koku, example.org
+dn: cn=Katja Jussila,ou=People,o=koku,dc=example,dc=org
+cn: Katja Jussila
+description: 121212-1212
+givenName: Katja
+objectClass: inetOrgPerson
+objectClass: top
+sn: Jussila
+uid: Jussila
+userPassword:: dGVzdA==
+
+# Veli-Matti Kanerva, People, koku, example.org
+dn: cn=Veli-Matti Kanerva,ou=People,o=koku,dc=example,dc=org
+cn: Veli-Matti Kanerva
+description: 121212-1212
+givenName: Veli-Matti
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kanerva
+uid: Kanerva
+userPassword:: dGVzdA==
+
+# Maija Kanerva, People, koku, example.org
+dn: cn=Maija Kanerva,ou=People,o=koku,dc=example,dc=org
+cn: Maija Kanerva
+description: 121212-1212
+givenName: Maija
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kanerva
+uid: Kanerva
+userPassword:: dGVzdA==
+
+# Pia Kola-Torvinen, People, koku, example.org
+dn: cn=Pia Kola-Torvinen,ou=People,o=koku,dc=example,dc=org
+cn: Pia Kola-Torvinen
+description: 121212-1212
+givenName: Pia
+objectClass: inetOrgPerson
+objectClass: top
+sn: Kola-Torvinen
+uid: Kola-Torvinen
+userPassword:: dGVzdA==
+
+# Mia Lumio, People, koku, example.org
+dn: cn=Mia Lumio,ou=People,o=koku,dc=example,dc=org
+cn: Mia Lumio
+description: 121212-1212
+givenName: Mia
+objectClass: inetOrgPerson
+objectClass: top
+sn: Lumio
+uid: Lumio
+userPassword:: dGVzdA==
+
+# Aila Salmelin, People, koku, example.org
+dn: cn=Aila Salmelin,ou=People,o=koku,dc=example,dc=org
+cn: Aila Salmelin
+description: 121212-1212
+givenName: Aila
+objectClass: inetOrgPerson
+objectClass: top
+sn: Salmelin
+uid: Salmelin
+userPassword:: dGVzdA==
+
+# Tuire Sannisto, People, koku, example.org
+dn: cn=Tuire Sannisto,ou=People,o=koku,dc=example,dc=org
+cn: Tuire Sannisto
+description: 121212-1212
+givenName: Tuire
+objectClass: inetOrgPerson
+objectClass: top
+sn: Sannisto
+uid: Sannisto
+userPassword:: dGVzdA==
+
+# Pirjo Smolander, People, koku, example.org
+dn: cn=Pirjo Smolander,ou=People,o=koku,dc=example,dc=org
+cn: Pirjo Smolander
+description: 121212-1212
+givenName: Pirjo
+objectClass: inetOrgPerson
+objectClass: top
+sn: Smolander
+uid: Smolander
+userPassword:: dGVzdA==
+
+# Riikka Alajaasko, People, koku, example.org
+dn: cn=Riikka Alajaasko,ou=People,o=koku,dc=example,dc=org
+cn: Riikka Alajaasko
+description: 121212-1212
+givenName: Riikka
+objectClass: inetOrgPerson
+objectClass: top
+sn: Alajaasko
+uid: Alajaasko
+userPassword:: dGVzdA==
+
+# Ari Andreasson, People, koku, example.org
+dn: cn=Ari Andreasson,ou=People,o=koku,dc=example,dc=org
+cn: Ari Andreasson
+description: 121212-1212
+givenName: Ari
+objectClass: inetOrgPerson
+objectClass: top
+sn: Andreasson
+uid: Andreasson
+userPassword:: dGVzdA==
+
+# Sari Halonen, People, koku, example.org
+dn: cn=Sari Halonen,ou=People,o=koku,dc=example,dc=org
+cn: Sari Halonen
+description: 121212-1212
+givenName: Sari
+objectClass: inetOrgPerson
+objectClass: top
+sn: Halonen
+uid: Halonen
+userPassword:: dGVzdA==
+
+# Marjut Heikkinen, People, koku, example.org
+dn: cn=Marjut Heikkinen,ou=People,o=koku,dc=example,dc=org
+cn: Marjut Heikkinen
+description: 121212-1212
+givenName: Marjut
+objectClass: inetOrgPerson
+objectClass: top
+sn: Heikkinen
+uid: Heikkinen
+userPassword:: dGVzdA==
+
+# Pia Hietanen, People, koku, example.org
+dn: cn=Pia Hietanen,ou=People,o=koku,dc=example,dc=org
+cn: Pia Hietanen
+description: 121212-1212
+givenName: Pia
+objectClass: inetOrgPerson
+objectClass: top
+sn: Hietanen
+uid: Hietanen
+userPassword:: dGVzdA==
+
+# Hannele Jarvi, People, koku, example.org
+dn: cn=Hannele Jarvi,ou=People,o=koku,dc=example,dc=org
+cn: Hannele Jarvi
+description: 121212-1212
+givenName: Hannele
+objectClass: inetOrgPerson
+objectClass: top
+sn: Jarvi
+uid: Jarvi
+userPassword:: dGVzdA==
+
+# Pirjo Jarvinen, People, koku, example.org
+dn: cn=Pirjo Jarvinen,ou=People,o=koku,dc=example,dc=org
+cn: Pirjo Jarvinen
+description: 121212-1212
+givenName: Pirjo
+objectClass: inetOrgPerson
+objectClass: top
+sn: Jarvinen
+uid: Jarvinen
+userPassword:: dGVzdA==
+
+# Jouni Lehtinen, People, koku, example.org
+dn: cn=Jouni Lehtinen,ou=People,o=koku,dc=example,dc=org
+cn: Jouni Lehtinen
+description: 121212-1212
+givenName: Jouni
+objectClass: inetOrgPerson
+objectClass: top
+sn: Lehtinen
+uid: Lehtinen
+userPassword:: dGVzdA==
+
+# Pirjo Makinen, People, koku, example.org
+dn: cn=Pirjo Makinen,ou=People,o=koku,dc=example,dc=org
+cn: Pirjo Makinen
+description: 121212-1212
+givenName: Pirjo
+objectClass: inetOrgPerson
+objectClass: top
+sn: Makinen
+uid: Makinen
+userPassword:: dGVzdA==
+
+# Heli Pakarinen, People, koku, example.org
+dn: cn=Heli Pakarinen,ou=People,o=koku,dc=example,dc=org
+cn: Heli Pakarinen
+description: 121212-1212
+givenName: Heli
+objectClass: inetOrgPerson
+objectClass: top
+sn: Pakarinen
+uid: Pakarinen
+userPassword:: dGVzdA==
+
+# Merja Pusa, People, koku, example.org
+dn: cn=Merja Pusa,ou=People,o=koku,dc=example,dc=org
+cn: Merja Pusa
+description: 121212-1212
+givenName: Merja
+objectClass: inetOrgPerson
+objectClass: top
+sn: Pusa
+uid: Pusa
+userPassword:: dGVzdA==
+
+# Sari Salomaa-Niemi, People, koku, example.org
+dn: cn=Sari Salomaa-Niemi,ou=People,o=koku,dc=example,dc=org
+cn: Sari Salomaa-Niemi
+description: 121212-1212
+givenName: Sari
+objectClass: inetOrgPerson
+objectClass: top
+sn: Salomaa-Niemi
+uid: Salomaa-Niemi
+userPassword:: dGVzdA==
+
+# Ulf Schnabel, People, koku, example.org
+dn: cn=Ulf Schnabel,ou=People,o=koku,dc=example,dc=org
+cn: Ulf Schnabel
+description: 121212-1212
+givenName: Ulf
+objectClass: inetOrgPerson
+objectClass: top
+sn: Schnabel
+uid: Schnabel
+userPassword:: dGVzdA==
+
+# Marjatta Silvennoinen, People, koku, example.org
+dn: cn=Marjatta Silvennoinen,ou=People,o=koku,dc=example,dc=org
+cn: Marjatta Silvennoinen
+description: 121212-1212
+givenName: Marjatta
+objectClass: inetOrgPerson
+objectClass: top
+sn: Silvennoinen
+uid: Silvennoinen
+userPassword:: dGVzdA==
+
+# Terhi Soyrinki, People, koku, example.org
+dn: cn=Terhi Soyrinki,ou=People,o=koku,dc=example,dc=org
+cn: Terhi Soyrinki
+description: 121212-1212
+givenName: Terhi
+objectClass: inetOrgPerson
+objectClass: top
+sn: Soyrinki
+uid: Soyrinki
+userPassword:: dGVzdA==
+
+# Mervi Tykkylainen, People, koku, example.org
+dn: cn=Mervi Tykkylainen,ou=People,o=koku,dc=example,dc=org
+cn: Mervi Tykkylainen
+description: 121212-1212
+givenName: Mervi
+objectClass: inetOrgPerson
+objectClass: top
+sn: Tykkylainen
+uid: Tykkylainen
+userPassword:: dGVzdA==
+
+# Esa Rantamaki, People, koku, example.org
+dn: cn=Esa Rantamaki,ou=People,o=koku,dc=example,dc=org
+cn: Esa Rantamaki
+description: 121212-1212
+givenName: Esa
+objectClass: inetOrgPerson
+objectClass: top
+sn: Rantamaki
+uid: Rantamaki
+userPassword:: dGVzdA==
+
+# kirsi.kuntalainen, People, koku, example.org
+dn: cn=kirsi.kuntalainen,ou=People,o=koku,dc=example,dc=org
+cn: kirsi.kuntalainen
+description: 222222-2222
+givenName: kirsi
+objectClass: inetOrgPerson
+objectClass: top
+sn: kuntalainen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 222222-2222
+
+# kaisa.kuntalainen, People, koku, example.org
+dn: cn=kaisa.kuntalainen,ou=People,o=koku,dc=example,dc=org
+cn: kaisa.kuntalainen
+description: 444444-4444
+givenName: kaisa
+objectClass: inetOrgPerson
+objectClass: top
+sn: kuntalainen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 444444-4444
+
+# kauko.kuntalainen, People, koku, example.org
+dn: cn=kauko.kuntalainen,ou=People,o=koku,dc=example,dc=org
+cn: kauko.kuntalainen
+description: 555555-5555
+givenName: kauko
+objectClass: inetOrgPerson
+objectClass: top
+sn: kuntalainen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 555555-5555
+
+# kerttu.kuntalainen, People, koku, example.org
+dn: cn=kerttu.kuntalainen,ou=People,o=koku,dc=example,dc=org
+cn: kerttu.kuntalainen
+description: 333333-3333
+givenName: kerttu
+objectClass: inetOrgPerson
+objectClass: top
+sn: kuntalainen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 333333-3333
+
+# paivi.paivakoti, People, koku, example.org
+dn: cn=paivi.paivakoti,ou=People,o=koku,dc=example,dc=org
+cn: paivi.paivakoti
+description: 777777-7777
+givenName: paivi
+objectClass: inetOrgPerson
+objectClass: top
+sn: paivakoti
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 777777-7777
+
+# nelli.neuvola, People, koku, example.org
+dn: cn=nelli.neuvola,ou=People,o=koku,dc=example,dc=org
+cn: nelli.neuvola
+description: 888888-8888
+givenName: nelli
+objectClass: inetOrgPerson
+objectClass: top
+sn: neuvola
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 888888-8888
+
+# veeti.virkamies, People, koku, example.org
+dn: cn=veeti.virkamies,ou=People,o=koku,dc=example,dc=org
+cn: veeti.virkamies
+description: 999999-9999
+givenName: veeti
+objectClass: inetOrgPerson
+objectClass: top
+sn: virkamies
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 999999-9999
+
+# pertti.paakayttaja, People, koku, example.org
+dn: cn=pertti.paakayttaja,ou=People,o=koku,dc=example,dc=org
+cn: pertti.paakayttaja
+description: 101010-1010
+givenName: pertti
+objectClass: inetOrgPerson
+objectClass: top
+sn: paakayttaja
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 101010-1010
+
+# piia.paakayttaja, People, koku, example.org
+dn: cn=piia.paakayttaja,ou=People,o=koku,dc=example,dc=org
+cn: piia.paakayttaja
+description: 121212-1212
+givenName: piia
+objectClass: inetOrgPerson
+objectClass: top
+sn: paakayttaja
+uid: paakayttaja
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+
+# keijo.keinonen, People, koku, example.org
+dn: cn=keijo.keinonen,ou=People,o=koku,dc=example,dc=org
+cn: keijo.keinonen
+description: 131313-1313
+givenName: keijo
+objectClass: inetOrgPerson
+objectClass: top
+sn: keinonen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 131313-1313
+
+# liisa.lahtinen, People, koku, example.org
+dn: cn=liisa.lahtinen,ou=People,o=koku,dc=example,dc=org
+cn: liisa.lahtinen
+description: 141414-1414
+givenName: liisa
+objectClass: inetOrgPerson
+objectClass: top
+sn: lahtinen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 141414-1414
+
+# sami.salminen, People, koku, example.org
+dn: cn=sami.salminen,ou=People,o=koku,dc=example,dc=org
+cn: sami.salminen
+description: 151515-1515
+givenName: sami
+objectClass: inetOrgPerson
+objectClass: top
+sn: salminen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 151515-1515
+
+# sanni.suhonen, People, koku, example.org
+dn: cn=sanni.suhonen,ou=People,o=koku,dc=example,dc=org
+cn: sanni.suhonen
+description: 161616-1616
+givenName: sanni
+objectClass: inetOrgPerson
+objectClass: top
+sn: suhonen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 161616-1616
+
+# sulo.simonen, People, koku, example.org
+dn: cn=sulo.simonen,ou=People,o=koku,dc=example,dc=org
+cn: sulo.simonen
+description: 171717-1717
+givenName: sulo
+objectClass: inetOrgPerson
+objectClass: top
+sn: simonen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 171717-1717
+
+# lasse.lahtinen, People, koku, example.org
+dn: cn=lasse.lahtinen,ou=People,o=koku,dc=example,dc=org
+cn: lasse.lahtinen
+description: 191919-1919
+givenName: lasse
+objectClass: inetOrgPerson
+objectClass: top
+sn: lahtinen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 191919-1919
+
+# lauri.lahtinen, People, koku, example.org
+dn: cn=lauri.lahtinen,ou=People,o=koku,dc=example,dc=org
+cn: lauri.lahtinen
+description: 181818-1818
+givenName: lauri
+objectClass: inetOrgPerson
+objectClass: top
+sn: lahtinen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 181818-1818
+
+# malla.mieho, People, koku, example.org
+dn: cn=malla.mieho,ou=People,o=koku,dc=example,dc=org
+cn: malla.mieho
+description: 272727-2727
+givenName: malla
+objectClass: inetOrgPerson
+objectClass: top
+sn: mieho
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 272727-2727
+
+# martti.mieho, People, koku, example.org
+dn: cn=martti.mieho,ou=People,o=koku,dc=example,dc=org
+cn: martti.mieho
+description: 262626-2626
+givenName: martti
+objectClass: inetOrgPerson
+objectClass: top
+sn: mieho
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 262626-2626
+
+# minna.mieho, People, koku, example.org
+dn: cn=minna.mieho,ou=People,o=koku,dc=example,dc=org
+cn: minna.mieho
+description: 252525-2525
+givenName: minna
+objectClass: inetOrgPerson
+objectClass: top
+sn: mieho
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 252525-2525
+
+# niina.neuvola, People, koku, example.org
+dn: cn=niina.neuvola,ou=People,o=koku,dc=example,dc=org
+cn: niina.neuvola
+description: 292929-2929
+givenName: niina
+objectClass: inetOrgPerson
+objectClass: top
+sn: neuvola
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 292929-2929
+
+# petra.paivakoti, People, koku, example.org
+dn: cn=petra.paivakoti,ou=People,o=koku,dc=example,dc=org
+cn: petra.paivakoti
+description: 282828-2828
+givenName: petra
+objectClass: inetOrgPerson
+objectClass: top
+sn: paivakoti
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 282828-2828
+
+# saana.salminen, People, koku, example.org
+dn: cn=saana.salminen,ou=People,o=koku,dc=example,dc=org
+cn: saana.salminen
+description: 212121-2121
+givenName: saana
+objectClass: inetOrgPerson
+objectClass: top
+sn: salminen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 212121-2121
+
+# saara.salminen, People, koku, example.org
+dn: cn=saara.salminen,ou=People,o=koku,dc=example,dc=org
+cn: saara.salminen
+description: 202020-2020
+givenName: saara
+objectClass: inetOrgPerson
+objectClass: top
+sn: salminen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 202020-2020
+
+# sampo.suhonen, People, koku, example.org
+dn: cn=sampo.suhonen,ou=People,o=koku,dc=example,dc=org
+cn: sampo.suhonen
+description: 232323-2323
+givenName: sampo
+objectClass: inetOrgPerson
+objectClass: top
+sn: suhonen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 232323-2323
+
+# santtu.suhonen, People, koku, example.org
+dn: cn=santtu.suhonen,ou=People,o=koku,dc=example,dc=org
+cn: santtu.suhonen
+description: 242424-2424
+givenName: santtu
+objectClass: inetOrgPerson
+objectClass: top
+sn: suhonen
+userPassword:: dGVzdA==
+telephoneNumber: 040-123123
+mail: testiposti@testiposti.com
+uid: 242424-2424
+
+# neuvola.3, People, koku, example.org
+dn: cn=neuvola.3,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.3
+description: 101010-1001
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 3
+uid: 101010-1001
+userPassword:: dGVzdA==
+
+# neuvola.4, People, koku, example.org
+dn: cn=neuvola.4,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.4
+description: 101010-1002
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 4
+uid: 101010-1002
+userPassword:: dGVzdA==
+
+# neuvola.5, People, koku, example.org
+dn: cn=neuvola.5,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.5
+description: 101010-1003
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 5
+uid: 101010-1003
+userPassword:: dGVzdA==
+
+# neuvola.6, People, koku, example.org
+dn: cn=neuvola.6,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.6
+description: 101010-1004
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 6
+uid: 101010-1004
+userPassword:: dGVzdA==
+
+# neuvola.7, People, koku, example.org
+dn: cn=neuvola.7,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.7
+description: 101010-1005
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 7
+uid: 101010-1005
+userPassword:: dGVzdA==
+
+# neuvola.8, People, koku, example.org
+dn: cn=neuvola.8,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.8
+description: 101010-1006
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 8
+uid: 101010-1006
+userPassword:: dGVzdA==
+
+# neuvola.9, People, koku, example.org
+dn: cn=neuvola.9,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.9
+description: 101010-1007
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 9
+uid: 101010-1007
+userPassword:: dGVzdA==
+
+# neuvola.10, People, koku, example.org
+dn: cn=neuvola.10,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.10
+description: 101010-1008
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 10
+uid: 101010-1008
+userPassword:: dGVzdA==
+
+# neuvola.11, People, koku, example.org
+dn: cn=neuvola.11,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.11
+description: 101010-1009
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 11
+uid: 101010-1009
+userPassword:: dGVzdA==
+
+# neuvola.12, People, koku, example.org
+dn: cn=neuvola.12,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.12
+description: 101010-1010
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 12
+uid: 101010-1010
+userPassword:: dGVzdA==
+
+# neuvola.13, People, koku, example.org
+dn: cn=neuvola.13,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.13
+description: 101010-1011
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 13
+uid: 101010-1011
+userPassword:: dGVzdA==
+
+# neuvola.14, People, koku, example.org
+dn: cn=neuvola.14,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.14
+description: 101010-1012
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 14
+uid: 101010-1012
+userPassword:: dGVzdA==
+
+# neuvola.15, People, koku, example.org
+dn: cn=neuvola.15,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.15
+description: 101010-1013
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 15
+uid: 101010-1013
+userPassword:: dGVzdA==
+
+# neuvola.16, People, koku, example.org
+dn: cn=neuvola.16,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.16
+description: 101010-1014
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 16
+uid: 101010-1014
+userPassword:: dGVzdA==
+
+# neuvola.17, People, koku, example.org
+dn: cn=neuvola.17,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.17
+description: 101010-1015
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 17
+uid: 101010-1015
+userPassword:: dGVzdA==
+
+# neuvola.18, People, koku, example.org
+dn: cn=neuvola.18,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.18
+description: 101010-1016
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 18
+uid: 101010-1016
+userPassword:: dGVzdA==
+
+# neuvola.19, People, koku, example.org
+dn: cn=neuvola.19,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.19
+description: 101010-1017
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 19
+uid: 101010-1017
+userPassword:: dGVzdA==
+
+# neuvola.20, People, koku, example.org
+dn: cn=neuvola.20,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.20
+description: 101010-1018
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 20
+uid: 101010-1018
+userPassword:: dGVzdA==
+
+# neuvola.21, People, koku, example.org
+dn: cn=neuvola.21,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.21
+description: 101010-1019
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 21
+uid: 101010-1019
+userPassword:: dGVzdA==
+
+# neuvola.22, People, koku, example.org
+dn: cn=neuvola.22,ou=People,o=koku,dc=example,dc=org
+cn: neuvola.22
+description: 101010-1020
+givenName: neuvola
+objectClass: inetOrgPerson
+objectClass: top
+sn: 22
+uid: 101010-1020
+userPassword:: dGVzdA==
+
+# paivakoti.1, People, koku, example.org
+dn: cn=paivakoti.1,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.1
+description: 202020-2001
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 1
+uid: 202020-2001
+userPassword:: dGVzdA==
+
+# paivakoti.2, People, koku, example.org
+dn: cn=paivakoti.2,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.2
+description: 202020-2002
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 2
+uid: 202020-2002
+userPassword:: dGVzdA==
+
+# paivakoti.3, People, koku, example.org
+dn: cn=paivakoti.3,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.3
+description: 202020-2003
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 3
+uid: 202020-2003
+userPassword:: dGVzdA==
+
+# paivakoti.4, People, koku, example.org
+dn: cn=paivakoti.4,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.4
+description: 202020-2004
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 4
+uid: 202020-2004
+userPassword:: dGVzdA==
+
+# paivakoti.5, People, koku, example.org
+dn: cn=paivakoti.5,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.5
+description: 202020-2005
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 5
+uid: 202020-2005
+userPassword:: dGVzdA==
+
+# paivakoti.6, People, koku, example.org
+dn: cn=paivakoti.6,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.6
+description: 202020-2006
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 6
+uid: 202020-2006
+userPassword:: dGVzdA==
+
+# paivakoti.7, People, koku, example.org
+dn: cn=paivakoti.7,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.7
+description: 202020-2007
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 7
+uid: 202020-2007
+userPassword:: dGVzdA==
+
+# paivakoti.8, People, koku, example.org
+dn: cn=paivakoti.8,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.8
+description: 202020-2008
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 8
+uid: 202020-2008
+userPassword:: dGVzdA==
+
+# paivakoti.9, People, koku, example.org
+dn: cn=paivakoti.9,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.9
+description: 202020-2009
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 9
+uid: 202020-2009
+userPassword:: dGVzdA==
+
+# paivakoti.10, People, koku, example.org
+dn: cn=paivakoti.10,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.10
+description: 202020-2010
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 10
+uid: 202020-2010
+userPassword:: dGVzdA==
+
+# paivakoti.11, People, koku, example.org
+dn: cn=paivakoti.11,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.11
+description: 202020-2011
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 11
+uid: 202020-2011
+userPassword:: dGVzdA==
+
+# paivakoti.12, People, koku, example.org
+dn: cn=paivakoti.12,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.12
+description: 202020-2012
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 12
+uid: 202020-2012
+userPassword:: dGVzdA==
+
+# paivakoti.13, People, koku, example.org
+dn: cn=paivakoti.13,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.13
+description: 202020-2013
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 13
+uid: 202020-2013
+userPassword:: dGVzdA==
+
+# paivakoti.14, People, koku, example.org
+dn: cn=paivakoti.14,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.14
+description: 202020-2014
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 14
+uid: 202020-2014
+userPassword:: dGVzdA==
+
+# paivakoti.15, People, koku, example.org
+dn: cn=paivakoti.15,ou=People,o=koku,dc=example,dc=org
+cn: paivakoti.15
+description: 202020-2015
+givenName: paivakoti
+objectClass: inetOrgPerson
+objectClass: top
+sn: 15
+uid: 202020-2015
+userPassword:: dGVzdA==
+
+# ROLE_LOK_ADMIN, roles, KokuCommunities, koku, example.org
+dn: cn=ROLE_LOK_ADMIN,ou=roles,ou=KokuCommunities,o=koku,dc=example,dc=org
+cn: ROLE_LOK_ADMIN
+objectClass: groupOfNames
+objectClass: top
+member: cn=kalle.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=pertti.paakayttaja,ou=people,o=koku,dc=example,dc=org
+
+# ROLE_LOK_LOG_ADMIN, roles, KokuCommunities, koku, example.org
+dn: cn=ROLE_LOK_LOG_ADMIN,ou=roles,ou=KokuCommunities,o=koku,dc=example,dc=org
+cn: ROLE_LOK_LOG_ADMIN
+objectClass: groupOfNames
+objectClass: top
+member: cn=piia.paakayttaja,ou=people,o=koku,dc=example,dc=org
+
+# Admin, Groups, koku, example.org
+dn: cn=Admin,ou=Groups,o=koku,dc=example,dc=org
+cn: Admin
+member: cn=admin,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# administrator, Groups, koku, example.org
+dn: cn=administrator,ou=Groups,o=koku,dc=example,dc=org
+cn: administrator
+member: cn=admin,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# administrators, Groups, koku, example.org
+dn: cn=administrators,ou=Groups,o=koku,dc=example,dc=org
+cn: administrators
+member: cn=admin,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# asiakaspalvelukeskus, Groups, koku, example.org
+dn: cn=asiakaspalvelukeskus,ou=Groups,o=koku,dc=example,dc=org
+cn: asiakaspalvelukeskus
+member: cn=Aarne Asiakaspalvelukeskus,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# KokuUsers, Groups, koku, example.org
+dn: cn=KokuUsers,ou=Groups,o=koku,dc=example,dc=org
+cn: KokuUsers
+member: cn=admin,ou=People,o=koku,dc=example,dc=org
+member: cn=Kalle Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Keijo Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Kirsi Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Lassi Lapsi,ou=People,o=koku,dc=example,dc=org
+member: cn=Liisa Lapsi,ou=People,o=koku,dc=example,dc=org
+member: cn=Pirjo Paivakodinjohtaja,ou=People,o=koku,dc=example,dc=org
+member: cn=Teija Testi,ou=People,o=koku,dc=example,dc=org
+member: cn=Teppo Testi,ou=People,o=koku,dc=example,dc=org
+member: cn=Ville Virkamies,ou=People,o=koku,dc=example,dc=org
+member: cn=Yrjo Yllapito,ou=People,o=koku,dc=example,dc=org
+member: cn=Aarne Asiakaspalvelukeskus,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# Users, KokuUsers, Groups, koku, example.org
+dn: cn=Users,cn=KokuUsers,ou=Groups,o=koku,dc=example,dc=org
+cn: Users
+member: cn=admin,ou=People,o=koku,dc=example,dc=org
+member: cn=Kalle Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Keijo Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Kirsi Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Lassi Lapsi,ou=People,o=koku,dc=example,dc=org
+member: cn=Liisa Lapsi,ou=People,o=koku,dc=example,dc=org
+member: cn=Pirjo Paivakodinjohtaja,ou=People,o=koku,dc=example,dc=org
+member: cn=Teija Testi,ou=People,o=koku,dc=example,dc=org
+member: cn=Teppo Testi,ou=People,o=koku,dc=example,dc=org
+member: cn=Ville Virkamies,ou=People,o=koku,dc=example,dc=org
+member: cn=Yrjo Yllapito,ou=People,o=koku,dc=example,dc=org
+member: cn=Aarne Asiakaspalvelukeskus,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# kuntalainen, Groups, koku, example.org
+dn: cn=kuntalainen,ou=Groups,o=koku,dc=example,dc=org
+cn: kuntalainen
+member: cn=Kalle Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Keijo Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Kirsi Kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=Lassi Lapsi,ou=People,o=koku,dc=example,dc=org
+member: cn=Liisa Lapsi,ou=People,o=koku,dc=example,dc=org
+member: cn=Teija Testi,ou=People,o=koku,dc=example,dc=org
+member: cn=Teppo Testi,ou=People,o=koku,dc=example,dc=org
+member: cn=admin,ou=People,o=koku,dc=example,dc=org
+member: cn=kirsi.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=kalle.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=kaisa.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=kauko.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=kerttu.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=keijo.keinonen,ou=People,o=koku,dc=example,dc=org
+member: cn=liisa.lahtinen,ou=People,o=koku,dc=example,dc=org
+member: cn=sami.salminen,ou=People,o=koku,dc=example,dc=org
+member: cn=sanni.suhonen,ou=People,o=koku,dc=example,dc=org
+member: cn=sulo.simonen,ou=People,o=koku,dc=example,dc=org
+member: cn=lasse.lahtinen,ou=People,o=koku,dc=example,dc=org
+member: cn=lauri.lahtinen,ou=People,o=koku,dc=example,dc=org
+member: cn=malla.mieho,ou=People,o=koku,dc=example,dc=org
+member: cn=martti.mieho,ou=People,o=koku,dc=example,dc=org
+member: cn=minna.mieho,ou=People,o=koku,dc=example,dc=org
+member: cn=saana.salminen,ou=People,o=koku,dc=example,dc=org
+member: cn=saara.salminen,ou=People,o=koku,dc=example,dc=org
+member: cn=sampo.suhonen,ou=People,o=koku,dc=example,dc=org
+member: cn=santtu.suhonen,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# paivakodin_johtaja, Groups, koku, example.org
+dn: cn=paivakodin_johtaja,ou=Groups,o=koku,dc=example,dc=org
+cn: paivakodin_johtaja
+member: cn=Pirjo Paivakodinjohtaja,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# virkailija, Groups, koku, example.org
+dn: cn=virkailija,ou=Groups,o=koku,dc=example,dc=org
+cn: virkailija
+member: cn=Ville Virkamies,ou=People,o=koku,dc=example,dc=org
+member: cn=Paula Vanninmaja,ou=People,o=koku,dc=example,dc=org
+member: cn=Kari Nurminen,ou=People,o=koku,dc=example,dc=org
+member: cn=paivi.paivakoti,ou=People,o=koku,dc=example,dc=org
+member: cn=nelli.neuvola,ou=People,o=koku,dc=example,dc=org
+member: cn=veeti.virkamies,ou=People,o=koku,dc=example,dc=org
+member: cn=pertti.paakayttaja,ou=People,o=koku,dc=example,dc=org
+member: cn=piia.paakayttaja,ou=People,o=koku,dc=example,dc=org
+member: cn=niina.neuvola,ou=People,o=koku,dc=example,dc=org
+member: cn=petra.paivakoti,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.3,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.4,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.5,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.6,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.7,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.8,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.9,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.10,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.11,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.12,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.13,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.14,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.15,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.16,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.17,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.18,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.19,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.20,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.21,ou=People,o=koku,dc=example,dc=org
+member: cn=neuvola.22,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.1,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.2,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.3,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.4,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.5,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.6,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.7,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.8,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.9,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.10,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.11,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.12,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.13,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.14,ou=People,o=koku,dc=example,dc=org
+member: cn=paivakoti.15,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# yllapito, Groups, koku, example.org
+dn: cn=yllapito,ou=Groups,o=koku,dc=example,dc=org
+cn: yllapito
+member: cn=Yrjo Yllapito,ou=People,o=koku,dc=example,dc=org
+objectClass: groupOfNames
+objectClass: top
+
+# Oravat, Groups, koku, example.org
+dn: cn=Oravat,ou=Groups,o=koku,dc=example,dc=org
+cn: Oravat
+objectClass: groupOfNames
+objectClass: top
+member: cn=kirsi.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=kalle.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=liisa.lahtinen,ou=People,o=koku,dc=example,dc=org
+member: cn=lauri.lahtinen,ou=People,o=koku,dc=example,dc=org
+member: cn=minna.mieho,ou=People,o=koku,dc=example,dc=org
+member: cn=martti.mieho,ou=People,o=koku,dc=example,dc=org
+
+# Siilit, Groups, koku, example.org
+dn: cn=Siilit,ou=Groups,o=koku,dc=example,dc=org
+cn: Siilit
+objectClass: groupOfNames
+objectClass: top
+member: cn=sami.salminen,ou=People,o=koku,dc=example,dc=org
+member: cn=sanni.suhonen,ou=People,o=koku,dc=example,dc=org
+member: cn=sulo.simonen,ou=People,o=koku,dc=example,dc=org
+member: cn=saara.salminen,ou=People,o=koku,dc=example,dc=org
+member: cn=sampo.suhonen,ou=People,o=koku,dc=example,dc=org
+
+# Oravat, Groups, KokuCommunities, koku, example.org
+dn: cn=Oravat,ou=Groups,ou=KokuCommunities,o=koku,dc=example,dc=org
+cn: Oravat
+objectClass: groupOfNames
+objectClass: top
+member: cn=kirsi.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=kalle.kuntalainen,ou=People,o=koku,dc=example,dc=org
+member: cn=liisa.lahtinen,ou=People,o=koku,dc=example,dc=org
+member: cn=lauri.lahtinen,ou=People,o=koku,dc=example,dc=org
+member: cn=minna.mieho,ou=People,o=koku,dc=example,dc=org
+member: cn=martti.mieho,ou=People,o=koku,dc=example,dc=org
+
+# Siilit, Groups, KokuCommunities, koku, example.org
+dn: cn=Siilit,ou=Groups,ou=KokuCommunities,o=koku,dc=example,dc=org
+cn: Siilit
+objectClass: groupOfNames
+objectClass: top
+member: cn=sami.salminen,ou=People,o=koku,dc=example,dc=org
+member: cn=sanni.suhonen,ou=People,o=koku,dc=example,dc=org
+member: cn=sulo.simonen,ou=People,o=koku,dc=example,dc=org
+member: cn=saara.salminen,ou=People,o=koku,dc=example,dc=org
+member: cn=sampo.suhonen,ou=People,o=koku,dc=example,dc=org
+
+# search result
+#search: 2
+#result: 0 Success
+
+# numResponses: 157
+# numEntries: 156

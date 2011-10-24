@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>palvelut-web-service</artifactId>
+	<name>palvelut services</name>
+	<packaging>ejb</packaging>
+	<description>KoKu palvelut services for portlet</description>
+
+	<parent>
+                <groupId>kohti-kumppanuutta</groupId>
+                <artifactId>koku-services</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+		<acj.version>0.9</acj.version>
+		<slf4j.version>1.6.0</slf4j.version>
+		<log4j.version>1.2.14</log4j.version>
+		<logback.version>0.9.21</logback.version>
+		<commons-lang.version>2.4</commons-lang.version>
+		<commons-codec.version>1.4</commons-codec.version>
+		<jpa.version>1.0</jpa.version>
+		<hibernate-core.version>3.3.1.GA</hibernate-core.version>
+		<hibernate-validator.version>3.1.0.GA</hibernate-validator.version>
+		<hibernate-annotations.version>3.4.0.GA</hibernate-annotations.version>
+		<hibernate-commons-annotations.version>3.3.0.ga</hibernate-commons-annotations.version>
+		<hibernate-entitymanager.version>3.4.0.GA</hibernate-entitymanager.version>
+		<spring.version>2.5.6.SEC01</spring.version>
+		<acegi.version>1.0.6</acegi.version>
+		<hsqldb.version>1.8.0.7</hsqldb.version>
+		<postgresql.version>8.3-603.jdbc3</postgresql.version>
+		<commons-dbcp.version>1.2.2</commons-dbcp.version>
+		<junit.version>4.5</junit.version>
+		<portlet.version>2.0</portlet.version>
+		<servlet.version>2.4</servlet.version>
+		<javac.source.version>1.6</javac.source.version>
+		<javac.target.version>1.6</javac.target.version>
+		<liferay.version>6.0.5</liferay.version>
+		<liferay-kernel.version>6.0.5</liferay-kernel.version>
+		<cas.version>3.1.9</cas.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>palvelut-portlet</groupId>
+			<artifactId>loggingServiceClient</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/loggingserviceclient.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>140</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging-api</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<!-- Postgresql -->
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

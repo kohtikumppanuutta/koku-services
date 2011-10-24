@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>koku-services</artifactId>
+    <groupId>kohti-kumppanuutta</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>lok-service</artifactId>
+  <packaging>ejb</packaging>
+  <name>lok-service</name>
+
+  <properties>
+    <lokservice-api.version>0.0.17</lokservice-api.version>
+  </properties>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-dependency-plugin</artifactId>
+         <version>2.3</version>
+         <executions>
+           <execution>
+             <id>unpack</id>
+             <phase>initialize</phase>
+             <goals>
+               <goal>unpack</goal>
+             </goals>
+             <configuration>
+               <artifactItems>
+                 <artifactItem>
+                   <groupId>kohti-kumppanuutta</groupId>
+                   <artifactId>lokservice-api</artifactId>
+                   <version>${lokservice-api.version}</version>
+                   <type>jar</type>
+                   <overWrite>false</overWrite>
+                   <outputDirectory>${project.build.directory}</outputDirectory>
+                   <includes>**/*.wsdl,**/*.xsd</includes>
+                 </artifactItem>
+               </artifactItems>
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
+      
+    </plugins>
+
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>kohti-kumppanuutta</groupId>
+      <artifactId>lokservice-api</artifactId>
+      <version>${lokservice-api.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>kohti-kumppanuutta</groupId>
+      <artifactId>authorizationinfoservice-api</artifactId>
+      <version>0.0.7</version>
+    </dependency>    
+  </dependencies>
+  <version>0.0.1-SNAPSHOT</version>
+</project>

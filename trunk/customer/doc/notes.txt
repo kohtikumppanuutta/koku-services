@@ -1,0 +1,112 @@
+
+TODO
+- input validation
+- faults in contract
+- LOK requirements and auditInfoHeader
+- slf4j + log4j config
+- testability
+
+
+DONE
+- schema centralization
+- move service implementation to .../v1/impl package ?
+- logging: conf/jboss-log4j.xml
+  <category name="fi.koku.services">
+   <priority value="DEBUG"></priority>
+   <appender-ref ref="KOKU"/>
+  </category>
+- using soapAction. no. WS-I BP 1.1.
+- contract/schema versioning
+- pass non-business contract related data to the service (e.g. logging data) via SOAP Headers
+	to keep the business interface clean and reusable.
+  mandatory headers: logging data should be passed in SOAP headers. Mandatory headers declared with "wsdl:required".
+  	Map headers as implementation method input parameters using JAX-WS and enforce header presence in method implementation if required
+    (not e.g. handler or interceptor).
+  NB: in principal header related faults should be reported using header faults.
+
+- schema reusability
+  message type definitions externalized to separate schema files and imported in wsdl.
+  separate service specific and common message type definitions.
+  common types reused across services.
+  
+- package and namespace conventions
+
+- authentication: HTTP basic authentication.
+  all clients must authenticate to service. each client has its own user id which can be used e.g. for auditing purposes
+  if clients don't follow the rules. 
+
+- SOAP 1.2 binding
+
+- 00:29:28,109 ERROR [SOAPFaultHelperJAXWS] SOAP request exception
+  org.jboss.ws.WSException: Cannot uniquely indentify operation: {http://koku.fi/schema/customer}customer
+  issue: WS-I BP R2710
+  solutions:
+  * use SOAPAction HTTP header
+  	manually set SOAPAction: "http://foo.bar/addCustomer" ==> same result
+  * use WS-Addressing Action: difficult to manage in client code ==> makes API less usable
+  * use unique message types: OK
+
+- ws-addressing? no
+
+==================
+fault handling
+- service implementation can deliver a fault to the client (SOAPFactory, SOAPFaultException)
+  even if a fault is not defined in contract (HTTP + SOAP). this is protocol specific behavior.
+  faults don't seem to get mapped in the client.
+- one-way MEPs can't specify faults
+- jax-ws maps faults defined in the contract in the client
+- using request-response MEP for inherently one-way MEP operations is not good contract design
+
+==================
+
+data model
+- nimi
+  hetu
+  henkilön tila
+  syntymäaika
+  siviilisääty (marital status)
+  kansalaisuus
+  kieli
+  yhteystieto
+  + osoite
+  + puhelinnumero
+  + sähköinen yhteystieto
+  sukupuoli
+  turvakielto
+  huollettavat
+
+kts. Asiakastiedon pääjäsennys
+	 soa palvelut
+
+http://www.jhs-suositukset.fi/suomi/jhs170
+http://www.asiakaspalvelukeskus.info/index.php?option=com_k2&view=item&id=110&Itemid=185
+  
+loggausta varten tarvitaan lisäksi seuraavat tiedot
+- komponentti?
+- käyttäjätunnus
+- 
+
+==================
+MySQL datasource
+- download MySQL jdbc driver and place the driver in common/lib
+- install datasource (copy to deploy dir)
+
+==================
+
+http://localhost:8080/customer-service-0.0.1-SNAPSHOT/CustomerServiceBean?wsdl
+http://localhost:8080/customer-service-0.0.1-SNAPSHOT/CommunityServiceBean?wsdl
+
+==================
+
+JBoss EAP auth config
+- add a security domain config in conf/login-config.xml
+
+==================
+
+http://jax-ws.java.net/articles/MessageContext.html
+http://blogs.oracle.com/artf/entry/using_jax_ws_2_1
+
+https://issues.jboss.org/browse/JBWS-2183?page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel
+
+
+==================

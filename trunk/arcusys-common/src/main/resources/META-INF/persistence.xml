@@ -1,0 +1,43 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	version="1.0">
+    <persistence-unit name="kokuDatabase" transaction-type = "JTA">
+		<jta-data-source>java:/jdbc/koku</jta-data-source>
+		<properties>
+			<!-- JBoss specific -->
+			<!-- Following is for development only - use "validate" in production instead-->
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+            <!-- For re-creation of database structure if it is changed -->
+<!--             <property name="hibernate.hbm2ddl.auto" value="create-drop" /> -->
+		</properties>
+		<class>fi.arcusys.koku.common.service.datamodel.AbstractEntity</class>
+		<class>fi.arcusys.koku.common.service.datamodel.Message</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Request</class>
+        <class>fi.arcusys.koku.common.service.datamodel.RequestTemplate</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Question</class>
+        <class>fi.arcusys.koku.common.service.datamodel.MultipleChoice</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Response</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Answer</class>
+<!--        <class>fi.arcusys.koku.common.service.datamodel.YesNoAnswer</class>-->
+<!--        <class>fi.arcusys.koku.common.service.datamodel.FreeTextAnswer</class>-->
+		<class>fi.arcusys.koku.common.service.datamodel.Folder</class>
+		<class>fi.arcusys.koku.common.service.datamodel.MessageRef</class>
+        <class>fi.arcusys.koku.common.service.datamodel.User</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Appointment</class>
+        <class>fi.arcusys.koku.common.service.datamodel.AppointmentSlot</class>
+        <class>fi.arcusys.koku.common.service.datamodel.AppointmentResponse</class>
+        <class>fi.arcusys.koku.common.service.datamodel.TargetPerson</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentTemplate</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentActionRequest</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Consent</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentGivenTo</class>
+        <class>fi.arcusys.koku.common.service.datamodel.SourceInfo</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentReply</class>
+        <class>fi.arcusys.koku.common.service.datamodel.ConsentActionReply</class>
+        <class>fi.arcusys.koku.common.service.datamodel.InformationRequest</class>
+        <class>fi.arcusys.koku.common.service.datamodel.InformationRequestCategory</class>
+        <class>fi.arcusys.koku.common.service.datamodel.InformationRequestReply</class>
+        <class>fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate</class>
+        <class>fi.arcusys.koku.common.service.datamodel.Authorization</class>
+        <class>fi.arcusys.koku.common.service.datamodel.DaycareRequest</class>
+	</persistence-unit>
+</persistence>
