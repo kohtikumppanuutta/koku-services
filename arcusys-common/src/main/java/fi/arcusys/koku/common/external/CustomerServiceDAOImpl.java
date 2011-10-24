@@ -162,6 +162,8 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         if (matcher.matches()) {
             user.setFirstname(matcher.group(1));
             user.setLastname(matcher.group(2));
+        } else {
+            user.setFirstname(employee.getEmployeePortalName());
         }
         return user;
     }
