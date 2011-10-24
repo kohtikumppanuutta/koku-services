@@ -6,9 +6,11 @@
 
   <security-domain>koku-domain</security-domain>
   
+<!--
   <webservices>
     <context-root>/customer-service</context-root>
   </webservices>
+-->
 
   <enterprise-beans>
     <session>
