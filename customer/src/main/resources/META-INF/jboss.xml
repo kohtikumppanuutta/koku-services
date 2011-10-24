@@ -14,7 +14,7 @@
     <session>
       <ejb-name>CustomerServiceEndpointBean</ejb-name>
       <port-component>
-        <port-component-name></port-component-name>
+        <port-component-name>CustomerService</port-component-name>
         <auth-method>BASIC</auth-method>
       </port-component>
     </session>
@@ -22,7 +22,7 @@
     <session>
       <ejb-name>CommunityServiceEndpointBean</ejb-name>
       <port-component>
-        <port-component-name></port-component-name>
+        <port-component-name>CommunityService</port-component-name>
         <auth-method>BASIC</auth-method>
       </port-component>
     </session>
