@@ -108,7 +108,7 @@ public class AppointmentServiceTest {
         assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().isEmpty());
 		serviceFacade.declineAppointment(targetPersonForDecline, receipientForDecline, appointmentForDecline.getAppointmentId(), "declined");
         assertFalse(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().isEmpty());
-        assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().contains(targetPersonForDecline));
+        assertTrue(serviceFacade.getAppointment(appointmentForApprove.getAppointmentId()).getUsersRejected().contains(getKunpoName(targetPersonForDecline)));
         assertNull(getById(serviceFacade.getRespondedAppointments(receipientForDecline, 1, 10), appointmentId));
         assertNotNull(getById(serviceFacade.getOldAppointments(receipientForDecline, 1, 10), appointmentId));
 
@@ -118,6 +118,10 @@ public class AppointmentServiceTest {
         serviceFacade.cancelAppointment(targetPerson, receipient, appointmentForApprove.getAppointmentId(), "cancelled");
         assertEquals(AppointmentSummaryStatus.Cancelled, serviceFacade.getAppointmentRespondedById(appointmentForApprove.getAppointmentId(), targetPerson).getStatus());
 	}
+
+    private String getKunpoName(final String targetPersonForDecline) {
+        return testUtil.getUserByUid(targetPersonForDecline).getCitizenPortalName();
+    }
 	
 	@Test
 	public void countTotals() {
