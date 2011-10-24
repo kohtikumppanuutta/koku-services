@@ -215,6 +215,7 @@ public final class KksConverter {
   public static KksCollection fromWsType(KksCollectionType collection) {
     KksCollection kksCollection = new KksCollection();
 
+    kksCollection.setId(Long.valueOf(collection.getId()));
     kksCollection.setCustomer(collection.getCustomerId());
     kksCollection.setCreated(CalendarUtil.getDate(collection.getCreated()));
     kksCollection.setCreator(collection.getCreator());
@@ -224,14 +225,14 @@ public final class KksConverter {
     kksCollection.setNextVersion(collection.getNextVersion());
     kksCollection.setPrevVersion(collection.getPrevVersion());
     kksCollection.setStatus(collection.getStatus());
-    kksCollection.setCollectionClass(Integer.parseInt(collection.getCollectionClassId()));
+    kksCollection.setCollectionClass(Integer.valueOf(collection.getCollectionClassId()));
     kksCollection.setVersion(collection.getVersion().intValue());
-    kksCollection.setModified(CalendarUtil.getDate(collection.getModified()));
+    kksCollection.setModified(collection.getModified() == null ? new Date() : CalendarUtil.getDate(collection.getModified()));
     kksCollection.setModifier(collection.getModifier());
 
     List<KksEntry> tmp = new ArrayList<KksEntry>();
     for (KksEntryType et : collection.getKksEntries().getEntries()) {
-      tmp.add(KksConverter.fromWsType(et));
+      tmp.add(KksConverter.fromWsType(et, kksCollection));
     }
 
     kksCollection.setEntries(tmp);
@@ -239,7 +240,7 @@ public final class KksConverter {
     return kksCollection;
   }
 
-  public static KksEntry fromWsType(KksEntryType entryType) {
+  public static KksEntry fromWsType(KksEntryType entryType, KksCollection collection ) {
     KksEntry entry = new KksEntry();
     entry.setCreator(entryType.getCreator());
 
@@ -247,10 +248,12 @@ public final class KksConverter {
     if (entryType.getId() != null) {
       entry.setId(Long.parseLong(entryType.getId()));
     }
+    entry.setKksCollection(collection);
 
-    entry.setEntryClassId(Integer.parseInt(entryType.getEntryClassId()));
+    entry.setEntryClassId(Integer.valueOf(entryType.getEntryClassId()));
     entry.setId(parseNullableLong(entryType.getId()));
-    entry.setModified(CalendarUtil.getDate(entryType.getModified()));
+    entry.setModified(entryType.getModified() == null ? new Date() : CalendarUtil.getDate(entryType.getModified()));
+    
     entry.setVersion(entryType.getVersion().intValue());
 
     List<KksValue> tmp = new ArrayList<KksValue>();
