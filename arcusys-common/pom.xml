@@ -31,7 +31,7 @@
         <dependency>
             <groupId>kohti-kumppanuutta</groupId>
             <artifactId>familyservice-api</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.7</version>
         </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

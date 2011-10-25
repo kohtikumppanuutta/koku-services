@@ -59,7 +59,7 @@
             <env-entry>
                 <env-entry-name>serviceEndpointBaseUrl</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>http://localhost:8180</env-entry-value>
+                <env-entry-value>http://localhost:8080</env-entry-value>
                 <injection-target>
                     <injection-target-class>fi.arcusys.koku.common.external.LogServiceDAOImpl</injection-target-class>
                     <injection-target-name>serviceEndpointBaseUrl</injection-target-name>
@@ -128,7 +128,7 @@
             <env-entry>
                 <env-entry-name>customerServiceEndpoint</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>http://localhost:8180</env-entry-value>
+                <env-entry-value>http://localhost:8080</env-entry-value>
                 <injection-target>
                     <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
                     <injection-target-name>customerServiceEndpoint</injection-target-name>

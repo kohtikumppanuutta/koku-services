@@ -37,7 +37,7 @@
             <env-entry>
                 <env-entry-name>urlBase</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>http://localhost:8180</env-entry-value>
+                <env-entry-value>http://localhost:8080</env-entry-value>
                 <injection-target>
                     <injection-target-class>fi.arcusys.koku.tiva.service.impl.KksCollectionsDAOImpl</injection-target-class>
                     <injection-target-name>urlBase</injection-target-name>
