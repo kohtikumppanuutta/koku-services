@@ -14,6 +14,7 @@
     <jsr250-api.version>1.0</jsr250-api.version>
     <jpa-api.version>1.0-rev-1</jpa-api.version>
     <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
+    <surefire.plugin.version>2.7.2</surefire.plugin.version>
     <junit.version>4.8.2</junit.version>
     <hamcrest.version>1.1</hamcrest.version>
     <koku-common.version>0.0.8</koku-common.version>
@@ -89,6 +90,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire.plugin.version}</version>
 				<configuration>
 					<systemProperties combine.children="append">
 						<property>
