@@ -50,6 +50,33 @@ public class LogUtils {
     return newday;  
   }
   
+  /**
+   * Helper method that checks if a given date is before today.
+   * @param date
+   * @return
+   */
+  public boolean isBeforeToday(Date date) {
+    
+    Calendar today = Calendar.getInstance();
+    today.set(Calendar.HOUR_OF_DAY, 0);
+    today.set(Calendar.MINUTE, 0);
+    today.set(Calendar.SECOND, 0);
+    today.set(Calendar.MILLISECOND, 0);
+
+    Calendar newDate = Calendar.getInstance();
+    newDate.setTime(date);
+
+    newDate.set(Calendar.HOUR_OF_DAY, 0);
+    newDate.set(Calendar.MINUTE, 0);
+    newDate.set(Calendar.SECOND, 0);
+    newDate.set(Calendar.MILLISECOND, 0);
+
+    if (newDate.before(today)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   
   /**
    * Checks if some of the mandatory fields in log writing is null.

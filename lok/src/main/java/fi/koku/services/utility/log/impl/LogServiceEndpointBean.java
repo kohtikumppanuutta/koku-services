@@ -222,14 +222,19 @@ public class LogServiceEndpointBean implements LogServicePortType {
     
     if(archivalParameters.getEndDate() == null){
       logger.error("archival end date not found!");
-    }else{
-
+    } else if(!lu.isBeforeToday(CalendarUtil.getDate(archivalParameters.getEndDate()))){
+      logger.error("Archive end date is not before today.");
+      throw new KoKuFaultException(LOG_ERROR_INVALID_ARCHIVE_DATE.getValue(), LOG_ERROR_INVALID_ARCHIVE_DATE.getDescription());
+    }
+    else{
+      
       try{
         Date endDate = CalendarUtil.getDate(archivalParameters.getEndDate());
-        
+       
         // first, find out what is the earliest entry to be archived so that we can write 
         // about this in the archive log
         Date movedDate = lu.moveOneDay(endDate);
+        // this has to be called before archiving
         Date earliest = logService.getEarliest(movedDate);
         
         // call to the actual archiving
