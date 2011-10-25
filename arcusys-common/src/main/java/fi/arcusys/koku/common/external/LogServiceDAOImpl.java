@@ -6,6 +6,8 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,14 @@ public class LogServiceDAOImpl implements LogServiceDAO {
     
     @PostConstruct
     void init() {
+        try {
+            final InitialContext ctx = new InitialContext();
+            serviceEndpointBaseUrl = (String) ctx.lookup("koku/urls/lokservice-baseurl");
+            logger.debug("Overwrite lokServiceEndpointBaseUrl with " + serviceEndpointBaseUrl);
+        } catch (NamingException e) {
+            logger.error(null, e);
+        }
+
         logServiceFactory = new LogServiceFactory(logUserUid, logUserPwd, serviceEndpointBaseUrl);
     }
     

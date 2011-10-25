@@ -5,6 +5,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +32,23 @@ public class KksCollectionsDAOImpl implements KksCollectionsDAO {
     @EJB
     private UserDAO userDao;
     
-    private String uid = "marko";
-    private String pwd = "marko";
-    private String component = "tiva";
-    private String urlBase = "http://localhost:8180";
+    private String uid;
+    private String pwd;
+    private String component;
+    private String urlBase;
     
     private GroupsHelper helper;
     
     @PostConstruct
     public void init() {
+        try {
+            final InitialContext ctx = new InitialContext();
+            urlBase = (String) ctx.lookup("koku/urls/kksservice-baseurl");
+            logger.debug("Overwrite urlBase with " + urlBase);
+        } catch (NamingException e) {
+            logger.error(null, e);
+        }
+
         try {
             helper = new GroupsHelper(uid, pwd, component, urlBase);
         } catch(RuntimeException re) {

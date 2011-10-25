@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -53,6 +54,13 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
 
     @PostConstruct
     public void init() {
+        try {
+            final InitialContext ctx = new InitialContext();
+            customerServiceEndpoint = (String) ctx.lookup("koku/urls/customerservice-baseurl");
+            logger.debug("Overwrite customerServiceEndpoint with " + customerServiceEndpoint);
+        } catch (NamingException e) {
+            logger.error(null, e);
+        }
         try {
             CustomerServiceFactory customerServiceFactory = new CustomerServiceFactory(
                     customerServiceUserUid, customerServiceUserPwd, customerServiceEndpoint);
