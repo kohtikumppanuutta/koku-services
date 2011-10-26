@@ -23,6 +23,28 @@
   <build>
 
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0.1</version>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.0</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
@@ -36,6 +58,7 @@
           <debug>true</debug>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.zeroturnaround</groupId>
         <artifactId>jrebel-maven-plugin</artifactId>
@@ -50,6 +73,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ejb-plugin</artifactId>
@@ -58,6 +82,7 @@
           <ejbVersion>${ejb-api.version}</ejbVersion>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jaxws-maven-plugin</artifactId>
@@ -85,21 +110,33 @@
         <configuration>
           <defaultLibBundleDir>lib</defaultLibBundleDir>
           <generateApplicationXml>true</generateApplicationXml>
+           <archive>
+            <index>true</index>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Build-Version>${koku.build.version}</Build-Version>
+              <Build-Platform>${os.name} ${os.version}</Build-Platform>
+              <Build-Time>${maven.build.timestamp}</Build-Time>
+            </manifestEntries>
+          </archive>
         </configuration>
       </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${surefire.plugin.version}</version>
-				<configuration>
-					<systemProperties combine.children="append">
-						<property>
-							<name>jboss.server.home.dir</name>
-							<value>${project.build.directory}/classes/</value>
-						</property>
-					</systemProperties>
-				</configuration>
-			</plugin>
+
+  	<plugin>
+  		<groupId>org.apache.maven.plugins</groupId>
+  		<artifactId>maven-surefire-plugin</artifactId>
+  		<version>${surefire.plugin.version}</version>
+  		<configuration>
+  			<systemProperties combine.children="append">
+  				<property>
+  					<name>jboss.server.home.dir</name>
+  					<value>${project.build.directory}/classes/</value>
+  				</property>
+  			</systemProperties>
+  		</configuration>
+  	</plugin>
 
     </plugins>
 
