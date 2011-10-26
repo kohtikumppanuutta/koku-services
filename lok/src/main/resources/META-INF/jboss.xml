@@ -1,23 +1,25 @@
-<?xml version="1.0"?>
-<jboss xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.jboss.org/j2ee/schema jboss_5_0.xsd"
-  version="3.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss xmlns="http://www.jboss.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_5_0.xsd"
+  version="5.0">
 
   <security-domain>koku-domain</security-domain>
   
-  <enterprise-beans>
-    <session>
-      <ejb-name>LogServiceEndpointBean</ejb-name>
-      <port-component>
-        <auth-method>BASIC</auth-method>
-      </port-component>
-    </session>
-  </enterprise-beans>
-
 <!-- 
   <webservices>
     <context-root>/lok-service</context-root>
   </webservices>
  -->
+
+  <enterprise-beans>
+    <session>
+      <ejb-name>LogServiceEndpointBean</ejb-name>
+      <port-component>
+        <port-component-name>LogService</port-component-name>
+        <auth-method>BASIC</auth-method>
+      </port-component>
+    </session>
+  </enterprise-beans>
 
 </jboss>
