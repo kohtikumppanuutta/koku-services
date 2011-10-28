@@ -46,7 +46,7 @@ public class LogDAOBean implements LogDAO {
     selectQuery.setParameter("date", movedDate);
     Long logEntryCount = (Long) selectQuery.getSingleResult();
 
-    logger.debug("archive list size: " + logEntryCount);
+    logger.info("archive list size: " + logEntryCount);
 
     // there is nothing to archive, the portlet user will see an error message
     if (logEntryCount == 0) {
@@ -64,7 +64,7 @@ public class LogDAOBean implements LogDAO {
       // execute the query
       int updateCount = archiveQuery.executeUpdate();
 
-      logger.info("Archived " + updateCount + " lines of log to log_archive table");//from "+startDate+" to " + date);
+      logger.info("Archived " + updateCount + " lines of log to log_archive table");
 
       // If there is a Runtime error in archiving, no entries will be deleted from the database.
       // The portlet user will see an error message.
@@ -111,7 +111,7 @@ public class LogDAOBean implements LogDAO {
 
   @Override
   public void writeAdminLog(AdminLogEntry entry) {
-    logger.debug("write to Admin Log");
+    logger.info("write to Admin Log");
     em.persist(entry);
   }
 
