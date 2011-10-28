@@ -13,6 +13,8 @@ import javax.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.KoKuFaultException;
+
 /**
  * LogDAOBean.
  * 
@@ -49,17 +51,16 @@ public class LogDAOBean implements LogDAO {
     // there is nothing to archive, the portlet user will see an error message
     if (logEntryCount == 0) {
       return 0;
-    } else {
-   
+    } else { 
       logger.info("insert log entries to archive log (enddate=" + date+")");
       Query archiveQuery = em
-          .createNativeQuery("INSERT INTO "
-              + "log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) "
-              + "SELECT data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message "
-              + "FROM log WHERE timestamp < :date");
+      .createNativeQuery("INSERT INTO "
+          + "log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) "
+          + "SELECT data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message "
+          + "FROM log WHERE timestamp < :date");
       // set the moved end date
       archiveQuery.setParameter("date", movedDate);
-      
+
       // execute the query
       int updateCount = archiveQuery.executeUpdate();
 
@@ -67,7 +68,7 @@ public class LogDAOBean implements LogDAO {
 
       // If there is a Runtime error in archiving, no entries will be deleted from the database.
       // The portlet user will see an error message.
-      
+
       // If the archiving went ok, delete the entries
       if(updateCount > 0){
         Query deleteQuery = em.createNativeQuery("DELETE FROM log WHERE timestamp < :date");
@@ -92,15 +93,14 @@ public class LogDAOBean implements LogDAO {
     Query dateQuery = em.createNativeQuery("SELECT MIN(timestamp) FROM log WHERE timestamp <= :date");
     dateQuery.setParameter("date", date);
     Date earliestDate = (Date)dateQuery.getSingleResult();
-    logger.debug("got earliest date: "+earliestDate);
-   
+
     if(earliestDate == null){
       logger.error("Could not get the timestamp of the earliest entry to be archived.");
     }
-    
+
     return earliestDate;
   }
-  
+
   /**
    * Write log (note: archive log is not written with this method!)
    */
@@ -111,7 +111,7 @@ public class LogDAOBean implements LogDAO {
 
   @Override
   public void writeAdminLog(AdminLogEntry entry) {
-   logger.debug("write to Admin Log");
+    logger.debug("write to Admin Log");
     em.persist(entry);
   }
 
@@ -120,35 +120,35 @@ public class LogDAOBean implements LogDAO {
    * showing to the user in the portlet. (LOK-3)
    */
   @Override
-  public List<LogEntry> queryLog(LogQueryCriteria criteria) {
+  public List<LogEntry> queryLog(LogQueryCriteria criteria) throws KoKuFaultException{
     StringBuilder sb = new StringBuilder();
     List<Object[]> params = new ArrayList<Object[]>();
 
     String entity = "";
-    // choose the table here
 
     // All four query parameters are mandatory: starttime, endime,
     // customerpic, dataitemtype. The fields of criteria are null-checked on the
     // portlet side but let's check them here again
     if (criteria.getStartTime() == null || criteria.getEndTime() == null || criteria.getCustomerPic() == null
         || criteria.getDataItemType() == null) {
-      throw new RuntimeException("Criteria is not valid");
+      logger.error("Log query criteria is null or invalid");
+      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());     
+     // throw new RuntimeException("Criteria is not valid");
     } else {
-
-      logger.debug("queryLog-metodi: " + criteria.getLogType() + ", " + criteria.getCustomerPic() + ", "
-          + criteria.getStartTime() + ", " + criteria.getEndTime());
 
       if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
         entity = "LogEntry";
       } else {
-        logger.error("Joku virhe"); // TODO: parempi virheenkäsittely
+        logger.error("Wrong logtype in log query");         
+        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_LOGTYPE;
+        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
       }
 
       sb.append("SELECT e FROM " + entity + " e WHERE ");
-      
+
       sb.append("e.timestamp >= :startTime");
       params.add(new Object[] { "startTime", criteria.getStartTime() });
-      logger.debug("start: " + criteria.getStartTime().toString());
 
       sb.append(" AND ");
 
@@ -157,8 +157,7 @@ public class LogDAOBean implements LogDAO {
       criteria.setEndTime(lu.moveOneDay(criteria.getEndTime()));
 
       sb.append("e.timestamp <= :endTime");
-      params.add(new Object[] { "endTime", criteria.getEndTime() });
-      logger.debug("end: " + criteria.getEndTime().toString());
+      params.add(new Object[] { "endTime", criteria.getEndTime() });   
 
       sb.append(" AND ");
 
@@ -174,32 +173,23 @@ public class LogDAOBean implements LogDAO {
       }
 
       if (params.size() == 0) {
-        throw new RuntimeException("missing criteria");
+        throw new RuntimeException("Missing criteria for log query.");
       }
 
-      try {
-        logger.debug("query: " + sb.toString());
-        Query q = em.createQuery(sb.toString());
+      Query q = em.createQuery(sb.toString());
 
-        // TODO: lisää info-lokitus!
-
-        // build the query
-        for (int i = 0; i < params.size(); i++) {
-          q.setParameter((String) params.get(i)[0], params.get(i)[1]);
-        }
-
-        logger.debug("query: " + q.toString());
-
-        // query the database
-        if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) {
-          return q.getResultList();
-        }
-
-      } catch (IllegalStateException e) {
-        // TODO
-      } catch (IllegalArgumentException ex) {
-        // TODO
+      // build the query
+      for (int i = 0; i < params.size(); i++) {
+        q.setParameter((String) params.get(i)[0], params.get(i)[1]);
       }
+
+      logger.info("query: " + q.toString());
+
+      // query the database
+      if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) {
+        return q.getResultList();
+      }
+
     }
     return null; // if something went wrong
   }
@@ -216,14 +206,21 @@ public class LogDAOBean implements LogDAO {
     List<Object[]> params = new ArrayList<Object[]>();
     String entity = "";
 
+    // starttime and enddate are required and are null-checked in the portlet
+    // let's check the criteria once again
     if (criteria == null || criteria.getStartTime() == null || criteria.getEndTime() == null) {
-      throw new RuntimeException("Criteria is not valid");
+      logger.error("Admin log query criteria is null or invalid");
+      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
+      //throw new RuntimeException("Admin log query criteria is not valid.");
     } else {
       if (LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())) { // seurantaloki
         entity = "AdminLogEntry";
       } else {
-        logger.error("joku virhe"); // TODO: parempi virheenkäsittely
-        throw new RuntimeException("virhe logtypessä");
+        logger.error("Wrong logtype in admin log query");
+        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_LOGTYPE;
+        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
+        //throw new RuntimeException("virhe logtypessä");
       }
 
       // set the end time 1 day later so that everything added on the last day
@@ -232,19 +229,18 @@ public class LogDAOBean implements LogDAO {
 
       sb.append("SELECT e FROM " + entity + " e WHERE ");
 
-      // starttime and enddate are required and are null-checked in the portlet
-      // let's check the criteria once again
+    
 
       sb.append("e.timestamp >= :startTime");
       params.add(new Object[] { "startTime", criteria.getStartTime() });
-      logger.debug("start: " + criteria.getStartTime().toString());
+
 
       sb.append(" AND ");
 
       sb.append("e.timestamp <= :endTime");
       params.add(new Object[] { "endTime", criteria.getEndTime() });
 
-      logger.debug("end: " + criteria.getEndTime().toString());
+
 
       if (params.size() == 0) {
         throw new RuntimeException("missing criteria");

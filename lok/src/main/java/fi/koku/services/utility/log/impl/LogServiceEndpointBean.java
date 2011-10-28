@@ -51,16 +51,15 @@ import static fi.koku.services.utility.log.impl.LogServiceErrorCode.*;
 @RolesAllowed("koku-role")
 public class LogServiceEndpointBean implements LogServicePortType {
   private static final Logger logger = LoggerFactory.getLogger(LogServiceEndpointBean.class);
-  SimpleDateFormat df = new SimpleDateFormat(LogConstants.DATE_FORMAT);
-  @Resource
-  private WebServiceContext wsCtx;
+  private SimpleDateFormat df = new SimpleDateFormat(LogConstants.DATE_FORMAT);
+
 
   @EJB
   private LogService logService;
 
   private LogConverter logConverter;
 
-  LogUtils lu = new LogUtils();
+  private LogUtils lu = new LogUtils();
   
   private AuthorizationInfoService authInfoService;
   
@@ -79,7 +78,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * @return
    */
   @Override
-  public VoidType opLog(LogEntriesType logEntriesType, AuditInfoType auditInfoType) throws KoKuFaultException {
+  public VoidType opLog(LogEntriesType logEntriesType, AuditInfoType auditInfoType) { //throws KoKuFaultException {
     logger.info("opLog");
     List<LogEntryType> list = logEntriesType.getLogEntry();
     
@@ -109,7 +108,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * Implements the use cases LOK-3 (Etsi lokitieto) and LOK-4 (Tarkista lokin käsittelyloki). 
    */
   @Override
-  public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) throws KoKuFaultException {
+  public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) {//throws KoKuFaultException {
     logger.info("opQueryLog");
     LogEntriesType logEntriesType = new LogEntriesType();
     
@@ -135,10 +134,10 @@ public class LogServiceEndpointBean implements LogServicePortType {
         }
 
       } catch (ParseException e) { 
-        logger.debug("parseException: "+e.getMessage());
+        logger.error(e.getMessage());
         LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_PARSING;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());       
-      }
+      } 
       
       AdminLogEntry adminLogEntry = new AdminLogEntry();
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
@@ -214,7 +213,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
    */
   @Override
   public ArchivalResultsType opArchiveLog(LogArchivalParametersType archivalParameters, AuditInfoType auditInfoType)
-      throws KoKuFaultException {
+  { // throws KoKuFaultException {
     logger.info("opArchiveLog");   
     AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(), authInfoService.getUsersRoles(LogConstants.COMPONENT_LOK, auditInfoType.getUserId()));
 
@@ -265,11 +264,9 @@ public class LogServiceEndpointBean implements LogServicePortType {
         }
         
       }catch(KoKuFaultException f){
-        logger.debug("endpoint: throw KoKuFaultException");
         throw f;
       }catch(Exception e){
-        logger.debug("Error in archiving: "+e.getMessage());
-     
+        logger.error("Error in archiving: "+e.getMessage());     
         LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_ARCHIVE_LOG_NOT_AVAILABLE;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
       }
@@ -289,10 +286,6 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * @author makinsu
    */
   private static class LogConverter {
-
-    SimpleDateFormat df = new SimpleDateFormat(LogConstants.DATE_FORMAT);
-
-    LogUtils lu = new LogUtils();
     
     public LogConverter() {
     }
