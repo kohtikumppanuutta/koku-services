@@ -111,7 +111,11 @@ public class AuthorizationInfoServiceMockImpl implements GroupService {
     r.put("202020-2015", Arrays.asList(createGroup(groupClass, "daycareregistry", "Paivahoidon rekisteri", "202020-2015")));
     
     r.put("777777-7777", Arrays.asList(createGroup(groupClass, "daycareregistry", "Paivahoidon rekisteri", "777777-7777")));
+    r.put("282828-2828", Arrays.asList(createGroup(groupClass, "daycareregistry", "Paivahoidon rekisteri", "282828-2828")));
+   
+
     r.put("888888-8888", Arrays.asList(createGroup(groupClass, "healthcareregistry", "Potilastietorekisteri", "888888-8888")));
+    r.put("292929-2929", Arrays.asList(createGroup(groupClass, "healthcareregistry", "Potilastietorekisteri", "292929-2929")));
     return r;
   }
 
