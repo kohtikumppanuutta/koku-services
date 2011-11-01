@@ -1,5 +1,6 @@
 # You can override the TestPropertiesUtil properties set with this file (remove the .svn suffix)
-koku.srv.layer.endpoint.address=http://localhost:8080
+koku.customer.srv.endpoint.address=http://localhost:8080/customer-service-ear-0.0.1-SNAPSHOT-customer-service-0.0.1-SNAPSHOT
+koku.lok.srv.endpoint.address=http://localhost:8080/lok-service-ear-0.0.1-SNAPSHOT-lok-service-0.0.1-SNAPSHOT
 koku.srv.layer.ws.username=marko
 koku.srv.layer.ws.pwd=marko
 

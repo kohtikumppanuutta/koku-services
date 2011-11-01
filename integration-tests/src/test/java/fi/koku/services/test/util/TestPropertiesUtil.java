@@ -16,7 +16,8 @@ public class TestPropertiesUtil {
   
   private static Properties defaultProps = new Properties();
   
-  public static final String KOKU_SRV_LAYER_ENDPOINT_ADDRESS = "koku.srv.layer.endpoint.address";
+  public static final String KOKU_CUSTOMER_SRV_ENDPOINT_ADDRESS = "koku.customer.srv.endpoint.address";
+  public static final String KOKU_LOK_SRV_ENDPOINT_ADDRESS = "koku.lok.srv.endpoint.address";
   public static final String KOKU_SRV_LAYER_WS_USERNAME = "koku.srv.layer.ws.username";
   public static final String KOKU_SRV_LAYER_WS_PWD = "koku.srv.layer.ws.pwd";
   
@@ -26,7 +27,8 @@ public class TestPropertiesUtil {
   
   // Default values are defined here (CI environment uses these)
   static {
-    defaultProps.setProperty(KOKU_SRV_LAYER_ENDPOINT_ADDRESS, "http://62.61.65.15:8180");
+    defaultProps.setProperty(KOKU_CUSTOMER_SRV_ENDPOINT_ADDRESS, "http://62.61.65.15:8180/customer-service-ear-0.0.1-SNAPSHOT-customer-service-0.0.1-SNAPSHOT");
+    defaultProps.setProperty(KOKU_LOK_SRV_ENDPOINT_ADDRESS, "http://62.61.65.15:8180/lok-service-ear-0.0.1-SNAPSHOT-lok-service-0.0.1-SNAPSHOT");
     defaultProps.setProperty(KOKU_SRV_LAYER_WS_USERNAME, "marko");
     defaultProps.setProperty(KOKU_SRV_LAYER_WS_PWD, "marko");
     

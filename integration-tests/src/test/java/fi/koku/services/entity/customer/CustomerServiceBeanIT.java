@@ -1,11 +1,13 @@
 package fi.koku.services.entity.customer;
 
-import java.util.Calendar;
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
+import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.customer.v1.AddressType;
 import fi.koku.services.entity.customer.v1.AddressesType;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
@@ -150,8 +152,8 @@ public class CustomerServiceBeanIT {
     // Add one new address
     AddressType newAddress = new AddressType();
     newAddress.setAddressType("TYPE3");
-    newAddress.setAlkuPvm(Calendar.getInstance());
-    newAddress.setLoppuPvm(Calendar.getInstance());
+    newAddress.setAlkuPvm(CalendarUtil.getXmlDate(new Date()));
+    newAddress.setLoppuPvm(CalendarUtil.getXmlDate(new Date()));
     newAddress.setKatuNimi("Kuusitie 4");
     newAddress.setPostilokeroTeksti("PL 284");
     newAddress.setPostinumeroKoodi("00811");
@@ -239,8 +241,8 @@ public class CustomerServiceBeanIT {
     customer.setSukuNimi("Järvinen");
     customer.setHenkiloTunnus("150790-123A");
     customer.setKieliKoodi("FI");
-    customer.setSyntymaPvm(Calendar.getInstance());
-    customer.setStatusDate(Calendar.getInstance());
+    customer.setSyntymaPvm(CalendarUtil.getXmlDate(new Date()));
+    customer.setStatusDate(CalendarUtil.getXmlDate(new Date()));
     customer.setTurvakieltoKytkin(false);
     customer.setStatus("STATUS1");
     customer.setKansalaisuusKoodi("FI");
@@ -249,8 +251,8 @@ public class CustomerServiceBeanIT {
     AddressesType addresses = new AddressesType();
     AddressType address1 = new AddressType();
     address1.setAddressType("TYPE1");
-    address1.setAlkuPvm(Calendar.getInstance());
-    address1.setLoppuPvm(Calendar.getInstance());
+    address1.setAlkuPvm(CalendarUtil.getXmlDate(new Date()));
+    address1.setLoppuPvm(CalendarUtil.getXmlDate(new Date()));
     // Test special character
     address1.setKatuNimi("Hitsaajankatu € 24");
     address1.setPostilokeroTeksti("PL 284");
@@ -260,8 +262,8 @@ public class CustomerServiceBeanIT {
     addresses.getAddress().add(address1);
     AddressType address2 = new AddressType();
     address2.setAddressType("TYPE2");
-    address2.setAlkuPvm(Calendar.getInstance());
-    address2.setLoppuPvm(Calendar.getInstance());
+    address2.setAlkuPvm(CalendarUtil.getXmlDate(new Date()));
+    address2.setLoppuPvm(CalendarUtil.getXmlDate(new Date()));
     address2.setKatuNimi("Iltatie 24");
     address2.setPostilokeroTeksti(null);
     address2.setPostinumeroKoodi("02220");
@@ -336,7 +338,7 @@ public class CustomerServiceBeanIT {
   private CustomerServicePortType getCustomerServicePort() {
     return new CustomerServiceFactory(TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_USERNAME),
         TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_PWD),
-        TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_ENDPOINT_ADDRESS)).getCustomerService();
+        TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_CUSTOMER_SRV_ENDPOINT_ADDRESS)).getCustomerService();
   }
   
   private AuditInfoType getAudit() {

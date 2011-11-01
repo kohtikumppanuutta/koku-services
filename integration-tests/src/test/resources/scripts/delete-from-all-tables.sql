@@ -5,4 +5,7 @@ DELETE FROM address;
 DELETE FROM phone_number;
 DELETE FROM customer;
 DELETE FROM community;
+DELETE FROM log;
+DELETE FROM log_admin;
+DELETE FROM log_archive;
 COMMIT;

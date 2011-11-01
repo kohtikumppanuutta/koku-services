@@ -142,7 +142,7 @@ public class CommunityServiceBeanIT {
   private CommunityServicePortType getCommunityServicePort() {
     return new CommunityServiceFactory(TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_USERNAME),
         TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_PWD),
-        TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_ENDPOINT_ADDRESS)).getCommunityService();
+        TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_CUSTOMER_SRV_ENDPOINT_ADDRESS)).getCommunityService();
   }
   
   private AuditInfoType getAudit() {
