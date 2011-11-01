@@ -54,6 +54,18 @@ public class KksValue implements Serializable {
 
   @Column
   private String modifier;
+  
+  public KksValue() {
+    
+  }
+  
+  public KksValue(KksValue v, KksEntry e ) {
+    id = v.getId();
+    value = v.getValue();
+    entry = e;
+    modified = v.getModified();
+    modifier = v.getModifier();
+  }
 
   public Long getId() {
     return id;

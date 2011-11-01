@@ -134,7 +134,12 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
     @SuppressWarnings("unchecked")
     List<KksCollection> list = (List<KksCollection>) q.getResultList();
-    return list;
+    List<KksCollection> tmp = new ArrayList<KksCollection>();
+    
+    for ( KksCollection c : list ) {
+      tmp.add(new KksCollection(c));
+    }
+    return tmp;
   }
 
   @Override
@@ -161,7 +166,12 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
     @SuppressWarnings("unchecked")
     List<KksCollection> list = (List<KksCollection>) q.getResultList();
-    return list;
+    List<KksCollection> tmp = new ArrayList<KksCollection>();
+    
+    for ( KksCollection c : list ) {
+      tmp.add(new KksCollection(c));
+    }
+    return tmp;
   }
 
   public List<KksCollection> getAuthorizedCollections(String pic, String user) {
@@ -170,12 +180,17 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
     @SuppressWarnings("unchecked")
     List<KksCollection> list = (List<KksCollection>) q.getResultList();
-    return list;
+    List<KksCollection> tmp = new ArrayList<KksCollection>();
+    
+    for ( KksCollection c : list ) {
+      tmp.add(new KksCollection(c));
+    }
+    return tmp;
   }
 
   @Override
   public KksCollection getCollection(String id) {
-    return em.find(KksCollection.class, Long.parseLong(id));
+    return new KksCollection( em.find(KksCollection.class, Long.parseLong(id)));
   }
 
   @Override
@@ -519,7 +534,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     Map<Long, List<KksEntry>> entryMap = new HashMap<Long, List<KksEntry>>();
 
     for (KksEntry e : entries) {
-      tmpCollections.add(e.getKksCollection());
+      tmpCollections.add( e.getKksCollection() );
 
       if (entryMap.containsKey(e.getKksCollection().getId())) {
         List<KksEntry> tmpList = entryMap.get(e.getKksCollection().getId());
@@ -531,10 +546,20 @@ public class KksServiceDAOBean implements KksServiceDAO {
       }
     }
 
+    Set<KksCollection> collections = new HashSet<KksCollection>();
     for (KksCollection c : tmpCollections) {
-      c.setEntries(entryMap.get(c.getId()));
+      
+      KksCollection kc = new KksCollection(c);
+      List<KksEntry> entryList = new ArrayList<KksEntry>();
+      
+      for ( KksEntry e : entryMap.get(c.getId()) ) {
+        entryList.add(new KksEntry(e, kc));
+      }
+      
+      kc.setEntries(entryList);   
+      collections.add(kc);
     }
-    return tmpCollections;
+    return collections;
   }
 
   private List<Long> searchTaggedEntries(List<String> tagNames, List<String> registers) {
@@ -584,7 +609,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
   @Override
   public void update(String user, KksCollection collection, Log log, LogEntriesType logEntries) {
 
-    KksCollection tmp = em.find(KksCollection.class, collection.getId());
+    KksCollection tmp = new KksCollection( em.find(KksCollection.class, collection.getId() ));
 
     syncFields(user, collection, tmp, log, logEntries);
 
@@ -595,6 +620,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setModifier(collection.getModifier());
     tmp.setModified(new Date());
     tmp.setDescription(collection.getDescription());
+    System.out.println("KANTA " + tmp.getVersion() + " CLIENT " + collection.getVersion() );
     tmp.setVersion(collection.getVersion());
     em.merge(tmp);
     setTags(collection, tmp);

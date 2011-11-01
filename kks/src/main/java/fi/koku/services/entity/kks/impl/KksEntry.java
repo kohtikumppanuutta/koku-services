@@ -93,6 +93,29 @@ public class KksEntry implements Serializable {
     tagIds = new ArrayList<Integer>();
   }
 
+  public KksEntry(KksEntry e, KksCollection c) {
+    values = new ArrayList<KksValue>();
+    tags = new ArrayList<KksTag>();
+    tagIds = new ArrayList<Integer>();
+    id = e.getId();
+
+    modified = e.getModified();
+    creator = e.getCreator();
+    version = e.getVersion();
+    entryClassId = e.getEntryClassId();
+    customer = e.getCustomer();
+    kksCollection = c;
+
+    for (KksValue v : e.getValues()) {
+      values.add(new KksValue(v, this));
+    }
+
+    for (KksTag t : e.getTags()) {
+      tags.add(new KksTag(t));
+    }
+    tagIds = e.getTagIds();
+  }
+
   public Long getId() {
     return id;
   }

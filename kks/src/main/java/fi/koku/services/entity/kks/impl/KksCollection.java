@@ -111,6 +111,36 @@ public class KksCollection implements Serializable {
     consentRequested = false;
     userConsentStatus = "";
   }
+  
+  public KksCollection(KksCollection c) {
+    entries = new ArrayList<KksEntry>();
+    tags = new ArrayList<KksTag>();
+    
+    id = c.getId();    
+    name = c.getName();
+    description = c.getDescription();
+    status = c.getStatus();
+    created = c.getCreated();
+    creator = c.getCreator();
+    modified = c.getModified();
+    modifier = c.getModifier();    
+    version = c.getVersion();
+    nextVersion = c.getNextVersion();
+    prevVersion = c.getPrevVersion();
+    customer = c.getCustomer();
+    collectionClass = c.getCollectionClass();
+    consentRequested = c.isConsentRequested();
+    userConsentStatus = c.getUserConsentStatus();
+
+    for ( KksEntry e : c.getEntries() ) {
+      entries.add(new KksEntry(e, this ));
+    }
+    
+    for ( KksTag t : c.getTags() ) {
+      tags.add(new KksTag(t));
+    }
+    
+  }
 
   public Long getId() {
     return id;

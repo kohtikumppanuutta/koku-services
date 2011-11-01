@@ -46,6 +46,17 @@ public class KksTag implements Serializable {
   @Column
   private String description;
 
+  public KksTag() {
+    
+  }
+  
+  public KksTag( KksTag t ) {
+    id = t.getId();
+    tagId = t.getTagId();
+    name = t.getName();
+    description = t.getDescription();
+  }
+  
   public Integer getId() {
     return id;
   }
