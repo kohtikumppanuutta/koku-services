@@ -16,6 +16,8 @@ public class LogConstants {
   public static final String COMPONENT_LOK = "lok";
   
   public static final String OPERATION_VIEW = "view log";
+
+  public static final int MAX_QUERY_RESULTS = 51;
   
   private LogConstants(){
   }

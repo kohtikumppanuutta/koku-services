@@ -134,14 +134,13 @@ public class LogDAOBean implements LogDAO {
     String entity = "";
 
     // All four query parameters are mandatory: starttime, endime,
-    // customerpic, dataitemtype. The fields of criteria are null-checked on the
+    // customerpic, dataitemtype. These fields are null-checked on the
     // portlet side but let's check them here again
     if (criteria.getStartTime() == null || criteria.getEndTime() == null || criteria.getCustomerPic() == null
         || criteria.getDataItemType() == null) {
       logger.error("Log query criteria is null or invalid");
       LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
       throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());     
-     // throw new RuntimeException("Criteria is not valid");
     } else {
 
       if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
@@ -184,7 +183,10 @@ public class LogDAOBean implements LogDAO {
       }
 
       Query q = em.createQuery(sb.toString());
-
+     
+      // limit the number of results 
+      q.setMaxResults(LogConstants.MAX_QUERY_RESULTS);
+      
       // build the query
       for (int i = 0; i < params.size(); i++) {
         q.setParameter((String) params.get(i)[0], params.get(i)[1]);
@@ -203,9 +205,7 @@ public class LogDAOBean implements LogDAO {
 
   /**
    * Makes a query to the admin log and returns a list of AdminLogEntries for
-   * showing to the super user in the portlet. (LOK-4)
-   * 
-   * 
+   * showing to the super user in the portlet. (LOK-4) 
    */
   @Override
   public Collection<AdminLogEntry> queryAdminLog(LogQueryCriteria criteria) {
@@ -219,7 +219,6 @@ public class LogDAOBean implements LogDAO {
       logger.error("Admin log query criteria is null or invalid");
       LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
       throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
-      //throw new RuntimeException("Admin log query criteria is not valid.");
     } else {
       if (LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())) { // seurantaloki
         entity = "AdminLogEntry";
@@ -227,7 +226,6 @@ public class LogDAOBean implements LogDAO {
         logger.error("Wrong logtype in admin log query");
         LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_LOGTYPE;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
-        //throw new RuntimeException("virhe logtypessä");
       }
 
       // set the end time 1 day later so that everything added on the last day
@@ -236,27 +234,22 @@ public class LogDAOBean implements LogDAO {
 
       sb.append("SELECT e FROM " + entity + " e WHERE ");
 
-    
-
       sb.append("e.timestamp >= :startTime");
       params.add(new Object[] { "startTime", criteria.getStartTime() });
-
 
       sb.append(" AND ");
 
       sb.append("e.timestamp <= :endTime");
       params.add(new Object[] { "endTime", criteria.getEndTime() });
 
-
-
       if (params.size() == 0) {
         throw new RuntimeException("missing criteria");
       }
-
-      try {
+    
         Query q = em.createQuery(sb.toString());
-
-        // TODO: lisää info-lokitus!
+   
+        // limit the number of results 
+        q.setMaxResults(LogConstants.MAX_QUERY_RESULTS);
 
         // build the query
         for (int i = 0; i < params.size(); i++) {
@@ -266,14 +259,14 @@ public class LogDAOBean implements LogDAO {
         // query the database
         return q.getResultList();
 
-      } catch (IllegalStateException e) {
+/*      } catch (IllegalStateException e) {
         // TODO
       } catch (IllegalArgumentException ex) {
         // TODO
-      } 
+      }  
+    }*/
+      //  return null;
     }
-    return null;
-
   }
 
 }

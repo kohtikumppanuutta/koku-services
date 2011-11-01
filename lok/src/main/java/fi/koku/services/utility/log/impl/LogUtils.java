@@ -17,8 +17,6 @@ import fi.koku.KoKuFaultException;
 import fi.koku.services.utility.log.v1.LogEntryType;
 
 public class LogUtils {
-  private static final Logger logger = LoggerFactory.getLogger(LogUtils.class);
-
   
   /**
    * Helper method for parsing a Date to a Calendar
@@ -43,7 +41,6 @@ public class LogUtils {
    * @param date
    * @return
    */
-  //TODO: does not throw any exceptions now. The input is null-checked earlier
   public Date moveOneDay(Date date){
     Date newday = null;
     
@@ -97,6 +94,7 @@ public class LogUtils {
     //In admin log, these must not be null:
     // timestamp, user_pic, operation
     
+    boolean inputOk = false;
     LogServiceErrorCode errorCode = null;
     
     if(LogConstants.LOG_ADMIN.equalsIgnoreCase(logtype) || LogConstants.LOG_NORMAL.equalsIgnoreCase(logtype)){
@@ -129,10 +127,9 @@ public class LogUtils {
       }
     }
     if(errorCode == null){
-      return true;
-    }else{
-      return false;
+      inputOk = true;
     }
- 
+    
+      return inputOk;
   }
 }

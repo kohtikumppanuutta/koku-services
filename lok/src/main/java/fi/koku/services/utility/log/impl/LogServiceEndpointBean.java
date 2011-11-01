@@ -112,9 +112,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * käsittelyloki).
    */
   @Override
-  public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) {// throws
-                                                                                                    // KoKuFaultException
-                                                                                                    // {
+  public LogEntriesType opQueryLog(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) { 
+                                                                                                    
     logger.info("opQueryLog");
     LogEntriesType logEntriesType = new LogEntriesType();
 
@@ -141,13 +140,13 @@ public class LogServiceEndpointBean implements LogServicePortType {
             }
           }
         }
-
       } catch (ParseException e) {
         logger.error(e.getMessage());
         LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_PARSING;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
 
+   // log the query to Admin log
       AdminLogEntry adminLogEntry = new AdminLogEntry();
       adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
       adminLogEntry.setUserPic(auditInfoType.getUserId());
@@ -165,6 +164,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
           + df.format(CalendarUtil.getDate(criteriaType.getStartTime())) + " - "
           + df.format(CalendarUtil.getDate(criteriaType.getEndTime())));
 
+      //call the lok service
       logService.writeAdmin(adminLogEntry);
 
     } else if (LogConstants.LOG_ADMIN.equals(criteriaType.getLogType())) {
@@ -215,6 +215,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       logEntry.setClientSystemId("adminlog");
       logEntry.setDataItemType("log");
       logEntry.setDataItemId("adminlogid");
+
       // call to lok service
       logService.write(logEntry);
     } else {
