@@ -167,10 +167,10 @@
                 <res-auth>Container</res-auth>
                 <res-sharing-scope>Shareable</res-sharing-scope>
                 <mapped-name>external/ldap/myldap</mapped-name>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
-                    <injection-target-name>dirContext</injection-target-name>
-                </injection-target>
+<!--                 <injection-target> -->
+<!--                     <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class> -->
+<!--                     <injection-target-name>dirContext</injection-target-name> -->
+<!--                 </injection-target> -->
             </resource-ref>
         </session>
         <session>
@@ -217,10 +217,10 @@
                 <res-auth>Container</res-auth>
                 <res-sharing-scope>Shareable</res-sharing-scope>
                 <mapped-name>external/ldap/groups</mapped-name>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.GroupsDAOImpl</injection-target-class>
-                    <injection-target-name>dirContext</injection-target-name>
-                </injection-target>
+<!--                 <injection-target> -->
+<!--                     <injection-target-class>fi.arcusys.koku.common.external.GroupsDAOImpl</injection-target-class> -->
+<!--                     <injection-target-name>dirContext</injection-target-name> -->
+<!--                 </injection-target> -->
             </resource-ref>
         </session>
 	</enterprise-beans>

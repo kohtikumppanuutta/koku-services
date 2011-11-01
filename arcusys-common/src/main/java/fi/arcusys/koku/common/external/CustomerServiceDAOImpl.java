@@ -41,7 +41,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     private UserDAO userDao;
     
     //  @Resource(mappedName = "external/ldap/myldap")
-    private DirContext dirContext;
+//    private DirContext dirContext;
     private String ssnAttributeName;
     private String usernameAttributeName;
     private String userSearchFilter;
@@ -186,25 +186,31 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
 
     private String getUsersAttrNameByFilter(final String filterAttrName, final String filterAttrValue, final String searchAttrName) {
         try {
-            SearchControls controls = new SearchControls();
-            controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            final NamingEnumeration<SearchResult> results = dirContext.search("", 
-                    userSearchFilter.replaceAll("#attrName#", filterAttrName)
-                                    .replaceAll("#attrValue#", filterAttrValue), controls);
+            InitialContext iniCtx = new InitialContext();
+            DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/myldap");
             try {
-                if (results.hasMore()) {
-                    final SearchResult searchResult = results.next();
+                SearchControls controls = new SearchControls();
+                controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                final NamingEnumeration<SearchResult> results = dirContext.search("", 
+                        userSearchFilter.replaceAll("#attrName#", filterAttrName)
+                                        .replaceAll("#attrValue#", filterAttrValue), controls);
+                try {
                     if (results.hasMore()) {
-                        return "multipleFound";
+                        final SearchResult searchResult = results.next();
+                        if (results.hasMore()) {
+                            return "multipleFound";
+                        }
+                        final Attributes attributes = searchResult.getAttributes();
+                        final Attribute attr = attributes.get(searchAttrName);
+                        if (attr != null) {
+                            return (String) attr.get();
+                        }
                     }
-                    final Attributes attributes = searchResult.getAttributes();
-                    final Attribute attr = attributes.get(searchAttrName);
-                    if (attr != null) {
-                        return (String) attr.get();
-                    }
+                } finally {
+                    results.close();
                 }
             } finally {
-                results.close();
+                dirContext.close();
             }
         } catch (NamingException e) {
             logger.error(null, e);
