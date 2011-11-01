@@ -79,9 +79,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
    * @return
    */
   @Override
-  public VoidType opLog(LogEntriesType logEntriesType, AuditInfoType auditInfoType) { // throws
-                                                                                      // KoKuFaultException
-                                                                                      // {
+  public VoidType opLog(LogEntriesType logEntriesType, AuditInfoType auditInfoType) {
     logger.info("opLog");
     List<LogEntryType> list = logEntriesType.getLogEntry();
 
@@ -283,9 +281,6 @@ public class LogServiceEndpointBean implements LogServicePortType {
           }
           logService.writeAdmin(adminLogEntry);
         }
-
-      } catch (KoKuFaultException f) {
-        throw f;
       } catch (Exception e) {
         logger.error("Error in archiving: " + e.getMessage());
         LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_ARCHIVE_LOG_NOT_AVAILABLE;

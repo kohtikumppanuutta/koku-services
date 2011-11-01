@@ -13,14 +13,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * LogEntry entity, used for logging all events (LOK-3).
@@ -32,8 +27,6 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "log")
 public class LogEntry {
-  private static final Logger logger = LoggerFactory.getLogger(LogEntry.class);
-
   @Id
   @GeneratedValue
   @Column(name="id", unique=true, nullable=false)

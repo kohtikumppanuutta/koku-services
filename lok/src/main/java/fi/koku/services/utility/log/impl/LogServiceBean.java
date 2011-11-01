@@ -23,7 +23,7 @@ import javax.ejb.Stateless;
 public class LogServiceBean implements LogService{
 
   @EJB
-  LogDAO logDAO;
+  private LogDAO logDAO;
   
   @Override
   public int archive(Date date) {

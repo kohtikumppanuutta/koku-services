@@ -75,11 +75,7 @@ public class LogUtils {
     newDate.set(Calendar.SECOND, 0);
     newDate.set(Calendar.MILLISECOND, 0);
 
-    if (newDate.before(today)) {
-      return true;
-    } else {
-      return false;
-    }
+    return newDate.before(today);
   }
   
   /**
