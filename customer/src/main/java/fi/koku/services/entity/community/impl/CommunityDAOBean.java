@@ -25,8 +25,6 @@ import fi.koku.KoKuFaultException;
 /**
  * CommunityDAOBean.
  * 
- * TODO: Use named queries
- * 
  * @author aspluma
  * @author laukksa
  *
@@ -42,7 +40,7 @@ public class CommunityDAOBean implements CommunityDAO {
 
   @Override
   public Community getCommunity(Long id) {
-    Query q = em.createQuery("SELECT c FROM Community c LEFT JOIN FETCH c.members WHERE c.id = :id");
+    Query q = em.createNamedQuery(Community.QUERY_GET_COMMUNITY_BY_ID);
     q.setParameter("id", id);
     Community c = (Community) q.getSingleResult();
     return c;
@@ -98,9 +96,7 @@ public class CommunityDAOBean implements CommunityDAO {
     StringBuilder jpql = new StringBuilder("SELECT c FROM Community c " +
         "JOIN FETCH c.members " +
         "WHERE c IN (" +
-        "SELECT cm.community FROM CommunityMember cm WHERE cm.memberPic IN (:memberPics)" +
-        ")"
-        );    
+        "SELECT cm.community FROM CommunityMember cm WHERE cm.memberPic IN (:memberPics))");    
     if(qc.getCommunityType() != null) {
       jpql.append(" AND c.type = :type");
     }
@@ -133,15 +129,10 @@ public class CommunityDAOBean implements CommunityDAO {
     Query q = null;
 
     if(qc.getRequesterPic() != null) {
-      q = em.createQuery("SELECT r FROM MembershipRequest r JOIN FETCH r.approvals WHERE r.requesterPic = :requesterPic");
+      q = em.createNamedQuery(MembershipRequest.QUERY_GET_MEM_REQUESTS_BY_REQUESTER_PIC);
       q.setParameter("requesterPic", qc.getRequesterPic());
     } else if(qc.getApproverPic() != null) {
-      String jpql = "SELECT r FROM MembershipRequest r " +
-          "JOIN FETCH r.approvals " +
-          "WHERE r IN (" +
-          "SELECT a.membershipRequest FROM MembershipApproval a WHERE a.approverPic = :approverPic" +
-          ")";
-      q = em.createQuery(jpql);
+      q = em.createNamedQuery(MembershipRequest.QUERY_GET_MEM_REQUESTS_BY_APPROVER_PIC);
       q.setParameter("approverPic", qc.getApproverPic());
     } else {
       throw new IllegalArgumentException("missing query parameters");
@@ -181,7 +172,7 @@ public class CommunityDAOBean implements CommunityDAO {
 
   @Override
   public MembershipRequest getMembershipRequest(Long requestId) {
-    Query q = em.createQuery("SELECT r FROM MembershipRequest r JOIN FETCH r.approvals WHERE r.id = :id");
+    Query q = em.createNamedQuery(MembershipRequest.QUERY_GET_MEM_REQUEST_BY_ID);
     q.setParameter("id", requestId);
     MembershipRequest rq = (MembershipRequest) q.getSingleResult();
     

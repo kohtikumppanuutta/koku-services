@@ -18,6 +18,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -29,8 +31,14 @@ import javax.persistence.Version;
  * @author Ixonos / aspluma
  */
 @Entity
+@NamedQueries({
+  @NamedQuery(name=Community.QUERY_GET_COMMUNITY_BY_ID, query="SELECT c FROM Community c LEFT JOIN FETCH c.members WHERE c.id = :id")
+})
 @Table(name = "community")
 public class Community implements Serializable {
+  
+  public static final String QUERY_GET_COMMUNITY_BY_ID = "getCommunityById";
+  
   private static final long serialVersionUID = -6318987012290421231L;
 
   @Id
@@ -44,7 +52,6 @@ public class Community implements Serializable {
 
   @OneToMany(mappedBy="community", cascade={PERSIST, REMOVE})
   private Collection<CommunityMember> members = new ArrayList<CommunityMember>();
-  
   
   @Version
   private int version;

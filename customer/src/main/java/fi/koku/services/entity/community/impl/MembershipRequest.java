@@ -19,6 +19,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -30,10 +32,23 @@ import javax.persistence.TemporalType;
  * @author aspluma
  */
 @Entity
+@NamedQueries({
+  @NamedQuery(name=MembershipRequest.QUERY_GET_MEM_REQUEST_BY_ID, query="SELECT r FROM MembershipRequest r JOIN FETCH r.approvals WHERE r.id = :id"),
+  @NamedQuery(name=MembershipRequest.QUERY_GET_MEM_REQUESTS_BY_REQUESTER_PIC, query="SELECT r FROM MembershipRequest r JOIN FETCH r.approvals WHERE r.requesterPic = :requesterPic"),
+  @NamedQuery(name=MembershipRequest.QUERY_GET_MEM_REQUESTS_BY_APPROVER_PIC, query="SELECT r FROM MembershipRequest r " +
+  "JOIN FETCH r.approvals WHERE r IN (" +
+  "SELECT a.membershipRequest FROM MembershipApproval a WHERE a.approverPic = :approverPic)")
+})
 @Table(name = "community_membership_request")
 public class MembershipRequest implements Serializable {
   private static final long serialVersionUID = -409898477181862486L;
 
+  public static final String QUERY_GET_MEM_REQUEST_BY_ID = "getMembershipRequestById";
+  
+  public static final String QUERY_GET_MEM_REQUESTS_BY_REQUESTER_PIC = "getMembershipRequestByRequesterPic";
+  
+  public static final String QUERY_GET_MEM_REQUESTS_BY_APPROVER_PIC = "getMembershipRequestByApproverPic";
+  
   @Id
   @GeneratedValue
   private Long id;
