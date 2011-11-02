@@ -11,20 +11,11 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.customer.v1.AddressType;
 import fi.koku.services.entity.customer.v1.AddressesType;
@@ -42,10 +33,7 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 /**
  * KoKu Customer service endpoint implementation class.
  * 
- * TODO
- * - exception handling (establish fault barrier)
- * 
- * @author Ixonos / aspluma
+ * @author aspluma
  * @author laukksa
  */
 @Stateless
@@ -56,16 +44,8 @@ import fi.koku.services.entity.customer.v1.CustomersType;
     portName="customerService-soap11-port",
     serviceName="customerService"
 )
-//@SchemaValidation
-//@BindingType(SOAPBinding.SOAP12HTTP_BINDING)
-//@HandlerChain(file="auditInfoHandler.xml")
 @RolesAllowed("koku-role")
-
 public class CustomerServiceEndpointBean implements CustomerServicePortType {
-  private Logger logger = LoggerFactory.getLogger(CustomerServiceEndpointBean.class);
-  
-	@Resource
-	private WebServiceContext wsCtx;
 	
 	@EJB
 	private CustomerService customerService;
@@ -78,50 +58,29 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 
   @Override
   public String opAddCustomer(CustomerType customer, AuditInfoType auditHeader) {
-    logger.debug("opAddCustomer");
-
-    // soap headers
-//    if(auditHeader != null)
-//      logger.debug("audit: "+auditHeader.getComponent()+", "+auditHeader.getUserId());
-    
-    logger.debug("msg: "+wsCtx.getMessageContext().get("myownmsg"));
-    
-    // message context
-    Set<String> keys = wsCtx.getMessageContext().keySet();
-    for(Iterator<String> i = keys.iterator(); i.hasNext(); )
-      logger.debug("i: "+i.next());
-    
-    String caller = wsCtx.getUserPrincipal().getName();
-    logger.debug("caller: "+caller);
-    
     Long id = customerService.add(customerConverter.fromWsType(customer));
     return id.toString();
   }
 	
 	@Override
 	public CustomerType opGetCustomer(String pic, AuditInfoType auditHeader) {
-		logger.debug("opGetCustomer");
 		return customerConverter.toWsType(customerService.get(pic), "full");
 	}
 
 	@Override
 	public VoidType opUpdateCustomer(CustomerType customer, AuditInfoType auditHeader) {
-		logger.debug("opUpdateCustomer: "+customer);
 		customerService.update(customerConverter.fromWsType(customer));
     return new VoidType();
 	}
 
 	@Override
 	public VoidType opDeleteCustomer(String pic, AuditInfoType auditHeader) {
-		logger.debug("opDeleteCustomer: "+pic);
 		customerService.delete(pic);
     return new VoidType();
 	}
 
 	@Override
 	public CustomersType opQueryCustomers(CustomerQueryCriteriaType criteria, AuditInfoType auditHeader) {
-		logger.debug("opQueryCustomers");
-		
     CustomerQueryCriteria customerQueryCriteria = new CustomerQueryCriteria(new HashSet<String>(
         criteria.getPics() != null ? criteria.getPics().getPic() : new HashSet<String>()), criteria.getSelection());
     Collection<Customer> customers = customerService.query(customerQueryCriteria);
@@ -173,10 +132,12 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	        at.setPostinumeroKoodi(a.getPostalCode());
 	        at.setPostilokeroTeksti(a.getPoBox());
 	        at.setMaatunnusKoodi(a.getCountryCode());
-	        if(a.getValidFrom() != null)
+	        if(a.getValidFrom() != null) {
 	          at.setAlkuPvm(CalendarUtil.getXmlDate(a.getValidFrom()));
-	        if(a.getValidTo() != null)
+	        }
+	        if(a.getValidTo() != null) {
 	          at.setLoppuPvm(CalendarUtil.getXmlDate(a.getValidTo()));
+	        }
 	        ct.getAddresses().getAddress().add(at);
 	      }
 
@@ -232,10 +193,12 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
           a.setPostalCode(at.getPostinumeroKoodi());
           a.setPoBox(at.getPostilokeroTeksti());
           a.setCountryCode(at.getMaatunnusKoodi());
-          if(at.getAlkuPvm() != null)
+          if(at.getAlkuPvm() != null) {
             a.setValidFrom(CalendarUtil.getDate(at.getAlkuPvm()));
-          if(at.getLoppuPvm() != null)
+          }
+          if(at.getLoppuPvm() != null) {
             a.setValidTo(CalendarUtil.getDate(at.getLoppuPvm()));
+          }
           c.getAddresses().add(a);
           a.setCustomer(c);
         }
@@ -266,6 +229,5 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	  }
 	  
 	}
-	
 	
 }

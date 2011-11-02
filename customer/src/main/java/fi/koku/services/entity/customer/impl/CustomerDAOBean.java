@@ -44,8 +44,7 @@ public class CustomerDAOBean implements CustomerDAO {
     Query q = em.createNamedQuery("getCustomerByPic");
     q.setParameter("pic", pic);
     try {
-      Customer c = (Customer) q.getSingleResult();
-      return c;
+      return (Customer) q.getSingleResult();
     } catch (NoResultException e) {
       CustomerServiceErrorCode errorCode = CustomerServiceErrorCode.CUSTOMER_NOT_FOUND;
       throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription(), e);

@@ -28,7 +28,7 @@ public interface CommunityDAO {
   
   void deleteCommunity(Long id);
   
-  public Collection<Community> queryCommunities(CommunityQueryCriteria qc);
+  Collection<Community> queryCommunities(CommunityQueryCriteria qc);
   
   Long insertMembershipRequest(MembershipRequest rq);
   

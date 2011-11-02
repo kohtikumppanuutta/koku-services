@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class CustomerServiceBean implements CustomerService {
   
   @EJB
-  CustomerDAO customerDAO;
+  private CustomerDAO customerDAO;
   
   @SuppressWarnings("unused")
   private Logger logger = LoggerFactory.getLogger(CustomerServiceBean.class);

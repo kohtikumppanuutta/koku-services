@@ -26,7 +26,7 @@ public class CommunityServiceBean implements CommunityService {
   private final static String REQUEST_APPROVED = "approved"; // TODO: move this definition
 
   @EJB
-  CommunityDAO communityDAO;
+  private CommunityDAO communityDAO;
   
   @Override
   public Long add(Community c) {
