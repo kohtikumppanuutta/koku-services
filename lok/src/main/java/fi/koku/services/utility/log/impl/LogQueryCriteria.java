@@ -9,23 +9,28 @@ package fi.koku.services.utility.log.impl;
 
 import java.util.Date;
 
+/**
+ * LogQueryCriteria.
+ * 
+ * @author makinsu
+ * 
+ */
 public class LogQueryCriteria {
-  private String logType;
 
+  private String logType;
   private String customerPic;
   private String dataItemType;
   private Date startTime;
   private Date endTime;
-  
-  public LogQueryCriteria(String logType, String customerPic, String dataItemType,
-      Date startTime, Date endTime){
+
+  public LogQueryCriteria(String logType, String customerPic, String dataItemType, Date startTime, Date endTime) {
     this.logType = logType;
     this.customerPic = customerPic;
     this.dataItemType = dataItemType;
     this.startTime = startTime;
     this.endTime = endTime;
   }
-  
+
   public String getLogType() {
     return logType;
   }

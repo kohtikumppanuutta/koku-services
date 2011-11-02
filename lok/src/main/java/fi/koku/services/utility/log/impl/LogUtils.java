@@ -10,9 +10,6 @@ package fi.koku.services.utility.log.impl;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fi.koku.KoKuFaultException;
 import fi.koku.services.utility.log.v1.LogEntryType;
 
@@ -44,7 +41,7 @@ public class LogUtils {
   public Date moveOneDay(Date date){
     Date newday = null;
     
-    if(date!=null){
+    if (date != null){
       // set the end time 1 day later so that everything added on the last day will be found
       Calendar endday = parseToCal(date); 
       endday.set(Calendar.DATE, endday.get(Calendar.DATE) +1);
@@ -83,49 +80,50 @@ public class LogUtils {
    * @param entry
    * @return
    */
-  public boolean logInputOk(LogEntryType entry, String logtype) throws KoKuFaultException{
-        
-    //In normal log, these must not be null:
-    // timestamp, user_pic, operation, data_item_id, data_item_type, client_system_id
-    //In admin log, these must not be null:
+  public boolean validateLogEntryType(LogEntryType entry, String logtype) throws KoKuFaultException {
+
+    // In normal log, these must not be null:
+    // timestamp, user_pic, operation, data_item_id, data_item_type,
+    // client_system_id
+    // In admin log, these must not be null:
     // timestamp, user_pic, operation
-    
+
     boolean inputOk = false;
     LogServiceErrorCode errorCode = null;
-    
-    if(LogConstants.LOG_ADMIN.equalsIgnoreCase(logtype) || LogConstants.LOG_NORMAL.equalsIgnoreCase(logtype)){
-      if(entry.getTimestamp() == null){
+
+    if (LogConstants.LOG_ADMIN.equalsIgnoreCase(logtype) || LogConstants.LOG_NORMAL.equalsIgnoreCase(logtype)) {
+      if (entry.getTimestamp() == null) {
         errorCode = LogServiceErrorCode.LOG_ERROR_MISSING_TIMESTAMP;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
-      if(entry.getUserPic() == null){
+      if (entry.getUserPic() == null) {
         errorCode = LogServiceErrorCode.LOG_ERROR_MISSING_USERPIC;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
-      if(entry.getOperation() == null){
+      if (entry.getOperation() == null) {
         errorCode = LogServiceErrorCode.LOG_ERROR_MISSING_OPERATION;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
     }
-    
-    if(LogConstants.LOG_NORMAL.equalsIgnoreCase(logtype)){
-      if(entry.getDataItemId() == null){
+
+    if (LogConstants.LOG_NORMAL.equalsIgnoreCase(logtype)) {
+      if (entry.getDataItemId() == null) {
         errorCode = LogServiceErrorCode.LOG_ERROR_MISSING_DATAITEMID;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
-      if(entry.getDataItemType() == null){
+      if (entry.getDataItemType() == null) {
         errorCode = LogServiceErrorCode.LOG_ERROR_MISSING_DATAITEMTYPE;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
-      if(entry.getClientSystemId() == null){
+      if (entry.getClientSystemId() == null) {
         errorCode = LogServiceErrorCode.LOG_ERROR_MISSING_CLIENTSYSTEMID;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
     }
-    if(errorCode == null){
+    if (errorCode == null) {
       inputOk = true;
     }
-    
-      return inputOk;
+
+    return inputOk;
   }
 }

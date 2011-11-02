@@ -30,22 +30,23 @@ import fi.koku.KoKuFaultException;
  */
 @Stateless
 public class LogDAOBean implements LogDAO {
+  
   private static final Logger logger = LoggerFactory.getLogger(LogDAOBean.class);
 
-  private LogUtils lu = new LogUtils();
+  private LogUtils logUtils;
 
   @PersistenceContext
   private EntityManager em;
 
   public LogDAOBean() {
+    logUtils = new LogUtils();
   }
 
   @Override
   public int archiveLog(Date date){
-
     // set the end time 1 day later so that everything added on the last day
     // will be archived. (Date has already been null-checked!)
-    Date movedDate = lu.moveOneDay(date);
+    Date movedDate = logUtils.moveOneDay(date);
 
     // check if there is anything to archive
     Query selectQuery = em.createQuery("SELECT COUNT(l) FROM LogEntry l WHERE l.timestamp < :date");
@@ -60,8 +61,7 @@ public class LogDAOBean implements LogDAO {
       return 0;
     } else { 
       logger.info("insert log entries to archive log (enddate=" + date+")");
-      Query archiveQuery = em
-      .createNativeQuery("INSERT INTO "
+      Query archiveQuery = em.createNativeQuery("INSERT INTO "
           + "log_archive (data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message) "
           + "SELECT data_item_id, timestamp, user_pic, customer_pic, data_item_type, operation, client_system_id, message "
           + "FROM log WHERE timestamp < :date");
@@ -116,9 +116,11 @@ public class LogDAOBean implements LogDAO {
     em.persist(entry);
   }
 
+  /**
+   * Write admin log.
+   */
   @Override
   public void writeAdminLog(AdminLogEntry entry) {
-    logger.info("write to Admin Log");
     em.persist(entry);
   }
 
@@ -127,7 +129,7 @@ public class LogDAOBean implements LogDAO {
    * showing to the user in the portlet. (LOK-3)
    */
   @Override
-  public List<LogEntry> queryLog(LogQueryCriteria criteria) throws KoKuFaultException{
+  public List<LogEntry> queryLog(LogQueryCriteria criteria) throws KoKuFaultException {
     StringBuilder sb = new StringBuilder();
     List<Object[]> params = new ArrayList<Object[]>();
 
@@ -138,69 +140,57 @@ public class LogDAOBean implements LogDAO {
     // portlet side but let's check them here again
     if (criteria.getStartTime() == null || criteria.getEndTime() == null || criteria.getCustomerPic() == null
         || criteria.getDataItemType() == null) {
-      logger.error("Log query criteria is null or invalid");
       LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
-      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());     
-    } else {
-
-      if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
-        entity = "LogEntry";
-      } else {
-        logger.error("Wrong logtype in log query");         
-        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_LOGTYPE;
-        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
-      }
-
-      sb.append("SELECT e FROM " + entity + " e WHERE ");
-
-      sb.append("e.timestamp >= :startTime");
-      params.add(new Object[] { "startTime", criteria.getStartTime() });
-
-      sb.append(" AND ");
-
-      // set the end time 1 day later so that everything added on the last day
-      // will be archived
-      criteria.setEndTime(lu.moveOneDay(criteria.getEndTime()));
-
-      sb.append("e.timestamp <= :endTime");
-      params.add(new Object[] { "endTime", criteria.getEndTime() });   
-
-      sb.append(" AND ");
-
-      sb.append("e.customerPic = :pic");
-      params.add(new Object[] { "pic", criteria.getCustomerPic() });
-
-      if (criteria.getDataItemType() != null && !criteria.getDataItemType().isEmpty()) {
-
-        sb.append(" AND ");
-
-        sb.append("e.dataItemType = :dataItemType");
-        params.add(new Object[] { "dataItemType", criteria.getDataItemType() });
-      }
-
-      if (params.size() == 0) {
-        throw new RuntimeException("Missing criteria for log query.");
-      }
-
-      Query q = em.createQuery(sb.toString());
-     
-      // limit the number of results 
-      q.setMaxResults(LogConstants.MAX_QUERY_RESULTS);
-      
-      // build the query
-      for (int i = 0; i < params.size(); i++) {
-        q.setParameter((String) params.get(i)[0], params.get(i)[1]);
-      }
-
-      logger.info("query: " + q.toString());
-
-      // query the database
-      if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) {
-        return q.getResultList();
-      }
-
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
     }
-    return null; // if something went wrong
+
+    if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
+      entity = "LogEntry";
+    } else {
+      logger.error("Wrong logtype in log query");
+      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_LOGTYPE;
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
+    }
+
+    sb.append("SELECT e FROM " + entity + " e WHERE ");
+
+    sb.append("e.timestamp >= :startTime");
+    params.add(new Object[] { "startTime", criteria.getStartTime() });
+
+    sb.append(" AND ");
+
+    // set the end time 1 day later so that everything added on the last day
+    // will be archived
+    criteria.setEndTime(logUtils.moveOneDay(criteria.getEndTime()));
+
+    sb.append("e.timestamp <= :endTime");
+    params.add(new Object[] { "endTime", criteria.getEndTime() });
+
+    sb.append(" AND ");
+
+    sb.append("e.customerPic = :pic");
+    params.add(new Object[] { "pic", criteria.getCustomerPic() });
+
+    if (criteria.getDataItemType() != null && !criteria.getDataItemType().isEmpty()) {
+      sb.append(" AND ");
+      sb.append("e.dataItemType = :dataItemType");
+      params.add(new Object[] { "dataItemType", criteria.getDataItemType() });
+    }
+
+    if (params.size() == 0) {
+      throw new IllegalArgumentException("Missing criteria for log query.");
+    }
+
+    Query q = em.createQuery(sb.toString());
+    // limit the number of results
+    q.setMaxResults(LogConstants.MAX_QUERY_RESULTS);
+    // build the query
+    for (int i = 0; i < params.size(); i++) {
+      q.setParameter((String) params.get(i)[0], params.get(i)[1]);
+    }
+
+    // query the database
+    return q.getResultList();
   }
 
   /**
@@ -218,55 +208,45 @@ public class LogDAOBean implements LogDAO {
     if (criteria == null || criteria.getStartTime() == null || criteria.getEndTime() == null) {
       logger.error("Admin log query criteria is null or invalid");
       LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
-      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
-    } else {
-      if (LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())) { // seurantaloki
-        entity = "AdminLogEntry";
-      } else {
-        logger.error("Wrong logtype in admin log query");
-        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_LOGTYPE;
-        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());        
-      }
-
-      // set the end time 1 day later so that everything added on the last day
-      // will be found
-      criteria.setEndTime(lu.moveOneDay(criteria.getEndTime()));
-
-      sb.append("SELECT e FROM " + entity + " e WHERE ");
-
-      sb.append("e.timestamp >= :startTime");
-      params.add(new Object[] { "startTime", criteria.getStartTime() });
-
-      sb.append(" AND ");
-
-      sb.append("e.timestamp <= :endTime");
-      params.add(new Object[] { "endTime", criteria.getEndTime() });
-
-      if (params.size() == 0) {
-        throw new RuntimeException("missing criteria");
-      }
-    
-        Query q = em.createQuery(sb.toString());
-   
-        // limit the number of results 
-        q.setMaxResults(LogConstants.MAX_QUERY_RESULTS);
-
-        // build the query
-        for (int i = 0; i < params.size(); i++) {
-          q.setParameter((String) params.get(i)[0], params.get(i)[1]);
-        }
-
-        // query the database
-        return q.getResultList();
-
-/*      } catch (IllegalStateException e) {
-        // TODO
-      } catch (IllegalArgumentException ex) {
-        // TODO
-      }  
-    }*/
-      //  return null;
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
     }
+
+    if (LogConstants.LOG_ADMIN.equalsIgnoreCase(criteria.getLogType())) { // seurantaloki
+      entity = "AdminLogEntry";
+    } else {
+      logger.error("Wrong logtype in admin log query");
+      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_LOGTYPE;
+      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
+    }
+
+    // set the end time 1 day later so that everything added on the last day
+    // will be found
+    criteria.setEndTime(logUtils.moveOneDay(criteria.getEndTime()));
+
+    sb.append("SELECT e FROM " + entity + " e WHERE ");
+
+    sb.append("e.timestamp >= :startTime");
+    params.add(new Object[] { "startTime", criteria.getStartTime() });
+
+    sb.append(" AND ");
+
+    sb.append("e.timestamp <= :endTime");
+    params.add(new Object[] { "endTime", criteria.getEndTime() });
+
+    if (params.size() == 0) {
+      throw new IllegalArgumentException("missing query criteria");
+    }
+
+    Query q = em.createQuery(sb.toString());
+    // limit the number of results
+    q.setMaxResults(LogConstants.MAX_QUERY_RESULTS);
+    // set parameters
+    for (int i = 0; i < params.size(); i++) {
+      q.setParameter((String) params.get(i)[0], params.get(i)[1]);
+    }
+
+    // query the database
+    return q.getResultList();
   }
 
 }

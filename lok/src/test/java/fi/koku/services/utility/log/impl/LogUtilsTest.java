@@ -44,7 +44,7 @@ public class LogUtilsTest {
     
     LogEntryType entry = createLogEntryType();
     try{
-      assertEquals(true, lu.logInputOk(entry, LogConstants.LOG_NORMAL));
+      assertEquals(true, lu.validateLogEntryType(entry, LogConstants.LOG_NORMAL));
     }catch(Exception e){
       fail();
     }
@@ -55,7 +55,7 @@ public class LogUtilsTest {
     LogEntryType entry = createLogEntryType();
     entry.setDataItemId(null);
     try{
-      assertEquals(true, lu.logInputOk(entry, LogConstants.LOG_ADMIN));
+      assertEquals(true, lu.validateLogEntryType(entry, LogConstants.LOG_ADMIN));
     }catch(Exception e){
       fail();
     }
@@ -66,7 +66,7 @@ public class LogUtilsTest {
     LogEntryType entry = createLogEntryType();
     entry.setTimestamp(null);
     try{
-      boolean result = lu.logInputOk(entry, LogConstants.LOG_NORMAL);
+      boolean result = lu.validateLogEntryType(entry, LogConstants.LOG_NORMAL);
       fail();
     }catch(KoKuFaultException e){
       assertEquals(LogServiceErrorCode.LOG_ERROR_MISSING_TIMESTAMP.getValue(), e.getErrorCode());
@@ -78,7 +78,7 @@ public class LogUtilsTest {
     LogEntryType entry = createLogEntryType();
     entry.setUserPic(null);
     try{
-      boolean result = lu.logInputOk(entry, LogConstants.LOG_NORMAL);
+      boolean result = lu.validateLogEntryType(entry, LogConstants.LOG_NORMAL);
       fail();
     }catch(KoKuFaultException e){
       assertEquals(LogServiceErrorCode.LOG_ERROR_MISSING_USERPIC.getValue(), e.getErrorCode());
@@ -90,7 +90,7 @@ public class LogUtilsTest {
     LogEntryType entry = createLogEntryType();
     entry.setOperation(null);
     try{
-      boolean result = lu.logInputOk(entry, LogConstants.LOG_NORMAL);
+      boolean result = lu.validateLogEntryType(entry, LogConstants.LOG_NORMAL);
       fail();
     }catch(KoKuFaultException e){
       assertEquals(LogServiceErrorCode.LOG_ERROR_MISSING_OPERATION.getValue(), e.getErrorCode());
@@ -102,7 +102,7 @@ public class LogUtilsTest {
     LogEntryType entry = createLogEntryType();
     entry.setDataItemId(null);
     try{
-      boolean result = lu.logInputOk(entry, LogConstants.LOG_NORMAL);
+      boolean result = lu.validateLogEntryType(entry, LogConstants.LOG_NORMAL);
       fail();
     }catch(KoKuFaultException e){
       assertEquals(LogServiceErrorCode.LOG_ERROR_MISSING_DATAITEMID.getValue(), e.getErrorCode());
@@ -114,7 +114,7 @@ public class LogUtilsTest {
     LogEntryType entry = createLogEntryType();
     entry.setDataItemType(null);
     try{
-      boolean result = lu.logInputOk(entry, LogConstants.LOG_NORMAL);
+      boolean result = lu.validateLogEntryType(entry, LogConstants.LOG_NORMAL);
       fail();
     }catch(KoKuFaultException e){
       assertEquals(LogServiceErrorCode.LOG_ERROR_MISSING_DATAITEMTYPE.getValue(), e.getErrorCode());
@@ -126,7 +126,7 @@ public class LogUtilsTest {
     LogEntryType entry = createLogEntryType();
     entry.setClientSystemId(null);
     try{
-      boolean result = lu.logInputOk(entry, LogConstants.LOG_NORMAL);
+      boolean result = lu.validateLogEntryType(entry, LogConstants.LOG_NORMAL);
       fail();
     }catch(KoKuFaultException e){
       assertEquals(LogServiceErrorCode.LOG_ERROR_MISSING_CLIENTSYSTEMID.getValue(), e.getErrorCode());

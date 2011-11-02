@@ -55,6 +55,8 @@ public class LogEntry {
 
   private String message;
 
+  public LogEntry(){  
+  }  
 
   public Long getId() {
     return id;
@@ -116,9 +118,6 @@ public class LogEntry {
   public void setMessage(String message) {
     this.message = message;
   }
-
-  public LogEntry(){  
-  }
   
   public LogEntry(String message) {
     this.message = message;
@@ -133,7 +132,6 @@ public class LogEntry {
   }
   
   public String getMessage() {
-    
     return message;
   }
  

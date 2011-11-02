@@ -32,5 +32,6 @@ public interface LogDAO {
   void writeAdminLog(AdminLogEntry entry);
 
   Date getEarliest(Date date);
+  
 }
 
