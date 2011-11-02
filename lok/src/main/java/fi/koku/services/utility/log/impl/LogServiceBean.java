@@ -128,42 +128,49 @@ public class LogServiceBean implements LogService {
           LOG_ERROR_INVALID_ARCHIVE_DATE.getDescription());
     } else {
 
-      Date endDate = CalendarUtil.getDate(archivalParameters.getEndDate());
+      try {
+        Date endDate = CalendarUtil.getDate(archivalParameters.getEndDate());
 
-      // first, find out what is the earliest entry to be archived so that we
-      // can write
-      // about this in the archive log
-      Date movedDate = logUtils.moveOneDay(endDate);
-      // this has to be called before archiving
-      Date earliest = logDAO.getEarliest(movedDate);
+        // first, find out what is the earliest entry to be archived so that we
+        // can write
+        // about this in the archive log
+        Date movedDate = logUtils.moveOneDay(endDate);
+        // this has to be called before archiving
+        Date earliest = logDAO.getEarliest(movedDate);
 
-      // call to the actual archiving
-      entryCount = logDAO.archiveLog(endDate);
+        // call to the actual archiving
+        entryCount = logDAO.archiveLog(endDate);
 
-      if (entryCount < 1) {
-        // do not throw a KoKuFaultException
-        logger.info("Nothing to archive before date " + endDate);
-      } else {
-        // write to admin log about the archive only if there was
-        // something to archive
-        logger.info("Log was archived. Now try to write in admin log.");
-        // move the archive date one day ahead so that everything from the end
-        // date will be taken account
-
-        // log this query to admin log
-        AdminLogEntry adminLogEntry = new AdminLogEntry();
-        adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
-        adminLogEntry.setUserPic(auditInfoType.getUserId());
-        adminLogEntry.setOperation("archive");
-
-        if (earliest == null) {
-          logger.error("Could not get the date of the earliest entry that was archived.");
-          adminLogEntry.setMessage("archive log from ? to "
-              + df.format(CalendarUtil.getDate(archivalParameters.getEndDate())));
+        if (entryCount < 1) {
+          // do not throw a KoKuFaultException
+          logger.info("Nothing to archive before date " + endDate);
         } else {
-          adminLogEntry.setMessage("archive log from " + df.format(earliest) + " to " + df.format(endDate));
+          // write to admin log about the archive only if there was
+          // something to archive
+          logger.info("Log was archived. Now try to write in admin log.");
+          // move the archive date one day ahead so that everything from the end
+          // date will be taken account
+
+          // log this query to admin log
+          AdminLogEntry adminLogEntry = new AdminLogEntry();
+          adminLogEntry.setTimestamp(Calendar.getInstance().getTime());
+          adminLogEntry.setUserPic(auditInfoType.getUserId());
+          adminLogEntry.setOperation("archive");
+
+          if (earliest == null) {
+            logger.error("Could not get the date of the earliest entry that was archived.");
+            adminLogEntry.setMessage("archive log from ? to "
+                + df.format(CalendarUtil.getDate(archivalParameters.getEndDate())));
+          } else {
+            adminLogEntry.setMessage("archive log from " + df.format(earliest) + " to " + df.format(endDate));
+          }
+          writeAdminLogEntry(adminLogEntry);
         }
-        writeAdminLogEntry(adminLogEntry);
+      } catch (Exception e) {
+        // We need to indicate this error scenario in the ui
+        logger.error("Error in archiving: " + e.getMessage());
+        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_ARCHIVE_LOG_NOT_AVAILABLE;
+        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
     }
     ArchivalResultsType count = new ArchivalResultsType();

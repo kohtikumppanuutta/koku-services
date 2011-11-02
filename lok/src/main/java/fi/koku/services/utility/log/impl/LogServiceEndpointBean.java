@@ -178,13 +178,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
     AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(),
         authInfoService.getUsersRoles(LogConstants.COMPONENT_LOK, auditInfoType.getUserId()));
 
-    try {
-      return logService.archiveLog(archivalParameters, auditInfoType);
-    } catch (RuntimeException e) {
-      logger.error("Error in archiving: " + e.getMessage(), e);
-      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_ARCHIVE_LOG_NOT_AVAILABLE;
-      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
-    } 
+    return logService.archiveLog(archivalParameters, auditInfoType);
   }
 
   /**
