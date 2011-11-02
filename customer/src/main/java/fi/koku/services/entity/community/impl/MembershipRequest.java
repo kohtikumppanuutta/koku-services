@@ -41,6 +41,7 @@ import javax.persistence.TemporalType;
 })
 @Table(name = "community_membership_request")
 public class MembershipRequest implements Serializable {
+  
   private static final long serialVersionUID = -409898477181862486L;
 
   public static final String QUERY_GET_MEM_REQUEST_BY_ID = "getMembershipRequestById";
@@ -53,8 +54,9 @@ public class MembershipRequest implements Serializable {
   @GeneratedValue
   private Long id;
 
+  // map as id, not relationship
   @Column(name="community_id", nullable=false)
-  private Long communityId; // map as id, not relationship
+  private Long communityId;
 
   @Column(name="member_role", nullable=false)
   private String memberRole;

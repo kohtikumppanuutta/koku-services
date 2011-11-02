@@ -18,12 +18,21 @@ import javax.ejb.Local;
  */
 @Local
 public interface CommunityService {
+
   Long add(Community c);
+
   Community get(String id);
+
   void update(Community c);
+
   void delete(String id);
+
   Collection<Community> query(CommunityQueryCriteria q);
+
   Long addMembershipRequest(MembershipRequest rq);
+
   Collection<MembershipRequest> queryMembershipRequests(MembershipRequestQueryCriteria q);
+
   void updateMembershipApproval(MembershipApproval approval);
+  
 }

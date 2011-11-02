@@ -164,12 +164,6 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	    return ct;
 	  }
 	  
-	  private Calendar dateToCalendar(Date d) {
-	    Calendar cal = Calendar.getInstance();
-	    cal.setTime(d);
-	    return cal;
-	  }
-	  
 	  public Customer fromWsType(CustomerType ct) {
 	    Customer c = new Customer();
       c.setStatus(ct.getStatus());

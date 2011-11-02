@@ -15,14 +15,16 @@ import java.util.Set;
  * @author aspluma
  */
 public class CommunityQueryCriteria {
+  
   private Set<String> memberPics;
+  
   private String communityType;
 
   public CommunityQueryCriteria(Set<String> memberPics, String communityType) {
     this.memberPics = memberPics;
     this.communityType = communityType;
   }
-  
+
   public String getCommunityType() {
     return communityType;
   }

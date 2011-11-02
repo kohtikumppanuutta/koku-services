@@ -11,14 +11,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,21 +49,16 @@ import fi.koku.services.entity.community.v1.VoidType;
     serviceName="communityService"
 )
 @RolesAllowed("koku-role")
-
 public class CommunityServiceEndpointBean implements CommunityServicePortType {
+  
   private Logger logger = LoggerFactory.getLogger(CommunityServiceEndpointBean.class);
-
-  @SuppressWarnings("unused")
-  @Resource
-  private WebServiceContext wsCtx;
   
   @EJB
   private CommunityService communityService;
 
-  
   private WSTypeConverter<CommunityType, Community> communityConverter;
-  private WSTypeConverter<MembershipRequestType, MembershipRequest> membershipRequestConverter;
   
+  private WSTypeConverter<MembershipRequestType, MembershipRequest> membershipRequestConverter;
   
   public CommunityServiceEndpointBean() {
     communityConverter = new CommunityConverter();
@@ -105,7 +97,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
         query.getMemberPics() != null ? new HashSet<String>(query.getMemberPics().getMemberPic()) : new HashSet<String>(), query.getCommunityType());
     Collection<Community> comms = communityService.query(qc);
     CommunitiesType ret = new CommunitiesType();
-    for(Community c : comms) {
+    for (Community c : comms) {
       ret.getCommunity().add(communityConverter.toWsType(c));
     }
     return ret;
@@ -125,7 +117,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       throws ServiceFault {
     MembershipRequestQueryCriteria qc = new MembershipRequestQueryCriteria(mrqc.getRequesterPic(), mrqc.getApproverPic());
     MembershipRequestsType ret = new MembershipRequestsType();
-    for(MembershipRequest rq : communityService.queryMembershipRequests(qc)) {
+    for (MembershipRequest rq : communityService.queryMembershipRequests(qc)) {
       ret.getMembershipRequest().add(membershipRequestConverter.toWsType(rq));
     }
     return ret;
@@ -140,7 +132,12 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
     return new VoidType();
   }
   
-  
+  /**
+   * CommunityConverter.
+   * 
+   * @author Ixonos / aspluma
+   *
+   */
   private static class CommunityConverter implements WSTypeConverter<CommunityType, Community> {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(CommunityConverter.class);
@@ -157,7 +154,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       to.setType(from.getType());
       to.setName(from.getName());
       MembersType mt = from.getMembers();
-      for(MemberType m : mt.getMember()) {
+      for (MemberType m : mt.getMember()) {
         to.getMembers().add(new CommunityMember(to, m.getId(), m.getPic(), m.getRole()));
       }
       
@@ -174,7 +171,7 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
       to.setType(from.getType());
       to.setName(from.getName());
       to.setMembers(new MembersType());
-      for(CommunityMember m : from.getMembers()) {
+      for (CommunityMember m : from.getMembers()) {
         MemberType mt = new MemberType();
         mt.setId(m.getMemberId());
         mt.setPic(m.getMemberPic());
@@ -185,9 +182,13 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
     }
   }
 
+  /**
+   * MembershipRequestConverter.
+   * 
+   * @author Ixonos / aspluma
+   *
+   */
   private static class MembershipRequestConverter implements WSTypeConverter<MembershipRequestType, MembershipRequest> {
-    @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(MembershipRequestConverter.class);
 
     public MembershipRequestConverter() {
     }

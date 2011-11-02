@@ -25,6 +25,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="community_member")
 public class CommunityMember implements Serializable {
+  
   private static final long serialVersionUID = -4604215142623220332L;
 
   @Id
@@ -89,6 +90,5 @@ public class CommunityMember implements Serializable {
   public void setCommunity(Community c) {
     this.community = c;
   }
-  
   
 }

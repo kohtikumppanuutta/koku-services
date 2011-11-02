@@ -23,6 +23,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "electronic_contact_info")
 public class ElectronicContactInfo {
+  
   @Id
   @GeneratedValue
   private Long id;

@@ -36,6 +36,7 @@ import javax.persistence.Version;
 @NamedQuery(name="getCustomerByPic", query="FROM Customer c WHERE c.pic = :pic")
 @Table(name = "customer")
 public class Customer {
+  
   @Id
   @GeneratedValue
   private Long id;

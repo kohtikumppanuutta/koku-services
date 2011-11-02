@@ -13,7 +13,9 @@ package fi.koku.services.entity.community.impl;
  * @author aspluma
  */
 public class MembershipRequestQueryCriteria {
+  
   private String requesterPic;
+  
   private String approverPic;
 
   public MembershipRequestQueryCriteria() {

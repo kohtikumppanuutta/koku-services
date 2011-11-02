@@ -16,7 +16,9 @@ package fi.koku.services.entity.community.impl;
  * @param <U> POJO type
  */
 interface WSTypeConverter<T, U> {
+  
   abstract U fromWsType(T from);
   
   abstract T toWsType(U from);
+  
 }

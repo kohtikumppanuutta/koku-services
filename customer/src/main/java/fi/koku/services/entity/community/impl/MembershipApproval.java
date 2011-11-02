@@ -26,6 +26,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "membership_approval")
 public class MembershipApproval implements Serializable {
+  
   private static final long serialVersionUID = 5782489865453741129L;
 
   @Id

@@ -15,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-
 /**
  * Phone number entity.
  * 
@@ -24,6 +23,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "phone_number")
 public class PhoneNumber {
+  
   @Id
   @GeneratedValue
   private Long id;

@@ -18,6 +18,7 @@ import java.util.Set;
 public class CustomerQueryCriteria {
 
   private Set<String> pics;
+  
   private String selection;
 
   public CustomerQueryCriteria(Set<String> pics, String selection) {
