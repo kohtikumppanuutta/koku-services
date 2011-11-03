@@ -12,6 +12,7 @@ import org.springframework.test.jdbc.SimpleJdbcTestUtils;
  * Some DB related operations.
  * 
  * @author laukksa
+ * @author makinsu
  *
  */
 public class TestDbUtils {
@@ -38,4 +39,13 @@ public class TestDbUtils {
   public static void deleteFromAllTables(JdbcTemplate template) {
     executeSqlScriptFromClasspath("/scripts/delete-from-all-tables.sql", template);
   }
+  
+  public static void writeToLogTable(JdbcTemplate template){
+    executeSqlScriptFromClasspath("/scripts/insert-to-log.sql", template);
+  }
+  
+  public static void writeToAdminLogTable(JdbcTemplate template){
+    executeSqlScriptFromClasspath("/scripts/insert-to-admin-log.sql", template);
+  }
+  
 }
