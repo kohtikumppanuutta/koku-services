@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import fi.koku.KoKuFaultException;
 
 /**
- * LogDAOBean.
+ * Log related data access facilities.
  * 
  * @author makinsu
  * 

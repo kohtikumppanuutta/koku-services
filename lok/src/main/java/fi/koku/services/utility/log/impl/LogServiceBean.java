@@ -28,7 +28,7 @@ import fi.koku.services.utility.log.v1.LogArchivalParametersType;
 import fi.koku.services.utility.log.v1.LogQueryCriteriaType;
 
 /**
- * Log service implementation class
+ * Log service implementation class.
  * 
  * @author makinsu
  *
@@ -70,6 +70,9 @@ public class LogServiceBean implements LogService {
     logDAO.writeLog(entry);
   }
   
+  /**
+   * This is called when the admin log is viewed.
+   */
   @Override
   public void writeAdminLogQueryEvent(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) {
     // log the query to Admin log
@@ -93,6 +96,9 @@ public class LogServiceBean implements LogService {
     logDAO.writeAdminLog(adminLogEntry);    
   }
 
+  /**
+   * This is called when the normal log is viewed.
+   */
   @Override
   public void writeNormalLogQueryEvent(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) {
     // log the query to normal log

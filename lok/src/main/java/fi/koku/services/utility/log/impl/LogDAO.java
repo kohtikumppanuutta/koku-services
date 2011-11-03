@@ -13,7 +13,7 @@ import java.util.Date;
 import javax.ejb.Local;
 
 /**
- * LogDAO.
+ * Log related data access facilities.
  * 
  * @author makinsu
  *

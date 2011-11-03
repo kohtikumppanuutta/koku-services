@@ -7,6 +7,12 @@
  */
 package fi.koku.services.utility.log.impl;
 
+/**
+ * Log related constans.
+ * 
+ * @author makinsu
+ *
+ */
 public class LogConstants {
   
   public static final String DATE_FORMAT = "yyyy-MM-dd";

@@ -27,6 +27,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "log")
 public class LogEntry {
+  
   @Id
   @GeneratedValue
   @Column(name="id", unique=true, nullable=false)
