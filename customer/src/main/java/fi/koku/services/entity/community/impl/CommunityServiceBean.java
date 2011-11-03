@@ -62,6 +62,9 @@ public class CommunityServiceBean implements CommunityService {
     return communityDAO.queryMembershipRequests(qc);
   }
 
+  /**
+   * Update MembershipApproval based on approval's status
+   */
   @Override
   public void updateMembershipApproval(MembershipApproval approval) {
     MembershipRequest rq = communityDAO.getMembershipRequest(approval.getMembershipRequestId());

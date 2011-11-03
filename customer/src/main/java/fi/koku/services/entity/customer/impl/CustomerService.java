@@ -12,7 +12,7 @@ import java.util.Collection;
 import javax.ejb.Local;
 
 /**
- * Service API for customer object access.
+ * Customer service.
  * 
  * @author aspluma
  */

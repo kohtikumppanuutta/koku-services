@@ -11,9 +11,8 @@ import java.util.Collection;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-
 /**
- * Customer service API implementation.
+ * Customer service implementation.
  * 
  * @author aspluma
  * @author laukksa

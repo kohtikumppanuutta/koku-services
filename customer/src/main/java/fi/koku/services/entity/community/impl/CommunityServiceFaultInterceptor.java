@@ -21,6 +21,9 @@ import fi.koku.services.entity.community.v1.ServiceFaultDetailType;
 /**
  * CommunityServiceFaultInterceptor.
  * 
+ * Used in endpoint bean.
+ * Catches and logs all exceptions and converts them to ServiceFault (as defined in the contract/wsdl).
+ * 
  * @author laukksa
  *
  */

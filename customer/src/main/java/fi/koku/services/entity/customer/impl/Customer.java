@@ -37,6 +37,8 @@ import javax.persistence.Version;
 @Table(name = "customer")
 public class Customer {
   
+  public static final String QUERY_GET_CUSTOMER_BY_PIC = "getCustomerByPic";
+  
   @Id
   @GeneratedValue
   private Long id;

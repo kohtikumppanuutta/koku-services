@@ -23,7 +23,7 @@ import javax.persistence.Query;
 import fi.koku.KoKuFaultException;
 
 /**
- * CommunityDAOBean.
+ * Community related data access facilities.
  * 
  * @author aspluma
  * @author laukksa
@@ -42,8 +42,7 @@ public class CommunityDAOBean implements CommunityDAO {
   public Community getCommunity(Long id) {
     Query q = em.createNamedQuery(Community.QUERY_GET_COMMUNITY_BY_ID);
     q.setParameter("id", id);
-    Community c = (Community) q.getSingleResult();
-    return c;
+    return (Community) q.getSingleResult();
   }
   
   @Override
@@ -53,12 +52,16 @@ public class CommunityDAOBean implements CommunityDAO {
     return c.getId();
   }  
   
+  /**
+   * Merge from c2 to c1.
+   */
   @Override
   public void updateCommunity(Community c2) {
     Community c1 = getCommunity(c2.getId());
     c1.setName(c2.getName());
     c1.setType(c2.getType());
 
+    // some temporary data structures
     Set<String> m1Ids = new HashSet<String>();
     Map<String, CommunityMember> m2 = new HashMap<String, CommunityMember>();
     for(CommunityMember cm : c2.getMembers()) {

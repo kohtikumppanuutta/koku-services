@@ -7,9 +7,7 @@
  */
 package fi.koku.services.entity.customer.impl;
 
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -64,7 +62,7 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	
 	@Override
 	public CustomerType opGetCustomer(String pic, AuditInfoType auditHeader) {
-		return customerConverter.toWsType(customerService.get(pic), "full");
+		return customerConverter.toWsType(customerService.get(pic), CustomerConstants.FULL_DATA_QUERY);
 	}
 
 	@Override
@@ -121,10 +119,10 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
       ct.setKieliKoodi(c.getLanguage());
 	    ct.setTurvakieltoKytkin(c.isTurvakielto());
 
-	    if("full".equals(profileType)) {
+	    if (CustomerConstants.FULL_DATA_QUERY.equals(profileType)) {
 	      // addresses
 	      ct.setAddresses(new AddressesType());
-	      for(Address a : c.getAddresses()) {
+	      for (Address a : c.getAddresses()) {
 	        AddressType at = new AddressType();
 	        at.setAddressType(a.getType());
 	        at.setKatuNimi(a.getStreetAddress());
@@ -132,10 +130,10 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	        at.setPostinumeroKoodi(a.getPostalCode());
 	        at.setPostilokeroTeksti(a.getPoBox());
 	        at.setMaatunnusKoodi(a.getCountryCode());
-	        if(a.getValidFrom() != null) {
+	        if (a.getValidFrom() != null) {
 	          at.setAlkuPvm(CalendarUtil.getXmlDate(a.getValidFrom()));
 	        }
-	        if(a.getValidTo() != null) {
+	        if (a.getValidTo() != null) {
 	          at.setLoppuPvm(CalendarUtil.getXmlDate(a.getValidTo()));
 	        }
 	        ct.getAddresses().getAddress().add(at);
@@ -143,7 +141,7 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 
 	      // phones
 	      ct.setPhoneNumbers(new PhoneNumbersType());
-	      for(PhoneNumber n : c.getPhones()) {
+	      for (PhoneNumber n : c.getPhones()) {
 	        PhoneNumberType pt = new PhoneNumberType();
 	        pt.setNumberType(n.getType());
 	        pt.setNumberClass(n.getNumberClass());
@@ -153,7 +151,7 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 
 	      // econtacts
 	      ct.setElectronicContactInfos(new ElectronicContactInfosType());
-	      for(ElectronicContactInfo e : c.getElectronicContacts()) {
+	      for (ElectronicContactInfo e : c.getElectronicContacts()) {
 	        ElectronicContactInfoType ec = new ElectronicContactInfoType();
 	        ec.setContactInfoType(e.getType());
 	        ec.setContactInfo(e.getContact());
@@ -187,10 +185,10 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
           a.setPostalCode(at.getPostinumeroKoodi());
           a.setPoBox(at.getPostilokeroTeksti());
           a.setCountryCode(at.getMaatunnusKoodi());
-          if(at.getAlkuPvm() != null) {
+          if (at.getAlkuPvm() != null) {
             a.setValidFrom(CalendarUtil.getDate(at.getAlkuPvm()));
           }
-          if(at.getLoppuPvm() != null) {
+          if (at.getLoppuPvm() != null) {
             a.setValidTo(CalendarUtil.getDate(at.getLoppuPvm()));
           }
           c.getAddresses().add(a);

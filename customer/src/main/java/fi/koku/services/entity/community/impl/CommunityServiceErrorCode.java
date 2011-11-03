@@ -8,7 +8,7 @@
 package fi.koku.services.entity.community.impl;
 
 /**
- * Error code for community service.
+ * Error codes for community service.
  * 
  * @author laukksa
  *

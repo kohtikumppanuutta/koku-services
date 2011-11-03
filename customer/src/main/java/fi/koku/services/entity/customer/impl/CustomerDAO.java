@@ -12,7 +12,7 @@ import java.util.Collection;
 import javax.ejb.Local;
 
 /**
- * CustomerDAO.
+ * Customer related data access facilities.
  * 
  * @author laukksa
  *

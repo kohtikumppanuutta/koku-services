@@ -25,7 +25,7 @@ import javax.persistence.Query;
 import fi.koku.KoKuFaultException;
 
 /**
- * CustomerDAOBean.
+ * Customer related data access facilities.
  * 
  * @author laukksa
  *
@@ -41,7 +41,7 @@ public class CustomerDAOBean implements CustomerDAO {
 
   @Override
   public Customer findCustomer(String pic) {
-    Query q = em.createNamedQuery("getCustomerByPic");
+    Query q = em.createNamedQuery(Customer.QUERY_GET_CUSTOMER_BY_PIC);
     q.setParameter("pic", pic);
     try {
       return (Customer) q.getSingleResult();
@@ -82,7 +82,7 @@ public class CustomerDAOBean implements CustomerDAO {
       c2Addresses.put(a.getType(), a);
     }
     
-    for(Iterator<Address> i = c1.getAddresses().iterator(); i.hasNext(); ) {
+    for (Iterator<Address> i = c1.getAddresses().iterator(); i.hasNext(); ) {
       Address a = i.next();
       Address a2 = c2Addresses.get(a.getType());
       if (a2 != null) {
@@ -99,7 +99,7 @@ public class CustomerDAOBean implements CustomerDAO {
     // Add Address
     Set<String> addressTypes = c2Addresses.keySet(); 
     addressTypes.removeAll(c1Addresses);
-    for(String type : addressTypes) {
+    for (String type : addressTypes) {
       Address a = c2Addresses.get(type);
       a.setCustomer(c1);
       c1.getAddresses().add(a);
@@ -120,7 +120,7 @@ public class CustomerDAOBean implements CustomerDAO {
       c2PhoneNumbers.put(p.getType(), p);
     }
     
-    for(Iterator<PhoneNumber> i = c1.getPhones().iterator(); i.hasNext(); ) {
+    for (Iterator<PhoneNumber> i = c1.getPhones().iterator(); i.hasNext(); ) {
       PhoneNumber p = i.next();
       PhoneNumber p2 = c2PhoneNumbers.get(p.getType());
       if (p2 != null) {
@@ -137,7 +137,7 @@ public class CustomerDAOBean implements CustomerDAO {
     // Add new PhoneNumber
     Set<String> PhoneNumberTypes = c2PhoneNumbers.keySet(); 
     PhoneNumberTypes.removeAll(c1PhoneNumbers);
-    for(String type : PhoneNumberTypes) {
+    for (String type : PhoneNumberTypes) {
       PhoneNumber p = c2PhoneNumbers.get(type);
       p.setCustomer(c1);
       c1.getPhones().add(p);
@@ -158,7 +158,7 @@ public class CustomerDAOBean implements CustomerDAO {
       c2ElectronicContactInfos.put(e.getType(), e);
     }
     
-    for(Iterator<ElectronicContactInfo> i = c1.getElectronicContacts().iterator(); i.hasNext(); ) {
+    for (Iterator<ElectronicContactInfo> i = c1.getElectronicContacts().iterator(); i.hasNext(); ) {
       ElectronicContactInfo e = i.next();
       ElectronicContactInfo e2 = c2ElectronicContactInfos.get(e.getType());
       if (e2 != null) {
@@ -175,7 +175,7 @@ public class CustomerDAOBean implements CustomerDAO {
     // Add new ElectronicContactInfo
     Set<String> ElectronicContactInfoTypes = c2ElectronicContactInfos.keySet(); 
     ElectronicContactInfoTypes.removeAll(c1ElectronicContactInfos);
-    for(String type : ElectronicContactInfoTypes) {
+    for (String type : ElectronicContactInfoTypes) {
       ElectronicContactInfo e = c2ElectronicContactInfos.get(type);
       e.setCustomer(c1);
       c1.getElectronicContacts().add(e);
@@ -191,12 +191,12 @@ public class CustomerDAOBean implements CustomerDAO {
   @Override
   public Collection<Customer> queryCustomers(CustomerQueryCriteria qc) {
     StringBuilder qs = new StringBuilder("SELECT DISTINCT c FROM Customer c ");
-    if("full".equals(qc.getSelection())) {
+    if (CustomerConstants.FULL_DATA_QUERY.equals(qc.getSelection())) {
     		qs.append("LEFT OUTER JOIN FETCH c.addresses LEFT OUTER JOIN FETCH c.phones LEFT OUTER JOIN FETCH c.electronicContacts ");
     }
     qs.append("WHERE ");
     List<Object[]> params = new ArrayList<Object[]>();
-    if(qc.getPics() != null && qc.getPics().size() > 0) {
+    if (qc.getPics() != null && qc.getPics().size() > 0) {
       qs.append("c.pic IN (:pics)");
       params.add(new Object[] {"pics", qc.getPics()});
     }
@@ -209,13 +209,13 @@ public class CustomerDAOBean implements CustomerDAO {
     //  params.add(new Object[] {"id", qc.getId()});
     //}
 
-    if(params.size() == 0) {
+    if (params.size() == 0) {
       CustomerServiceErrorCode errorCode = CustomerServiceErrorCode.NO_QUERY_CRITERIA;
       throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());      
     }
     Query q = em.createQuery(qs.toString());
 
-    for(int i = 0; i<params.size(); i++) {
+    for (int i = 0; i<params.size(); i++) {
       q.setParameter((String)params.get(i)[0], params.get(i)[1]);
     }
     
