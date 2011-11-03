@@ -106,7 +106,8 @@ public class LokServiceBeanIT {
   }
 
   /**
-   * Tests that all three rows are returned from the log
+   * Tests the opQueryLog operation. Verifies that three rows are returned from the log, and
+   * that a row is written in the admin log about the query.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -133,10 +134,10 @@ public class LokServiceBeanIT {
     
     // Verify operation result from DB
     assertEquals(entriestype.getLogEntry().size(), 3);
-    
+  
     // test that the query resulted in writing a row in admin log
-/*    int year = Calendar.getInstance().get(Calendar.YEAR);
-    int month = Calendar.getInstance().get(Calendar.MONTH);
+    int year = Calendar.getInstance().get(Calendar.YEAR);
+    int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
     int day = Calendar.getInstance().get(Calendar.DATE);
     
     start = DatatypeFactory.newInstance().newXMLGregorianCalendar(year, month, day, 0, 0, 0, 0, 0);
@@ -147,18 +148,17 @@ public class LokServiceBeanIT {
     admincriteriatype.setEndTime(end);
     admincriteriatype.setLogType("seurantaloki");
     
-    LogEntriesType adminentriestype = port.opQueryLog(criteriatype, getAudit("adminlog"));
+    LogEntriesType adminentriestype = port.opQueryLog(admincriteriatype, getAudit("adminlog"));
     
+    assertEquals(adminentriestype.getLogEntry().size(), 1);
     assertEquals(adminentriestype.getLogEntry().get(0).getUserPic(), "101010-1010");
     assertEquals(adminentriestype.getLogEntry().get(0).getOperation(), "view log");
     assertEquals(adminentriestype.getLogEntry().get(0).getCustomerPic(), "030303A022T");
     assertEquals(adminentriestype.getLogEntry().get(0).getMessage(), "030303A022T kks.vasu 2009-01-01 - 2011-11-11");
-    assertEquals(adminentriestype.getLogEntry().get(0).getDataItemType(), "kks.vasu");
- */
   }
   
   /**
-   * Tests that the query only returns one row
+   * Tests the opQueryLog operation. Only one row should be returned.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -188,7 +188,7 @@ public class LokServiceBeanIT {
   }
 
   /**
-   * Tests that the entry returned from the log is correct.
+   * Tests the opQueryLog operation. Verifies that the entry returned from the log is correct.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -228,7 +228,7 @@ public class LokServiceBeanIT {
   }
 
   /**
-   * Tests a query that does not return anything
+   * Tests the opQueryLog operation. Tests a query that does not return anything.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -258,7 +258,8 @@ public class LokServiceBeanIT {
   }
   
   /**
-   * Tests a query with a wrong kind of criteria, should throw an exception
+   * Tests the opQueryLog operation. The query is made with a wrong kind of criteria, 
+   * so the test should throw an exception.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -292,7 +293,8 @@ public class LokServiceBeanIT {
   }
   
   /**
-   * Tests that all three rows are returned from the admin log 
+   * Tests the opQueryLog operation. Verifies that all three rows are returned from the admin log,
+   * and that a row is written in log about the query.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -317,10 +319,15 @@ public class LokServiceBeanIT {
     
     // Verify operation result from DB
     assertEquals(entriestype.getLogEntry().size(), 3);
+    
+    // Verify that the query resulted in writing a row in normal log
+    assertThat(jdbcTemplate.queryForInt(
+        "SELECT COUNT(*) FROM log WHERE data_item_type = 'log' AND data_item_id = 'adminlogid'" +
+        "AND message = 'start: 2009-01-01, end: 2011-11-11'"), is(1));
   }
   
   /**
-   * Tests that the query returns one result from admin log 
+   * Tests the opQueryLog operation. Tests that the query returns one result from admin log .
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -348,7 +355,7 @@ public class LokServiceBeanIT {
   }
   
   /**
-   * Tests that the entry returned from the admin log is correct.
+   * Tests the opQueryLog operation. Verifies that the entry returned from the admin log is correct.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -379,7 +386,7 @@ public class LokServiceBeanIT {
   }
   
   /**
-   * Tests that the query does not return anything 
+   * Tests the opQueryLog operation. Tests that the query does not return anything.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -407,7 +414,7 @@ public class LokServiceBeanIT {
   }
   
   /**
-   * Tests a query with a wrong kind of criteria, should fail 
+   * Tests the opQueryLog operation. Tests a query with a wrong kind of criteria, should fail.
    * @throws ServiceFault
    * @throws DatatypeConfigurationException 
    */
@@ -439,7 +446,8 @@ public class LokServiceBeanIT {
   }
  
   /**
-  * Tests the archive operation
+  * Tests the opArchiveLog operation. Verifies that rows are archived and that the row written in
+  * the admin log is correct.
   * @throws ServiceFault
   * @throws DatatypeConfigurationException 
   */
@@ -465,13 +473,18 @@ public class LokServiceBeanIT {
    }
    if(archiveCount != null){
      assertEquals(archiveCount.getLogEntryCount(), 2); 
+
+     // Verify that a row was written in the admin log 
+     assertThat(jdbcTemplate.queryForInt(
+         "SELECT COUNT(*) FROM log_admin WHERE user_pic='101010-1010' AND " +
+         "operation = 'archive' AND message = 'archive log from 2009-02-01 to 2011-01-01'"), is(1));   
    } else{
      fail();
    }
   }
   
  /**
-  * Tests the archive operation when there is nothing to archive on a given date
+  * Tests the opArchiveLog operation when there is nothing to archive on a given date.
   * @throws ServiceFault
   * @throws DatatypeConfigurationException 
   */
@@ -503,7 +516,7 @@ public class LokServiceBeanIT {
   }
  
  /**
-  * Tests the archive operation when the archive date is wrong
+  * Tests the opArchiveLog operation when the archive date is wrong.
   * @throws ServiceFault
   * @throws DatatypeConfigurationException 
   */
@@ -547,8 +560,8 @@ public class LokServiceBeanIT {
     AuditInfoType audit = new AuditInfoType();
     audit.setComponent("lok"); 
     if("log".equals(logtype)){
-      audit.setUserId("101010-1010"); // pic from the session    
-    } else if("adminlog".equalsIgnoreCase(logtype)){
+      audit.setUserId("101010-1010");     
+    } else if("adminlog".equals(logtype)){
       audit.setUserId("121212-1212");
     }
    
