@@ -15,7 +15,6 @@ package fi.koku.services.utility.log.impl;
  */
 public enum LogServiceErrorCode {
 
-  LOG_ERROR_PARSING(2000, "Error in parsing."),
   LOG_ERROR_INVALID_LOGTYPE(2010, "Invalid logtype"),
   LOG_ERROR_MISSING_TIMESTAMP(2100, "Timestamp missing when writing to log"),
   LOG_ERROR_MISSING_USERPIC(2110, "User pic missing when writing to log"),

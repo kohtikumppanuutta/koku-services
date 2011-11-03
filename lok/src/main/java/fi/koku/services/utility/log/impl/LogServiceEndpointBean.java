@@ -111,54 +111,40 @@ public class LogServiceEndpointBean implements LogServicePortType {
       AuthUtils.requirePermission("AdminSystemLogFile", auditInfoType.getUserId(),
           authInfoService.getUsersRoles(LogConstants.COMPONENT_LOK, auditInfoType.getUserId()));
 
-      List<LogEntry> entries;
-      try {
-        entries = logService.queryNormalLog(logConverter.fromWsType(criteriaType));
-        if (entries == null) {
-          logger.info("No entries found in log table!");
-        } else {
-          Iterator<LogEntry> i = entries.iterator();
-          while (i.hasNext()) {
-            LogEntry entry = (LogEntry) i.next();
-            if (entry != null) {
-              logEntriesType.getLogEntry().add(logConverter.toWsType(entry));
-            }
+      List<LogEntry> entries = logService.queryNormalLog(logConverter.fromWsType(criteriaType));
+      if (entries == null) {
+        logger.info("No entries found in log table!");
+      } else {
+        Iterator<LogEntry> i = entries.iterator();
+        while (i.hasNext()) {
+          LogEntry entry = (LogEntry) i.next();
+          if (entry != null) {
+            // convert log entry to log entry web Service type and add it to the collection
+            logEntriesType.getLogEntry().add(logConverter.toWsType(entry));
           }
         }
-      } catch (ParseException e) {
-        logger.error(e.getMessage(), e);
-        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_PARSING;
-        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
-      
+      // log the query event
       logService.writeAdminLogQueryEvent(criteriaType, auditInfoType);
     } else if (LogConstants.LOG_ADMIN.equals(criteriaType.getLogType())) {
       // Check permission
       AuthUtils.requirePermission("ViewAdminLogFile", auditInfoType.getUserId(),
           authInfoService.getUsersRoles(LogConstants.COMPONENT_LOK, auditInfoType.getUserId()));
 
-      List<AdminLogEntry> entries;
-      try {
-        entries = logService.queryAdminLog(logConverter.fromWsType(criteriaType));
-        if (entries == null) {
-          logger.info("No entries found in log_admin table!");
-        } else {
-          Iterator<AdminLogEntry> j = entries.iterator();
-          while (j.hasNext()) {
-            // convert log entry to AdminLog Web Service type and
-            // add it to the collection
-            AdminLogEntry entry = (AdminLogEntry) j.next();
-            if (entry != null) {
-              logEntriesType.getLogEntry().add(logConverter.toWsFromAdminType(entry));
-            }
+      List<AdminLogEntry> entries = logService.queryAdminLog(logConverter.fromWsType(criteriaType));
+      if (entries == null) {
+        logger.info("No entries found in log_admin table!");
+      } else {
+        Iterator<AdminLogEntry> j = entries.iterator();
+        while (j.hasNext()) {
+          // convert log entry to admin log entry web Service type and add it to the collection
+          AdminLogEntry entry = (AdminLogEntry) j.next();
+          if (entry != null) {
+            logEntriesType.getLogEntry().add(logConverter.toWsFromAdminType(entry));
           }
         }
-      } catch (ParseException e) {
-        logger.error(e.getMessage(), e);
-        LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_PARSING;
-        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
       }
-
+      // log the query event
       logService.writeNormalLogQueryEvent(criteriaType, auditInfoType);
     } else {
       throw new KoKuFaultException(LOG_ERROR_INVALID_QUERY_CRITERIA.getValue(),
@@ -213,7 +199,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
      * @return
      * @throws ParseException
      */
-    public LogEntryType toWsFromAdminType(AdminLogEntry entry) throws ParseException {
+    public LogEntryType toWsFromAdminType(AdminLogEntry entry) {
 
       LogEntryType entryType = new LogEntryType();
       entryType.setCustomerPic(entry.getCustomerPic());
@@ -231,7 +217,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
      * @return
      * @throws ParseException
      */
-    public LogEntryType toWsType(LogEntry entry) throws ParseException {
+    public LogEntryType toWsType(LogEntry entry) {
       LogEntryType et = new LogEntryType();
 
       et.setClientSystemId(entry.getClientSystemId());
