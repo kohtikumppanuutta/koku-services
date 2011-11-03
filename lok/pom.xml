@@ -11,6 +11,7 @@
 
   <properties>
     <lokservice-api.version>0.0.17</lokservice-api.version>
+	<authorizationinfoservice-api.version>0.0.7</authorizationinfoservice-api.version>
   </properties>
 
   <build>
@@ -60,7 +61,7 @@
     <dependency>
       <groupId>kohti-kumppanuutta</groupId>
       <artifactId>authorizationinfoservice-api</artifactId>
-      <version>0.0.7</version>
+      <version>${authorizationinfoservice-api.version}</version>
     </dependency>    
   </dependencies>
   <version>0.0.1-SNAPSHOT</version>
