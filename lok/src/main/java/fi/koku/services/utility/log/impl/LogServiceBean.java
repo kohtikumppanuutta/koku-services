@@ -71,7 +71,7 @@ public class LogServiceBean implements LogService {
   }
   
   /**
-   * This is called when the admin log is viewed.
+   * This is called when the normal log is viewed.
    */
   @Override
   public void writeAdminLogQueryEvent(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) {
@@ -81,13 +81,7 @@ public class LogServiceBean implements LogService {
     adminLogEntry.setUserPic(auditInfoType.getUserId());
     adminLogEntry.setCustomerPic(criteriaType.getCustomerPic());
     adminLogEntry.setOperation(LogConstants.OPERATION_VIEW);
-
-    // set end date back to 1 day earlier so that the search criteria given by
-    // the user is written to admin log
-    Calendar end = criteriaType.getEndTime().toGregorianCalendar();
-
-    end.set(Calendar.DATE, end.get(Calendar.DATE) - 1);
-    criteriaType.setEndTime(CalendarUtil.getXmlDateTime(end.getTime()));
+    
     // LOK-3: "tapahtumatietona hakuehdot"
     adminLogEntry.setMessage(criteriaType.getCustomerPic() + " " + criteriaType.getDataItemType() + " "
         + df.format(CalendarUtil.getDate(criteriaType.getStartTime())) + " - "
@@ -97,7 +91,7 @@ public class LogServiceBean implements LogService {
   }
 
   /**
-   * This is called when the normal log is viewed.
+   * This is called when the admin log is viewed.
    */
   @Override
   public void writeNormalLogQueryEvent(LogQueryCriteriaType criteriaType, AuditInfoType auditInfoType) {
@@ -105,14 +99,9 @@ public class LogServiceBean implements LogService {
     LogEntry logEntry = new LogEntry();
     logEntry.setUserPic(auditInfoType.getUserId());
 
-    // set end date back to 1 day earlier so that the real query end date
-    // given by the user is written to log
-    Calendar end = criteriaType.getEndTime().toGregorianCalendar();
-    end.set(Calendar.DATE, end.get(Calendar.DATE) - 1);
-
     // LOK-4: "Tapahtumatietona hakuehdot"
     logEntry.setMessage("start: " + df.format(CalendarUtil.getDate(criteriaType.getStartTime())) + ", end: "
-        + df.format(end.getTime()));
+        + df.format(CalendarUtil.getDate(criteriaType.getEndTime())));
     logEntry.setTimestamp(Calendar.getInstance().getTime());
     logEntry.setOperation("search");
     logEntry.setClientSystemId("adminlog");
@@ -138,8 +127,7 @@ public class LogServiceBean implements LogService {
         Date endDate = CalendarUtil.getDate(archivalParameters.getEndDate());
 
         // first, find out what is the earliest entry to be archived so that we
-        // can write
-        // about this in the archive log
+        // can write about this in the archive log
         Date movedDate = logUtils.moveOneDay(endDate);
         // this has to be called before archiving
         Date earliest = logDAO.getEarliest(movedDate);

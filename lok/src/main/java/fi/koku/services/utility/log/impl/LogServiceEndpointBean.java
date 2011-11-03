@@ -232,6 +232,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
       return et;
     }
 
+    
     /**
      * Convert from webservice type (LogEntryType) to internal object
      * representation (LogEntry).
