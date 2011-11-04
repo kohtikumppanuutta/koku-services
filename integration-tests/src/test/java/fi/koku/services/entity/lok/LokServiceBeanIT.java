@@ -542,12 +542,6 @@ public class LokServiceBeanIT {
    }
   }
  
- /* lisätestit:
- /* -query admin logiin kirjataan logiin
-  * -query logiin kirjataan admin logiin
-  * -archive kirjataan admin logiin
-  */
- 
   private LogServicePortType getLogService() {
     LogServiceFactory logServiceFactory = new LogServiceFactory(
         TestPropertiesUtil.getProperty(TestPropertiesUtil.KOKU_SRV_LAYER_WS_USERNAME),
