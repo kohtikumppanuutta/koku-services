@@ -173,9 +173,19 @@ public class LogDAOBean implements LogDAO {
 
     if (criteria.getDataItemType() != null && !criteria.getDataItemType().isEmpty()) {
       sb.append(" AND ");
-      sb.append("e.dataItemType = :dataItemType");
-      params.add(new Object[] { "dataItemType", criteria.getDataItemType() });
+      String concept = criteria.getDataItemType();
+      // enable star queries (only star in the end can be used)
+      if (concept.endsWith("*")){
+        int length = concept.length();
+        concept = concept.substring(0, length - 1) + "%";
+        sb.append("e.dataItemType LIKE :dataItemType");
+      } else{
+        sb.append("e.dataItemType = :dataItemType"); 
+      }
+      
+      params.add(new Object[] { "dataItemType", concept}); 
     }
+   
 
     if (params.size() == 0) {
       throw new IllegalArgumentException("Missing criteria for log query.");
