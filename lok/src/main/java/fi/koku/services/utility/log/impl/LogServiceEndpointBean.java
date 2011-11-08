@@ -7,7 +7,7 @@
  */
 package fi.koku.services.utility.log.impl;
 
-import static fi.koku.services.utility.log.impl.LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
+import static fi.koku.services.utility.log.impl.LogServiceErrorCode.LOG_ERROR_INVALID_LOGTYPE;
 
 import java.text.ParseException;
 import java.util.Iterator;
@@ -147,8 +147,8 @@ public class LogServiceEndpointBean implements LogServicePortType {
       // log the query event
       logService.writeNormalLogQueryEvent(criteriaType, auditInfoType);
     } else {
-      throw new KoKuFaultException(LOG_ERROR_INVALID_QUERY_CRITERIA.getValue(),
-          LOG_ERROR_INVALID_QUERY_CRITERIA.getDescription());
+      throw new KoKuFaultException(LOG_ERROR_INVALID_LOGTYPE.getValue(),
+          LOG_ERROR_INVALID_LOGTYPE.getDescription());
     }
 
     return logEntriesType;
