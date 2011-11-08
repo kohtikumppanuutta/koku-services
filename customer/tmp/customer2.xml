@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<p:customers xmlns:jhs="http://skeemat.jhs-suositukset.fi/yhteiset/2009/10/19" xmlns:p="http://services.koku.fi/entity/customer/v1" xmlns:p1="http://services.koku.fi/common/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://services.koku.fi/entity/customer/v1 customer.xsd ">
-  <p:customer>
-    <p:id>p:id</p:id>
-    <p:hetu>p:hetu</p:hetu>
-    <p:firstName>p:firstName</p:firstName>
-    <p:lastName>p:lastName</p:lastName>
-  </p:customer>
-</p:customers>
