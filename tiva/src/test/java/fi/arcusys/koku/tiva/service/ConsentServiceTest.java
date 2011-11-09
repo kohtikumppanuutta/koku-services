@@ -25,8 +25,11 @@ import fi.arcusys.koku.tiva.soa.ActionRequestSummary;
 import fi.arcusys.koku.tiva.soa.ActionRequestTO;
 import fi.arcusys.koku.tiva.soa.ConsentApprovalStatus;
 import fi.arcusys.koku.tiva.soa.ConsentCriteria;
+import fi.arcusys.koku.tiva.soa.ConsentExternalGivenTo;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
+import fi.arcusys.koku.tiva.soa.ConsentKksExtraInfo;
 import fi.arcusys.koku.tiva.soa.ConsentQuery;
+import fi.arcusys.koku.tiva.soa.ConsentSearchCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
 import fi.arcusys.koku.tiva.soa.ConsentSourceInfo;
 import fi.arcusys.koku.tiva.soa.ConsentStatus;
@@ -226,6 +229,43 @@ public class ConsentServiceTest {
 
         service.revokeConsent(consentId, parent1, "no comments");
         assertEquals(ConsentStatus.Revoked, getById(consentId, service.getProcessedConsents(employeeUid, query)).getStatus());
+    }
+    
+    @Test
+    public void tivaToKksConsents() {
+        // new consent
+        final Long templateId = service.createConsentTemplate(createTestTemplate("kks"));
+        final String parent1 = "kksParent1";
+        final String parent2 = "kksParent2";
+        final String targetPersonUid = "Lassi Lapsi";
+        
+        final String employeeUid = "Ville Virkamies";
+
+        final ConsentKksExtraInfo extraInfo = new ConsentKksExtraInfo();
+        final String informationTargetId = "info1";
+        final ConsentExternalGivenTo givenToParty = new ConsentExternalGivenTo();
+        givenToParty.setPartyId("partyId");
+        givenToParty.setPartyName("partyName");
+        final List<ConsentExternalGivenTo> givenTo = Collections.singletonList(givenToParty);
+        extraInfo.setInformationTargetId(informationTargetId);
+        extraInfo.setGivenTo(givenTo);
+
+        final Long consentId = service.requestForConsent(templateId, employeeUid, 
+                targetPersonUid, Arrays.asList(parent1, parent2), null, null, null, Boolean.FALSE, extraInfo);
+        
+        final ActionPermittedTO actionPermittedTO = new ActionPermittedTO();
+        actionPermittedTO.setActionRequestNumber(1);
+        actionPermittedTO.setPermitted(true);
+        
+        service.giveConsent(consentId, parent1, Collections.singletonList(actionPermittedTO), null, "");
+        service.giveConsent(consentId, parent2, Collections.singletonList(actionPermittedTO), null, "");
+        
+        final ConsentSearchCriteria query = new ConsentSearchCriteria();
+        query.setGivenTo(Collections.singletonList("partyId"));
+        query.setInformationTargetId(informationTargetId);
+        query.setTargetPerson(targetPersonUid);
+        query.setTemplateNamePrefix("kks");
+        assertNotNull(getById(consentId, service.searchConsents(query)));
     }
 
     private List<ActionPermittedTO> getTestActionsPermitted() {

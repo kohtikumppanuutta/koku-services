@@ -122,7 +122,8 @@ public class ConsentDAOImpl extends AbstractEntityDAOImpl<Consent> implements Co
         // where
         
         // only replied and valid consents will be retreived
-        query.append(" WHERE (NOT (:given_status != ANY (SELECT cr.status FROM ConsentReply cr WHERE cr.consent = cn ))) ");
+//        query.append(" WHERE (NOT (:given_status <> ANY (SELECT cr.status FROM ConsentReply cr WHERE cr.consent = cn ))) ");
+        query.append(" WHERE (EXISTS (SELECT DISTINCT cr.id FROM ConsentReply cr WHERE cr.consent = cn AND cr.status = :given_status)) ");
         params.put("given_status", ConsentReplyStatus.Given);
         // criteria applied
         final String templatePrefix = criteria.getTemplateNamePrefix();

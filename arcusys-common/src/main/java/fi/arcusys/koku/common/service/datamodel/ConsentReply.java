@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -40,6 +42,8 @@ import javax.persistence.UniqueConstraint;
 public class ConsentReply extends AbstractEntity {
     private Date validTill;
     private String comment;
+    
+    @Enumerated(EnumType.STRING)
     private ConsentReplyStatus status;
 
     @ManyToOne

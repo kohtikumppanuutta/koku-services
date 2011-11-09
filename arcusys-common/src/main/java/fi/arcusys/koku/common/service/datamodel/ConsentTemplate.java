@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -24,7 +25,10 @@ import javax.persistence.OneToMany;
 })
 public class ConsentTemplate extends AbstractEntity {
     private String title;
+
+    @Lob
     private String description;
+    
     private Date endDate;
     private Boolean endDateMandatory;
     

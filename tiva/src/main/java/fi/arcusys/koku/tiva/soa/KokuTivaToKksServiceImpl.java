@@ -73,6 +73,9 @@ public class KokuTivaToKksServiceImpl implements KokuTivaToKksService {
     @Override
     public List<ConsentExternal> queryConsents(ConsentSearchCriteria query) {
         final List<ConsentExternal> result = new ArrayList<ConsentExternal>();
+        if (query.getTargetPerson() != null) {
+            query.setTargetPerson(usersService.getUserUidByKunpoSsn(query.getTargetPerson()));
+        }
         final List<ConsentTO> consents = consentServiceFacade.searchConsents(query);
         for (final ConsentTO consent : consents) {
             final ConsentExternal consentExternal = new ConsentExternal();
@@ -105,11 +108,13 @@ public class KokuTivaToKksServiceImpl implements KokuTivaToKksService {
      * @return
      */
     private String getSsnByLooraUid(String userUid) {
-        return usersService.getSsnByLdapName(usersService.getLooraNameByUserUid(userUid));
+//        return usersService.getSsnByLdapName(usersService.getLooraNameByUserUid(userUid));
+        return usersService.getSsnByLdapName(userUid);
     }
 
     protected String getSsnByKunpoUid(final String userUid) {
-        return usersService.getSsnByLdapName(usersService.getKunpoNameByUserUid(userUid));
+//        return usersService.getSsnByLdapName(usersService.getKunpoNameByUserUid(userUid));
+        return usersService.getSsnByLdapName(userUid);
     }
 
 }
