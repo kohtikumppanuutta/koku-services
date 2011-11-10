@@ -19,7 +19,6 @@ public enum LogServiceErrorCode {
   LOG_ERROR_MISSING_TIMESTAMP(2100, "Timestamp missing when writing to log"),
   LOG_ERROR_MISSING_USERPIC(2110, "User pic missing when writing to log"),
   LOG_ERROR_MISSING_OPERATION(2120, "Operation missing when writing to log"),
-  LOG_ERROR_MISSING_DATAITEMID(2130, "Data item id missing when writing to log"),
   LOG_ERROR_MISSING_DATAITEMTYPE(2140, "Date item type missing when writing to log"),
   LOG_ERROR_MISSING_CLIENTSYSTEMID(2150, "Client system id missing when writing to log"),
   LOG_ERROR_ARCHIVE_LOG_NOT_AVAILABLE(2160, "Archive log not available"),

@@ -89,7 +89,7 @@ public class LogUtils {
   public boolean validateLogEntryType(LogEntryType entry, String logtype) throws KoKuFaultException {
 
     // In normal log, these must not be null:
-    // timestamp, user_pic, operation, data_item_id, data_item_type,
+    // timestamp, user_pic, operation, data_item_type,
     // client_system_id
     // In admin log, these must not be null:
     // timestamp, user_pic, operation
@@ -113,10 +113,6 @@ public class LogUtils {
     }
 
     if (LogConstants.LOG_NORMAL.equalsIgnoreCase(logtype)) {
-      if (entry.getDataItemId() == null) {
-        errorCode = LogServiceErrorCode.LOG_ERROR_MISSING_DATAITEMID;
-        throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
-      }
       if (entry.getDataItemType() == null) {
         errorCode = LogServiceErrorCode.LOG_ERROR_MISSING_DATAITEMTYPE;
         throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());

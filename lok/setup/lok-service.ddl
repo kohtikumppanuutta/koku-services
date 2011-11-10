@@ -6,7 +6,7 @@ SET storage_engine = innodb;
 --
 CREATE TABLE log (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  data_item_id VARCHAR(10) NOT NULL,
+  data_item_id VARCHAR(10),
   timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11),
@@ -27,7 +27,7 @@ CREATE TABLE log_admin (
 
 CREATE TABLE log_archive (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  data_item_id VARCHAR(10) NOT NULL,
+  data_item_id VARCHAR(10),
   timestamp DATETIME NOT NULL,
   user_pic VARCHAR(11) NOT NULL,
   customer_pic VARCHAR(11),

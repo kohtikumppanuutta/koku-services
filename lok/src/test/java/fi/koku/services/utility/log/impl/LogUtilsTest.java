@@ -25,19 +25,6 @@ public class LogUtilsTest {
   
  
 
- 
- /* 
-  
-  @Test
-  public void testOkMoveOneDay(){
-    
-  }
-  
-  @Test
-  public void testWrongMoveOneDay(){
-    
-  }
-  */
   
   @Test
   public void testOkLogInputOk(){
@@ -94,18 +81,6 @@ public class LogUtilsTest {
       fail();
     }catch(KoKuFaultException e){
       assertEquals(LogServiceErrorCode.LOG_ERROR_MISSING_OPERATION.getValue(), e.getErrorCode());
-    } 
-  }
-  
-  @Test
-  public void testWrongDataitemidLogInputOk(){
-    LogEntryType entry = createLogEntryType();
-    entry.setDataItemId(null);
-    try{
-      boolean result = lu.validateLogEntryType(entry, LogConstants.LOG_NORMAL);
-      fail();
-    }catch(KoKuFaultException e){
-      assertEquals(LogServiceErrorCode.LOG_ERROR_MISSING_DATAITEMID.getValue(), e.getErrorCode());
     } 
   }
   
