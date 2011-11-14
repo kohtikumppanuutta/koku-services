@@ -7,7 +7,10 @@
     <driver-class>com.mysql.jdbc.Driver</driver-class>
     <user-name>koku1</user-name>
     <password>koku1</password>
-    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLExceptionSorter</exception-sorter-class-name>
+	<min-pool-size>5</min-pool-size>
+	<max-pool-size>50</max-pool-size>
+	<idle-timeout-minutes>5</idle-timeout-minutes>
+	<exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLExceptionSorter</exception-sorter-class-name>
     <metadata>
        <type-mapping>mySQL</type-mapping>
     </metadata>
