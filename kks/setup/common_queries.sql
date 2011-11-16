@@ -13,3 +13,10 @@ delete from kks_entry_tags;
 delete from kks_entry;
 delete from kks_collection;
 
+
+-- Delete old 4-year-check
+delete from kks_entry_class_tags where entry_class_id in ( select entry_class_id from kks_entry_class where kks_entry_class.entry_group = 23 );
+delete from kks_entry_class WHERE entry_group = 23;
+delete from kks_group WHERE group_id = 23; 
+delete from kks_group WHERE group_id = 20;
+
