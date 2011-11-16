@@ -110,7 +110,7 @@ public class AuthorizationBean implements Authorization {
   private Consent getValidConsent(String customer, String user, String consentType) {
     try {
       List<Consent> consents = getConsents(customer, user, consentType);
-
+      
       if (consents.size() > 0) {
         for (Consent c : consents) {
           if (ConsentStatus.VALID.equals(c.getStatus())) {
@@ -135,11 +135,14 @@ public class AuthorizationBean implements Authorization {
    *          of the collection that is requested to see
    * @return valid consent or NULL if no valid consent found
    */
-  private List<Consent> getConsents(String customer, String user, String consentType) {
-    LOG.debug("Getting consents for consent type " + consentType);
-    ConsentSearchCriteria csc = new ConsentSearchCriteria();
-    csc.setTargetPerson(customer);
-    csc.setTemplateNamePrefix(consentType);
+  private List<Consent> getConsents(String customer, String user, String consentType) { 
+    
+    if ( "".equals(consentType) ) {
+      return new ArrayList<Consent>();
+    }
+    ConsentSearchCriteria csc = new ConsentSearchCriteria(); 
+    csc.setTargetPerson(customer); 
+    csc.setTemplateNamePrefix(consentType); 
     csc.getGivenTo().addAll(getOrganizationIds(user));
     return KksServiceContainer.getService().tiva().queryConsents(csc);
   }
@@ -187,7 +190,9 @@ public class AuthorizationBean implements Authorization {
   @Override
   public KksCollection removeUnauthorizedContent(KksCollection c, KksCollectionClass metadata,
     Map<Integer, String> entryRegisters, String user) {
+
     boolean consent = hasConsent(c.getCustomer(), user, metadata.getConsentType());
+
     if (isParent(user, c.getCustomer()) || consent ) {
       if ( consent ) {
         c.setConsentRequested(true);
