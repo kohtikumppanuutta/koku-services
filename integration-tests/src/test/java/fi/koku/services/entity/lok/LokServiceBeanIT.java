@@ -85,6 +85,18 @@ public class LokServiceBeanIT {
     logEntryType.setUserPic("123456-123A");
     logEntries.getLogEntry().add(logEntryType);
     
+    // add a log entry that writes null values to fields that allow it
+    logEntryType = new LogEntryType();
+    logEntryType.setClientSystemId("kks");
+//    logEntryType.setCustomerPic("123456-123A");
+//    logEntryType.setDataItemId("it-id");
+    logEntryType.setDataItemType("it-type");
+//    logEntryType.setMessage("Integration test log 2");
+    logEntryType.setOperation("Test");
+    logEntryType.setTimestamp(CalendarUtil.getXmlDateTime(new Date())); 
+    logEntryType.setUserPic("123456-123A");
+    logEntries.getLogEntry().add(logEntryType);
+    
     port.opLog(logEntries, audit);
     
     // Verify operation result from DB
