@@ -12,6 +12,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.koku.KoKuFaultException;
 import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
@@ -126,7 +127,6 @@ public final class Log {
   }
 
   private void log(String operation, String dataType, String customer, String userId, String message) {
-
     try {
 
       LogEntryType l = new LogEntryType();
@@ -144,6 +144,7 @@ public final class Log {
       KksServiceContainer.getService().log().opLog(entries, getLogAuditInfo(userId));
     } catch (ServiceFault e) {
       LOG.error("Failed to log operation " + operation + " for data type " + dataType, e);
+      throw new KoKuFaultException(1001, "Log service down", e );
     }
   }
 
