@@ -723,7 +723,7 @@ insert into kks_entry_class (
 ) VALUES (
    83   -- entry_class_id
   ,35   -- sort_order
-  ,'Terveiset neuvolaan?'  -- name
+  ,'Terveiset neuvolaan'  -- name
   ,'terveiset neuvolaan'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type

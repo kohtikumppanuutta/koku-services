@@ -9,7 +9,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.5lk_koulu_terveystarkastus.oppilas'   -- type_code
   ,'5. Luokan kouluterveystarkastus, Oppilaan lomake'  -- name
   ,''  -- description
-  ,'kks.suostumus.5lk_koulu_terveystarkastus'  -- consent_type
+  ,''  -- consent_type
 );
 
 insert into kks_group (
@@ -262,7 +262,7 @@ insert into kks_entry_class (
 ) VALUES (
    209   -- entry_class_id
   ,9   -- sort_order
-  ,'Paljonko ulkoilet päivittäin (tunteina)'  -- name
+  ,'Paljonko ulkoilet päivittäin (tunteina)?'  -- name
   ,'Oppilaan vapaa-aika ja liikunta'  -- description
   ,0   -- multi_value
   ,'TEXT'  -- data_type
@@ -282,7 +282,7 @@ insert into kks_entry_class (
 ) VALUES (
    210   -- entry_class_id
   ,10   -- sort_order
-  ,'Paljonko katsot TV:tä (tunteina)'  -- name
+  ,'Paljonko katsot TV:tä (tunteina)?'  -- name
   ,'Oppilaan vapaa-aika ja liikunta'  -- description
   ,0   -- multi_value
   ,'TEXT'  -- data_type

@@ -9,7 +9,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.vasu'   -- type_code
   ,'Varhaiskasvatussuunnitelma'  -- name
   ,''  -- description
-  ,'kks.suostumus.vasu'  -- concent_type
+  ,''  -- concent_type
 );
 
 insert into kks_group (
@@ -144,7 +144,7 @@ insert into kks_entry_class (
 ) VALUES (
    2   -- entry_class_id
   ,1   -- sort_order
-  ,'Miten lapsesi on viihtynyt päivähoidossa'  -- name
+  ,'Miten lapsesi on viihtynyt päivähoidossa?'  -- name
   ,'Kuvaa lapsen hyvinvointia'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -164,7 +164,7 @@ insert into kks_entry_class (
 ) VALUES (
    3   -- entry_class_id
   ,2   -- sort_order
-  ,'Mitä lapsesi kertoo päivähoidosta kotona'  -- name
+  ,'Mitä lapsesi kertoo päivähoidosta kotona?'  -- name
   ,'Kuvaa lapsen hyvinvointia'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -184,7 +184,7 @@ insert into kks_entry_class (
 ) VALUES (
    4   -- entry_class_id
   ,3   -- sort_order
-  ,'Lapsellesi läheiset ja tärkeät ihmiset'  -- name
+  ,'Lapsellesi läheiset ja tärkeät ihmiset?'  -- name
   ,'Kuvaa lapsen hyvinvointia'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -204,7 +204,7 @@ insert into kks_entry_class (
 ) VALUES (
    5   -- entry_class_id
   ,4   -- sort_order
-  ,'Onko sinulla perushoitoon liittyen jotain ajatuksia tai kysyttävää'  -- name
+  ,'Onko sinulla perushoitoon liittyen jotain ajatuksia tai kysyttävää?'  -- name
   ,'Pukeminen ja riisuminen, hygienia, ruokailu, ulkoilu, lepohetki'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -224,7 +224,7 @@ insert into kks_entry_class (
 ) VALUES (
    6   -- entry_class_id
   ,5   -- sort_order
-  ,'Mietityttääkö sinua jokin asia lapsesi kehityksessä'  -- name
+  ,'Mietityttääkö sinua jokin asia lapsesi kehityksessä?'  -- name
   ,'mm. pelot, arkuus, sosiaaliset taidot, puhe, motoriikka, siisteyskasvatus, perhetilanne, kasvatuskysymykset'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -244,7 +244,7 @@ insert into kks_entry_class (
 ) VALUES (
    7   -- entry_class_id
   ,6   -- sort_order
-  ,'Miten lapsesi suhtautuu uusiin tilanteisiin ja asioihin'  -- name
+  ,'Miten lapsesi suhtautuu uusiin tilanteisiin ja asioihin?'  -- name
   ,'Kuvaa lapsen hyvinvointia'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -264,7 +264,7 @@ insert into kks_entry_class (
 ) VALUES (
    8   -- entry_class_id
   ,7   -- sort_order
-  ,'Onko lapsellasi pelkoja'  -- name
+  ,'Onko lapsellasi pelkoja?'  -- name
   ,'Kuvaa lapsen hyvinvointia'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -284,7 +284,7 @@ insert into kks_entry_class (
 ) VALUES (
    9   -- entry_class_id
   ,8   -- sort_order
-  ,'Oletko jostain asiasta huolissasi lapseesi liittyen'  -- name
+  ,'Oletko jostain asiasta huolissasi lapseesi liittyen?'  -- name
   ,'mm. pelot, arkuus, sosiaaliset taidot, puhe, motoriikka, siisteyskasvatus, perhetilanne, kasvatuskysymykset'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -305,7 +305,7 @@ insert into kks_entry_class (
 ) VALUES (
    10   -- entry_class_id
   ,9   -- sort_order
-  ,'Mitkä asiat erityisesti tuottavat iloa lapsessasi'  -- name
+  ,'Mitkä asiat erityisesti tuottavat iloa lapsessasi?'  -- name
   ,'Kuvaa lapsen hyvinvointia'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -325,7 +325,7 @@ insert into kks_entry_class (
 ) VALUES (
    11   -- entry_class_id
   ,10   -- sort_order
-  ,'Mistä asioista lapsesi on kiinnostunut'  -- name
+  ,'Mistä asioista lapsesi on kiinnostunut?'  -- name
   ,'Kuvaa lapsen hyvinvointia'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -345,7 +345,7 @@ insert into kks_entry_class (
 ) VALUES (
    12   -- entry_class_id
   ,11   -- sort_order
-  ,'Miten lapsesi toiveet huomioidaan'  -- name
+  ,'Miten lapsesi toiveet huomioidaan?'  -- name
   ,'Kuvaa lapsen hyvinvointia'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -367,7 +367,7 @@ insert into kks_entry_class (
 ) VALUES (
    13   -- entry_class_id
   ,12   -- sort_order
-  ,'Mitä ajatuksia lapsesi päivähoitoon tulo- ja lähtötilanteet sinussa herättävät'  -- name
+  ,'Mitä ajatuksia lapsesi päivähoitoon tulo- ja lähtötilanteet sinussa herättävät?'  -- name
   ,'Kuvaa lapsen vuorovaikutusta'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -387,7 +387,7 @@ insert into kks_entry_class (
 ) VALUES (
    14   -- entry_class_id
   ,13   -- sort_order
-  ,'Miten ilo tai suru näkyy lapsessasi'  -- name
+  ,'Miten ilo tai suru näkyy lapsessasi?'  -- name
   ,'Kuvaa lapsen vuorovaikutusta'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -407,7 +407,7 @@ insert into kks_entry_class (
 ) VALUES (
    15   -- entry_class_id
   ,14   -- sort_order
-  ,'Milloin lapsesi haluaa olla yksin'  -- name
+  ,'Milloin lapsesi haluaa olla yksin?'  -- name
   ,'Kuvaa lapsen vuorovaikutusta'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -587,7 +587,7 @@ insert into kks_entry_class (
 ) VALUES (
    27   -- entry_class_id
   ,26   -- sort_order
-  ,'Millaisia asioita toivoisit kerrottavan päivittäin lapsesi arjesta päivähoidossa'  -- name
+  ,'Millaisia asioita toivoisit kerrottavan päivittäin lapsesi arjesta päivähoidossa?'  -- name
   ,'Kuvaa kodin ja päivähoidon yhteistyötä'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -607,7 +607,7 @@ insert into kks_entry_class (
 ) VALUES (
    28   -- entry_class_id
   ,27   -- sort_order
-  ,'Miten yhteistyö hoidetaan molempiin vanhempiin'  -- name
+  ,'Miten yhteistyö hoidetaan molempiin vanhempiin?'  -- name
   ,'Kuvaa kodin ja päivähoidon yhteistyötä'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -627,7 +627,7 @@ insert into kks_entry_class (
 ) VALUES (
    31   -- entry_class_id
   ,28   -- sort_order
-  ,'Millaisia yhteistyön tapoja toivotte'  -- name
+  ,'Millaisia yhteistyön tapoja toivotte?'  -- name
   ,'Kuvaa kodin ja päivähoidon yhteistyötä'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -647,7 +647,7 @@ insert into kks_entry_class (
 ) VALUES (
    29   -- entry_class_id
   ,29   -- sort_order
-  ,'Minkälaiset asiat teille on kasvatuksessa tärkeitä? mitä toivotte meiltä'  -- name
+  ,'Minkälaiset asiat teille on kasvatuksessa tärkeitä? mitä toivotte meiltä?'  -- name
   ,'Kuvaa kodin ja päivähoidon yhteistyötä'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -669,7 +669,7 @@ insert into kks_entry_class (
 ) VALUES (
    33   -- entry_class_id
   ,1   -- sort_order
-  ,'Yhteiset tavoitteet liittyen lapsen hyvinvointiin'  -- name
+  ,'Yhteiset tavoitteet liittyen lapsen hyvinvointiin?'  -- name
   ,'Kirjataan yhteiset tavoitteet liittyen lapsen hyvinvointiin'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type

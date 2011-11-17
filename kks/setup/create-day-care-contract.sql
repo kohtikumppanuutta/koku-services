@@ -9,7 +9,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.sopimus_paivakotihoito'   -- type_code
   ,'Päiväkotihoidon Hoitosopimus'  -- name
   ,''  -- description
-  ,'kks.suostumus.sopimus_paivakotihoito'  -- concent_type
+  ,''  -- concent_type
 );
 
 insert into kks_group (

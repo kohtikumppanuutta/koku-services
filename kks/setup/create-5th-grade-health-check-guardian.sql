@@ -9,7 +9,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.5lk_koulu_terveystarkastus.huoltaja'   -- type_code
   ,'5. Luokan kouluterveystarkastus, Huoltajan lomake'  -- name
   ,''  -- description
-  ,'kks.suostumus.5lk_koulu_terveystarkastus'  -- consent_type
+  ,''  -- consent_type
 );
 
 insert into kks_group (
@@ -402,7 +402,7 @@ insert into kks_entry_class (
 ) VALUES (
    162   -- entry_class_id
   ,12   -- sort_order
-  ,'Oppilaan nukkumaanmenoaika arkisin (klo)?'  -- name
+  ,'Oppilaan nukkumaanmenoaika arkisin (klo)'  -- name
   ,'Oppilaan lepotottumukset'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -901,7 +901,7 @@ insert into kks_entry_class (
 ) VALUES (
    187   -- entry_class_id
   ,37   -- sort_order
-  ,'Mihin haluaisitte erityisesti kiinnitettävän huomiota tarkastuksessa'  -- name
+  ,'Mihin haluaisitte erityisesti kiinnitettävän huomiota tarkastuksessa?'  -- name
   ,'Toiveet tarkastukselle'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
