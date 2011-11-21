@@ -9,24 +9,31 @@ package fi.koku.services.entity.customer.impl;
 
 import java.util.Collection;
 import java.util.HashSet;
+
+import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.customer.v1.AddressType;
 import fi.koku.services.entity.customer.v1.AddressesType;
-import fi.koku.services.entity.customer.v1.ElectronicContactInfoType;
-import fi.koku.services.entity.customer.v1.ElectronicContactInfosType;
-import fi.koku.services.entity.customer.v1.PhoneNumberType;
-import fi.koku.services.entity.customer.v1.PhoneNumbersType;
-import fi.koku.services.entity.customer.v1.VoidType;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerQueryCriteriaType;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.CustomersType;
+import fi.koku.services.entity.customer.v1.ElectronicContactInfoType;
+import fi.koku.services.entity.customer.v1.ElectronicContactInfosType;
+import fi.koku.services.entity.customer.v1.PhoneNumberType;
+import fi.koku.services.entity.customer.v1.PhoneNumbersType;
+import fi.koku.services.entity.customer.v1.VoidType;
 
 /**
  * KoKu Customer service endpoint implementation class.
@@ -44,7 +51,11 @@ import fi.koku.services.entity.customer.v1.CustomersType;
 )
 @RolesAllowed("koku-role")
 public class CustomerServiceEndpointBean implements CustomerServicePortType {
+  private static final Logger logger = LoggerFactory.getLogger(CustomerServiceEndpointBean.class);
 	
+  @Resource
+  private SessionContext ctx;
+  
 	@EJB
 	private CustomerService customerService;
 	
