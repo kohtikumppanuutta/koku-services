@@ -161,6 +161,25 @@
                     <injection-target-name>userSearchFilter</injection-target-name>
                 </injection-target>
             </env-entry>
+            <env-entry>
+                <env-entry-name>kuntalainenGroupUid</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>kuntalainen</env-entry-value>
+                <injection-target>
+                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
+                    <injection-target-name>kuntalainenGroupUid</injection-target-name>
+                </injection-target>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>kunpoUserBaseDn</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>ou=People,o=koku,dc=example,dc=org</env-entry-value>
+                <injection-target>
+                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
+                    <injection-target-name>kunpoUserBaseDn</injection-target-name>
+                </injection-target>
+            </env-entry>
+            
             <resource-ref>
                 <res-ref-name>myldap</res-ref-name>
                 <res-type>javax.naming.directory</res-type>

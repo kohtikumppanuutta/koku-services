@@ -27,17 +27,31 @@ public interface CustomerServiceDAO {
      * @param searchString
      * @return
      */
-    public User getKunpoUserInfoBySsn(final String ssn);
+    User getKunpoUserInfoBySsn(final String ssn);
 
     /**
      * @param searchString
      * @return
      */
-    public User getEmployeeUserInfoBySsn(final String ssn);
+    User getEmployeeUserInfoBySsn(final String ssn);
 
     /**
      * @param userUid
      * @return
      */
     String getSsnByUserUid(String userUid);
+
+    /**
+     * @param kunpoUsername
+     * @param ssn
+     * @return
+     */
+    User getKunpoUserInfoByPortalNameAndSsn(final GroupsDAO groupsDao, String kunpoUsername, String ssn);
+
+    /**
+     * @param looraUsername
+     * @param ssn
+     * @return
+     */
+    User getEmployeeUserInfoByPortalNameAndSsn(String looraUsername, String ssn);
 }

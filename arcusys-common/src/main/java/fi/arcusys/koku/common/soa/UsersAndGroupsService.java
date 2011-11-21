@@ -14,6 +14,12 @@ import javax.jws.WebService;
 public interface UsersAndGroupsService {
     // Portal part
     
+    @WebResult(name = "user")
+    User loginByKunpoNameAndSsn(@WebParam(name = "kunpoUsername") final String username, @WebParam(name = "ssn") final String ssn);
+    
+    @WebResult(name = "user")
+    User loginByLooraNameAndSsn(@WebParam(name = "looraUsername") final String username, @WebParam(name = "ssn") final String ssn);
+    
     @WebResult(name = "userUid")
     String getUserUidByKunpoName(@WebParam(name = "kunpoUsername") final String username);
 

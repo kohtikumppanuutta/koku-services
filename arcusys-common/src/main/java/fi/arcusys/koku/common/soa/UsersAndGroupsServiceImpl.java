@@ -221,4 +221,32 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
     public String getSsnByKunpoName(String kunpoName) {
         return customerDao.getSsnByKunpoName(kunpoName);
     }
+
+    /**
+     * @param username
+     * @param ssn
+     * @return
+     */
+    @Override
+    public User loginByKunpoNameAndSsn(String kunpoUsername, String ssn) {
+        if (ssn == null || ssn.isEmpty()) {
+            return customerDao.getKunpoUserInfoBySsn(customerDao.getSsnByKunpoName(kunpoUsername));
+        }
+        
+        return customerDao.getKunpoUserInfoByPortalNameAndSsn(groupsDao, kunpoUsername, ssn);
+    }
+
+    /**
+     * @param username
+     * @param ssn
+     * @return
+     */
+    @Override
+    public User loginByLooraNameAndSsn(String looraUsername, String ssn) {
+        if (ssn == null || ssn.isEmpty()) {
+            return customerDao.getEmployeeUserInfoBySsn(customerDao.getSsnByLooraName(looraUsername));
+        }
+        
+        return customerDao.getEmployeeUserInfoByPortalNameAndSsn(looraUsername, ssn);
+    }
 }
