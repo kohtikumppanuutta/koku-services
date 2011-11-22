@@ -35,4 +35,6 @@ public interface CommunityService {
 
   void updateMembershipApproval(MembershipApproval approval);
   
+  void deleteMembershipRequest(String membershipRequestId);
+  
 }

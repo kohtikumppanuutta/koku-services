@@ -98,6 +98,11 @@ public class CommunityServiceBean implements CommunityService {
     
   }
   
+  @Override
+  public void deleteMembershipRequest(String membershipRequestId) {
+    communityDAO.deleteMembershipRequest(Long.valueOf(membershipRequestId));
+  }
+  
   private boolean isFinalMembershipRequestApproval(MembershipRequest rq, MembershipApproval approval) {
     for (MembershipApproval a : rq.getApprovals()) {
       if (!a.getApproverPic().equals(approval.getApproverPic())

@@ -132,6 +132,12 @@ public class CommunityServiceEndpointBean implements CommunityServicePortType {
     return new VoidType();
   }
   
+  @Override
+  public VoidType opDeleteMembershipRequest(String membershipRequestId, AuditInfoType auditHeader) {
+    communityService.deleteMembershipRequest(membershipRequestId);
+    return new VoidType();
+  }
+  
   /**
    * CommunityConverter.
    * 

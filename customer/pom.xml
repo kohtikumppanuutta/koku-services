@@ -10,7 +10,7 @@
   <name>customer-service</name>
 
   <properties>
-    <customerservice-api.version>0.0.22</customerservice-api.version>
+    <customerservice-api.version>0.0.23</customerservice-api.version>
   </properties>
   
   <build>
