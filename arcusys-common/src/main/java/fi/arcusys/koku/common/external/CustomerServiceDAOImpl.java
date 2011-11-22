@@ -305,7 +305,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     private DirContext createUsersDirContext() throws NamingException {
         InitialContext iniCtx = new InitialContext();
         DirContext dirContext = (DirContext) iniCtx.lookup("external/ldap/myldap");
-        return dirContext;
+        return (DirContext)dirContext.lookup("ou=People");
     } 
 
     /**
@@ -338,7 +338,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
             // add user to 'kuntalainen' group
             final DirContext dirContext = createUsersDirContext();
             try {
-                groupsDao.addUserToGroup(getUserDnWithBase(getUserDn(kunpoUsername)), kuntalainenGroupUid);
+                groupsDao.addUserToSystemGroup(getUserDnWithBase(getUserDn(kunpoUsername)), kuntalainenGroupUid);
             } finally {
                 dirContext.close();
             }

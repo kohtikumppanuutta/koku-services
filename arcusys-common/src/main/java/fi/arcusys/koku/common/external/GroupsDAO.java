@@ -15,7 +15,7 @@ public interface GroupsDAO {
 
     public List<User> getUsersByGroupUid(String groupUid);
     
-    public void addUserToGroup(final String userDn, final String groupUid);
+    public void addUserToSystemGroup(final String userDn, final String groupUid);
     
     public void updateMembership(final String oldUserDn, final String newUserDn);
 }

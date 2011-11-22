@@ -57,14 +57,13 @@ public class GroupsDAOImpl implements GroupsDAO {
     public List<Group> searchGroups(String searchString, int limit) {
         final String filterAttrName = groupNameAttribute;
         final String filterAttrValue = "*" + searchString + "*";
-        return doSearchGroups(filterAttrName, filterAttrValue);
+        return doSearchGroups(filterAttrName, filterAttrValue, false);
     }
 
     private List<Group> doSearchGroups(final String filterAttrName,
-            final String filterAttrValue) {
+            final String filterAttrValue, final boolean systemGroups) {
         try {
-            InitialContext iniCtx = new InitialContext();
-            DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/groups");
+            DirContext dirContext = getGroupsContext(systemGroups);
             try {
                 final List<Group> result = new ArrayList<Group>();
                 SearchControls controls = new SearchControls();
@@ -95,6 +94,19 @@ public class GroupsDAOImpl implements GroupsDAO {
         }
     }
 
+    private DirContext getCommunityGroupsContext() throws NamingException {
+        InitialContext iniCtx = new InitialContext();
+        DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/myldap");
+        DirContext communities = (DirContext)dirContext.lookup("ou=KokuCommunities");
+        return (DirContext)communities.lookup("ou=Groups");
+    }
+
+    private DirContext getSystemGroupsContext() throws NamingException {
+        InitialContext iniCtx = new InitialContext();
+        DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/myldap");
+        return (DirContext)dirContext.lookup("ou=Groups");
+    }
+
     /**
      * @param groupUid
      * @return
@@ -104,7 +116,7 @@ public class GroupsDAOImpl implements GroupsDAO {
         final List<User> result = new ArrayList<User>();
         final Pattern pattern = Pattern.compile(usernameAttribute + "=([^,]+)\\,");
         
-        for (final String member : getGroupMembers(groupUidAttribute, groupUid)) {
+        for (final String member : getGroupMembers(groupUidAttribute, groupUid, false)) {
             final Matcher matcher = pattern.matcher(member);
             if (matcher.find()) {
                 final String ldapName = matcher.group(1);
@@ -116,10 +128,9 @@ public class GroupsDAOImpl implements GroupsDAO {
         return result;
     }
 
-    private List<String> getGroupMembers(final String filterAttrName, final String filterAttrValue) {
+    private List<String> getGroupMembers(final String filterAttrName, final String filterAttrValue, final boolean systemGroup) {
         try {
-            InitialContext iniCtx = new InitialContext();
-            DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/groups");
+            DirContext dirContext = getGroupsContext(systemGroup);
             try {
                 final List<String> result = new ArrayList<String>();
                 SearchControls controls = new SearchControls();
@@ -163,17 +174,16 @@ public class GroupsDAOImpl implements GroupsDAO {
      * @param groupUid
      */
     @Override
-    public void addUserToGroup(String userDn, String groupUid) {
-        if (getGroupMembers(groupUidAttribute, groupUid).contains(userDn)) {
+    public void addUserToSystemGroup(String userDn, String groupUid) {
+        if (getGroupMembers(groupUidAttribute, groupUid, true).contains(userDn)) {
             logger.info("User " + userDn + " is already in group " + groupUid);
             return;
         }
         try {
-            InitialContext iniCtx = new InitialContext();
-            DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/groups");
+            DirContext dirContext = getGroupsContext(true);
     
             try {
-                dirContext.modifyAttributes(dirContext.composeName(groupUidAttribute + "=" + groupUid, dirContext.getNameInNamespace()), 
+                dirContext.modifyAttributes(groupUidAttribute + "=" + groupUid, 
                         DirContext.ADD_ATTRIBUTE, new BasicAttributes("member", userDn));
             } finally {
                 dirContext.close();
@@ -190,14 +200,19 @@ public class GroupsDAOImpl implements GroupsDAO {
      */
     @Override
     public void updateMembership(String oldUserDn, String newUserDn) {
-        final List<Group> groups = doSearchGroups("member", oldUserDn);
+        doUpdateMembership(oldUserDn, newUserDn, false); 
+        doUpdateMembership(oldUserDn, newUserDn, true); 
+    }
+
+    private void doUpdateMembership(String oldUserDn, String newUserDn, final boolean systemGroups) {
+        final List<Group> groups = doSearchGroups("member", oldUserDn, systemGroups);
         if (groups == null || groups.isEmpty()) {
             return;
         }
         
         final Map<String, BasicAttributes> groupsForUpdate = new HashMap<String, BasicAttributes>();
         for (final Group group : groups) {
-            final Set<String> members = new HashSet<String>(getGroupMembers(groupUidAttribute, group.getGroupUid()));
+            final Set<String> members = new HashSet<String>(getGroupMembers(groupUidAttribute, group.getGroupUid(), systemGroups));
             members.remove(oldUserDn);
             members.add(newUserDn);
             final BasicAttributes attributes = new BasicAttributes();
@@ -210,13 +225,11 @@ public class GroupsDAOImpl implements GroupsDAO {
         }
         
         try {
-            InitialContext iniCtx = new InitialContext();
-            DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/groups");
+            DirContext dirContext = getGroupsContext(systemGroups);
             
             try {
                 for (final Map.Entry<String, BasicAttributes> entry : groupsForUpdate.entrySet()) {
-                    dirContext.modifyAttributes(dirContext.composeName(groupUidAttribute + "=" + entry.getKey(), dirContext.getNameInNamespace()), 
-                            DirContext.REPLACE_ATTRIBUTE, entry.getValue());
+                    dirContext.modifyAttributes(groupUidAttribute + "=" + entry.getKey(), DirContext.REPLACE_ATTRIBUTE, entry.getValue());
                 }
             } finally {
                 dirContext.close();
@@ -224,6 +237,17 @@ public class GroupsDAOImpl implements GroupsDAO {
         } catch (NamingException e) {
             logger.error("Failed to update user membership: oldUserDn '" + oldUserDn + "', newUserDn '" + newUserDn +  ", groups " + groupsForUpdate.keySet(), e);
             throw new RuntimeException(e);
-        } 
+        }
+    }
+
+    private DirContext getGroupsContext(final boolean systemGroups)
+            throws NamingException {
+        DirContext dirContext;
+        if (systemGroups) {
+            dirContext = getSystemGroupsContext();
+        } else {
+            dirContext = getCommunityGroupsContext();
+        }
+        return dirContext;
     }
 }
