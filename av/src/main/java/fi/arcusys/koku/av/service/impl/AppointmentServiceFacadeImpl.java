@@ -35,6 +35,7 @@ import fi.arcusys.koku.av.soa.AppointmentSlotTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
 import fi.arcusys.koku.av.soa.AppointmentSummaryStatus;
 import fi.arcusys.koku.av.soa.AppointmentTO;
+import fi.arcusys.koku.av.soa.AppointmentUserRejected;
 import fi.arcusys.koku.av.soa.AppointmentWithTarget;
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.AppointmentDAO;
@@ -203,11 +204,15 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		convertAppointmentToDTO(appointment, appointmentTO);
 		
 		appointmentTO.setStatus(AppointmentSummaryStatus.valueOf(getSummaryAppointmentStatus(appointment)));
+		if (appointment.getStatus() == AppointmentStatus.Cancelled) {
+		    appointmentTO.setCancelComment(appointment.getCancelComment());
+		}
 
         appointmentTO.setRecipients(getReceipientsDTOByAppointment(appointment, true));
 
 		final HashMap<Integer, String> acceptedSlots = new HashMap<Integer, String>();
         final List<String> usersRejected = new ArrayList<String>();
+        final List<AppointmentUserRejected> usersRejectedWithComments = new ArrayList<AppointmentUserRejected>();
 		
 		for (final AppointmentResponse response : appointment.getResponses()) {
 		    final User targetUser = response.getTarget().getTargetUser();
@@ -216,10 +221,16 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	            acceptedSlots.put(response.getSlotNumber(), targetPersonUid);
 		    } else {
 		        usersRejected.add(targetPersonUid);
+		        final AppointmentUserRejected userRejected = new AppointmentUserRejected();
+		        userRejected.setRejectComment(response.getComment());
+                userRejected.setUserDisplayName(getDisplayName(targetUser));
+                userRejected.setUserUid(targetUser.getUid());
+                usersRejectedWithComments.add(userRejected);
 		    }
 		}
         appointmentTO.setAcceptedSlots(acceptedSlots);
         appointmentTO.setUsersRejected(usersRejected);
+        appointmentTO.setUsersRejectedWithComments(usersRejectedWithComments);
 		
 		appointmentTO.setSlots(getSlotTOsByAppointment(appointment));
 		
@@ -544,6 +555,11 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
             convertAppointmentToDTO(response.getAppointment(), appointmentTO);
             appointmentTO.setTargetPerson(response.getTarget().getTargetUser().getUid());
             appointmentTO.setStatus(getAppointmentStatusByResponse(response));
+            if (response.getStatus() == AppointmentResponseStatus.Rejected) {
+                appointmentTO.setCancelComment(response.getComment());
+            } else if (response.getAppointment().getStatus() == AppointmentStatus.Cancelled) {
+                appointmentTO.setCancelComment(response.getAppointment().getCancelComment());
+            }
             result.add(appointmentTO);
         }
         return result;
@@ -686,6 +702,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         final Appointment appointment = loadAppointment(appointmentId);
         
         appointment.setStatus(AppointmentStatus.Cancelled);
+        appointment.setCancelComment(comment);
         appointmentDAO.update(appointment);
 
         final Set<String> notificationReceivers = new HashSet<String>();

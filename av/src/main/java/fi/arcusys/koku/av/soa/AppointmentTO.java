@@ -10,15 +10,29 @@ import javax.xml.bind.annotation.XmlType;
  * Jul 21, 2011
  */
 @XmlType (name = "appointment", namespace = "http://soa.av.koku.arcusys.fi/",
-		  propOrder={"slots", "recipients", "acceptedSlots", "usersRejected" })
+		  propOrder={"slots", "recipients", "acceptedSlots", "usersRejected", "usersRejectedWithComments", "cancelComment" })
 public class AppointmentTO extends AppointmentSummary {
 	private List<AppointmentSlotTO> slots;
 
 	private List<AppointmentReceipientTO> recipients;
     private Map<Integer, String> acceptedSlots;
     private List<String> usersRejected;
-	
+    private List<AppointmentUserRejected> usersRejectedWithComments;
+    private String cancelComment;
+    
 	/**
+     * @return the cancelComment
+     */
+    public String getCancelComment() {
+        return cancelComment;
+    }
+    /**
+     * @param cancelComment the cancelComment to set
+     */
+    public void setCancelComment(String cancelComment) {
+        this.cancelComment = cancelComment;
+    }
+    /**
      * @return the acceptedSlots
      */
     public Map<Integer, String> getAcceptedSlots() {
@@ -32,6 +46,7 @@ public class AppointmentTO extends AppointmentSummary {
     }
     /**
      * @return the rejectedUsers
+     * @deprecated use getUsersRejectedWithComments instead
      */
     public List<String> getUsersRejected() {
         return usersRejected;
@@ -41,6 +56,20 @@ public class AppointmentTO extends AppointmentSummary {
      */
     public void setUsersRejected(List<String> usersRejected) {
         this.usersRejected = usersRejected;
+    }
+    
+    /**
+     * @return the usersRejectedWithComments
+     */
+    public List<AppointmentUserRejected> getUsersRejectedWithComments() {
+        return usersRejectedWithComments;
+    }
+    /**
+     * @param usersRejectedWithComments the usersRejectedWithComments to set
+     */
+    public void setUsersRejectedWithComments(
+            List<AppointmentUserRejected> usersRejectedWithComments) {
+        this.usersRejectedWithComments = usersRejectedWithComments;
     }
     /**
 	 * @return the slots

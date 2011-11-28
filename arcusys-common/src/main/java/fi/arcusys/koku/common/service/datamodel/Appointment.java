@@ -87,8 +87,24 @@ public class Appointment extends AbstractEntity {
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "appointment")
 	private Set<AppointmentResponse> responses;
-
+	
+	private String cancelComment;
+	
 	/**
+     * @return the cancelComment
+     */
+    public String getCancelComment() {
+        return cancelComment;
+    }
+
+    /**
+     * @param cancelComment the cancelComment to set
+     */
+    public void setCancelComment(String cancelComment) {
+        this.cancelComment = cancelComment;
+    }
+
+    /**
 	 * @return the sender
 	 */
 	public User getSender() {
