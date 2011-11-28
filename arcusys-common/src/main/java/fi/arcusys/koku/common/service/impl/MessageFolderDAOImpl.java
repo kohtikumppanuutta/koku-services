@@ -166,14 +166,9 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 		} else if (field == MessageQuery.Fields.CreatedDate) {
 			fieldName = "mr.createdDate";
 		} else if (field == MessageQuery.Fields.Sender) {
-			fieldName = "mr.message.fromUser.uid";
+			fieldName = "mr.message.fromUser.employeePortalName";
 		} else if (field == MessageQuery.Fields.Receiver) {
-			fieldName = "to_.uid";
-//			if (folderType == FolderType.Outbox || folderType == FolderType.Archive_Outbox) {
-//				fieldName = "mr.folder.user.uid";
-//			} else {
-//				fieldName = "mr.message.fromUser.uid";
-//			}
+			fieldName = "to_.citizenPortalName";
 		} else {
 			throw new IllegalArgumentException("Unsupported field: " + field);
 		}
