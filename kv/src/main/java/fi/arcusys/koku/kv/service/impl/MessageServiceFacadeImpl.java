@@ -429,6 +429,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 			final ResponseTO responseTO = new ResponseTO();
             responseTO.setAnswers(convertAnswersToAnswerTO(response.getAnswers()));
 			responseTO.setName(getDisplayName(response.getReplier()));
+			responseTO.setComment(response.getComment());
 			receipientsNotResponded.remove(getDisplayName(response.getReplier()));
 			responseTOs.add(responseTO);
 		}
@@ -572,7 +573,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	 * @return
 	 */
 	@Override
-	public Long replyToRequest(final String toUserId, final Long requestId, final List<Answer> answers) {
+	public Long replyToRequest(final String toUserId, final Long requestId, final List<Answer> answers, final String comment) {
 		final User replier = getUserByUid(toUserId);
 		
 		final Request sentRequest = requestDAO.getById(requestId);
@@ -583,6 +584,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		final Response response = new Response();
 		response.setReplier(replier);
 		response.setRequest(sentRequest);
+		response.setComment(comment);
 		final Set<fi.arcusys.koku.common.service.datamodel.Answer> answersList = new HashSet<fi.arcusys.koku.common.service.datamodel.Answer>();
 		for (final Answer answerSoa : answers) {
 			fi.arcusys.koku.common.service.datamodel.Answer answer = new fi.arcusys.koku.common.service.datamodel.Answer();
