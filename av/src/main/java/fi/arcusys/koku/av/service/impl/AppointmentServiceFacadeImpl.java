@@ -555,11 +555,6 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
             convertAppointmentToDTO(response.getAppointment(), appointmentTO);
             appointmentTO.setTargetPerson(response.getTarget().getTargetUser().getUid());
             appointmentTO.setStatus(getAppointmentStatusByResponse(response));
-            if (response.getStatus() == AppointmentResponseStatus.Rejected) {
-                appointmentTO.setCancelComment(response.getComment());
-            } else if (response.getAppointment().getStatus() == AppointmentStatus.Cancelled) {
-                appointmentTO.setCancelComment(response.getAppointment().getCancelComment());
-            }
             result.add(appointmentTO);
         }
         return result;
@@ -640,6 +635,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         appointmentTO.setStatus(getAppointmentStatusByResponse(response));
         appointmentTO.setReplier(getDisplayName(response.getReplier()));
         appointmentTO.setReplierComment(response.getComment());
+        if (appointment.getStatus() == AppointmentStatus.Cancelled) {
+            appointmentTO.setEmployeesCancelComent(appointment.getCancelComment());
+        }
         if (appointmentTO.getStatus() == AppointmentSummaryStatus.Approved) {
             appointmentTO.setApprovedSlot(getSlotTOBySlot(appointment.getSlotByNumber(response.getSlotNumber())));
         }

@@ -9,22 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType (name = "appointmentWithTarget", namespace = "http://soa.av.koku.arcusys.fi/")
 public class AppointmentWithTarget extends AppointmentSummary {
     private String targetPerson;
-    private String cancelComment;
     
-    /**
-     * @return the cancelComment
-     */
-    public String getCancelComment() {
-        return cancelComment;
-    }
-
-    /**
-     * @param cancelComment the cancelComment to set
-     */
-    public void setCancelComment(String cancelComment) {
-        this.cancelComment = cancelComment;
-    }
-
     /**
      * @return the targetPerson
      */
