@@ -8,10 +8,16 @@
 package fi.koku.services.entity.community.impl;
 
 import java.util.Collection;
+
+import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fi.koku.KoKuNotAuthorizedException;
 
 /**
  * Community service API implementation.
@@ -20,15 +26,22 @@ import org.slf4j.LoggerFactory;
  * @author laukksa
 */
 @Stateless
+@RolesAllowed("koku-role")
 public class CommunityServiceBean implements CommunityService {
   
   private Logger logger = LoggerFactory.getLogger(CommunityService.class);
+  
+  private static final String GUARDIAN_COMMUNITY = "guardian_community";
+  
+  @Resource
+  private SessionContext ctx;
 
   @EJB
   private CommunityDAO communityDAO;
   
   @Override
-  public Long add(Community c) {
+  public Long add(Community c) {    
+    verifyUserRole(c); 
     return communityDAO.insertCommunity(c);
   }
 
@@ -39,12 +52,16 @@ public class CommunityServiceBean implements CommunityService {
   
   @Override
   public void update(Community c) {
+    verifyUserRole(c); 
     communityDAO.updateCommunity(c);
   }
 
   @Override
   public void delete(String communityId) {
-    communityDAO.deleteCommunity(Long.valueOf(communityId));
+    long id = Long.valueOf(communityId);
+    Community c = communityDAO.getCommunity(id);
+    verifyUserRole(c); 
+    communityDAO.deleteCommunity(id);
   }
 
   @Override
@@ -111,6 +128,19 @@ public class CommunityServiceBean implements CommunityService {
       }
     }
     return true;
+  }
+  
+  /**
+   * Verifies user role
+   * 
+   * @param c
+   * @throws KoKuNotAuthorizedException if user is not in correct role
+   */
+  private void verifyUserRole(Community c) {
+    if (c.getType().equals(GUARDIAN_COMMUNITY) && !ctx.isCallerInRole("koku-role-community-admin") ) {
+        throw new KoKuNotAuthorizedException( CommunityServiceErrorCode.UNAUTHORIZED.getValue(), 
+            CommunityServiceErrorCode.UNAUTHORIZED.getDescription() );   
+    }
   }
   
 }

@@ -26,6 +26,8 @@ public interface CustomerDAO {
   
   void updateCustomer(Customer c);
   
+  void updateCustomerElectronicContacts(Customer c2);
+  
   void deleteCustomer(String pic);
   
   Collection<Customer> queryCustomers(CustomerQueryCriteria c);
