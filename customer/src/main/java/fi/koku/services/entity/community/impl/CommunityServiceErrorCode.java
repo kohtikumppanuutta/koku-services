@@ -16,7 +16,8 @@ package fi.koku.services.entity.community.impl;
 public enum CommunityServiceErrorCode {
 
   CUSTOMER_NOT_FOUND(1001, "Customer not found."),
-  NO_MEMBER_PICS_QUERY_CRITERIA(1002, "Query criteria 'member pics' missing.");
+  NO_MEMBER_PICS_QUERY_CRITERIA(1002, "Query criteria 'member pics' missing."),
+  UNAUTHORIZED(1003, "Unauthorized to use operation");
   
   private final int value;
 

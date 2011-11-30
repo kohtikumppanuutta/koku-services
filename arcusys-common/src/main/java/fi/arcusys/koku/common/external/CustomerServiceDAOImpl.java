@@ -241,7 +241,19 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     
     private void createKunpoUserInLdap(final String kunpoUsername, final String ssn) {
         try {
-            final CustomerType customer = getCustomer(ssn);
+            String etuNimi;
+            String sukuNimi;
+            
+            try {
+                final CustomerType customer = getCustomer(ssn);
+
+                etuNimi = customer.getEtuNimi();
+                sukuNimi = customer.getSukuNimi();
+            } catch (ServiceFault e) {
+                logger.error("Failed to get Customer by ssn '" + ssn + "': " + e.getClass() + ", " + e.getMessage());
+                etuNimi = kunpoUsername;
+                sukuNimi = ssn;
+            }
 
             Attributes personAttributes = new BasicAttributes();
             BasicAttribute personBasicAttribute = new BasicAttribute(
@@ -250,9 +262,9 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
             personBasicAttribute.add("top");
             personAttributes.put(personBasicAttribute);
 
-            personAttributes.put("givenName", customer.getEtuNimi());
+            personAttributes.put("givenName", etuNimi);
             personAttributes.put("cn", kunpoUsername);
-            personAttributes.put("sn", customer.getSukuNimi());
+            personAttributes.put("sn", sukuNimi);
             personAttributes.put("description", ssn);
             personAttributes.put("uid", ssn);
             personAttributes.put("userPassword", "test");
@@ -266,9 +278,6 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
             } finally {
                 dirContext.close();
             }
-        } catch (ServiceFault e) {
-            logger.error("Failed to get Customer by ssn: " + ssn, e);
-            throw new RuntimeException(e);
         } catch (NamingException e) {
             logger.error("Failed to create new user in ldap by portal name '" + kunpoUsername + "' and ssn '" + ssn + "'", e);
             throw new RuntimeException(e);

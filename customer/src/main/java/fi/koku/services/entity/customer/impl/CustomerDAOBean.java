@@ -68,6 +68,12 @@ public class CustomerDAOBean implements CustomerDAO {
     updateElectronicContactInfos(c1, c2);
   }
   
+  @Override
+  public void updateCustomerElectronicContacts(Customer c2) {
+    Customer c1 = findCustomer(c2.getPic());
+    updateElectronicContactInfos(c1, c2);
+  }
+  
   /**
    * Merge from c2 to c1.
    * 

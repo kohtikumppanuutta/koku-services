@@ -49,6 +49,8 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
 		    if (allowCreationByUid()) {
 	            fromUser = new User();
 	            fromUser.setUid(uid);
+	            fromUser.setCitizenPortalName(uid);
+                fromUser.setEmployeePortalName(uid);
 	            fromUser = super.create(fromUser);
 		    } else {
 	            throw new IllegalArgumentException("Creation of the user by UID '" + uid + "' - should be used for test purposes only.");

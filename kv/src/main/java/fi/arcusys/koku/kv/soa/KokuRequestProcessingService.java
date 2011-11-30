@@ -30,7 +30,8 @@ public interface KokuRequestProcessingService {
 
 	void replyToRequest(@WebParam(name = "user") final String userUid, 
 						@WebParam(name = "requestId") final Long requestId,
-						@WebParam(name = "answers") final Answers answers);
+						@WebParam(name = "answers") final Answers answers,
+						@WebParam(name = "comment") final String comment);
 	
 	void createRequestTemplate(
 	        @WebParam(name = "creator") final String userUid, 

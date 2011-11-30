@@ -9,6 +9,19 @@ public class AppointmentRespondedTO extends AppointmentSummary {
     private String replier;
     private String replierComment;
     private AppointmentSlotTO approvedSlot;
+    private String employeesCancelComent;
+    /**
+     * @return the employeesCancelComent
+     */
+    public String getEmployeesCancelComent() {
+        return employeesCancelComent;
+    }
+    /**
+     * @param employeesCancelComent the employeesCancelComent to set
+     */
+    public void setEmployeesCancelComent(String employeesCancelComent) {
+        this.employeesCancelComent = employeesCancelComent;
+    }
     /**
      * @return the targetPerson
      */

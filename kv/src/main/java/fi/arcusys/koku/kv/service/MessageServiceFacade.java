@@ -65,7 +65,7 @@ public interface MessageServiceFacade {
 
 	Long receiveRequest(final String toUserId, final Long requestId, final String content);
 
-	Long replyToRequest(final String toUserId, final Long requestId, final List<Answer> answers);
+	Long replyToRequest(final String toUserId, final Long requestId, final List<Answer> answers, String comment);
 
 	/**
 	 * @param fromUserId

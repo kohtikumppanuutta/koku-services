@@ -46,13 +46,13 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 	 * @param answers
 	 */
 	@Override
-	public void replyToRequest(String userUid, Long requestId, Answers answers) {
+	public void replyToRequest(String userUid, Long requestId, Answers answers, final String comment) {
 		logger.debug("replyToRequest: [userUid, requestId, answers] = " +
 				"[" + userUid
 				+ "," + requestId
 				+ "," + answers.getAnswers()
 				+ "]");
-		final Long replyId = kvFacade.replyToRequest(userUid, requestId, answers.getAnswers());
+		final Long replyId = kvFacade.replyToRequest(userUid, requestId, answers.getAnswers(), comment);
 		logger.debug("Reply sent: " + replyId);
 	}
 

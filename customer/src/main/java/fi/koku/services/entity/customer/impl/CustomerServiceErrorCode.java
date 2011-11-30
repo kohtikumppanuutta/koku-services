@@ -16,7 +16,8 @@ package fi.koku.services.entity.customer.impl;
 public enum CustomerServiceErrorCode {
 
   CUSTOMER_NOT_FOUND(1001, "Customer not found."),
-  NO_QUERY_CRITERIA(1002, "Query criteria missing.");
+  NO_QUERY_CRITERIA(1002, "Query criteria missing."),
+  UNAUTHORIZED(1003,"Unauthorized to use operation");
   
   private final int value;
 

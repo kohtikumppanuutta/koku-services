@@ -216,7 +216,7 @@ public class MessageServiceTest {
 		final List<Answer> answers = createTestAnswers();
 		
         assertNull(getByRequestId(serviceFacade.getRepliedRequests(toUserId, 1, 10), requestId));
-		serviceFacade.replyToRequest(toUserId, requestId, answers);
+		serviceFacade.replyToRequest(toUserId, requestId, answers, null);
         assertNotNull(getByRequestId(serviceFacade.getRepliedRequests(toUserId, 1, 10), requestId));
 		
 		final RequestTO request = serviceFacade.getRequestById(requestId);
@@ -281,11 +281,11 @@ public class MessageServiceTest {
         assertEquals(oldSentTotal + 1, serviceFacade.getTotalRequests(fromUserId));
         assertEquals(oldOldSentTotal + 1, serviceFacade.getTotalOldRequests(fromUserId));
 
-        serviceFacade.replyToRequest(toUserId, requestId, answers);
+        serviceFacade.replyToRequest(toUserId, requestId, answers, "some comment");
         assertEquals(oldRepliedTotal + 1, serviceFacade.getTotalRepliedRequests(toUserId));
         assertEquals(oldOldRepliedTotal, serviceFacade.getTotalOldRepliedRequests(toUserId));
 
-        serviceFacade.replyToRequest(toUserId, oldRequestId, answers);
+        serviceFacade.replyToRequest(toUserId, oldRequestId, answers, "another comment");
         assertEquals(oldRepliedTotal + 1, serviceFacade.getTotalRepliedRequests(toUserId));
         assertEquals(oldOldRepliedTotal + 1, serviceFacade.getTotalOldRepliedRequests(toUserId));
     }

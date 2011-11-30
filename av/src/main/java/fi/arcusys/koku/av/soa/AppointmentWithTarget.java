@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType (name = "appointmentWithTarget", namespace = "http://soa.av.koku.arcusys.fi/")
 public class AppointmentWithTarget extends AppointmentSummary {
     private String targetPerson;
-
+    
     /**
      * @return the targetPerson
      */
