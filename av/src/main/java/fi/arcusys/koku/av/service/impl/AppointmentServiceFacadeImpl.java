@@ -1,20 +1,20 @@
 package fi.arcusys.koku.av.service.impl;
 
-import static fi.arcusys.koku.common.service.AbstractEntityDAO.*;
+import static fi.arcusys.koku.common.service.AbstractEntityDAO.FIRST_RESULT_NUMBER;
+import static fi.arcusys.koku.common.service.AbstractEntityDAO.MAX_RESULTS_COUNT;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -37,7 +37,6 @@ import fi.arcusys.koku.av.soa.AppointmentSummaryStatus;
 import fi.arcusys.koku.av.soa.AppointmentTO;
 import fi.arcusys.koku.av.soa.AppointmentUserRejected;
 import fi.arcusys.koku.av.soa.AppointmentWithTarget;
-import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
@@ -531,6 +530,19 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         
         if (appointment.getResponseForTargetPerson(targetPersonUid) != null) {
             throw new IllegalArgumentException("Appointment id " + appointmentId + " already have response for target person " + targetPersonUid);
+        }
+        
+        final Set<Integer> acceptedSlots = new HashSet<Integer>();
+        for (final AppointmentResponse response : appointment.getResponses()) {
+            if (response.getStatus() == AppointmentResponseStatus.Accepted) {
+                acceptedSlots.add(response.getSlotNumber());
+            }
+        }
+        
+        for (final Iterator<AppointmentSlotTO> iter = appointmentTO.getSlots().iterator(); iter.hasNext();) {
+            if (acceptedSlots.contains(iter.next().getSlotNumber())) {
+                iter.remove();
+            }
         }
         
         return appointmentTO;

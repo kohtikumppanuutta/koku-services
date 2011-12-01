@@ -26,6 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 import fi.arcusys.koku.av.soa.AppointmentForEditTO;
+import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
 import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
 import fi.arcusys.koku.av.soa.AppointmentSlotTO;
 import fi.arcusys.koku.av.soa.AppointmentSummary;
@@ -51,13 +52,6 @@ public class AppointmentServiceTest {
 
 	@Autowired
 	private CommonTestUtil testUtil;
-	
-//	@Test
-	public void testLoadBundle() {
-        final String bundleName = "appointment.msg";
-        assertNotNull(getClass().getResource("/" + bundleName + ".properties"));
-        assertNotNull(ResourceBundle.getBundle("/" + bundleName));
-	}
 	
 	@Test
 	public void testMessageTemplate() {
@@ -118,6 +112,17 @@ public class AppointmentServiceTest {
         serviceFacade.cancelAppointment(targetPerson, receipient, appointmentForApprove.getAppointmentId(), "cancelled");
         assertEquals(AppointmentSummaryStatus.Cancelled, serviceFacade.getAppointmentRespondedById(appointmentForApprove.getAppointmentId(), targetPerson).getStatus());
 	}
+	
+	@Test
+	public void cancelAppointment() {
+        final AppointmentForEditTO newAppointment = createTestAppointment("new appointment for cancel", "appointment description", 1);
+
+        final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
+        serviceFacade.cancelWholeAppointment(appointmentId, "cancelled");
+        
+        assertNull(getById(serviceFacade.getCreatedAppointments(newAppointment.getSender(), 1, 5), appointmentId));
+        assertNotNull(getById(serviceFacade.getProcessedAppointments(newAppointment.getSender(), 1, 5), appointmentId));
+	}
 
     private String getKunpoName(final String targetPersonForDecline) {
         return testUtil.getUserByUid(targetPersonForDecline).getCitizenPortalName();
@@ -125,7 +130,7 @@ public class AppointmentServiceTest {
 	
 	@Test
 	public void countTotals() {
-        final AppointmentForEditTO newAppointment = createTestAppointment("new appointment for counts", "appointment description", 1);
+        final AppointmentForEditTO newAppointment = createTestAppointment("new appointment for counts", "appointment description", 3);
 
         final AppointmentReceipientTO appointmentReceipient = newAppointment.getReceipients().get(0);
         final String uniqReceipient = appointmentReceipient.getReceipients().get(1);
@@ -138,6 +143,31 @@ public class AppointmentServiceTest {
 
         serviceFacade.approveAppointment(targetPerson, uniqReceipient, appointmentId, 1, "approved");
         assertEquals(oldAssignedTotal, serviceFacade.getTotalAssignedAppointments(uniqReceipient));
+	}
+	
+	@Test
+	public void testSkipApprovedSlots() {
+	    // create appointment
+        final AppointmentForEditTO newAppointment = createTestAppointment("new appointment for counts", "appointment description", 1);
+        final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
+	    
+        final AppointmentReceipientTO appointmentReceipient = newAppointment.getReceipients().get(0);
+        final String receipient = appointmentReceipient.getReceipients().get(0);
+        final String targetPerson = appointmentReceipient.getTargetPerson();
+        final String targetPersonForCheck = newAppointment.getReceipients().get(1).getTargetPerson();
+        assertFalse(targetPerson.equals(targetPersonForCheck));
+
+        // reply to appointment
+        final int approvedSlotNumber = 1;
+        serviceFacade.approveAppointment(targetPerson, receipient, appointmentId, approvedSlotNumber, "approved");
+
+        // get for reply - approved slot is absent
+        final AppointmentForReplyTO appointmentForReply = serviceFacade.getAppointmentForReply(appointmentId, targetPersonForCheck);
+        for (final AppointmentSlotTO slot : appointmentForReply.getSlots()) {
+            if (slot.getSlotNumber() == approvedSlotNumber) {
+                fail("Already approved slot shouldn't be available for reply.");
+            }
+        }
 	}
 
 	private <AS extends AppointmentSummary> AS getById(final List<AS> appointments, final Long appointmentId) {
