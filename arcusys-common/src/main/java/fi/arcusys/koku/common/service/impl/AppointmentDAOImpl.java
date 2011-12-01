@@ -104,7 +104,14 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
      */
     @Override
     public List<Appointment> getProcessedAppointments(User user, final int startNum, final int maxResults) {
-        return getResultList("findProcessedAppointmentsBySender", Collections.singletonMap("sender", user), startNum, maxResults);
+        return getResultList("findProcessedAppointmentsBySender", getParamsForSender(user), startNum, maxResults);
+    }
+
+    private Map<String, Object> getParamsForSender(User user) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("sender", user);
+        params.put("status_cancelled", AppointmentStatus.Cancelled);
+        return params;
     }
 
     /**
@@ -113,7 +120,7 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
      */
     @Override
     public Long getTotalProcessedAppointments(User user) {
-        return getSingleResult("countProcessedAppointmentsBySender", Collections.singletonMap("sender", user));
+        return getSingleResult("countProcessedAppointmentsBySender", getParamsForSender(user));
     }
 
     /**
@@ -124,7 +131,7 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
      */
     @Override
     public List<Appointment> getCreatedAppointments(User user, int startNum, int maxResults) {
-        return getResultList("findCreatedAppointmentsBySender", Collections.singletonMap("sender", user), startNum, maxResults);
+        return getResultList("findCreatedAppointmentsBySender", getParamsForSender(user), startNum, maxResults);
     }
 
     /**
@@ -133,7 +140,7 @@ public class AppointmentDAOImpl extends AbstractEntityDAOImpl<Appointment> imple
      */
     @Override
     public Long getTotalCreatedAppointments(User user) {
-        return getSingleResult("countCreatedAppointmentsBySender", Collections.singletonMap("sender", user));
+        return getSingleResult("countCreatedAppointmentsBySender", getParamsForSender(user));
     }
 
     /**

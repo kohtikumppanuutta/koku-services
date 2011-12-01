@@ -40,16 +40,16 @@ import javax.persistence.PrePersist;
             "    AND :user MEMBER OF tp.guardians " +
             "    AND ap.status in (:statuses) "),
     @NamedQuery(name = "findProcessedAppointmentsBySender", query = "SELECT DISTINCT ap FROM Appointment ap " +
-            " WHERE EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender  ORDER BY ap.id DESC"),
     @NamedQuery(name = "countProcessedAppointmentsBySender", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap " +
-            " WHERE EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender "),
     @NamedQuery(name = "findCreatedAppointmentsBySender", query = "SELECT DISTINCT ap FROM Appointment ap " +
-            " WHERE NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            " WHERE ap.status <> :status_cancelled AND NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender  ORDER BY ap.id DESC"),
     @NamedQuery(name = "countCreatedAppointmentsBySender", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap " +
-            " WHERE NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            " WHERE ap.status <> :status_cancelled AND NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender "),
     @NamedQuery(name = "findAppointmentResponsesByUser", query = "SELECT DISTINCT ar FROM AppointmentResponse ar " +
             " WHERE ar.replier = :user " +

@@ -9,6 +9,21 @@ import java.util.List;
 public class ResponseDetail extends ResponseSummary {
     private List<QuestionTO> questions;
     private List<AnswerTO> answers;
+    private String comment;
+    
+    
+    /**
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
+    /**
+     * @param comment the comment to set
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
     /**
      * @return the questions
      */

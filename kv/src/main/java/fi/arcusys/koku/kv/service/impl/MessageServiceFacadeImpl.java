@@ -948,6 +948,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         fillResponseSummary(response, responseDetail);
         responseDetail.setQuestions(getQuestionsTObyDTO(response.getRequest().getTemplate().getQuestions()));
         responseDetail.setAnswers(convertAnswersToAnswerTO(response.getAnswers()));
+        responseDetail.setComment(response.getComment());
         
         return responseDetail;
     }
