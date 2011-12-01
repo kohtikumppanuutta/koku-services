@@ -3,6 +3,7 @@ package fi.arcusys.koku.av.service;
 import java.util.List;
 import java.util.Set;
 
+import fi.arcusys.koku.av.soa.AppointmentCriteria;
 import fi.arcusys.koku.av.soa.AppointmentForEditTO;
 import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
 import fi.arcusys.koku.av.soa.AppointmentRespondedTO;
@@ -69,13 +70,13 @@ public interface AppointmentServiceFacade {
 	 */
 	int getTotalAppointments(String user, Set<AppointmentStatus> statuses);	
 	
-	int getTotalCreatedAppointments(String user);
+	int getTotalCreatedAppointments(String user, AppointmentCriteria criteria);
 	
-	int getTotalProcessedAppointments(final String user);
+	int getTotalProcessedAppointments(final String user, AppointmentCriteria criteria);
 	
-    List<AppointmentSummary> getCreatedAppointments(final String user, int startNum, int maxNum);
+    List<AppointmentSummary> getCreatedAppointments(final String user, int startNum, int maxNum, AppointmentCriteria criteria);
     
-    List<AppointmentSummary> getProcessedAppointments(final String user, int startNum, int maxNum);
+    List<AppointmentSummary> getProcessedAppointments(final String user, int startNum, int maxNum, AppointmentCriteria criteria);
 
     /**
      * @param appointmentId

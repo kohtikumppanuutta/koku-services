@@ -45,12 +45,36 @@ import javax.persistence.PrePersist;
     @NamedQuery(name = "countProcessedAppointmentsBySender", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap " +
             " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender "),
+
+// Criteria search            
+    @NamedQuery(name = "findProcessedAppointmentsBySenderAndTarget", query = "SELECT DISTINCT ap FROM Appointment ap JOIN ap.recipients AS tp " +
+            " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            "    AND :sender = ap.sender " +
+            "    AND tp.targetUser.uid = :targetUserUid " +
+            " ORDER BY ap.id DESC"),
+    @NamedQuery(name = "countProcessedAppointmentsBySenderAndTarget", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap JOIN ap.recipients AS tp " +
+            " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            "    AND :sender = ap.sender " +
+            "    AND tp.targetUser.uid = :targetUserUid "),
+                    
     @NamedQuery(name = "findCreatedAppointmentsBySender", query = "SELECT DISTINCT ap FROM Appointment ap " +
             " WHERE ap.status <> :status_cancelled AND NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender  ORDER BY ap.id DESC"),
     @NamedQuery(name = "countCreatedAppointmentsBySender", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap " +
             " WHERE ap.status <> :status_cancelled AND NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
             "    AND :sender = ap.sender "),
+
+// Criteria search            
+    @NamedQuery(name = "findCreatedAppointmentsBySenderAndTarget", query = "SELECT DISTINCT ap FROM Appointment ap JOIN ap.recipients AS tp " +
+            " WHERE ap.status <> :status_cancelled AND NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            "    AND :sender = ap.sender " +
+            "    AND tp.targetUser.uid = :targetUserUid " +
+            " ORDER BY ap.id DESC"),
+    @NamedQuery(name = "countCreatedAppointmentsBySenderAndTarget", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap JOIN ap.recipients AS tp " +
+            " WHERE ap.status <> :status_cancelled AND NOT EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            "    AND :sender = ap.sender " +
+            "    AND tp.targetUser.uid = :targetUserUid "),
+    
     @NamedQuery(name = "findAppointmentResponsesByUser", query = "SELECT DISTINCT ar FROM AppointmentResponse ar " +
             " WHERE ar.replier = :user " +
             " AND ar.status = :reply_approved AND ar.appointment.status IN (:appointment_approved)" +

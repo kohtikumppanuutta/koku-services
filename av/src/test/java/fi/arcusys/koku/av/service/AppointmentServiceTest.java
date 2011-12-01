@@ -25,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
+import fi.arcusys.koku.av.soa.AppointmentCriteria;
 import fi.arcusys.koku.av.soa.AppointmentForEditTO;
 import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
 import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
@@ -62,14 +63,20 @@ public class AppointmentServiceTest {
 	@Test
 	public void getUserAppointments() {
 		final AppointmentForEditTO newAppointment = createTestAppointment("new appointment", "appointment description", 1);
+        final AppointmentReceipientTO appointmentReceipient = newAppointment.getReceipients().get(0);
+        final String targetPerson = appointmentReceipient.getTargetPerson();
 		final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
 		
-		for (final AppointmentSummary appointment : serviceFacade.getCreatedAppointments(newAppointment.getSender(), 1, 10)) {
-			if (appointment.getAppointmentId() == appointmentId ) {
-				return;
-			}
-		}
-		fail("Appointment is not found in user's appointments");
+		assertNotNull("Appointment is not found in user's appointments", getById(serviceFacade.getCreatedAppointments(newAppointment.getSender(), 1, 10, null), appointmentId));
+		
+        final AppointmentCriteria criteria = new AppointmentCriteria();
+        assertNotNull("Appointment is not found in user's appointments", getById(serviceFacade.getCreatedAppointments(newAppointment.getSender(), 1, 10, criteria), appointmentId));
+
+        criteria.setTargetPersonUid(targetPerson);
+        assertNotNull("Search by target person:", getById(serviceFacade.getCreatedAppointments(newAppointment.getSender(), 1, 10, criteria), appointmentId));
+
+        criteria.setTargetPersonUid("unknown");
+        assertNull("Search by wrong target person:", getById(serviceFacade.getCreatedAppointments(newAppointment.getSender(), 1, 10, criteria), appointmentId));
 	}
 	
 	@Test
@@ -120,8 +127,8 @@ public class AppointmentServiceTest {
         final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
         serviceFacade.cancelWholeAppointment(appointmentId, "cancelled");
         
-        assertNull(getById(serviceFacade.getCreatedAppointments(newAppointment.getSender(), 1, 5), appointmentId));
-        assertNotNull(getById(serviceFacade.getProcessedAppointments(newAppointment.getSender(), 1, 5), appointmentId));
+        assertNull(getById(serviceFacade.getCreatedAppointments(newAppointment.getSender(), 1, 5, null), appointmentId));
+        assertNotNull(getById(serviceFacade.getProcessedAppointments(newAppointment.getSender(), 1, 5, null), appointmentId));
 	}
 
     private String getKunpoName(final String targetPersonForDecline) {

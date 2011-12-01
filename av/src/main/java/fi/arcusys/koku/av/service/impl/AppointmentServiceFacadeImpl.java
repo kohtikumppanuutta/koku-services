@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
+import fi.arcusys.koku.av.soa.AppointmentCriteria;
 import fi.arcusys.koku.av.soa.AppointmentForEditTO;
 import fi.arcusys.koku.av.soa.AppointmentForReplyTO;
 import fi.arcusys.koku.av.soa.AppointmentReceipientTO;
@@ -49,6 +50,7 @@ import fi.arcusys.koku.common.service.datamodel.AppointmentSlot;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.service.dto.AppointmentDTOCriteria;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -586,8 +588,8 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
      * @return
      */
     @Override
-    public int getTotalCreatedAppointments(String user) {
-        return getIntValue(appointmentDAO.getTotalCreatedAppointments(userDao.getOrCreateUser(user)));
+    public int getTotalCreatedAppointments(String user, AppointmentCriteria criteria) {
+        return getIntValue(appointmentDAO.getTotalCreatedAppointments(userDao.getOrCreateUser(user), getDtoCriteria(criteria)));
     }
 
     /**
@@ -595,19 +597,8 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
      * @return
      */
     @Override
-    public int getTotalProcessedAppointments(String user) {
-        return getIntValue(appointmentDAO.getTotalProcessedAppointments(userDao.getOrCreateUser(user)));
-    }
-
-    /**
-     * @param user
-     * @param startNum
-     * @param maxNum
-     * @return
-     */
-    @Override
-    public List<AppointmentSummary> getCreatedAppointments(String user, int startNum, int maxNum) {
-        return getEmployeeSummaryByAppointments(appointmentDAO.getCreatedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1));
+    public int getTotalProcessedAppointments(String user, AppointmentCriteria criteria) {
+        return getIntValue(appointmentDAO.getTotalProcessedAppointments(userDao.getOrCreateUser(user), getDtoCriteria(criteria)));
     }
 
     /**
@@ -617,8 +608,23 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
      * @return
      */
     @Override
-    public List<AppointmentSummary> getProcessedAppointments(String user, int startNum, int maxNum) {
-        return getEmployeeSummaryByAppointments(appointmentDAO.getProcessedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1));
+    public List<AppointmentSummary> getCreatedAppointments(String user, int startNum, int maxNum, AppointmentCriteria criteria) {
+        return getEmployeeSummaryByAppointments(appointmentDAO.getCreatedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1, getDtoCriteria(criteria)));
+    }
+
+    private AppointmentDTOCriteria getDtoCriteria(AppointmentCriteria criteria) {
+        return criteria != null ? criteria.toDtoCriteria() : new AppointmentDTOCriteria();
+    }
+
+    /**
+     * @param user
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<AppointmentSummary> getProcessedAppointments(String user, int startNum, int maxNum, AppointmentCriteria criteria) {
+        return getEmployeeSummaryByAppointments(appointmentDAO.getProcessedAppointments(userDao.getOrCreateUser(user), startNum, maxNum - startNum + 1, getDtoCriteria(criteria)));
     }
 
     private List<AppointmentSummary> getEmployeeSummaryByAppointments(List<Appointment> appointments) {

@@ -12,19 +12,25 @@ import javax.jws.WebService;
 @WebService(targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public interface KokuLooraAppointmentService {
 
-    public int getTotalCreatedAppointments(@WebParam(name = "user") final String user);
+    public int getTotalCreatedAppointments(
+            @WebParam(name = "user") final String user, 
+            @WebParam(name = "criteria") final AppointmentCriteria criteria);
     
-    public int getTotalProcessedAppointments(@WebParam(name = "user") final String user);
+    public int getTotalProcessedAppointments(
+            @WebParam(name = "user") final String user, 
+            @WebParam(name = "criteria") final AppointmentCriteria criteria);
 
     public List<AppointmentSummary> getCreatedAppointments(
             @WebParam(name = "user") final String user,
             @WebParam(name = "startNum") int startNum, 
-            @WebParam(name = "maxNum") int maxNum);
+            @WebParam(name = "maxNum") int maxNum, 
+            @WebParam(name = "criteria") final AppointmentCriteria criteria);
     
     public List<AppointmentSummary>  getProcessedAppointments(
             @WebParam(name = "user") final String user,
             @WebParam(name = "startNum") int startNum, 
-            @WebParam(name = "maxNum") int maxNum);
+            @WebParam(name = "maxNum") int maxNum, 
+            @WebParam(name = "criteria") final AppointmentCriteria criteria);
 
     public AppointmentTO getAppointmentById(@WebParam(name = "appointmentId") final long appointmentId);
 

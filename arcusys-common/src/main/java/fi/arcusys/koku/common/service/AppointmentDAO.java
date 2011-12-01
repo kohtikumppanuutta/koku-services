@@ -7,6 +7,7 @@ import fi.arcusys.koku.common.service.datamodel.Appointment;
 import fi.arcusys.koku.common.service.datamodel.AppointmentResponse;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.service.dto.AppointmentDTOCriteria;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -51,13 +52,13 @@ public interface AppointmentDAO extends AbstractEntityDAO<Appointment>{
      * @param orCreateUser
      * @return
      */
-    List<Appointment> getProcessedAppointments(final User user, final int startNum, final int maxResults);
+    List<Appointment> getProcessedAppointments(final User user, final int startNum, final int maxResults, final AppointmentDTOCriteria criteria);
 
     /**
      * @param orCreateUser
      * @return
      */
-    Long getTotalProcessedAppointments(User user);
+    Long getTotalProcessedAppointments(User user, final AppointmentDTOCriteria criteria);
 
     /**
      * @param orCreateUser
@@ -65,13 +66,13 @@ public interface AppointmentDAO extends AbstractEntityDAO<Appointment>{
      * @param i
      * @return
      */
-    List<Appointment> getCreatedAppointments(User user, int startNum, int maxResults);
+    List<Appointment> getCreatedAppointments(User user, int startNum, int maxResults, final AppointmentDTOCriteria criteria);
 
     /**
      * @param orCreateUser
      * @return
      */
-    Long getTotalCreatedAppointments(User user);
+    Long getTotalCreatedAppointments(User user, final AppointmentDTOCriteria criteria);
 
     /**
      * @param orCreateUser
