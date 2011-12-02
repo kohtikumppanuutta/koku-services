@@ -143,7 +143,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         if (ssn == null || ssn.isEmpty()) {
             return null;
         }
-        final String ldapNameBySsn = ldapDao.getLooraNameBySsn(ssn);
+        final String ldapNameBySsn = ldapDao.getKunpoNameBySsn(ssn);
         if (ldapNameBySsn == null || ldapNameBySsn.isEmpty()) {
             try {
                 if (getCustomer(ssn) != null) {
