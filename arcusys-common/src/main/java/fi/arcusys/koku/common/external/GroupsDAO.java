@@ -14,8 +14,4 @@ public interface GroupsDAO {
     public List<Group> searchGroups(String searchString, int limit);
 
     public List<User> getUsersByGroupUid(String groupUid);
-    
-    public void addUserToSystemGroup(final String userDn, final String groupUid);
-    
-    public void updateMembership(final String oldUserDn, final String newUserDn);
 }

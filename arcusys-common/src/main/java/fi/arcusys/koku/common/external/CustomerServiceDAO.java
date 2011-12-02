@@ -46,7 +46,7 @@ public interface CustomerServiceDAO {
      * @param ssn
      * @return
      */
-    User getKunpoUserInfoByPortalNameAndSsn(final GroupsDAO groupsDao, String kunpoUsername, String ssn);
+    User getKunpoUserInfoByPortalNameAndSsn(String kunpoUsername, String ssn);
 
     /**
      * @param looraUsername

@@ -110,5 +110,6 @@
     <bean id="customerServiceDao" class="fi.arcusys.koku.common.external.CustomerServiceDAOImpl" />
     <bean id="groupsDao" class="fi.arcusys.koku.common.external.GroupsDAOImpl" />
     <bean id="pyhServiceDao" class="fi.arcusys.koku.common.external.PyhServiceDAOImpl" />
+    <bean id="ldapDao" class="fi.arcusys.koku.common.external.LdapDAOImpl" />
 
 </beans>

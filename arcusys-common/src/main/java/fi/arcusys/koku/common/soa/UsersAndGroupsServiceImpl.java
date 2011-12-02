@@ -233,7 +233,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
             return customerDao.getKunpoUserInfoBySsn(customerDao.getSsnByKunpoName(kunpoUsername));
         }
         
-        return customerDao.getKunpoUserInfoByPortalNameAndSsn(groupsDao, kunpoUsername, ssn);
+        return customerDao.getKunpoUserInfoByPortalNameAndSsn(kunpoUsername, ssn);
     }
 
     /**

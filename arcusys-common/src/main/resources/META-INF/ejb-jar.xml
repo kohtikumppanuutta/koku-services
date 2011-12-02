@@ -134,12 +134,16 @@
                     <injection-target-name>customerServiceEndpoint</injection-target-name>
                 </injection-target>
             </env-entry>
+        </session>
+        <session>
+            <ejb-name>LdapDAOImpl</ejb-name>
+            <!-- User repository configs  -->
             <env-entry>
                 <env-entry-name>ssnAttributeName</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>uid</env-entry-value>
                 <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
                     <injection-target-name>ssnAttributeName</injection-target-name>
                 </injection-target>
             </env-entry>
@@ -148,7 +152,7 @@
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>cn</env-entry-value>
                 <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
                     <injection-target-name>usernameAttributeName</injection-target-name>
                 </injection-target>
             </env-entry>
@@ -157,17 +161,26 @@
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>(&amp;(objectclass=inetOrgPerson)(#attrName#=#attrValue#))</env-entry-value>
                 <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
                     <injection-target-name>userSearchFilter</injection-target-name>
                 </injection-target>
             </env-entry>
             <env-entry>
-                <env-entry-name>kuntalainenGroupUid</env-entry-name>
+                <env-entry-name>citizensGroupUid</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>kuntalainen</env-entry-value>
                 <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
-                    <injection-target-name>kuntalainenGroupUid</injection-target-name>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
+                    <injection-target-name>citizensGroupUid</injection-target-name>
+                </injection-target>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>employeesGroupUid</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>virkailija</env-entry-value>
+                <injection-target>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
+                    <injection-target-name>employeesGroupUid</injection-target-name>
                 </injection-target>
             </env-entry>
             <env-entry>
@@ -175,31 +188,18 @@
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>ou=People,o=koku,dc=example,dc=org</env-entry-value>
                 <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
                     <injection-target-name>kunpoUserBaseDn</injection-target-name>
                 </injection-target>
             </env-entry>
-            
-            <resource-ref>
-                <res-ref-name>myldap</res-ref-name>
-                <res-type>javax.naming.directory</res-type>
-                <res-auth>Container</res-auth>
-                <res-sharing-scope>Shareable</res-sharing-scope>
-                <mapped-name>external/ldap/myldap</mapped-name>
-<!--                 <injection-target> -->
-<!--                     <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class> -->
-<!--                     <injection-target-name>dirContext</injection-target-name> -->
-<!--                 </injection-target> -->
-            </resource-ref>
-        </session>
-        <session>
-            <ejb-name>GroupsDAOImpl</ejb-name>
+
+            <!-- Groups repository config -->            
             <env-entry>
                 <env-entry-name>groupNameAttribute</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>cn</env-entry-value>
                 <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.GroupsDAOImpl</injection-target-class>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
                     <injection-target-name>groupNameAttribute</injection-target-name>
                 </injection-target>
             </env-entry>
@@ -208,17 +208,8 @@
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>cn</env-entry-value>
                 <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.GroupsDAOImpl</injection-target-class>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
                     <injection-target-name>groupUidAttribute</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
-                <env-entry-name>usernameAttribute</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>cn</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.GroupsDAOImpl</injection-target-class>
-                    <injection-target-name>usernameAttribute</injection-target-name>
                 </injection-target>
             </env-entry>
             <env-entry>
@@ -226,21 +217,17 @@
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>(&amp;(objectclass=groupOfNames)(#attrName#=#attrValue#))</env-entry-value>
                 <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.GroupsDAOImpl</injection-target-class>
+                    <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
                     <injection-target-name>groupsSearchFilter</injection-target-name>
                 </injection-target>
             </env-entry>
+
             <resource-ref>
                 <res-ref-name>myldap</res-ref-name>
                 <res-type>javax.naming.directory</res-type>
                 <res-auth>Container</res-auth>
                 <res-sharing-scope>Shareable</res-sharing-scope>
                 <mapped-name>external/ldap/myldap</mapped-name>
-<!--                 <mapped-name>external/ldap/groups</mapped-name> -->
-<!--                 <injection-target> -->
-<!--                     <injection-target-class>fi.arcusys.koku.common.external.GroupsDAOImpl</injection-target-class> -->
-<!--                     <injection-target-name>dirContext</injection-target-name> -->
-<!--                 </injection-target> -->
             </resource-ref>
         </session>
 	</enterprise-beans>

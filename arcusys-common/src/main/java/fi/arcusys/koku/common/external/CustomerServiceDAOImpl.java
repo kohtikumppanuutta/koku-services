@@ -43,15 +43,9 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     @EJB
     private UserDAO userDao;
     
-    //  @Resource(mappedName = "external/ldap/myldap")
-//    private DirContext dirContext;
-    private String ssnAttributeName;
-    private String usernameAttributeName;
-    private String userSearchFilter;
+    @EJB
+    private LdapDAO ldapDao;
     
-    private String kunpoUserBaseDn;
-    private String kuntalainenGroupUid;
-
     private CustomerServicePortType customerService;
     
     private String customerServiceUserUid;
@@ -127,7 +121,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     @Override
     public String getSsnByLooraName(String employeePortalName) {
         userDao.getOrCreateUserByEmployeePortalName(employeePortalName);
-        return getSsnByLdapName(employeePortalName);
+        return ldapDao.getSsnByLooraName(employeePortalName);
     }
 
     /**
@@ -137,7 +131,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     @Override
     public String getSsnByKunpoName(String citizenPortalName) {
         userDao.getOrCreateUserByCitizenPortalName(citizenPortalName);
-        return getSsnByLdapName(citizenPortalName);
+        return ldapDao.getSsnByKunpoName(citizenPortalName);
     }
 
     /**
@@ -149,11 +143,24 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         if (ssn == null || ssn.isEmpty()) {
             return null;
         }
-        final String ldapNameBySsn = getLdapNameBySsn(ssn);
+        final String ldapNameBySsn = ldapDao.getLooraNameBySsn(ssn);
         if (ldapNameBySsn == null || ldapNameBySsn.isEmpty()) {
             try {
                 if (getCustomer(ssn) != null) {
-                    createKunpoUserInLdap(ssn, ssn);
+                    String firstName;
+                    String lastName;
+                    try {
+                        final CustomerType customer = getCustomer(ssn);
+
+                        firstName = customer.getEtuNimi();
+                        lastName = customer.getSukuNimi();
+                    } catch (ServiceFault e) {
+                        logger.error("Failed to get Customer by ssn '" + ssn + "': " + e.getClass() + ", " + e.getMessage());
+                        firstName = ssn;
+                        lastName = ssn;
+                    }
+                    
+                    ldapDao.createKunpoUserInLdap(ssn, ssn, firstName, lastName);
                     return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(ssn).getUid(), ssn);
                 } 
             } catch (ServiceFault e) {
@@ -174,7 +181,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         if (ssn == null || ssn.isEmpty()) {
             return null;
         }
-        final String ldapNameBySsn = getLdapNameBySsn(ssn);
+        final String ldapNameBySsn = ldapDao.getLooraNameBySsn(ssn);
         if (ldapNameBySsn == null || ldapNameBySsn.isEmpty()) {
             return null;
         }
@@ -197,133 +204,13 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         return user;
     }
     
-    private String getLdapNameBySsn(final String ssn) {
-        return getUsersAttrNameByFilter(ssnAttributeName, ssn, usernameAttributeName);
-    }
-
-    private String getSsnByLdapName(final String ldapName) {
-        return getUsersAttrNameByFilter(usernameAttributeName, ldapName, ssnAttributeName);
-    }
-
-    private String getUsersAttrNameByFilter(final String filterAttrName, final String filterAttrValue, final String searchAttrName) {
-        try {
-            DirContext dirContext = createUsersDirContext();
-            try {
-                SearchControls controls = new SearchControls();
-                controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-                final NamingEnumeration<SearchResult> results = dirContext.search("", 
-                        userSearchFilter.replaceAll("#attrName#", filterAttrName)
-                                        .replaceAll("#attrValue#", filterAttrValue), controls);
-                try {
-                    if (results.hasMore()) {
-                        final SearchResult searchResult = results.next();
-                        if (results.hasMore()) {
-                            return "multipleFound";
-                        }
-                        final Attributes attributes = searchResult.getAttributes();
-                        final Attribute attr = attributes.get(searchAttrName);
-                        if (attr != null) {
-                            return (String) attr.get();
-                        }
-                    }
-                } finally {
-                    results.close();
-                }
-            } finally {
-                dirContext.close();
-            }
-        } catch (NamingException e) {
-            logger.error(null, e);
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-    
-    private void createKunpoUserInLdap(final String kunpoUsername, final String ssn) {
-        try {
-            String etuNimi;
-            String sukuNimi;
-            
-            try {
-                final CustomerType customer = getCustomer(ssn);
-
-                etuNimi = customer.getEtuNimi();
-                sukuNimi = customer.getSukuNimi();
-            } catch (ServiceFault e) {
-                logger.error("Failed to get Customer by ssn '" + ssn + "': " + e.getClass() + ", " + e.getMessage());
-                etuNimi = kunpoUsername;
-                sukuNimi = ssn;
-            }
-
-            Attributes personAttributes = new BasicAttributes();
-            BasicAttribute personBasicAttribute = new BasicAttribute(
-                    "objectclass");
-            personBasicAttribute.add("inetOrgPerson");
-            personBasicAttribute.add("top");
-            personAttributes.put(personBasicAttribute);
-
-            personAttributes.put("givenName", etuNimi);
-            personAttributes.put("cn", kunpoUsername);
-            personAttributes.put("sn", sukuNimi);
-            personAttributes.put("description", ssn);
-            personAttributes.put("uid", ssn);
-            personAttributes.put("userPassword", "test");
-
-            final String newContactDN = getUserDn(kunpoUsername);
-
-            DirContext dirContext = createUsersDirContext();
-            try {
-                logger.info("Creating new user in ldap: " + newContactDN);
-                dirContext.bind(newContactDN, null, personAttributes);
-            } finally {
-                dirContext.close();
-            }
-        } catch (NamingException e) {
-            logger.error("Failed to create new user in ldap by portal name '" + kunpoUsername + "' and ssn '" + ssn + "'", e);
-            throw new RuntimeException(e);
-        } 
-    }
-
-    private String getUserDn(final String kunpoUsername) {
-        return usernameAttributeName + "=" + kunpoUsername;
-    }
-    
-    private void updateLdapName(final GroupsDAO groupsDao, final String oldLdapName, final String newLdapName) {
-        try {
-            DirContext dirContext = createUsersDirContext();
-            try {
-                final String oldName = getUserDn(oldLdapName);
-                final String newName = getUserDn(newLdapName);
-                final String userOldDn = getUserDnWithBase(oldName);
-                final String userNewDn = getUserDnWithBase(newName);
-                dirContext.rename(oldName, newName);
-                groupsDao.updateMembership(userOldDn, userNewDn);
-            } finally {
-                dirContext.close();
-            }
-        } catch (NamingException e) {
-            logger.error("Failed to update user in ldap: old name '" + oldLdapName + "', new name '" + newLdapName + "'", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String getUserDnWithBase(final String oldName) {
-        return oldName + "," + kunpoUserBaseDn;
-    }
-
-    private DirContext createUsersDirContext() throws NamingException {
-        InitialContext iniCtx = new InitialContext();
-        DirContext dirContext = (DirContext) iniCtx.lookup("external/ldap/myldap");
-        return (DirContext)dirContext.lookup("ou=People");
-    } 
-
     /**
      * @param kunpoUsername
      * @param ssn
      * @return
      */
     @Override
-    public User getKunpoUserInfoByPortalNameAndSsn(final GroupsDAO groupsDao, final String kunpoUsername, final String ssn) {
+    public User getKunpoUserInfoByPortalNameAndSsn(final String kunpoUsername, final String ssn) {
         if (kunpoUsername == null || kunpoUsername.trim().isEmpty()) {
             throw new IllegalArgumentException("Get of Kunpo user info failed: Kunpo username is empty: '" + kunpoUsername + "'");
         }
@@ -331,29 +218,30 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
             throw new IllegalArgumentException("Get of Kunpo user info failed: Kunpo user ssn is empty: '" + ssn + "'");
         }
         
-        final String ldapNameBySsn = getLdapNameBySsn(ssn);
+        final String ldapNameBySsn = ldapDao.getKunpoNameBySsn(ssn);
         if (ldapNameBySsn == null || ldapNameBySsn.isEmpty()) {
             // create new user in ldap/DB
-            createKunpoUserInLdap(kunpoUsername, ssn);
+            String firstName;
+            String lastName;
+            try {
+                final CustomerType customer = getCustomer(ssn);
+
+                firstName = customer.getEtuNimi();
+                lastName = customer.getSukuNimi();
+            } catch (ServiceFault e) {
+                logger.error("Failed to get Customer by ssn '" + ssn + "': " + e.getClass() + ", " + e.getMessage());
+                firstName = kunpoUsername;
+                lastName = ssn;
+            }
+            ldapDao.createKunpoUserInLdap(kunpoUsername, ssn, firstName, lastName);
         } else if (!kunpoUsername.equals(ldapNameBySsn)) {
             // update username in ldap/db
             final fi.arcusys.koku.common.service.datamodel.User userForUpdate = userDao.getOrCreateUserByCitizenPortalName(ldapNameBySsn);
             userForUpdate.setCitizenPortalName(kunpoUsername);
             userDao.update(userForUpdate);
-            updateLdapName(groupsDao, ldapNameBySsn, kunpoUsername);
+            ldapDao.updateKunpoLdapName(ldapNameBySsn, kunpoUsername);
         }
 
-        try {
-            // add user to 'kuntalainen' group
-            final DirContext dirContext = createUsersDirContext();
-            try {
-                groupsDao.addUserToSystemGroup(getUserDnWithBase(getUserDn(kunpoUsername)), kuntalainenGroupUid);
-            } finally {
-                dirContext.close();
-            }
-        } catch (NamingException e) {
-            logger.warn("Failed to add user '" + getUserDn(kunpoUsername) + "' to group " + kuntalainenGroupUid + ": " + e.getMessage());
-        }
         return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(kunpoUsername).getUid(), ssn);
     }
 
