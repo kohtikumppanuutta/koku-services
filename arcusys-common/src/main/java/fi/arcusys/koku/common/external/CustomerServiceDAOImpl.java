@@ -130,8 +130,11 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      */
     @Override
     public String getSsnByKunpoName(String citizenPortalName) {
-        userDao.getOrCreateUserByCitizenPortalName(citizenPortalName);
-        return ldapDao.getSsnByKunpoName(citizenPortalName);
+        final String ssn = ldapDao.getSsnByKunpoName(citizenPortalName);
+        if (ssn != null && !ssn.isEmpty()) {
+            userDao.getOrCreateUserByCitizenPortalName(citizenPortalName);
+        }
+        return ssn;
     }
 
     /**

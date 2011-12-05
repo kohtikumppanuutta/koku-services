@@ -44,7 +44,18 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByKunpoName(String username) {
-        return userDao.getOrCreateUserByCitizenPortalName(username).getUid();
+        final fi.arcusys.koku.common.service.datamodel.User user = userDao.getUserByCitizenPortalNameOrNull(username);
+        if (user == null) {
+            final String ssnByKunpoName = customerDao.getSsnByKunpoName(username);
+            if (ssnByKunpoName != null && !ssnByKunpoName.isEmpty()) {
+                return userDao.getOrCreateUserByCitizenPortalName(username).getUid();
+            } else {
+                throw new IllegalArgumentException("KunPo user '" + username + "' not found in ldap and DB.");
+            }
+        } else {
+            return user.getUid();
+        }
+        
     }
 
     /**
