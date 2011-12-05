@@ -94,9 +94,6 @@ public class LdapDAOImpl implements LdapDAO {
                 try {
                     while (results.hasMore()) {
                         final SearchResult searchResult = results.next();
-//                        if (results.hasMore()) {
-//                            return "multipleFound";
-//                        }
                         final Attributes attributes = searchResult.getAttributes();
                         final Attribute attr = attributes.get(searchAttrName);
                         if (attr != null && attr.get() != null) {
@@ -115,7 +112,8 @@ public class LdapDAOImpl implements LdapDAO {
                 }
             } 
             if (dnToAttrValue.size() > 1) {
-                return "multipleFound";
+                throw new IllegalStateException("Multiple values found in users context for filterAttrName = " + 
+                        filterAttrName + " and filterAttrValue = " + filterAttrValue + ": " + dnToAttrValue);
             } else if (!dnToAttrValue.isEmpty()) {
                 return dnToAttrValue.values().iterator().next();
             }
