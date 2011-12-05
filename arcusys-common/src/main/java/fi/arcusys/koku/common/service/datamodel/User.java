@@ -19,7 +19,9 @@ import javax.persistence.UniqueConstraint;
     @NamedQuery(name = "findUserByCitizenPortalName", query = "SELECT DISTINCT u FROM User_ u WHERE u.citizenPortalName = :portalName")
 }) 
 @Table(uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"uid"})
+    @UniqueConstraint(columnNames = {"uid"}),
+    @UniqueConstraint(columnNames = {"citizenPortalName"}),
+    @UniqueConstraint(columnNames = {"employeePortalName"})
 })
 public class User extends AbstractEntity {
 	/**
