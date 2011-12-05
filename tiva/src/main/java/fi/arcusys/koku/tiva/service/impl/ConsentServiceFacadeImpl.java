@@ -626,6 +626,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             actionRequests.add(actionRequestSummary);
         }
         consentTO.setActionRequests(actionRequests);
+        consentTO.setComment(reply.getComment());
         
         return consentTO;
     }
@@ -687,8 +688,22 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         fillConsentSummaryCombined(consent, replies, consentTO);
         
         consentTO.setActionRequests(getActionResponsesCombined(consent, replies));
+        consentTO.setComment(getCommentsCombined(replies));
         
         return consentTO;
+    }
+
+    private String getCommentsCombined(final List<ConsentReply> replies) {
+        final StringBuilder result = new StringBuilder();
+        for (final ConsentReply reply : replies) {
+            if (reply.getComment() != null && !reply.getComment().isEmpty()) {
+                result.append(reply.getComment()).append(';');
+            }
+        }
+        if (result.length() > 0) {
+            result.setLength(result.length() - 1);
+        }
+        return result.toString();
     }
 
     private void fillConsentSummaryCombined(final Consent consent, final List<ConsentReply> replies, final ConsentSummary consentTO) {

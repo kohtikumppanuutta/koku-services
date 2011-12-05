@@ -7,7 +7,22 @@ import java.util.List;
  * Aug 11, 2011
  */
 public class ConsentTO extends ConsentSummary {
+    private String comment;
     private List<ActionRequestSummary> actionRequests;
+
+    /**
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param comment the comment to set
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
     /**
      * @return the actionRequests
