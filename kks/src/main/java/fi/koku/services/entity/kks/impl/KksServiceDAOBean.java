@@ -620,7 +620,6 @@ public class KksServiceDAOBean implements KksServiceDAO {
     tmp.setModifier(collection.getModifier());
     tmp.setModified(new Date());
     tmp.setDescription(collection.getDescription());
-    System.out.println("KANTA " + tmp.getVersion() + " CLIENT " + collection.getVersion() );
     tmp.setVersion(collection.getVersion());
     em.merge(tmp);
     setTags(collection, tmp);
