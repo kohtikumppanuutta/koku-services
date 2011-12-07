@@ -215,8 +215,8 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
     public InformationCategoryTO getCategories(final String employeeUid) {
         final InformationCategoryTO rootCategoryTO = new InformationCategoryTO();
         rootCategoryTO.setCategoryId("root");
-        rootCategoryTO.setDescription("Root category");
-        rootCategoryTO.setName("root");
+        rootCategoryTO.setDescription("Pääkategoria");
+        rootCategoryTO.setName("kaikki");
         final List<InfoGroup> infoGroups = kksDao.getInfoGroups(employeeUid);
         rootCategoryTO.setSubcategories(convertInfoGroupsToCategories(infoGroups));
         return rootCategoryTO;
