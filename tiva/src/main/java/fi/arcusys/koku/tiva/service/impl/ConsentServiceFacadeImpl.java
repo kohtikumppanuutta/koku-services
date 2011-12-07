@@ -438,7 +438,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         
         doGiveConsent(actions, validTill, null, comment, consent, replier);
         notificationService.sendNotification(getValueFromBundle(CONSENT_GIVEN_SUBJECT), Collections.singletonList(consent.getCreator().getUid()), 
-                MessageFormat.format(getValueFromBundle(CONSENT_GIVEN_BODY), new Object[] {consent.getTemplate().getTitle()}));
+                MessageFormat.format(getValueFromBundle(CONSENT_GIVEN_BODY), new Object[] {consent.getTemplate().getTitle(),
+                    consent.getTargetPerson().getCitizenPortalName(), replier.getCitizenPortalName()}));
     }
 
     private void doGiveConsent(List<ActionPermittedTO> actions,
@@ -496,7 +497,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
 
             consentReplyDao.update(oldReply);
             notificationService.sendNotification(getValueFromBundle(CONSENT_DECLINED_SUBJECT), Collections.singletonList(consent.getCreator().getUid()), 
-                    MessageFormat.format(getValueFromBundle(CONSENT_DECLINED_BODY), new Object[] {consent.getTemplate().getTitle()}));
+                    MessageFormat.format(getValueFromBundle(CONSENT_DECLINED_BODY), new Object[] {consent.getTemplate().getTitle(),
+                        consent.getTargetPerson().getCitizenPortalName(), replier.getCitizenPortalName()}));
         } else {
             final ConsentReply reply = new ConsentReply();
             reply.setConsent(consent);
@@ -506,7 +508,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
 
             consentReplyDao.create(reply);
             notificationService.sendNotification(getValueFromBundle(CONSENT_DECLINED_SUBJECT), Collections.singletonList(consent.getCreator().getUid()), 
-                    MessageFormat.format(getValueFromBundle(CONSENT_DECLINED_BODY), new Object[] {consent.getTemplate().getTitle()}));
+                    MessageFormat.format(getValueFromBundle(CONSENT_DECLINED_BODY), new Object[] {consent.getTemplate().getTitle(),
+                        consent.getTargetPerson().getCitizenPortalName(), replier.getCitizenPortalName()}));
         }
     }
 
@@ -589,7 +592,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         
         consentReplyDao.update(reply);
         notificationService.sendNotification(getValueFromBundle(CONSENT_UPDATED_SUBJECT), Collections.singletonList(reply.getConsent().getCreator().getUid()), 
-                MessageFormat.format(getValueFromBundle(CONSENT_UPDATED_BODY), new Object[] {reply.getConsent().getTemplate().getTitle()}));
+                MessageFormat.format(getValueFromBundle(CONSENT_UPDATED_BODY), new Object[] {reply.getConsent().getTemplate().getTitle(),
+                    reply.getConsent().getTargetPerson().getCitizenPortalName(), reply.getReplier().getCitizenPortalName()}));
     }
 
     /**
@@ -646,7 +650,8 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         
         consentReplyDao.update(reply);
         notificationService.sendNotification(getValueFromBundle(CONSENT_REVOKED_SUBJECT), Collections.singletonList(consent.getCreator().getUid()), 
-                MessageFormat.format(getValueFromBundle(CONSENT_REVOKED_BODY), new Object[] {consent.getTemplate().getTitle()}));
+                MessageFormat.format(getValueFromBundle(CONSENT_REVOKED_BODY), new Object[] {consent.getTemplate().getTitle(),
+                    consent.getTargetPerson().getCitizenPortalName(), reply.getReplier().getCitizenPortalName()}));
     }
 
     /**
