@@ -10,7 +10,7 @@ import fi.arcusys.koku.common.service.datamodel.TargetPerson;
  */
 public interface TargetPersonDAO extends AbstractEntityDAO<TargetPerson> {
 
-    TargetPerson getTargetPersonByUid(final String uid);
+//    TargetPerson getTargetPersonByUid(final String uid);
 
     /**
      * @param targetPerson

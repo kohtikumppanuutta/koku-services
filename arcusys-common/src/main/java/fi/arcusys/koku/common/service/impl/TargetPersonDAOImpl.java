@@ -28,9 +28,9 @@ public class TargetPersonDAOImpl extends AbstractEntityDAOImpl<TargetPerson> imp
         super(TargetPerson.class);
     }
     
-    public TargetPerson getTargetPersonByUid(final String uid) {
+    private List<TargetPerson> getTargetPersonsByUid(final String uid) {
         final Map<String, Object> params = Collections.<String,Object>singletonMap("uid", uid);
-        return getSingleResultOrNull("findTargetPersonByUid", params);
+        return getResultList("findTargetPersonByUid", params);
     }
 
     /**
@@ -43,19 +43,21 @@ public class TargetPersonDAOImpl extends AbstractEntityDAOImpl<TargetPerson> imp
         if (targetPersonUid == null) {
             return null;
         }
-        TargetPerson targetPerson = getTargetPersonByUid(targetPersonUid);
+        List<TargetPerson> targetPersons = getTargetPersonsByUid(targetPersonUid);
         
-        if (targetPerson == null || !equalsByUids(receipients, targetPerson.getGuardians())) {
-            targetPerson = new TargetPerson();
-            targetPerson.setTargetUser(userDAO.getOrCreateUser(targetPersonUid));
-            if (receipients != null) {
-                for (final String userUid : receipients) {
-                    targetPerson.getGuardians().add(userDAO.getOrCreateUser(userUid));
-                }
+        for (final TargetPerson targetPerson : targetPersons) {
+            if (equalsByUids(receipients, targetPerson.getGuardians())) {
+                return targetPerson;
             }
-            targetPerson = super.create(targetPerson);
         }
-        return targetPerson;
+        final TargetPerson targetPerson = new TargetPerson();
+        targetPerson.setTargetUser(userDAO.getOrCreateUser(targetPersonUid));
+        if (receipients != null) {
+            for (final String userUid : receipients) {
+                targetPerson.getGuardians().add(userDAO.getOrCreateUser(userUid));
+            }
+        }
+        return super.create(targetPerson);
     }
 
     private boolean equalsByUids(final List<String> userUids, final Set<User> users) {
