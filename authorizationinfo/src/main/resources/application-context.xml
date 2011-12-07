@@ -5,7 +5,7 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-  	<property name="locations" value="classpath:koku-settings.properties"/>
+  	<property name="locations" value="${jboss.server.config.url}koku-settings.properties"/>
   </bean>
 
   <bean id="groupServiceHolder" class="fi.koku.services.utility.authorization.impl.GroupServiceHolder">
