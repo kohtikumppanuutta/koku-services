@@ -16,6 +16,8 @@ public class ConsentShortSummary {
     private Long templateId;
     private String templateName;
     private String templateDescription;
+    private Long templateTypeId;
+    private String templateTypeName;
     private String targetPersonUid;
     private String anotherPermitterUid;
     private String requestor;
@@ -26,6 +28,30 @@ public class ConsentShortSummary {
     private String metaInfo;
     private List<ConsentExternalGivenTo> givenToParties;
     
+    /**
+     * @return the templateTypeId
+     */
+    public Long getTemplateTypeId() {
+        return templateTypeId;
+    }
+    /**
+     * @param templateTypeId the templateTypeId to set
+     */
+    public void setTemplateTypeId(Long templateTypeId) {
+        this.templateTypeId = templateTypeId;
+    }
+    /**
+     * @return the templateTypeName
+     */
+    public String getTemplateTypeName() {
+        return templateTypeName;
+    }
+    /**
+     * @param templateTypeName the templateTypeName to set
+     */
+    public void setTemplateTypeName(String templateTypeName) {
+        this.templateTypeName = templateTypeName;
+    }
     /**
      * @return the templateId
      */

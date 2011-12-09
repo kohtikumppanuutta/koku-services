@@ -35,9 +35,24 @@ public class ConsentTemplate extends AbstractEntity {
     @ManyToOne
     private User creator;
     
+    @ManyToOne
+    private AuthorizationTemplate authorizationTemplate;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<ConsentActionRequest> actions;
     
+    /**
+     * @return the authorizationTemplate
+     */
+    public AuthorizationTemplate getAuthorizationTemplate() {
+        return authorizationTemplate;
+    }
+    /**
+     * @param authorizationTemplate the authorizationTemplate to set
+     */
+    public void setAuthorizationTemplate(AuthorizationTemplate authorizationTemplate) {
+        this.authorizationTemplate = authorizationTemplate;
+    }
     /**
      * @return the endDate
      */

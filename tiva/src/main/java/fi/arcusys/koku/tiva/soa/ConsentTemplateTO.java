@@ -11,13 +11,26 @@ import javax.xml.bind.annotation.XmlType;
  * Aug 9, 2011
  */
 @XmlType (name = "suostumuspohja", namespace = "http://soa.tiva.koku.arcusys.fi/",
-propOrder={"description", "creatorUid", "actions"})
+propOrder={"description", "creatorUid", "actions", "templateType"})
 public class ConsentTemplateTO extends ConsentTemplateSummary {
     private String description;
     private String creatorUid;
+    private AuthorizationTemplateTO templateType;
     
     private List<ActionRequestTO> actions;
     
+    /**
+     * @return the templateType
+     */
+    public AuthorizationTemplateTO getTemplateType() {
+        return templateType;
+    }
+    /**
+     * @param templateType the templateType to set
+     */
+    public void setTemplateType(AuthorizationTemplateTO templateType) {
+        this.templateType = templateType;
+    }
     /**
      * @return the actions
      */

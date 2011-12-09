@@ -22,12 +22,14 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.arcusys.koku.common.service.AuthorizationTemplateDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.ConsentDAO;
 import fi.arcusys.koku.common.service.ConsentReplyDAO;
 import fi.arcusys.koku.common.service.ConsentTemplateDAO;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.UserDAO;
+import fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate;
 import fi.arcusys.koku.common.service.datamodel.Consent;
 import fi.arcusys.koku.common.service.datamodel.ConsentActionReply;
 import fi.arcusys.koku.common.service.datamodel.ConsentActionRequest;
@@ -45,6 +47,7 @@ import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
 import fi.arcusys.koku.tiva.soa.ActionRequestStatus;
 import fi.arcusys.koku.tiva.soa.ActionRequestSummary;
 import fi.arcusys.koku.tiva.soa.ActionRequestTO;
+import fi.arcusys.koku.tiva.soa.AuthorizationTemplateTO;
 import fi.arcusys.koku.tiva.soa.ConsentApprovalStatus;
 import fi.arcusys.koku.tiva.soa.ConsentCreateType;
 import fi.arcusys.koku.tiva.soa.ConsentCriteria;
@@ -89,6 +92,9 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
     @EJB
     private ConsentTemplateDAO templateDao;
     
+    @EJB
+    private AuthorizationTemplateDAO authorizationTemplateDao;
+
     @EJB
     private ConsentDAO consentDao;
 
@@ -158,6 +164,14 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         templateTO.setCreatorUid(template.getCreator().getUid());
         templateTO.setDescription(template.getDescription() == null ? "" : template.getDescription());
         templateTO.setTitle(template.getTitle());
+        final AuthorizationTemplate authorizationTemplate = template.getAuthorizationTemplate();
+        if (authorizationTemplate != null) {
+            final AuthorizationTemplateTO templateType = new AuthorizationTemplateTO();
+            templateType.setTemplateId(authorizationTemplate.getId());
+            templateType.setTemplateName(authorizationTemplate.getName());
+            templateType.setDescription(authorizationTemplate.getDescription());
+            templateTO.setTemplateType(templateType);
+        }
         final List<ActionRequestTO> actionTOs = new ArrayList<ActionRequestTO>();
         for (final ConsentActionRequest action : template.getActions()) {
             final ActionRequestTO actionRequestTO = new ActionRequestTO();
@@ -195,6 +209,10 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         template.setCreator(userDao.getOrCreateUser(templateTO.getCreatorUid()));
         template.setDescription(templateTO.getDescription());
         template.setTitle(templateTO.getTitle());
+        final AuthorizationTemplateTO templateType = templateTO.getTemplateType();
+        if (templateType != null && templateType.getTemplateId() != 0) {
+            template.setAuthorizationTemplate(authorizationTemplateDao.getById(templateType.getTemplateId()));
+        }
         final Set<ConsentActionRequest> actions = new HashSet<ConsentActionRequest>();
         for (final ActionRequestTO actionTO : templateTO.getActions()) {
             final ConsentActionRequest actionRequest = new ConsentActionRequest();
@@ -405,6 +423,11 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         consentTO.setTemplateId(consent.getTemplate().getId());
         consentTO.setTemplateName(consent.getTemplate().getTitle());
         consentTO.setTemplateDescription(consent.getTemplate().getDescription());
+        final AuthorizationTemplate templateType = consent.getTemplate().getAuthorizationTemplate();
+        if (templateType != null) {
+            consentTO.setTemplateTypeId(templateType.getId());
+            consentTO.setTemplateTypeName(templateType.getName());
+        }
         consentTO.setAnotherPermitterUid(getAnotherUserName(userUid, consent.getReceipients()));
         consentTO.setCreateType(ConsentCreateType.valueOf(consent.getCreationType()));
         consentTO.setReplyTill(CalendarUtil.getXmlDate(consent.getReplyTill()));
