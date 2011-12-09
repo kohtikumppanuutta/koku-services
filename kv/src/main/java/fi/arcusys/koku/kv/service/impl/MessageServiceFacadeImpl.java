@@ -639,8 +639,13 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @param content
      */
     @Override
-    public void sendNotification(String subject, List<String> receipients, String content) {
-        doDeliverMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, receipients, subject, content);
+    public void sendNotification(String subject, List<String> recipients, String content) {
+        if (recipients != null) {
+            // separate sending of the message to all recipients
+            for (final String recipient : recipients) {
+                doDeliverMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, Collections.singletonList(recipient), subject, content);
+            }
+        }
     }
 
     private void doDeliverMessage(final String fromUser,
