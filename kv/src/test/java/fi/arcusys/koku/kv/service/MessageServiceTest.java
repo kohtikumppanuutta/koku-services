@@ -31,9 +31,11 @@ import fi.arcusys.koku.kv.soa.MessageSummary;
 import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.QuestionType;
+import fi.arcusys.koku.kv.soa.RequestProcessingTO;
 import fi.arcusys.koku.kv.soa.RequestShortSummary;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
+import fi.arcusys.koku.kv.soa.RequestTemplateTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
 import fi.arcusys.koku.kv.soa.ResponseSummary;
 
@@ -229,6 +231,57 @@ public class MessageServiceTest {
 		final List<RequestSummary> requests = serviceFacade.getRequests(fromUserId, 1, 10);
 		assertEquals(1, requests.size());
 	}
+	
+	@Test
+	public void readRequestByRole() {
+	    // create request with role
+        final String fromRole = "Role1";
+
+        final String fromUserId = testUtil.getUserByUidWithRoles("testRequestSender1WithRole1", Collections.singletonList(fromRole)).getUid();
+        final String employeeUserId = testUtil.getUserByUidWithRoles("testEmployee1WithRole1", Collections.singletonList(fromRole)).getUid();
+        
+        final String toUserId = "testRequestReplier2";
+        final List<String> toUsers = Collections.singletonList(toUserId);
+        
+        
+        final List<QuestionTO> questions = createTestQuestions();
+        
+        final RequestTemplateTO template = new RequestTemplateTO();
+        template.setChoices(new ArrayList<MultipleChoiceTO>());
+        template.setQuestions(questions);
+        template.setSubject("test request");
+        template.setCreatorUid(fromUserId);
+        template.setVisibility(RequestTemplateVisibility.Creator);
+        
+        final RequestProcessingTO request = new RequestProcessingTO();
+        request.setContent("read-only form of request");
+        request.setFromRole(fromRole);
+        request.setFromUserUid(fromUserId);
+        request.setReceipients(toUsers);
+        request.setSubject("test request");
+        final Long requestId = serviceFacade.sendRequest(template, request);
+        assertEquals("No replies yet: ", 0, serviceFacade.getRequestById(requestId).getRespondedAmount());
+
+        // get request data by role
+        final List<RequestSummary> requests = serviceFacade.getRequests(employeeUserId, 1, 10);
+        assertNotNull("Request should be visible to another user with the same role.", getById(requests, requestId));
+        
+	    // reply to request
+        final List<Answer> answers = createTestAnswers();   
+        serviceFacade.replyToRequest(toUserId, requestId, answers, null);
+
+        // get request data by role
+        assertNotNull(getById(serviceFacade.getRequests(employeeUserId, 1, 10), requestId));
+	}
+
+    private RequestSummary getById(final List<RequestSummary> requests, final long requestId) {
+        for (final RequestSummary request : requests) {
+            if (request.getRequestId() == requestId) {
+                return request;
+            }
+        }
+        return null;
+    }
 
     private List<Answer> createTestAnswers() {
         final List<Answer> answers = new ArrayList<Answer>();
@@ -245,7 +298,7 @@ public class MessageServiceTest {
 		answers.add(testAnswer);
         return answers;
     }
-
+    
     private ResponseSummary getByRequestId(final List<ResponseSummary> repliedRequests, final Long requestId) {
         ResponseSummary result = null; 
         for (final ResponseSummary requestTO : repliedRequests) {

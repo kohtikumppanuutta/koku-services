@@ -1,7 +1,9 @@
 package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 
@@ -37,17 +39,6 @@ public class RequestDAOImpl extends AbstractEntityDAOImpl<Request> implements Re
 		return Request.GET_REQUESTS_BY_IDS;
 	}
 
-	/**
-	 * @param userId
-	 * @param startNum
-	 * @param maxNum
-	 * @return
-	 */
-	@Override
-	public List<Request> getRequestsByUser(User user, int startNum, int maxNum) {
-		return super.getResultList(Request.GET_REQUESTS_BY_USER_UID, Collections.<String, Object>singletonMap("user", user), startNum, maxNum);
-	}
-
     /**
      * @param template
      * @return
@@ -58,12 +49,31 @@ public class RequestDAOImpl extends AbstractEntityDAOImpl<Request> implements Re
     }
 
     /**
+     * @param userId
+     * @param startNum
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public List<Request> getRequestsByUserAndRoles(User user, List<String> userRoles, int startNum, int maxNum) {
+        if (userRoles != null && !userRoles.isEmpty()) {
+            return super.getResultList("findRequestsByUserUidOrRoles", getUserAndRolesParams(user, userRoles), startNum, maxNum);
+        } else {
+            return super.getResultList("findRequestsByUserUid", Collections.singletonMap("user", user), startNum, maxNum);
+        }
+    }
+
+    /**
      * @param user
      * @return
      */
     @Override
-    public Long getTotalRequestsByUser(User user) {
-        return getSingleResult("countRequestsByUserUid", Collections.singletonMap("user", user));
+    public Long getTotalRequestsByUserAndRoles(User user, List<String> userRoles) {
+        if (userRoles != null && !userRoles.isEmpty()) {
+            return getSingleResult("countRequestsByUserUidOrRoles", getUserAndRolesParams(user, userRoles));
+        } else {
+            return getSingleResult("countRequestsByUserUid", Collections.singletonMap("user", user));
+        }
     }
 
     /**
@@ -73,8 +83,12 @@ public class RequestDAOImpl extends AbstractEntityDAOImpl<Request> implements Re
      * @return
      */
     @Override
-    public List<Request> getOldRequestsByUser(User user, int startNum, int maxResults) {
-        return super.getResultList("findOldRequestsByUserUid", Collections.<String, Object>singletonMap("user", user), startNum, maxResults);
+    public List<Request> getOldRequestsByUserAndRoles(User user, List<String> userRoles, int startNum, int maxResults) {
+        if (userRoles != null && !userRoles.isEmpty()) {
+            return super.getResultList("findOldRequestsByUserUidOrRoles", getUserAndRolesParams(user, userRoles), startNum, maxResults);
+        } else {
+            return super.getResultList("findOldRequestsByUserUid", Collections.singletonMap("user", user), startNum, maxResults);
+        }
     }
 
     /**
@@ -82,7 +96,18 @@ public class RequestDAOImpl extends AbstractEntityDAOImpl<Request> implements Re
      * @return
      */
     @Override
-    public Long getTotalOldRequestsByUser(User user) {
-        return getSingleResult("countOldRequestsByUserUid", Collections.singletonMap("user", user));
+    public Long getTotalOldRequestsByUserAndRoles(User user, List<String> userRoles) {
+        if (userRoles != null && !userRoles.isEmpty()) {
+            return getSingleResult("countOldRequestsByUserUidOrRoles", getUserAndRolesParams(user, userRoles));
+        } else {
+            return getSingleResult("countOldRequestsByUserUid", Collections.singletonMap("user", user));
+        }
+    }
+
+    private Map<String, Object> getUserAndRolesParams(User user, List<String> userRoles) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user", user);
+        params.put("userRoles", userRoles);
+        return params;
     }
 }

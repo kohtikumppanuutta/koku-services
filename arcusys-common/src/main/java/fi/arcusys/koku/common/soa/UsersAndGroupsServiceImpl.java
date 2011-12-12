@@ -10,6 +10,7 @@ import javax.jws.WebService;
 import fi.arcusys.koku.common.external.CustomerServiceDAO;
 import fi.arcusys.koku.common.external.GroupsDAO;
 import fi.arcusys.koku.common.external.PyhServiceDAO;
+import fi.arcusys.koku.common.external.RolesDAO;
 import fi.arcusys.koku.common.service.UserDAO;
 
 /**
@@ -37,6 +38,9 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
     
     @EJB
     private GroupsDAO groupsDao;
+    
+    @EJB
+    private RolesDAO rolesDao;
     
     /**
      * @param username
@@ -259,5 +263,24 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         }
         
         return customerDao.getEmployeeUserInfoByPortalNameAndSsn(looraUsername, ssn);
+    }
+
+    /**
+     * @param userUid
+     * @return
+     */
+    @Override
+    public List<Role> getUserRoles(String userUid) {
+        return rolesDao.getEmployeeRoles(getLooraNameByUserUid(userUid));
+    }
+
+    /**
+     * @param searchString
+     * @param limit
+     * @return
+     */
+    @Override
+    public List<Role> searchRoles(String searchString, int limit) {
+        return rolesDao.searchRoles(searchString, limit);
     }
 }

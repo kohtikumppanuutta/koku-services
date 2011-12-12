@@ -46,6 +46,8 @@ import fi.arcusys.koku.common.service.datamodel.YesNoAnswer;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
 import fi.arcusys.koku.common.service.exception.UserNotFoundException;
+import fi.arcusys.koku.common.soa.Role;
+import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.AnswerTO;
@@ -55,6 +57,7 @@ import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.Questions;
 import fi.arcusys.koku.kv.soa.Receipients;
+import fi.arcusys.koku.kv.soa.RequestProcessingTO;
 import fi.arcusys.koku.kv.soa.RequestShortSummary;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
@@ -102,6 +105,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 
     @EJB
 	private ResponseDAO responseDAO;
+    
+    @EJB
+    private UsersAndGroupsService usersService;
 
     private String notificationTemplate = "{2}";
 
@@ -474,25 +480,61 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	public Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, 
 	        final List<QuestionTO> questionTOs, final List<MultipleChoiceTO> choices, final RequestTemplateVisibility visibility,
             final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
-		final RequestTemplate template = doCreateRequestTemplate(fromUserId, subject, questionTOs, choices, visibility);
+	    final RequestTemplateTO templateTO = createTemplateTO(fromUserId,
+                subject, questionTOs, choices, visibility);
+	    
+	    final RequestProcessingTO requestTO = createRequestProcessingTO(
+                fromUserId, subject, receipients, content, replyTill,
+                notifyBeforeDays);
+	    
+		final RequestTemplate template = doCreateRequestTemplate(templateTO);
 
-		return doCreateRequest(fromUserId, subject, receipients, content, template, replyTill, notifyBeforeDays).getId();
+		return doCreateRequest(template, requestTO).getId();
 	}
 
-    private Request doCreateRequest(final String fromUserId,
-            final String subject, final List<String> receipients,
-            final String content, final RequestTemplate template, XMLGregorianCalendar replyTill, Integer notifyBeforeDays) {
-        final User fromUser = getUserByUid(fromUserId);
+    private RequestProcessingTO createRequestProcessingTO(
+            final String fromUserId, final String subject,
+            final List<String> receipients, final String content,
+            final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
+        final RequestProcessingTO requestTO = new RequestProcessingTO();
+	    requestTO.setContent(content);
+	    // check if "default" role should be used
+        requestTO.setFromRole(null);
+        requestTO.setFromUserUid(fromUserId);
+        requestTO.setNotifyBeforeDays(notifyBeforeDays);
+        requestTO.setReceipients(receipients);
+        requestTO.setReplyTill(replyTill);
+        requestTO.setSubject(subject);
+        return requestTO;
+    }
+
+    private RequestTemplateTO createTemplateTO(final String fromUserId,
+            final String subject, final List<QuestionTO> questionTOs,
+            final List<MultipleChoiceTO> choices,
+            final RequestTemplateVisibility visibility) {
+        final RequestTemplateTO templateTO = new RequestTemplateTO();
+	    templateTO.setChoices(choices);
+        templateTO.setCreatorUid(fromUserId);
+        templateTO.setQuestions(questionTOs);
+        templateTO.setSubject(subject);
+        templateTO.setVisibility(visibility);
+        return templateTO;
+    }
+
+    private Request doCreateRequest(final RequestTemplate template, final RequestProcessingTO requestTO) {
+        
+        final User fromUser = getUserByUid(requestTO.getFromUserUid());
 
         Request request = new Request();
         request.setTemplate(template);
-        request.setReplyTill(CalendarUtil.getSafeDate(replyTill));
-        request.setNotifyBeforeDays(notifyBeforeDays);
-        request.setSubject(subject);
-        request.setReceipients(getUsersByUids(receipients));
+        request.setReplyTill(CalendarUtil.getSafeDate(requestTO.getReplyTill()));
+        request.setNotifyBeforeDays(requestTO.getNotifyBeforeDays());
+        request.setSubject(requestTO.getSubject());
+        request.setReceipients(getUsersByUids(requestTO.getReceipients()));
         request.setFromUser(fromUser);
+        request.setFromRoleUid(requestTO.getFromRole());
 
-        createNewMessageInOutbox(subject, receipients, content, fromUser);
+        createNewMessageInOutbox(requestTO.getSubject(), requestTO.getReceipients(), requestTO.getContent(), fromUser);
         
 		request = requestDAO.create(request);
 		
@@ -506,27 +548,27 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @param visibility 
      * @return
      */
-    private RequestTemplate doCreateRequestTemplate(String fromUserId, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choiceTOs, RequestTemplateVisibility visibility) {
+    private RequestTemplate doCreateRequestTemplate(final RequestTemplateTO templateTO) {
         final RequestTemplate requestTemplate = new RequestTemplate();
-        fillRequestTemplate(fromUserId, subject, questionTOs, choiceTOs, visibility, requestTemplate);
+        fillRequestTemplate(templateTO, requestTemplate);
         return requestTemplateDAO.create(requestTemplate);
     }
 
-    private void fillRequestTemplate(String fromUserId, String subject,
-            List<QuestionTO> questionTOs, List<MultipleChoiceTO> choiceTOs,
-            RequestTemplateVisibility visibility, final RequestTemplate requestTemplate) {
-        requestTemplate.setCreator(getUserByUid(fromUserId));
-        requestTemplate.setSubject(subject);
+    private void fillRequestTemplate(final RequestTemplateTO templateTO, final RequestTemplate requestTemplate) {
+        requestTemplate.setCreator(getUserByUid(templateTO.getCreatorUid()));
+        requestTemplate.setSubject(templateTO.getSubject());
         final Map<Integer, Question> numberToQuestion = new HashMap<Integer, Question>();
-        for (final QuestionTO questionTO : questionTOs) {
-            final Question question = new Question();
-            question.setIndex(questionTO.getNumber());
-            question.setDescription(questionTO.getDescription());
-            question.setType(getQuestionType(questionTO));
-            numberToQuestion.put(questionTO.getNumber(), question);
+        if (templateTO.getQuestions() != null) {
+            for (final QuestionTO questionTO : templateTO.getQuestions()) {
+                final Question question = new Question();
+                question.setIndex(questionTO.getNumber());
+                question.setDescription(questionTO.getDescription());
+                question.setType(getQuestionType(questionTO));
+                numberToQuestion.put(questionTO.getNumber(), question);
+            }
         }
-        if (choiceTOs != null) {
-            for (final MultipleChoiceTO choiceTO : choiceTOs) {
+        if (templateTO.getChoices() != null) {
+            for (final MultipleChoiceTO choiceTO : templateTO.getChoices()) {
                 final Question question = numberToQuestion.get(choiceTO.getQuestionNumber());
                 if (question.getChoices() == null) {
                     question.setChoices(new HashSet<MultipleChoice>());
@@ -538,7 +580,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             }
         }
         requestTemplate.setQuestions(new HashSet<Question>(numberToQuestion.values()));
-        requestTemplate.setVisibility(RequestTemplateVisibility.toDmType(visibility == null ? RequestTemplateVisibility.All : visibility));
+        requestTemplate.setVisibility(RequestTemplateVisibility.toDmType(templateTO.getVisibility() == null ? RequestTemplateVisibility.All : templateTO.getVisibility()));
     }
 
 	private QuestionType getQuestionType(final QuestionTO questionTO) {
@@ -614,8 +656,20 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	public List<RequestSummary> getRequests(String userId, int startNum, int maxNum) {
         validateStartAndMaxNum(startNum, maxNum);
 
-        return convertRequestsToSummaryTO(requestDAO.getRequestsByUser(getUserByUid(userId), startNum, maxNum - startNum + 1));
+        return convertRequestsToSummaryTO(requestDAO.getRequestsByUserAndRoles(getUserByUid(userId), getUserRoles(userId), startNum, maxNum - startNum + 1));
 	}
+
+    /**
+     * @param userId
+     * @return
+     */
+    private List<String> getUserRoles(String userId) {
+        final List<String> roleUids = new ArrayList<String>();
+        for (final Role userRole : usersService.getUserRoles(userId)) {
+            roleUids.add(userRole.getRoleUid());
+        }
+        return roleUids;
+    }
 
     protected List<RequestSummary> convertRequestsToSummaryTO(
             final List<Request> requests) {
@@ -685,7 +739,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      */
     @Override
     public void createRequestTemplate(String userUid, String subject, List<QuestionTO> questionTOs, List<MultipleChoiceTO> choices, RequestTemplateVisibility visibility) {
-        doCreateRequestTemplate(userUid, subject, questionTOs, choices, visibility);
+        doCreateRequestTemplate(createTemplateTO(userUid, subject, questionTOs, choices, visibility));
     }
 
     /**
@@ -768,7 +822,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
         final RequestTemplate template = loadRequestTemplate(requestTemplateId);
         
-        return doCreateRequest(fromUserUid, subject, receipients, content, template, replyTill, notifyBeforeDays).getId();
+        return doCreateRequest(template, createRequestProcessingTO(fromUserUid, subject, receipients, content, replyTill, notifyBeforeDays)).getId();
     }
 
     private RequestTemplate loadRequestTemplate(long requestTemplateId) {
@@ -844,7 +898,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             throw new IllegalStateException("Error in update: request template with subject '" + subject + "' is active.");
         } 
 
-        fillRequestTemplate(userUid, subject, questions, choices, visibility, template);
+        fillRequestTemplate(createTemplateTO(userUid, subject, questions, choices, visibility), template);
         requestTemplateDAO.update(template);
     }
 
@@ -912,7 +966,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      */
     @Override
     public int getTotalRequests(String user) {
-        return getIntValue(requestDAO.getTotalRequestsByUser(getUserByUid(user)));
+        return getIntValue(requestDAO.getTotalRequestsByUserAndRoles(getUserByUid(user), getUserRoles(user)));
     }
 
     /**
@@ -925,7 +979,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     public List<RequestSummary> getOldRequests(String user, int startNum, int maxNum) {
         validateStartAndMaxNum(startNum, maxNum);
 
-        return convertRequestsToSummaryTO(requestDAO.getOldRequestsByUser(getUserByUid(user), startNum, maxNum - startNum + 1));
+        return convertRequestsToSummaryTO(requestDAO.getOldRequestsByUserAndRoles(getUserByUid(user), getUserRoles(user), startNum, maxNum - startNum + 1));
     }
 
     /**
@@ -934,7 +988,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      */
     @Override
     public int getTotalOldRequests(String user) {
-        return getIntValue(requestDAO.getTotalOldRequestsByUser(getUserByUid(user)));
+        return getIntValue(requestDAO.getTotalOldRequestsByUserAndRoles(getUserByUid(user), getUserRoles(user)));
     }
 
     /**
@@ -956,5 +1010,28 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         responseDetail.setComment(response.getComment());
         
         return responseDetail;
+    }
+
+    /**
+     * @param template
+     * @param request
+     * @return
+     */
+    @Override
+    public Long sendRequest(RequestTemplateTO templateTO, RequestProcessingTO request) {
+        final RequestTemplate template = doCreateRequestTemplate(templateTO);
+
+        return doCreateRequest(template, request).getId();
+    }
+
+    /**
+     * @param requestTemplateId
+     * @param request
+     * @return
+     */
+    @Override
+    public Long sendRequestWithTemplate(long requestTemplateId, RequestProcessingTO request) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

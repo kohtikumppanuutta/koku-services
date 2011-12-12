@@ -26,16 +26,35 @@ import fi.arcusys.koku.common.service.CalendarUtil;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = Request.GET_REQUESTS_BY_IDS, query = "SELECT DISTINCT r FROM Request r WHERE r.id in (:ids) ORDER BY r.id DESC"),
-	@NamedQuery(name = Request.GET_REQUESTS_BY_USER_UID, query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user " +
+	
+	@NamedQuery(name = "findRequestsByUserUid", query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user " +
 			" AND (r.replyTill IS NULL OR r.replyTill >= CURRENT_DATE) " +
 			" ORDER BY r.id DESC"),
     @NamedQuery(name = "countRequestsByUserUid", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.fromUser = :user" +
     		" AND (r.replyTill IS NULL OR r.replyTill >= CURRENT_DATE)"),
+    		
+    @NamedQuery(name = "findRequestsByUserUidOrRoles", query = "SELECT DISTINCT r FROM Request r " +
+    		" WHERE (r.fromUser = :user OR r.fromRoleUid in (:userRoles)) " +
+            " AND (r.replyTill IS NULL OR r.replyTill >= CURRENT_DATE) " +
+            " ORDER BY r.id DESC"),
+    @NamedQuery(name = "countRequestsByUserUidOrRoles", query = "SELECT COUNT(DISTINCT r) FROM Request r " +
+    		" WHERE (r.fromUser = :user OR r.fromRoleUid in (:userRoles)) " +
+            " AND (r.replyTill IS NULL OR r.replyTill >= CURRENT_DATE)"),
+    		    		
     @NamedQuery(name = "findOldRequestsByUserUid", query = "SELECT DISTINCT r FROM Request r WHERE r.fromUser = :user " +
             " AND (r.replyTill IS NOT NULL AND r.replyTill < CURRENT_DATE) " +
             " ORDER BY r.id DESC"),
     @NamedQuery(name = "countOldRequestsByUserUid", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.fromUser = :user" +
             " AND (r.replyTill IS NOT NULL AND r.replyTill < CURRENT_DATE)"),
+
+    @NamedQuery(name = "findOldRequestsByUserUidOrRoles", query = "SELECT DISTINCT r FROM Request r " +
+    		" WHERE (r.fromUser = :user OR r.fromRoleUid in (:userRoles)) " +
+            " AND (r.replyTill IS NOT NULL AND r.replyTill < CURRENT_DATE) " +
+            " ORDER BY r.id DESC"),
+    @NamedQuery(name = "countOldRequestsByUserUidOrRoles", query = "SELECT COUNT(DISTINCT r) FROM Request r " +
+    		" WHERE (r.fromUser = :user OR r.fromRoleUid in (:userRoles)) " +
+            " AND (r.replyTill IS NOT NULL AND r.replyTill < CURRENT_DATE)"),
+    
     @NamedQuery(name = "countRequestsByTemplate", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.template = :template")
 })
 public class Request extends AbstractEntity {
@@ -55,10 +74,26 @@ public class Request extends AbstractEntity {
     
     @ManyToOne
     private User fromUser;
+    
+    private String fromRoleUid;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> receipients;
     
+    /**
+     * @return the fromRole
+     */
+    public String getFromRoleUid() {
+        return fromRoleUid;
+    }
+
+    /**
+     * @param fromRole the fromRole to set
+     */
+    public void setFromRoleUid(String fromRoleUid) {
+        this.fromRoleUid = fromRoleUid;
+    }
+
     /**
      * @return the subject
      */

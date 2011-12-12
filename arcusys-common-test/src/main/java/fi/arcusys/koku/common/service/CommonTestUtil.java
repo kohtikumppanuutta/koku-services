@@ -2,10 +2,12 @@ package fi.arcusys.koku.common.service;
 
 import static junit.framework.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.impl.UserDAOImpl;
+import fi.arcusys.koku.common.soa.Role;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -30,6 +33,9 @@ import fi.arcusys.koku.common.service.impl.UserDAOImpl;
 public class CommonTestUtil {
 	@Autowired
 	private UserDAO userDao;
+	
+	@Autowired
+	private UsersAndGroupsTestImpl usersAndGroups;
 	
     @Autowired
     private TargetPersonDAO targetPersonDao;
@@ -45,6 +51,19 @@ public class CommonTestUtil {
 		assertNotNull("User found by uid: " + userUid, user);
 		return user;
 	}
+    
+    public User getUserByUidWithRoles(final String userUid, final List<String> roleUids) {
+        final List<Role> roles = new ArrayList<Role>();
+        for (final String roleUid : roleUids) {
+            final Role role = new Role();
+            role.setRoleUid(roleUid);
+            role.setRoleName(roleUid);
+            roles.add(role);
+        }
+        usersAndGroups.setUserRoles(userUid, roles);
+        
+        return getUserByUid(userUid);
+    }
 
 	private Set<AppointmentSlot> createTestSlots(int numberOfSlots) {
 		final HashSet<AppointmentSlot> slots = new HashSet<AppointmentSlot>();

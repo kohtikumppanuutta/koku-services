@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.external;
 import java.util.List;
 import java.util.Map;
 
+import fi.arcusys.koku.common.soa.Role;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 2, 2011
@@ -57,5 +59,17 @@ public interface LdapDAO {
      * @return
      */
     List<String> getGroupMembers(String groupUid);
+
+    /**
+     * @param employeeName
+     * @return
+     */
+    List<Role> getEmployeeRoles(String employeeName);
+
+    /**
+     * @param searchString
+     * @return
+     */
+    List<Role> searchRoles(String searchString);
 
 }

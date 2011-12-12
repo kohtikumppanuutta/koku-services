@@ -77,4 +77,14 @@ public interface UsersAndGroupsService {
     String getUserUidByKunpoSsn(@WebParam(name = "ssn") final String ssn);
 
     String getUserUidByEmployeeSsn(@WebParam(name = "ssn") final String ssn);
+    
+    // Roles impl
+    @WebResult(name = "role")
+    List<Role> getUserRoles(
+            @WebParam(name = "userUid") final String userUid);
+    
+    @WebResult(name = "role")
+    List<Role> searchRoles(
+            @WebParam(name = "searchString") final String searchString, 
+            @WebParam(name = "limit") final int limit);
 }

@@ -7,6 +7,33 @@ package fi.arcusys.koku.kv.soa;
 public class RequestTemplateSummary {
     private Long requestTemplateId;
     private String subject;
+    private RequestTemplateVisibility visibility;
+    private String creatorUid;
+    
+    /**
+     * @return the creatorUid
+     */
+    public String getCreatorUid() {
+        return creatorUid;
+    }
+    /**
+     * @param creatorUid the creatorUid to set
+     */
+    public void setCreatorUid(String creatorUid) {
+        this.creatorUid = creatorUid;
+    }
+    /**
+     * @return the visibility
+     */
+    public RequestTemplateVisibility getVisibility() {
+        return visibility;
+    }
+    /**
+     * @param visibility the visibility to set
+     */
+    public void setVisibility(RequestTemplateVisibility visibility) {
+        this.visibility = visibility;
+    }
     /**
      * @return the requestTemplateId
      */

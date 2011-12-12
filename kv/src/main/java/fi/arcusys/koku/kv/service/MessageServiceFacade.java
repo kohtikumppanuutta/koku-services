@@ -18,6 +18,7 @@ import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.Questions;
 import fi.arcusys.koku.kv.soa.Receipients;
+import fi.arcusys.koku.kv.soa.RequestProcessingTO;
 import fi.arcusys.koku.kv.soa.RequestShortSummary;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
@@ -56,10 +57,15 @@ public interface MessageServiceFacade {
 
 	int getUnreadMessagesCount(final String userId, final FolderType folderType);
 
+	/**
+	 * @deprecated use sendRequest(RequestTemplateTO, RequestProcessingTO) instead - roles implementation added there
+	 */
 	Long sendRequest(final String fromUserId, final String subject, final List<String> receipients, final String content, 
 	        final List<QuestionTO> questions, final List<MultipleChoiceTO> choices, RequestTemplateVisibility visibility,
             XMLGregorianCalendar replyTill, 
             Integer notifyBeforeDays);
+	
+	Long sendRequest(final RequestTemplateTO template, final RequestProcessingTO request);
 	
 	RequestTO getRequestById(final Long requestId);
 
@@ -95,6 +101,9 @@ public interface MessageServiceFacade {
     RequestTemplateTO getRequestTemplateById(
             final long requestTemplateId);
     
+    /**
+     * @deprecated - use sendRequestWithTemplate(long, RequestProcessingTO) instead, roles implementation added there
+     */
     Long sendRequestWithTemplate(
             final String fromUserUid, 
             final long requestTemplateId, 
@@ -103,6 +112,8 @@ public interface MessageServiceFacade {
             final String content, 
             XMLGregorianCalendar replyTill, 
             Integer notifyBeforeDays);
+
+    Long sendRequestWithTemplate(final long requestTemplateId, final RequestProcessingTO request);
 
     /**
      * @param fromUserUid

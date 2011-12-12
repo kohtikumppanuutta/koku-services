@@ -104,11 +104,12 @@
     <bean id="authorizationDao" class="fi.arcusys.koku.common.service.impl.AuthorizationDAOImpl" />
     <bean id="daycareRequestDao" class="fi.arcusys.koku.common.service.impl.DaycareRequestDAOImpl" />
 
-    <bean id="usersAndGroupsService" class="fi.arcusys.koku.common.soa.UsersAndGroupsServiceImpl" />
+    <bean id="usersAndGroupsService" class="fi.arcusys.koku.common.service.UsersAndGroupsTestImpl" />
     
     <bean id="logServiceDao" class="fi.arcusys.koku.common.external.LogServiceDAOImpl" />
     <bean id="customerServiceDao" class="fi.arcusys.koku.common.external.CustomerServiceDAOImpl" />
     <bean id="groupsDao" class="fi.arcusys.koku.common.external.GroupsDAOImpl" />
+    <bean id="rolesDao" class="fi.arcusys.koku.common.external.RolesDAOImpl" />
     <bean id="pyhServiceDao" class="fi.arcusys.koku.common.external.PyhServiceDAOImpl" />
     <bean id="ldapDao" class="fi.arcusys.koku.common.external.LdapDAOImpl" />
 

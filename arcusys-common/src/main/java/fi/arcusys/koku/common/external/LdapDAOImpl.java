@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.soa.Group;
+import fi.arcusys.koku.common.soa.Role;
 import fi.arcusys.koku.common.soa.User;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.ServiceFault;
@@ -130,7 +131,7 @@ public class LdapDAOImpl implements LdapDAO {
      * @return
      */
     private boolean isMemberOf(String dn, String systemRole) {
-        return doSearchGroups("member", dn, true).containsKey(systemRole);
+        return doSearchGroups("member", dn, "member", GroupType.SystemGroup).containsKey(systemRole);
     }
 
     @Override
@@ -211,13 +212,13 @@ public class LdapDAOImpl implements LdapDAO {
     public Map<String, String> searchGroups(String searchString) {
         final String filterAttrName = groupNameAttribute;
         final String filterAttrValue = "*" + searchString + "*";
-        return doSearchGroups(filterAttrName, filterAttrValue, false);
+        return doSearchGroups(filterAttrName, filterAttrValue, filterAttrName, GroupType.CommunityGroup);
     }
     
     private Map<String, String> doSearchGroups(final String filterAttrName,
-            final String filterAttrValue, final boolean systemGroups) {
+            final String filterAttrValue, final String returnAttrValue, final GroupType groupType) {
         try {
-            DirContext dirContext = getGroupsContext(systemGroups);
+            DirContext dirContext = getGroupsContext(groupType);
             try {
                 final Map<String, String> result = new HashMap<String, String>();
                 SearchControls controls = new SearchControls();
@@ -252,15 +253,22 @@ public class LdapDAOImpl implements LdapDAO {
         return (DirContext)communities.lookup("ou=Groups");
     }
 
+    private DirContext getRolesContext() throws NamingException {
+        InitialContext iniCtx = new InitialContext();
+        DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/myldap");
+        DirContext communities = (DirContext)dirContext.lookup("ou=KokuCommunities");
+        return (DirContext)communities.lookup("ou=Roles");
+    }
+
     private DirContext getSystemGroupsContext() throws NamingException {
         InitialContext iniCtx = new InitialContext();
         DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/myldap");
         return (DirContext)dirContext.lookup("ou=Groups");
     }
 
-    private List<String> getGroupMembers(final String filterAttrName, final String filterAttrValue, final boolean systemGroup) {
+    private List<String> getGroupMembers(final String filterAttrName, final String filterAttrValue, final GroupType groupType) {
         try {
-            DirContext dirContext = getGroupsContext(systemGroup);
+            DirContext dirContext = getGroupsContext(groupType);
             try {
                 final List<String> result = new ArrayList<String>();
                 SearchControls controls = new SearchControls();
@@ -300,12 +308,12 @@ public class LdapDAOImpl implements LdapDAO {
     }
 
     private void addUserToSystemGroup(String userDn, String groupUid) {
-        if (getGroupMembers(groupUidAttribute, groupUid, true).contains(userDn)) {
+        if (getGroupMembers(groupUidAttribute, groupUid, GroupType.SystemGroup).contains(userDn)) {
             logger.info("User " + userDn + " is already in group " + groupUid);
             return;
         }
         try {
-            DirContext dirContext = getGroupsContext(true);
+            DirContext dirContext = getGroupsContext(GroupType.SystemGroup);
     
             try {
                 dirContext.modifyAttributes(groupUidAttribute + "=" + groupUid, 
@@ -320,19 +328,20 @@ public class LdapDAOImpl implements LdapDAO {
     }
 
     private void updateMembership(String oldUserDn, String newUserDn) {
-        doUpdateMembership(oldUserDn, newUserDn, false); 
-        doUpdateMembership(oldUserDn, newUserDn, true); 
+        for (final GroupType groupType : GroupType.values()) {
+            doUpdateMembership(oldUserDn, newUserDn, groupType); 
+        }
     }
 
-    private void doUpdateMembership(String oldUserDn, String newUserDn, final boolean systemGroups) {
-        final Map<String, String> groups = doSearchGroups("member", oldUserDn, systemGroups);
+    private void doUpdateMembership(String oldUserDn, String newUserDn, final GroupType groupType) {
+        final Map<String, String> groups = doSearchGroups("member", oldUserDn, "member", groupType);
         if (groups == null || groups.isEmpty()) {
             return;
         }
         
         final Map<String, BasicAttributes> groupsForUpdate = new HashMap<String, BasicAttributes>();
         for (final String groupUid : groups.keySet()) {
-            final Set<String> members = new HashSet<String>(getGroupMembers(groupUidAttribute, groupUid, systemGroups));
+            final Set<String> members = new HashSet<String>(getGroupMembers(groupUidAttribute, groupUid, groupType));
             members.remove(oldUserDn);
             members.add(newUserDn);
             final BasicAttributes attributes = new BasicAttributes();
@@ -345,7 +354,7 @@ public class LdapDAOImpl implements LdapDAO {
         }
         
         try {
-            DirContext dirContext = getGroupsContext(systemGroups);
+            DirContext dirContext = getGroupsContext(groupType);
             
             try {
                 for (final Map.Entry<String, BasicAttributes> entry : groupsForUpdate.entrySet()) {
@@ -360,13 +369,15 @@ public class LdapDAOImpl implements LdapDAO {
         }
     }
 
-    private DirContext getGroupsContext(final boolean systemGroups)
+    private DirContext getGroupsContext(final GroupType groupType)
             throws NamingException {
         DirContext dirContext;
-        if (systemGroups) {
+        if (groupType == GroupType.SystemGroup) {
             dirContext = getSystemGroupsContext();
-        } else {
+        } else if (groupType == GroupType.CommunityGroup) {
             dirContext = getCommunityGroupsContext();
+        } else { // Roles
+            dirContext = getRolesContext();
         }
         return dirContext;
     }
@@ -380,7 +391,7 @@ public class LdapDAOImpl implements LdapDAO {
         final List<String> result = new ArrayList<String>();
         final Pattern pattern = Pattern.compile(usernameAttributeName + "=([^,]+)\\,");
         
-        for (final String member : getGroupMembers(groupUidAttribute, groupUid, false)) {
+        for (final String member : getGroupMembers(groupUidAttribute, groupUid, GroupType.CommunityGroup)) {
             final Matcher matcher = pattern.matcher(member);
             if (matcher.find()) {
                 result.add(matcher.group(1));
@@ -407,5 +418,43 @@ public class LdapDAOImpl implements LdapDAO {
     @Override
     public String getKunpoNameBySsn(String ssn) {
         return getLdapNameBySsn(ssn, citizensGroupUid);
+    }
+
+    /**
+     * @param employeeName
+     * @return
+     */
+    @Override
+    public List<Role> getEmployeeRoles(String employeeName) {
+        return createRolesFromSearchResult(doSearchGroups("member", getUserDnWithBase(getUserDn(employeeName)), "description", GroupType.Roles));
+    }
+
+    private List<Role> createRolesFromSearchResult(
+            final Map<String, String> roles) {
+        final List<Role> result = new ArrayList<Role>();
+        for (final Map.Entry<String, String> entry : roles.entrySet() ) {
+            final Role role = new Role();
+            role.setRoleUid(entry.getKey());
+            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                role.setRoleName(entry.getKey());
+            } else {
+                role.setRoleName(entry.getValue());
+            }
+            result.add(role);
+        }
+        return result;
+    }
+
+    /**
+     * @param searchString
+     * @return
+     */
+    @Override
+    public List<Role> searchRoles(String searchString) {
+        return createRolesFromSearchResult(doSearchGroups(groupNameAttribute, "*" + searchString + "*", groupNameAttribute, GroupType.Roles));
+    }
+    
+    private enum GroupType {
+        SystemGroup, CommunityGroup, Roles;
     }
 }
