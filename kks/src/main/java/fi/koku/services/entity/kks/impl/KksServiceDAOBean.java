@@ -348,8 +348,9 @@ public class KksServiceDAOBean implements KksServiceDAO {
     e.setCreator(user);
     e.setModified(new Date());
 
-    if (creation.getValue().getId() == null) {
+    if (e.getValues().size() == 0 || creation.getValue().getId() == null) {
       KksValue v = creation.getValue();
+      v.setId(null);
       v.setEntry(e);
       v.setModified(new Date());
       v.setModifier(user);
