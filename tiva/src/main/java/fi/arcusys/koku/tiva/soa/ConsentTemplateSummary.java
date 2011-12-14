@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
  * Aug 11, 2011
  */
 @XmlType (name = "suostumuspohjaShort", namespace = "http://soa.tiva.koku.arcusys.fi/",
-propOrder={"consentTemplateId", "title"})
+propOrder={"consentTemplateId", "code", "title"})
 public class ConsentTemplateSummary {
     private Long consentTemplateId;
     private String code;
