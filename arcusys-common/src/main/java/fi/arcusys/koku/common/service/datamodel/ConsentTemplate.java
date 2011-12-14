@@ -21,10 +21,11 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "findTemplatesByPrefix", query = "SELECT tmp FROM ConsentTemplate tmp WHERE tmp.title LIKE :prefix  ORDER BY tmp.id DESC")
+    @NamedQuery(name = "findTemplatesByPrefix", query = "SELECT tmp FROM ConsentTemplate tmp WHERE (tmp.title LIKE :prefix OR tmp.code LIKE :prefix ) ORDER BY tmp.id DESC")
 })
 public class ConsentTemplate extends AbstractEntity {
     private String title;
+    private String code;
 
     @Lob
     private String description;
@@ -38,8 +39,23 @@ public class ConsentTemplate extends AbstractEntity {
     @ManyToOne
     private AuthorizationTemplate authorizationTemplate;
 
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+    /**
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<ConsentActionRequest> actions;
+    
+    
     
     /**
      * @return the authorizationTemplate

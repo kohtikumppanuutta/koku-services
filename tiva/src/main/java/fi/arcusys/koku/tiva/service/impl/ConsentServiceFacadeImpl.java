@@ -164,6 +164,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         templateTO.setCreatorUid(template.getCreator().getUid());
         templateTO.setDescription(template.getDescription() == null ? "" : template.getDescription());
         templateTO.setTitle(template.getTitle());
+        templateTO.setCode(template.getCode());
         final AuthorizationTemplate authorizationTemplate = template.getAuthorizationTemplate();
         if (authorizationTemplate != null) {
             final AuthorizationTemplateTO templateType = new AuthorizationTemplateTO();
@@ -209,6 +210,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
         template.setCreator(userDao.getOrCreateUser(templateTO.getCreatorUid()));
         template.setDescription(templateTO.getDescription());
         template.setTitle(templateTO.getTitle());
+        template.setCode(templateTO.getCode());
         final AuthorizationTemplateTO templateType = templateTO.getTemplateType();
         if (templateType != null && templateType.getTemplateId() != 0) {
             template.setAuthorizationTemplate(authorizationTemplateDao.getById(templateType.getTemplateId()));
@@ -246,6 +248,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             final ConsentTemplateSummary templateTO = new ConsentTemplateSummary();
             templateTO.setConsentTemplateId(template.getId());
             templateTO.setTitle(template.getTitle());
+            templateTO.setCode(template.getCode());
             result.add(templateTO);
         }
         return result;

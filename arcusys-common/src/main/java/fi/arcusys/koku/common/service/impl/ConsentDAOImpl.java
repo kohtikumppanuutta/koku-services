@@ -128,7 +128,7 @@ public class ConsentDAOImpl extends AbstractEntityDAOImpl<Consent> implements Co
         // criteria applied
         final String templatePrefix = criteria.getTemplateNamePrefix();
         if (templatePrefix != null && !"".equals(templatePrefix.trim())) {
-            query.append(" AND cn.template.title LIKE :templateNamePrefix " );
+            query.append(" AND (cn.template.code IS NULL AND cn.template.title LIKE :templateNamePrefix OR cn.template.code LIKE :templateNamePrefix ) " );
             params.put("templateNamePrefix", getPrefixLike(templatePrefix));
         }
         final String targetPersonUid = criteria.getTargetPerson();

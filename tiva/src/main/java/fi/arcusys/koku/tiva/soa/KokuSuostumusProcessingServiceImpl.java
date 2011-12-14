@@ -49,34 +49,6 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
     @Override
     public List<ConsentTemplateTO> getConsentTemplates(String searchString, int limit) {
         return serviceFacade.getConsentTemplates(searchString, limit);
-//        return getConsentTemplates_stubVersion(searchString, limit);
-    }
-
-    private List<ConsentTemplateTO> getConsentTemplates_stubVersion(
-            String searchString, int limit) {
-        logger.info("getConsentTemplates: " + searchString + ", limit = " + limit);
-        final List<ConsentTemplateTO> result = new ArrayList<ConsentTemplateTO>();
-        final ConsentTemplateTO template = createTestTemplate();
-        result.add(template);
-        return result;
-    }
-
-    private ConsentTemplateTO createTestTemplate() {
-        final ConsentTemplateTO template = new ConsentTemplateTO();
-        template.setConsentTemplateId(1L);
-        template.setCreatorUid("Ville Virkamies");
-        template.setDescription("Testing suostumus from service stub.");
-        template.setTitle("Testing suostumus");
-        final List<ActionRequestTO> actions = new ArrayList<ActionRequestTO>();
-        for (int number = 1; number <= 2; number++ ) {
-            final ActionRequestTO actionRequest = new ActionRequestTO();
-            actionRequest.setNumber(number);
-            actionRequest.setName("toimenpidepyyntö " + number);
-            actionRequest.setDescription("descripton of toimenpidepyyntö " + number);
-            actions.add(actionRequest);
-        } 
-        template.setActions(actions);
-        return template;
     }
 
     /**
@@ -102,7 +74,6 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
             final List<ActionPermittedTO> actions,
             XMLGregorianCalendar endDate,
             String comment) {        
-//        logger.info("giveConsent: " + consentId + ", replierUid = " + replierUid + ", endDate = " + endDate + ", comment = " + comment);
         serviceFacade.giveConsent(consentId, replierUid, actions, endDate, comment);
     }
 
@@ -113,7 +84,6 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public void declineConsent(long consentId, String replierUid, String comment) {
-//        logger.info("declineConsent: " + consentId + ", replierUid = " + replierUid + ", comment = " + comment);
         serviceFacade.declineConsent(consentId, replierUid, comment);
     }
 
@@ -147,22 +117,6 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
     @Override
     public ConsentForReplyTO getConsentForReply(long consentId, String userUid) {
         return serviceFacade.getConsentForReply(consentId, userUid);
-//        return getConsentForReply_stubVersion(consentId);
-    }
-
-    private ConsentForReplyTO getConsentForReply_stubVersion(long consentId) {
-        if (consentId != 123) {
-            throw new IllegalArgumentException("Consent with ID " + consentId + " is not found.");
-        }
-        final ConsentForReplyTO consent = new ConsentForReplyTO();
-        consent.setConsentId(123L);
-        final XMLGregorianCalendar endDate = CalendarUtil.getXmlDate(new Date());
-        endDate.setDay(31);
-        consent.setEndDate(endDate);
-        consent.setReplierUid("Kalle Kuntalainen");
-        consent.setReplyComment("Hyväksynyt suostumus");
-        consent.setTemplate(createTestTemplate());
-        return consent;
     }
 
     /**

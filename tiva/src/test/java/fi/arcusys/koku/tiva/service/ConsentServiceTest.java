@@ -296,6 +296,7 @@ public class ConsentServiceTest {
     private ConsentTemplateTO createTestTemplate(final String title) {
         final ConsentTemplateTO template = new ConsentTemplateTO();
         template.setTitle(title);
+        template.setCode(title);
         template.setCreatorUid("Ville Virkamies");
         template.setDescription("test template description");
         final List<ActionRequestTO> actions = new ArrayList<ActionRequestTO>();
