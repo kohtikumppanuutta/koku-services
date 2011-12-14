@@ -14,8 +14,22 @@ public class InformationRequestSummary {
     private String targetPersonUid;
     private String senderUid;
     private String receiverUid;
+    private String receiverRoleUid;
     private XMLGregorianCalendar validTill;
     private InformationRequestStatus status;
+    
+    /**
+     * @return the receiverRoleUid
+     */
+    public String getReceiverRoleUid() {
+        return receiverRoleUid;
+    }
+    /**
+     * @param receiverRoleUid the receiverRoleUid to set
+     */
+    public void setReceiverRoleUid(String receiverRoleUid) {
+        this.receiverRoleUid = receiverRoleUid;
+    }
     /**
      * @return the requestId
      */

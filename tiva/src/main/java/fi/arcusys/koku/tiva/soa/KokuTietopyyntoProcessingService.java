@@ -24,6 +24,7 @@ public interface KokuTietopyyntoProcessingService {
     @WebMethod(operationName = "hylkaTietopyynto")
     void declineRequest(
             @WebParam(name = "tietopyyntoId") final Long requestId, 
+            @WebParam(name = "userUid") final String userUid,
             @WebParam(name = "explanation") final String explanation);
     
     @WebResult(name = "record")

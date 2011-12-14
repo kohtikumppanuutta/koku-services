@@ -388,10 +388,14 @@ public class LdapDAOImpl implements LdapDAO {
      */
     @Override
     public List<String> getGroupMembers(String groupUid) {
+        return doGetGroupMembers(groupUid, GroupType.CommunityGroup);
+    }
+
+    private List<String> doGetGroupMembers(String groupUid, final GroupType groupType) {
         final List<String> result = new ArrayList<String>();
         final Pattern pattern = Pattern.compile(usernameAttributeName + "=([^,]+)\\,");
         
-        for (final String member : getGroupMembers(groupUidAttribute, groupUid, GroupType.CommunityGroup)) {
+        for (final String member : getGroupMembers(groupUidAttribute, groupUid, groupType)) {
             final Matcher matcher = pattern.matcher(member);
             if (matcher.find()) {
                 result.add(matcher.group(1));
@@ -456,5 +460,14 @@ public class LdapDAOImpl implements LdapDAO {
     
     private enum GroupType {
         SystemGroup, CommunityGroup, Roles;
+    }
+
+    /**
+     * @param groupUid
+     * @return
+     */
+    @Override
+    public List<String> getRoleMembers(String groupUid) {
+        return doGetGroupMembers(groupUid, GroupType.Roles);
     }
 }

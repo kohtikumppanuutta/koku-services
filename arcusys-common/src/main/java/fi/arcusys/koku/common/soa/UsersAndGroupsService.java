@@ -87,4 +87,8 @@ public interface UsersAndGroupsService {
     List<Role> searchRoles(
             @WebParam(name = "searchString") final String searchString, 
             @WebParam(name = "limit") final int limit);
+    
+    @WebResult(name = "username")
+    List<String> getUsernamesInRole(
+            @WebParam(name = "roleUid") final String roleUid);
 }

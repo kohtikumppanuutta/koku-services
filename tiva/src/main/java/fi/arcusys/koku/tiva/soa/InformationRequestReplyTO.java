@@ -19,7 +19,20 @@ public class InformationRequestReplyTO {
     private String additionalInfo;
     private String attachmentURL;
     private InformationAccessType informationAccessType;
+    private String replierUid;
     
+    /**
+     * @return the replierUid
+     */
+    public String getReplierUid() {
+        return replierUid;
+    }
+    /**
+     * @param replierUid the replierUid to set
+     */
+    public void setReplierUid(String replierUid) {
+        this.replierUid = replierUid;
+    }
     /**
      * @return the infoAccessType
      */

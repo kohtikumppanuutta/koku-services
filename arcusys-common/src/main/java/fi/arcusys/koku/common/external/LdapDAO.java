@@ -72,4 +72,5 @@ public interface LdapDAO {
      */
     List<Role> searchRoles(String searchString);
 
+    List<String> getRoleMembers(String groupUid);
 }

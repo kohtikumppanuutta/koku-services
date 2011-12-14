@@ -72,7 +72,7 @@ public class MessageServiceTest {
 			assertNotNull("Find or create receiver: " + uid, testUtil.getUserByUid(uid));
 		}
 		
-		final long messageId = serviceFacade.sendNewMessage(fromUserUid, subject, receipients, messageContent);
+		final long messageId = serviceFacade.sendNewMessage(fromUserUid, subject, receipients, messageContent, false, false);
 		assertNotNull(messageId);
 
 		// check message in "Sent messages" folder
@@ -86,7 +86,7 @@ public class MessageServiceTest {
 		final String fromUserId = "testSender";
 		final String toUserId = "testReceiver";
 		
-		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content");
+		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content", false, false);
 		
 		assertEquals("Message is in sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageId).getMessageType());
 		
@@ -100,7 +100,7 @@ public class MessageServiceTest {
 		final String fromUserId = "testSenderForDelete";
 		final String toUserId = "testReceiverForDelete";
 		
-		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content");
+		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content", false, false);
 		
 		assertEquals("Message is in sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageId).getMessageType());
 		
@@ -113,8 +113,8 @@ public class MessageServiceTest {
 	public void testOpenJPAFailure() {
 		final String fromUserId = "testOpenJPA";
 		final String toUserId = "testOpenJPA2";
-		serviceFacade.sendNewMessage(fromUserId, "subject1", Collections.singletonList(toUserId), "content1");
-		serviceFacade.sendNewMessage(fromUserId, "subject2", Collections.singletonList(toUserId), "content2");
+		serviceFacade.sendNewMessage(fromUserId, "subject1", Collections.singletonList(toUserId), "content1", false, false);
+		serviceFacade.sendNewMessage(fromUserId, "subject2", Collections.singletonList(toUserId), "content2", false, false);
 	}
 	
 	@Test
@@ -122,7 +122,7 @@ public class MessageServiceTest {
 		final String fromUserId = "testSender2";
 		final String toUserId = "testReceiver2";
 		
-		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content");
+		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content", false, false);
 		final List<MessageSummary> testInboxMessages = serviceFacade.getMessages(toUserId, FolderType.Inbox);
 		serviceFacade.receiveMessage(toUserId, messageId);
 		
@@ -146,7 +146,7 @@ public class MessageServiceTest {
 		final String toUserId = "testReceiver3";
 		final String toUserId2 = "testReceiver3_2";
 		
-		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Arrays.asList(toUserId, toUserId2), "content");
+		final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Arrays.asList(toUserId, toUserId2), "content", false, false);
 		final long receivedMessageId = serviceFacade.receiveMessage(toUserId, messageId);
 		
 		assertEquals("New message in Inbox: ", 1, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox, null));
@@ -170,7 +170,7 @@ public class MessageServiceTest {
 		final String toUserId = "testReceiverPaging";
 
 		for (int i = 0; i < 1; i ++) {
-			serviceFacade.sendNewMessage(fromUserId, "subject_" + i, Collections.singletonList(toUserId), "content");
+			serviceFacade.sendNewMessage(fromUserId, "subject_" + i, Collections.singletonList(toUserId), "content", false, false);
 		}
 		assertEquals(1, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Outbox, null));
 		
@@ -360,7 +360,7 @@ public class MessageServiceTest {
 		final String toUserId = "testSearchReceiver";
 		final String subject = "subject for search test";
 		
-		final Long messageId = serviceFacade.sendNewMessage(fromUserId, subject, Collections.singletonList(toUserId), "content for search");
+		final Long messageId = serviceFacade.sendNewMessage(fromUserId, subject, Collections.singletonList(toUserId), "content for search", false, false);
 		serviceFacade.receiveMessage(toUserId, messageId);
 		
 		final MessageQuery query = new MessageQuery(1, 10);

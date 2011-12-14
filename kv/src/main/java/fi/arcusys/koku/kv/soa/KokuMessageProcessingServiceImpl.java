@@ -3,6 +3,7 @@ package fi.arcusys.koku.kv.soa;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
@@ -38,13 +39,8 @@ public class KokuMessageProcessingServiceImpl implements KokuMessageProcessingSe
 	 * @return
 	 */
 	@Override
-	public Long sendMessage(String fromUserUid, String subject, Receipients receipients, String content) {
-//		final List<String> userUids = new ArrayList<String>(receipients.size());
-//		for (final Receipients rec : receipients) {
-//			userUids.add(rec.getReceipient());
-//		}
-//		return kvFacade.sendNewMessage(fromUserUid, subject, userUids, content);
-		return kvFacade.sendNewMessage(fromUserUid, subject, receipients.getReceipients(), content);
+	public Long sendMessage(String fromUserUid, String subject, Receipients receipients, String content, final Boolean sendToFamilyMembers, final Boolean sendToGroupSite) {
+		return kvFacade.sendNewMessage(fromUserUid, subject, receipients.getReceipients(), content, Boolean.TRUE.equals(sendToFamilyMembers), Boolean.TRUE.equals(sendToGroupSite));
 	}
 
     /**

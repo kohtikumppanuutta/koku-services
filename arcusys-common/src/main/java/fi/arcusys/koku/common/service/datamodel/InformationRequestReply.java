@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -21,6 +22,23 @@ public class InformationRequestReply {
 
     @Enumerated(EnumType.STRING)
     private InformationReplyStatus replyStatus;
+    
+    @ManyToOne
+    private User replier;
+
+    /**
+     * @return the replier
+     */
+    public User getReplier() {
+        return replier;
+    }
+
+    /**
+     * @param replier the replier to set
+     */
+    public void setReplier(User replier) {
+        this.replier = replier;
+    }
 
     /**
      * @return the createdDate

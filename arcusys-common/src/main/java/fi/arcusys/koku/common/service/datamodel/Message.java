@@ -23,6 +23,8 @@ public class Message extends AbstractEntity {
 	private String text;
 
 	private String subject;
+	private Boolean sendToFamilyMembers;
+	private Boolean sendToGroupSite;
 	
 	@ManyToOne
 	private User fromUser;
@@ -30,7 +32,41 @@ public class Message extends AbstractEntity {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<User> receipients;
 	
-	public String getText() {
+	/**
+     * @return the sendToFamilyMembers
+     */
+    public Boolean getSendToFamilyMembers() {
+        if (sendToFamilyMembers == null) {
+            sendToFamilyMembers = Boolean.FALSE;
+        }
+        return sendToFamilyMembers;
+    }
+
+    /**
+     * @param sendToFamilyMembers the sendToFamilyMembers to set
+     */
+    public void setSendToFamilyMembers(Boolean sendToFamilyMembers) {
+        this.sendToFamilyMembers = sendToFamilyMembers;
+    }
+
+    /**
+     * @return the sendToGroupSite
+     */
+    public Boolean getSendToGroupSite() {
+        if (sendToGroupSite == null) {
+            sendToGroupSite = Boolean.FALSE;
+        } 
+        return sendToGroupSite;
+    }
+
+    /**
+     * @param sendToGroupSite the sendToGroupSite to set
+     */
+    public void setSendToGroupSite(Boolean sendToGroupSite) {
+        this.sendToGroupSite = sendToGroupSite;
+    }
+
+    public String getText() {
 		return text;
 	}
 	

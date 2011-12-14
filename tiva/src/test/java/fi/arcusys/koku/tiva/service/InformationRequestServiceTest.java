@@ -106,7 +106,7 @@ public class InformationRequestServiceTest {
         final String targetPersonUid = "tpTargetPerson";
         final Long requestId = createInformationRequest(senderUid, receiverUid, targetPersonUid);
         
-        service.declineRequest(requestId, "rejected");
+        service.declineRequest(requestId, receiverUid, "rejected");
         
         final InformationRequestSummary rejectedRequest = getById(service.getSentRequests(senderUid, new InformationRequestQuery(1, 10)), requestId);
         assertEquals(InformationRequestStatus.Declined, rejectedRequest.getStatus());
@@ -127,7 +127,7 @@ public class InformationRequestServiceTest {
         assertEquals(oldSentTotal + 1, service.getTotalSentRequests(senderUid, criteria));
         assertEquals(oldRepliedTotal, service.getTotalRepliedRequests(receiverUid, criteria));
         
-        service.declineRequest(requestId, "rejected");
+        service.declineRequest(requestId, receiverUid, "rejected");
 
         assertEquals(oldSentTotal + 1, service.getTotalSentRequests(senderUid, criteria));
         assertEquals(oldRepliedTotal + 1, service.getTotalRepliedRequests(receiverUid, criteria));
@@ -152,7 +152,7 @@ public class InformationRequestServiceTest {
         assertEquals(oldTotal, service.getTotalRequests(criteria));
         assertNull(getById(service.getRequests(query), requestId));
         
-        service.declineRequest(requestId, "rejected");
+        service.declineRequest(requestId, receiverUid, "rejected");
 
         assertEquals(oldTotal + 1, service.getTotalRequests(criteria));
         assertNotNull(getById(service.getRequests(query), requestId));

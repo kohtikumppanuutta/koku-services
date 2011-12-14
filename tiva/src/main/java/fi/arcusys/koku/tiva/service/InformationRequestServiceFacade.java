@@ -19,7 +19,7 @@ public interface InformationRequestServiceFacade {
     
     void approveRequest(final InformationRequestReplyTO reply);
     
-    void declineRequest(final Long requestId, final String explanation);
+    void declineRequest(final Long requestId, final String employeeUid, String explanation);
     
     InformationCategoryTO getCategories(final String employeeUid);
 

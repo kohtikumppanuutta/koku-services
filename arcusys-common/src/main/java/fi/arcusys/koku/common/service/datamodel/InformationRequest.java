@@ -31,12 +31,27 @@ public class InformationRequest extends AbstractEntity {
 
     @ManyToOne
     private User receiver;
+    private String receiverRoleUid;
 
     @ManyToOne
     private User targetPerson;
 
     @OneToMany(mappedBy = "request", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<InformationRequestCategory> categories;
+
+    /**
+     * @return the receiverRoleUid
+     */
+    public String getReceiverRoleUid() {
+        return receiverRoleUid;
+    }
+
+    /**
+     * @param receiverRoleUid the receiverRoleUid to set
+     */
+    public void setReceiverRoleUid(String receiverRoleUid) {
+        this.receiverRoleUid = receiverRoleUid;
+    }
 
     /**
      * @return the reply

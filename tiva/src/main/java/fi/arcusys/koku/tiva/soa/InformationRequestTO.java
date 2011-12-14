@@ -16,12 +16,25 @@ public class InformationRequestTO {
     private List<String> categories;
     private String senderUid;
     private String receiverUid;
+    private String receiverRoleUid;
     private String description;
     private String requestPurpose;
     private String legislationInfo;
     private String additionalInfo;
     private XMLGregorianCalendar validTill;
     
+    /**
+     * @return the receiverRoleUid
+     */
+    public String getReceiverRoleUid() {
+        return receiverRoleUid;
+    }
+    /**
+     * @param receiverRoleUid the receiverRoleUid to set
+     */
+    public void setReceiverRoleUid(String receiverRoleUid) {
+        this.receiverRoleUid = receiverRoleUid;
+    }
     /**
      * @return the senderUid
      */

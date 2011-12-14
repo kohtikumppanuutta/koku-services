@@ -151,4 +151,24 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
                 choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>(),
                 visibility);
     }
+
+    /**
+     * @param template
+     * @param request
+     * @return
+     */
+    @Override
+    public Long sendRequestNew(RequestTemplateTO template, RequestProcessingTO request) {
+        return kvFacade.sendRequest(template, request);
+    }
+
+    /**
+     * @param requestTemplateId
+     * @param request
+     * @return
+     */
+    @Override
+    public Long sendRequestWithTemplateNew(long requestTemplateId, RequestProcessingTO request) {
+        return kvFacade.sendRequestWithTemplate(requestTemplateId, request);
+    }
 }

@@ -6,6 +6,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.soa.Role;
+import fi.arcusys.koku.common.soa.User;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -34,6 +35,15 @@ public class RolesDAOImpl implements RolesDAO {
     @Override
     public List<Role> searchRoles(String searchString, int limit) {
         return ldapDao.searchRoles(searchString);
+    }
+
+    /**
+     * @param roleUid
+     * @return
+     */
+    @Override
+    public List<String> getUsernamesInRole(String roleUid) {
+        return ldapDao.getRoleMembers(roleUid);
     }
 
 }

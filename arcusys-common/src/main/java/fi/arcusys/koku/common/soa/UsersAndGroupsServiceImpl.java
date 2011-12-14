@@ -283,4 +283,13 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
     public List<Role> searchRoles(String searchString, int limit) {
         return rolesDao.searchRoles(searchString, limit);
     }
+
+    /**
+     * @param roleUid
+     * @return
+     */
+    @Override
+    public List<String> getUsernamesInRole(String roleUid) {
+        return rolesDao.getUsernamesInRole(roleUid);
+    }
 }

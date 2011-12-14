@@ -112,7 +112,10 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         request.setCategories(categories);
         request.setDescription(requestTO.getDescription());
         request.setLegislationInfo(requestTO.getLegislationInfo());
-        request.setReceiver(userDao.getOrCreateUser(requestTO.getReceiverUid()));
+        if (requestTO.getReceiverUid() != null) {
+            request.setReceiver(userDao.getOrCreateUser(requestTO.getReceiverUid()));
+        }
+        request.setReceiverRoleUid(requestTO.getReceiverRoleUid());
         request.setRequestPurpose(requestTO.getRequestPurpose());
         request.setSender(userDao.getOrCreateUser(requestTO.getSenderUid()));
         request.setTargetPerson(userDao.getOrCreateUser(requestTO.getTargetPersonUid()));
@@ -120,10 +123,12 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         request.setValidTill(getSafeDate(requestTO.getValidTill()));
         final InformationRequest result = informationRequestDao.create(request);
         
-        notificationService.sendNotification(getValueFromBundle(INFORMATION_REQUEST_CREATED_SUBJECT), 
-                Collections.singletonList(request.getReceiver().getUid()), 
-                MessageFormat.format(getValueFromBundle(INFORMATION_REQUEST_CREATED_BODY), 
-                        new Object[] {request.getDescription()}));
+        if (request.getReceiver().getUid() != null) {
+            notificationService.sendNotification(getValueFromBundle(INFORMATION_REQUEST_CREATED_SUBJECT), 
+                    Collections.singletonList(request.getReceiver().getUid()), 
+                    MessageFormat.format(getValueFromBundle(INFORMATION_REQUEST_CREATED_BODY), 
+                            new Object[] {request.getDescription()}));
+        }
 
         return result.getId();
     }
@@ -194,11 +199,14 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
      * @param explanation
      */
     @Override
-    public void declineRequest(Long requestId, String explanation) {
+    public void declineRequest(Long requestId, final String employeeUid, String explanation) {
         final InformationRequest request = loadRequestForReply(requestId);
         final InformationRequestReply reply = new InformationRequestReply();
         reply.setReplyStatus(InformationReplyStatus.Declined);
         reply.setReplyDescription(explanation);
+        if (employeeUid != null && !employeeUid.isEmpty()) {
+            reply.setReplier(userDao.getOrCreateUser(employeeUid));
+        }
         request.setReply(reply);
         informationRequestDao.update(request);
 
@@ -258,7 +266,10 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
     }
 
     private InformationRequestSummary fillRequestSummaryByDO(InformationRequest request, final InformationRequestSummary requestTO) {
-        requestTO.setReceiverUid(request.getReceiver().getUid());
+        if (request.getReceiver() != null) {
+            requestTO.setReceiverUid(request.getReceiver().getUid());
+        }
+        requestTO.setReceiverRoleUid(request.getReceiverRoleUid());
         requestTO.setRequestId(request.getId());
         requestTO.setSenderUid(request.getSender().getUid());
         requestTO.setTargetPersonUid(request.getTargetPerson().getUid());

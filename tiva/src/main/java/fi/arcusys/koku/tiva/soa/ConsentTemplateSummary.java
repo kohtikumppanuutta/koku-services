@@ -11,7 +11,21 @@ import javax.xml.bind.annotation.XmlType;
 propOrder={"consentTemplateId", "title"})
 public class ConsentTemplateSummary {
     private Long consentTemplateId;
+    private String code;
     private String title;
+    
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+    /**
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
     /**
      * @return the consentTemplateId
      */

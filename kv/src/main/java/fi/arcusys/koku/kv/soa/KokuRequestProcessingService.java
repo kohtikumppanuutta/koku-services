@@ -13,6 +13,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @WebService(targetNamespace = "http://soa.kv.koku.arcusys.fi/")
 public interface KokuRequestProcessingService {
+    /**
+     * @deprecated use sendRequest(RequestTemplateTO, RequestProcessingTO) instead - roles implementation added there
+     */
 	@WebResult(name = "requestId")
 	Long sendRequest(@WebParam(name = "fromUser") final String fromUserUid, 
 					 @WebParam(name = "subject") final String subject, 
@@ -23,6 +26,11 @@ public interface KokuRequestProcessingService {
 					 @WebParam(name = "requestContent") final String content,
 					 @WebParam(name = "replyTill") final XMLGregorianCalendar replyTill,
 					 @WebParam(name = "notifyBeforeDays") final Integer notifyBeforeDays);
+	
+    @WebResult(name = "requestId")
+    Long sendRequestNew(
+            @WebParam(name = "requestTemplate") final RequestTemplateTO template, 
+            @WebParam(name = "request") final RequestProcessingTO request);
 	
 	void receiveRequest(@WebParam(name = "toUser") final String toUserUid, 
 						@WebParam(name = "requestId") final Long requestId,
@@ -59,6 +67,9 @@ public interface KokuRequestProcessingService {
 	RequestTemplateTO getRequestTemplateById(
 	        @WebParam(name = "requestTemplateId") final long requestTemplateId);
 	
+    /**
+     * @deprecated - use sendRequestWithTemplate(long, RequestProcessingTO) instead, roles implementation added there
+     */
 	Long sendRequestWithTemplate(
 	        @WebParam(name = "fromUser") final String fromUserUid, 
             @WebParam(name = "requestTemplateId") final long requestTemplateId, 
@@ -67,4 +78,9 @@ public interface KokuRequestProcessingService {
             @WebParam(name = "requestContent") final String content,
             @WebParam(name = "replyTill") final XMLGregorianCalendar replyTill,
             @WebParam(name = "notifyBeforeDays") final Integer notifyBeforeDays);
+
+    @WebResult(name = "requestId")
+    Long sendRequestWithTemplateNew(
+            @WebParam(name = "requestTemplateId") final long requestTemplateId, 
+            @WebParam(name = "request") final RequestProcessingTO request);
 }

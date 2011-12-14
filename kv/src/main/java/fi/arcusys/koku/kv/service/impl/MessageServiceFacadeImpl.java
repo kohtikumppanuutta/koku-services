@@ -111,18 +111,26 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 
     private String notificationTemplate = "{2}";
 
-    public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content) {
+    @Override
+    public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content,
+            final boolean sendToFamilyMembers, final boolean sendToGroupSite) {
 		final User fromUser = getUserByUid(fromUserUid);
 		
-        final MessageRef storedMessage = createNewMessageInOutbox(subject, receipientUids, content, fromUser);
+        final MessageRef storedMessage = createNewMessageInOutbox(subject, receipientUids, content, fromUser, sendToFamilyMembers, sendToGroupSite);
 		return storedMessage.getId();
 	}
 
     protected MessageRef createNewMessageInOutbox(final String subject,
             final List<String> receipientUids, final String content,
             final User fromUser) {
+        return createNewMessageInOutbox(subject, receipientUids, content, fromUser, false, false);
+    }
+
+    protected MessageRef createNewMessageInOutbox(final String subject,
+            final List<String> receipientUids, final String content,
+            final User fromUser, boolean sendToFamilyMembers, boolean sendToGroupSite) {
         Message msg = new Message();
-		fillMessage(msg, fromUser, subject, receipientUids, content);
+		fillMessage(msg, fromUser, subject, receipientUids, content, sendToFamilyMembers, sendToGroupSite);
 		
 		msg = messageDao.create(msg);
 		
@@ -132,13 +140,21 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         return storedMessage;
     }
 
-	private void fillMessage(Message msg,
+    private void fillMessage(Message msg,
+            final User fromUser, final String subject,
+            final List<String> receipientUids, final String content) {
+        fillMessage(msg, fromUser, subject, receipientUids, content, false, false);
+    }
+
+    private void fillMessage(Message msg,
 			final User fromUser, final String subject,
-			final List<String> receipientUids, final String content) {
+			final List<String> receipientUids, final String content, boolean sendToFamilyMembers, boolean sendToGroupSite) {
 		msg.setFrom(fromUser);
 		msg.setSubject(subject);
 		msg.setReceipients(getUsersByUids(receipientUids));
 		msg.setText(content);
+		msg.setSendToFamilyMembers(sendToFamilyMembers);
+		msg.setSendToGroupSite(sendToGroupSite);
 	}
 
     protected Set<User> getUsersByUids(final List<String> receipientUids) {
@@ -705,7 +721,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     private void doDeliverMessage(final String fromUser,
             List<String> receipients, String subject, String content) {
         final String contentByTemplate = MessageFormat.format(notificationTemplate, new Object[] {getReceipientNames(receipients), subject, content});
-        final Long messageId = sendNewMessage(fromUser, subject, receipients, contentByTemplate);
+        final Long messageId = sendNewMessage(fromUser, subject, receipients, contentByTemplate, false, false);
         for (final String receipient : receipients) {
             receiveMessage(receipient, messageId);
         }
@@ -1031,7 +1047,8 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      */
     @Override
     public Long sendRequestWithTemplate(long requestTemplateId, RequestProcessingTO request) {
-        // TODO Auto-generated method stub
-        return null;
+        final RequestTemplate template = loadRequestTemplate(requestTemplateId);
+        
+        return doCreateRequest(template, request).getId();
     }
 }

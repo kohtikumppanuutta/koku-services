@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import fi.arcusys.koku.tiva.service.InformationRequestServiceFacade;
 @WebService(serviceName = "KokuTietopyyntoProcessingService", portName = "KokuTietopyyntoProcessingServicePort", 
         endpointInterface = "fi.arcusys.koku.tiva.soa.KokuTietopyyntoProcessingService",
         targetNamespace = "http://soa.tiva.koku.arcusys.fi/")
+@Interceptors(KokuTietopyyntoInterceptor.class)
 public class KokuTietopyyntoProcessingServiceImpl implements KokuTietopyyntoProcessingService {
 
     private final static Logger logger = LoggerFactory.getLogger(KokuTietopyyntoProcessingServiceImpl.class);
@@ -50,8 +52,8 @@ public class KokuTietopyyntoProcessingServiceImpl implements KokuTietopyyntoProc
      * @param requestId
      */
     @Override
-    public void declineRequest(Long requestId, final String explanation) {
-        serviceFacade.declineRequest(requestId, explanation);
+    public void declineRequest(Long requestId, final String userUid, final String explanation) {
+        serviceFacade.declineRequest(requestId, userUid, explanation);
     }
 
     /**
