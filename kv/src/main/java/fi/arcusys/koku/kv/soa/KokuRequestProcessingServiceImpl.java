@@ -1,6 +1,8 @@
 package fi.arcusys.koku.kv.soa;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -12,6 +14,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.arcusys.koku.common.external.RolesDAO;
+import fi.arcusys.koku.common.service.UserDAO;
+import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.soa.Role;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 
 /**
@@ -28,6 +34,12 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 
 	@EJB
 	private MessageServiceFacade kvFacade;
+	
+	@EJB
+	private UserDAO userDao;
+	
+	@EJB
+	private RolesDAO roleDao;
 	
 	/**
 	 * @param toUserUid
@@ -68,20 +80,55 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 	public Long sendRequest(final String fromUserUid, final String subject, final Receipients receipients, 
 	        final Questions questions, final MultipleChoices choices, final RequestTemplateVisibility visibility, final String content, 
 	        final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
-		logger.debug("sendRequest: [fromUserUid, subject, receipients, questions, content] = " +
-				"[" + fromUserUid
-				+ "," + subject 
-				+ "," + receipients.getReceipients() 
-				+ "," + questions.getQuestions()
-				+ ", contentLength=" + content.length()
-				+ "]");
-		final Long requestId = kvFacade.sendRequest(fromUserUid, subject, receipients.getReceipients(), content, 
-		        questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>(), 
-		        choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>(),
-		        visibility, replyTill, notifyBeforeDays);
-		logger.debug("Request sent: " + requestId);
+        final RequestTemplateTO templateTO = new RequestTemplateTO();
+        templateTO.setChoices(choices != null ? choices.getChoices() : new ArrayList<MultipleChoiceTO>());
+        templateTO.setCreatorUid(fromUserUid);
+        templateTO.setQuestions(questions != null ? questions.getQuestions() : new ArrayList<QuestionTO>());
+        templateTO.setSubject(subject);
+        templateTO.setVisibility(visibility);
+
+        final RequestProcessingTO requestTO = createRequestProcessingTO(
+                fromUserUid, subject, receipients, content, replyTill,
+                notifyBeforeDays);
+
+        final Long requestId = kvFacade.sendRequest(templateTO, requestTO);
 		return requestId;
 	}
+
+    private RequestProcessingTO createRequestProcessingTO(
+            final String fromUserUid, final String subject,
+            final Receipients receipients, final String content,
+            final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
+        final RequestProcessingTO requestTO = new RequestProcessingTO();
+        requestTO.setContent(content);
+        // check if "default" role should be used
+        requestTO.setFromRole(getDefaultUserRole(fromUserUid));
+        requestTO.setFromUserUid(fromUserUid);
+        requestTO.setNotifyBeforeDays(notifyBeforeDays);
+        requestTO.setReceipients(receipients.getReceipients());
+        requestTO.setReplyTill(replyTill);
+        requestTO.setSubject(subject);
+        return requestTO;
+    }
+
+    /**
+     * @param fromUserUid
+     * @return
+     */
+    private String getDefaultUserRole(String fromUserUid) {
+        final User user = userDao.getOrCreateUser(fromUserUid);
+        final List<Role> employeeRoles = roleDao.getEmployeeRoles(user.getEmployeePortalName());
+        if (employeeRoles != null && !employeeRoles.isEmpty()) {
+            Collections.sort(employeeRoles, new Comparator<Role>() {
+                @Override
+                public int compare(Role o1, Role o2) {
+                    return o1.getRoleUid().compareTo(o2.getRoleUid());
+                }
+            });
+            return employeeRoles.get(0).getRoleUid();
+        }
+        return null;
+    }
 
     /**
      * @param userUid
@@ -125,7 +172,10 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
     @Override
     public Long sendRequestWithTemplate(String fromUserUid, long requestTemplateId, String subject, Receipients receipients, String content, 
             final XMLGregorianCalendar replyTill, final Integer notifyBeforeDays) {
-        return kvFacade.sendRequestWithTemplate(fromUserUid, requestTemplateId, subject, receipients.getReceipients(), content, replyTill, notifyBeforeDays);
+        final RequestProcessingTO requestTO = createRequestProcessingTO(
+                fromUserUid, subject, receipients, content, replyTill,
+                notifyBeforeDays);
+        return kvFacade.sendRequestWithTemplate(requestTemplateId, requestTO);
     }
 
     /**
