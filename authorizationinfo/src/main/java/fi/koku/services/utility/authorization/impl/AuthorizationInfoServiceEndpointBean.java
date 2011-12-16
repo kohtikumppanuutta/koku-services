@@ -16,7 +16,6 @@ import javax.jws.WebService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import fi.koku.services.utility.authorization.v1.AuthorizationInfoServicePortType;
@@ -42,11 +41,16 @@ public class AuthorizationInfoServiceEndpointBean implements AuthorizationInfoSe
 
   private GroupService groupService;
 
+  @Autowired
+  private GroupServiceHolder groupServiceHolder;
+
   public AuthorizationInfoServiceEndpointBean() {
   }
   
   @PostConstruct
   public void init() {
+    logger.debug("init(): "+groupServiceHolder);
+    groupService = groupServiceHolder.getGroupService();
   }
   
   @Override
@@ -55,10 +59,4 @@ public class AuthorizationInfoServiceEndpointBean implements AuthorizationInfoSe
     return groupService.getGroups(groupQueryCriteria);
   }
 
-  @Autowired
-  @Qualifier("groupServiceHolder")
-  public void setGroupServiceHolder(GroupServiceHolder groupServiceHolder) {
-    this.groupService = groupServiceHolder.getGroupService();
-  }
-  
 }
