@@ -1,6 +1,7 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -10,6 +11,8 @@ import javax.persistence.Entity;
 public class ConsentActionRequest extends AbstractEntity {
     private int number;
     private String name;
+    
+    @Lob
     private String description;
     /**
      * @return the number
