@@ -1,5 +1,7 @@
 package fi.arcusys.koku.kv.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,9 +10,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
@@ -110,6 +115,30 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     private UsersAndGroupsService usersService;
 
     private String notificationTemplate = "{2}";
+
+    private static final String REQUEST_REPLIED_BODY = "request.replied.body";
+    private static final String REQUEST_REPLIED_SUBJECT = "request.replied.subject";
+    private String notificationsBundleName = "kv_messages.msg";
+    private Properties messageTemplates;
+    
+    @PostConstruct
+    public void init() {
+        messageTemplates = new Properties();
+        try {
+            final InputStream in = getClass().getClassLoader().getResourceAsStream(notificationsBundleName + ".properties");
+            try {
+                messageTemplates.load(in);
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            throw new EJBException("Incorrect configuration, failed to load message templates:", e);
+        }
+    } 
+
+    protected String getValueFromBundle(final String bundleKey) {
+        return messageTemplates.getProperty(bundleKey);
+    }
 
     @Override
     public Long sendNewMessage(final String fromUserUid, final String subject, final List<String> receipientUids, final String content,
@@ -659,7 +688,13 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		}
 		response.setAnswers(answersList);
 		
-		return responseDAO.create(response).getId();
+		final Response newResponse = responseDAO.create(response);
+        doDeliverMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, Collections.singletonList(sentRequest.getFromUser().getUid()),
+                getValueFromBundle(REQUEST_REPLIED_SUBJECT), 
+                MessageFormat.format(getValueFromBundle(REQUEST_REPLIED_BODY), 
+                        new Object[] {sentRequest.getSubject(), replier.getCitizenPortalName()}));
+        
+        return newResponse.getId();
 	}
 
 	/**
