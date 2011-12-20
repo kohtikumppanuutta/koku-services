@@ -32,7 +32,7 @@ import fi.koku.services.utility.authorizationinfo.v1.model.OrgUnit;
 import fi.koku.services.utility.authorizationinfo.v1.model.Registry;
 
 /**
- * Authorization services for KKS
+ * Implements authorization services for KKS
  * 
  * @author Ixonos / tuomape
  */

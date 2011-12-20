@@ -17,7 +17,7 @@ import fi.koku.services.utility.log.v1.LogServicePortType;
 import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
- * Container for outside services used in KKS
+ * Container for outside services used in the KKS
  * 
  * @author Ixonos / tuomape
  * 

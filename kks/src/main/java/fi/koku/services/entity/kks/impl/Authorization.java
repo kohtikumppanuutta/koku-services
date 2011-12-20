@@ -16,7 +16,7 @@ import fi.koku.services.entity.tiva.v1.Consent;
 import fi.koku.services.utility.authorizationinfo.v1.model.Registry;
 
 /**
- * Authorization services for KKS
+ * Authorization interface provides authorisation related services for other KKS classes. 
  * 
  * @author Ixonos / tuomape
  */

@@ -31,7 +31,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 /**
- * Entity for kks collection
+ * Entity for single kks collection
  * 
  * @author Ixonos / tuomape
  * 

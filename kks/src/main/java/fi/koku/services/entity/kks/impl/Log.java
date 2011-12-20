@@ -39,27 +39,79 @@ public final class Log {
   public static final String QUERY = "query";
   public static final String KKS = "KKS";
 
+  /**
+   * Logs read operation
+   * 
+   * @param customer
+   * @param dataType
+   * @param userId
+   * @param message
+   */
   public void logRead(String customer, String dataType, String userId, String message) {
     log(Log.READ, dataType, customer, userId, message);
   }
 
+  /**
+   * Logs create operation
+   * 
+   * @param customer
+   * @param dataType
+   * @param userId
+   * @param message
+   */
   public void logCreate(String customer, String dataType, String userId, String message) {
     log(Log.CREATE, dataType, customer, userId, message);
   }
 
+  /**
+   * Logs update operation
+   * 
+   * @param customer
+   * @param dataType
+   * @param userId
+   * @param message
+   */
   public void logUpdate(String customer, String dataType, String userId, String message) {
     log(Log.UPDATE, dataType, customer, userId, message);
 
   }
 
+  /**
+   * Logs delete operation
+   * 
+   * @param customer
+   * @param dataType
+   * @param userId
+   * @param message
+   */
   public void logDelete(String customer, String dataType, String userId, String message) {
     log(Log.DELETE, dataType, customer, userId, message);
   }
 
+  /**
+   * Logs query operation
+   * 
+   * @param customer
+   * @param dataType
+   * @param userId
+   * @param message
+   */
   public void logQuery(String customer, String dataType, String userId, String message) {
     log(Log.QUERY, dataType, customer, userId, message);
   }
 
+  /**
+   * Logs value update in given log entry container
+   * 
+   * @param collection
+   * @param collectionType
+   * @param customer
+   * @param user
+   * @param entry
+   * @param oldVal
+   * @param newVal
+   * @param logEntries
+   */
   public void logValueUpdate(String collection, String collectionType, String customer, String user, KksEntry entry,
       KksValue oldVal, KksValue newVal, LogEntriesType logEntries) {
     if (oldVal == null || !oldVal.getValue().equals(newVal.getValue())) {
@@ -72,7 +124,17 @@ public final class Log {
       addLogEntry(UPDATE, collectionType, customer, user, sb.toString(), logEntries);
     }
   }
-
+  
+  /**Logs value update 
+   * 
+   * @param collection
+   * @param collectionType
+   * @param customer
+   * @param user
+   * @param entry
+   * @param oldVal
+   * @param newVal
+   */
   public void logValueUpdate(String collection, String collectionType, String customer, String user, KksEntry entry,
       KksValue oldVal, KksValue newVal) {
     if (oldVal == null || !oldVal.getValue().equals(newVal.getValue())) {
@@ -86,20 +148,30 @@ public final class Log {
     }
   }
 
+  /**
+   * Logs given log entry collection
+   * 
+   * @param entries
+   * @param userId
+   */
   public void logEntries(LogEntriesType entries, String userId) {
     try {
-
-      for (LogEntryType lt : entries.getLogEntry()) {
-        System.out.println("LOG " + lt.getCustomerPic() + " MESSAGE " + lt.getMessage());
-      }
-
       KksServiceContainer.getService().log().opLog(entries, getLogAuditInfo(userId));
     } catch (ServiceFault e) {
-
       LOG.error("Failed to log entries set", e);
     }
   }
 
+  /**
+   * Logs value addition
+   * 
+   * @param collection
+   * @param collectionType
+   * @param customer
+   * @param user
+   * @param entry
+   * @param newVal
+   */
   public void logValueAddition(String collection, String collectionType, String customer, String user, KksEntry entry,
       KksValue newVal) {
 
@@ -110,6 +182,16 @@ public final class Log {
     logCreate(customer, collectionType, user, sb.toString());
   }
 
+  /**
+   * Logs value deletion
+   * 
+   * @param collection
+   * @param collectionType
+   * @param customer
+   * @param user
+   * @param entry
+   * @param remVal
+   */
   public void logValueDeletion(String collection, String collectionType, String customer, String user, KksEntry entry,
       KksValue remVal) {
     StringBuilder sb = new StringBuilder();
@@ -119,6 +201,12 @@ public final class Log {
     logDelete(customer, collectionType, user, sb.toString());
   }
 
+  /**
+   * Gets audit info
+   * 
+   * @param user
+   * @return  audit info
+   */
   private AuditInfoType getLogAuditInfo(String user) {
     AuditInfoType a = new AuditInfoType();
     a.setComponent(Log.KKS);
@@ -126,6 +214,15 @@ public final class Log {
     return a;
   }
 
+  /**
+   * Does the actual logging
+   * 
+   * @param operation
+   * @param dataType
+   * @param customer
+   * @param userId
+   * @param message
+   */
   private void log(String operation, String dataType, String customer, String userId, String message) {
     try {
 
@@ -148,6 +245,16 @@ public final class Log {
     }
   }
 
+  /**
+   * Adds log entry into entries container
+   * 
+   * @param operation
+   * @param dataType
+   * @param customer
+   * @param userId
+   * @param message
+   * @param entries
+   */
   private void addLogEntry(String operation, String dataType, String customer, String userId, String message,
       LogEntriesType entries) {
 

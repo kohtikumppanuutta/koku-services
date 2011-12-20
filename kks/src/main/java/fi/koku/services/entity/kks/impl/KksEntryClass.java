@@ -24,7 +24,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
- * Entity for entry class (entry metadata)
+ * Entity for entry class (single entry metadata)
  * 
  * @author Ixonos / tuomape
  * 

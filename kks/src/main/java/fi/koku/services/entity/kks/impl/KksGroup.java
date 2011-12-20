@@ -21,7 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
- * Entity for group
+ * Entity for entry group
  * 
  * @author Ixonos / tuomape
  * 

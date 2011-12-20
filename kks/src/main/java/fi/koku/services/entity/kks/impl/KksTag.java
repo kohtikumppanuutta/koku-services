@@ -18,7 +18,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
- * Entity for kks tag
+ * Entity for single kks tag
  * 
  * @author Ixonos / tuomape
  * 

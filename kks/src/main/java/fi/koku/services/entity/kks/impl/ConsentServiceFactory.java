@@ -17,7 +17,7 @@ import fi.koku.services.entity.tiva.v1.KokuTivaToKksService_Service;
 import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
- * Factory class for consents
+ * Factory class for consent service usage
  * 
  * @author Ixonos / tuomape
  * 

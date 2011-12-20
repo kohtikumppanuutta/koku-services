@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Query criteria
+ * Criteria for KKS queries
  * 
  * @author Ixonos / tuomape
  * 

@@ -8,7 +8,12 @@
 package fi.koku.services.entity.kks.impl;
 
 
-
+/**
+ * KKS related error codes
+ * 
+ * @author Ixonos / tuomape
+ *
+ */
 public enum KksServiceErrorCode {
 
   COLLECTION_CLASS_NOT_FOUND(1001, "Collection class not found");

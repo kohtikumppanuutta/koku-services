@@ -16,7 +16,7 @@ import fi.koku.services.utility.authorizationinfo.v1.model.Registry;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 
 /**
- * Helper class for collection updating
+ * Helper class for kks collection updating
  * 
  * @author Ixonos / tuomape
  * 

@@ -27,6 +27,12 @@ import javax.persistence.Query;
 import fi.koku.services.utility.authorizationinfo.v1.model.Registry;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 
+/**
+ * KKS data access implementation
+ * 
+ * @author Ixonos / tuomape
+ *
+ */
 @Stateless
 public class KksServiceDAOBean implements KksServiceDAO {
 

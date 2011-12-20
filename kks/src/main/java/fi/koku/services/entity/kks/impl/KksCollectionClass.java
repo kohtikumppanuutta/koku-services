@@ -19,7 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
- * Entity for collection class (collection metadata)
+ * Entity for single kks collection class (collection metadata)
  * 
  * @author Ixonos / tuomape
  * 
