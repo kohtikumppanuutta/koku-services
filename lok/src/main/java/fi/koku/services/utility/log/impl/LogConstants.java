@@ -8,10 +8,9 @@
 package fi.koku.services.utility.log.impl;
 
 /**
- * Log related constans.
+ * Log related constans. Used troughout logService.
  * 
  * @author makinsu
- *
  */
 public class LogConstants {
   
@@ -28,5 +27,4 @@ public class LogConstants {
   
   private LogConstants(){
   }
-  
 }

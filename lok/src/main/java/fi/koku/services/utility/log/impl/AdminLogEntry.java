@@ -17,11 +17,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * 
- * AdminLogEntry entity, used for admin log (LOK-4).
+ * AdminLogEntry entity, used for admin log (LOK-4). Stores the information
+ * needed for one admin log entry.
  * 
  * @author makinsu
- *
  */
 @Entity
 @Table(name = "log_admin")
@@ -93,5 +92,4 @@ public class AdminLogEntry {
   public void setMessage(String message) {
     this.message = message;
   }
-  
 }

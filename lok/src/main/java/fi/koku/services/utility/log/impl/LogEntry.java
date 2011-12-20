@@ -23,7 +23,6 @@ import javax.persistence.TemporalType;
  * @author aspluma
  * @author makinsu
  */
-
 @Entity
 @Table(name = "log")
 public class LogEntry {
@@ -135,5 +134,4 @@ public class LogEntry {
   public String getMessage() {
     return message;
   }
- 
 }

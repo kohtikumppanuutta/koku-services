@@ -23,10 +23,9 @@ import org.slf4j.LoggerFactory;
 import fi.koku.KoKuFaultException;
 
 /**
- * Log related data access facilities.
+ * Log related data access facilities implementation. Implements LogDAO interface.
  * 
  * @author makinsu
- * 
  */
 @Stateless
 public class LogDAOBean implements LogDAO {

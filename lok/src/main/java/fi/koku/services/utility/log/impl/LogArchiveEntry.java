@@ -24,7 +24,6 @@ import javax.persistence.TemporalType;
  * @author aspluma
  * @author makinsu
  */
-
 @Entity
 @Table(name = "log_archive")
 public class LogArchiveEntry {
@@ -137,5 +136,4 @@ public class LogArchiveEntry {
   
     return message;
   }
- 
 }

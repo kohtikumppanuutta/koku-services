@@ -28,10 +28,9 @@ import fi.koku.services.utility.log.v1.LogArchivalParametersType;
 import fi.koku.services.utility.log.v1.LogQueryCriteriaType;
 
 /**
- * Log service implementation class.
+ * Log service implementation class. Will call LogDao to database access.
  * 
  * @author makinsu
- *
  */
 @Stateless
 public class LogServiceBean implements LogService {

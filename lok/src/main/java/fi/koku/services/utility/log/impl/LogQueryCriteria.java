@@ -10,10 +10,10 @@ package fi.koku.services.utility.log.impl;
 import java.util.Date;
 
 /**
- * LogQueryCriteria.
+ * LogQueryCriteria. Class used to describe log query criteria from UI to
+ * service.
  * 
  * @author makinsu
- * 
  */
 public class LogQueryCriteria {
 

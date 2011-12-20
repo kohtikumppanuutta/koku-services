@@ -21,11 +21,10 @@ import fi.koku.services.utility.log.v1.ServiceFaultDetailType;
 /**
  * LogServiceFaultInterceptor.
  * 
- * Used in endpoint bean.
- * Catches and logs all exceptions and converts them to ServiceFault (as defined in the contract/wsdl).
+ * Used in endpoint bean. Catches and logs all exceptions and converts them to
+ * ServiceFault (as defined in the contract/wsdl).
  * 
  * @author laukksa
- *
  */
 public class LogServiceFaultInterceptor {
 

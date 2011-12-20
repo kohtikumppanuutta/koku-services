@@ -17,7 +17,6 @@ import fi.koku.services.utility.log.v1.LogEntryType;
  * Log related utility class.
  * 
  * @author makinsu
- *
  */
 public class LogUtils {
   

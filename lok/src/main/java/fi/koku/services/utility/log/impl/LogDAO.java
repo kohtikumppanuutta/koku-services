@@ -16,7 +16,6 @@ import javax.ejb.Local;
  * Log related data access facilities.
  * 
  * @author makinsu
- *
  */
 @Local
 public interface LogDAO {
@@ -32,6 +31,4 @@ public interface LogDAO {
   void writeAdminLog(AdminLogEntry entry);
 
   Date getEarliest(Date date);
-  
 }
-

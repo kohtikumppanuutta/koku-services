@@ -38,7 +38,9 @@ import fi.koku.services.utility.log.v1.VoidType;
 import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
- * KoKu log service implementation class.
+ * KoKu log service implementation class. Actual point of entry to Log service.
+ * Will call LogService for database access. Uses AuthorizationInfoService for
+ * access validation.
  * 
  * @author aspluma
  * @author makinsu

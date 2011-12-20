@@ -8,10 +8,9 @@
 package fi.koku.services.utility.log.impl;
 
 /**
- * Error codes for Lok Service
+ * Error codes for Lok Service.
  * 
  * @author makinsu
- *
  */
 public enum LogServiceErrorCode {
 
@@ -42,4 +41,3 @@ public enum LogServiceErrorCode {
     return description;
   }
 }
-  
