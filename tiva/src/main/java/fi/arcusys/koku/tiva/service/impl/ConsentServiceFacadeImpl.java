@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -28,6 +29,7 @@ import fi.arcusys.koku.common.service.ConsentDAO;
 import fi.arcusys.koku.common.service.ConsentReplyDAO;
 import fi.arcusys.koku.common.service.ConsentTemplateDAO;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
+import fi.arcusys.koku.common.service.ScheduledTaskExecutor;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate;
 import fi.arcusys.koku.common.service.datamodel.Consent;
@@ -70,7 +72,8 @@ import fi.arcusys.koku.tiva.soa.ConsentTemplateTO;
  * Aug 23, 2011
  */
 @Stateless
-public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
+@Local({ConsentServiceFacade.class, ScheduledTaskExecutor.class})
+public class ConsentServiceFacadeImpl implements ConsentServiceFacade, ScheduledTaskExecutor {
     
     private static final String NEW_CONSENT_REQUEST_BODY = "new_consent.request.body";
     private static final String NEW_CONSENT_REQUEST_SUBJECT = "new_consent.request.subject";
@@ -919,5 +922,21 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade {
             }
         }
         return result;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public String getTaskDescription() {
+        return "Automatic cancellation of outdated ConsentRequests";
+    }
+
+    /**
+     * 
+     */
+    @Override
+    public void performTask() {
+        logger.info("Perform scheduled task.");
     }
 }

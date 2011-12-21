@@ -187,4 +187,9 @@ public interface MessageServiceFacade {
      * @return
      */
     ResponseDetail getResponseDetail(long responseId);
+
+    /**
+     * 
+     */
+    int deleteOldMessages();
 }

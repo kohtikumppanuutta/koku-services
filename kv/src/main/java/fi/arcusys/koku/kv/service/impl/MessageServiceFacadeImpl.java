@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import fi.arcusys.koku.common.service.MessageRefDAO;
 import fi.arcusys.koku.common.service.RequestDAO;
 import fi.arcusys.koku.common.service.RequestTemplateDAO;
 import fi.arcusys.koku.common.service.ResponseDAO;
+import fi.arcusys.koku.common.service.ScheduledTaskExecutor;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.Folder;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
@@ -84,8 +86,8 @@ import static fi.arcusys.koku.common.service.AbstractEntityDAO.MAX_RESULTS_COUNT
  * May 18, 2011
  */
 @Stateless
-@Local({MessageServiceFacade.class, KokuSystemNotificationsService.class})
-public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSystemNotificationsService {
+@Local({MessageServiceFacade.class, KokuSystemNotificationsService.class, ScheduledTaskExecutor.class})
+public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSystemNotificationsService, ScheduledTaskExecutor {
 	private final static Logger logger = LoggerFactory.getLogger(MessageServiceFacadeImpl.class);
 	
 	public static final String SYSTEM_USER_NAME_FOR_NOTIFICATIONS = "KohtiKumppanuutta";
@@ -1085,5 +1087,34 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         final RequestTemplate template = loadRequestTemplate(requestTemplateId);
         
         return doCreateRequest(template, request).getId();
+    }
+
+    /**
+     * 
+     */
+    @Override
+    public void performTask() {
+        logger.info("Perform scheduled tasks.");
+        logger.info("Start deletion of old messages.");
+        final int messagesDeleted = deleteOldMessages();
+        logger.info("Deleted " + messagesDeleted + " messages."); 
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public String getTaskDescription() {
+        return "Auto archiving, auto deletion, unanswered requests reminding.";
+    }
+
+    /**
+     * 
+     */
+    @Override
+    public int deleteOldMessages() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 2);
+        return messageRefDao.deleteOldMessages(calendar.getTime());
     }
 }

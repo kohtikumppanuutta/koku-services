@@ -13,7 +13,8 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = MessageRef.GET_MESSAGE_REFS_BY_IDS, query = "SELECT mr FROM MessageRef mr WHERE mr.id in (:ids) ORDER BY mr.id DESC"),
-	@NamedQuery(name = MessageRef.DELETE_MESSAGE_REFS_BY_IDS, query = "DELETE FROM MessageRef mr WHERE mr.id in (:ids)")
+	@NamedQuery(name = MessageRef.DELETE_MESSAGE_REFS_BY_IDS, query = "DELETE FROM MessageRef mr WHERE mr.id in (:ids)"),
+	@NamedQuery(name = "deleteOldMessages", query = "DELETE FROM MessageRef mr WHERE mr.createdDate < :olderThen")
 })
 public class MessageRef extends AbstractEntity {
 	public static final String GET_MESSAGE_REFS_BY_IDS = "getMessageRefsByIds";

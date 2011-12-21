@@ -6,6 +6,14 @@ package fi.arcusys.koku.common.soa;
  */
 public class User {
 
+    /**
+     * @return
+     */
+    @Override
+    public String toString() {
+        return "User [uid=" + uid + ", displayName=" + displayName + "]";
+    }
+
     private String uid;
     private String displayName;
     private String firstname;

@@ -37,6 +37,21 @@
 <!--             </resource-ref> -->
 <!-- 		</session> -->
         <session>
+            <ejb-name>KokuScheduledTasksServiceImpl</ejb-name>
+            <env-entry>
+                <env-entry-name>scheduledTaskNames</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>
+                    arcusys-koku-0.1-SNAPSHOT/MessageServiceFacadeImpl/local-fi.arcusys.koku.common.service.ScheduledTaskExecutor;
+                    arcusys-koku-0.1-SNAPSHOT/ConsentServiceFacadeImpl/local-fi.arcusys.koku.common.service.ScheduledTaskExecutor
+                </env-entry-value>
+                <injection-target>
+                    <injection-target-class>fi.arcusys.koku.common.soa.KokuScheduledTasksServiceImpl</injection-target-class>
+                    <injection-target-name>scheduledTaskNames</injection-target-name>
+                </injection-target>
+            </env-entry>
+        </session>
+        <session>
             <ejb-name>LogServiceDAOImpl</ejb-name>
             <env-entry>
                 <env-entry-name>logUserUid</env-entry-name>

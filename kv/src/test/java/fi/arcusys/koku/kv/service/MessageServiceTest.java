@@ -4,6 +4,7 @@ import static junit.framework.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -21,7 +22,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.CommonTestUtil;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
+import fi.arcusys.koku.common.service.MessageRefDAO;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
+import fi.arcusys.koku.common.service.datamodel.MessageRef;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
@@ -56,6 +59,9 @@ public class MessageServiceTest {
 
     @Autowired
 	private CommonTestUtil testUtil;
+    
+    @Autowired
+    private MessageRefDAO messageRefDao;
 	
 	@Test
 	public void testSendTextMessage() {
@@ -406,6 +412,32 @@ public class MessageServiceTest {
         final List<MessageSummary> messages = serviceFacade.getMessages(toUserId, FolderType.Inbox);
         assertFalse(messages.isEmpty());
         assertTrue(serviceFacade.getMessageById(messages.get(0).getMessageId()).getContent().contains(content));
+	}
+	
+	@Test
+	public void autodeleteOldMessages() {
+        final String fromUserId = "testSender";
+        final String toUserId = "testReceiver";
+        
+        final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content", false, false);
+        final long messageNewId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content", false, false);
+        
+        assertEquals("Message is in sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageId).getMessageType());
+        
+        final MessageRef msgRef = messageRefDao.getById(messageId);
+        final MessageRef msgNewRef = messageRefDao.getById(messageNewId);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1);
+        msgNewRef.setCreatedDate(calendar.getTime());
+        calendar.set(Calendar.YEAR, 2000);
+        msgRef.setCreatedDate(calendar.getTime());
+        messageRefDao.update(msgRef);
+        messageRefDao.update(msgNewRef);
+        
+        serviceFacade.deleteOldMessages();
+        
+        assertNotNull("New message wasn't removed from sender's Outbox folder: ", serviceFacade.getMessageById(messageNewId));
+        assertNull("Old message removed from sender's Outbox folder: ", serviceFacade.getMessageById(messageId));
 	}
 
 	private void assertMessageFound(final String userId, FolderType folderType, final MessageQuery query, final String subject) {

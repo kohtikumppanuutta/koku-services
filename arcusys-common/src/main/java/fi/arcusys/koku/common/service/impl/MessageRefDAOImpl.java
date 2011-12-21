@@ -1,5 +1,7 @@
 package fi.arcusys.koku.common.service.impl;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -48,4 +50,12 @@ public class MessageRefDAOImpl extends AbstractEntityDAOImpl<MessageRef> impleme
 	protected String getDeleteByIdsQueryName() {
 		return MessageRef.DELETE_MESSAGE_REFS_BY_IDS;
 	}
+
+    /**
+     * @param olderThen
+     */
+    @Override
+    public int deleteOldMessages(Date olderThen) {
+        return super.executeBulkOperation("deleteOldMessages", Collections.singletonMap("olderThen", olderThen));
+    }
 }

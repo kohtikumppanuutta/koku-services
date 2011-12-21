@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<server>
+	<mbean code="org.jboss.varia.scheduler.Scheduler" name="jboss.docs:service=Scheduler">
+		<attribute name="StartAtStartup">true</attribute>
+		<attribute name="SchedulableClass">fi.arcusys.koku.schedule.KokuScheduledTasksCaller</attribute>
+		<attribute name="SchedulableArguments">http://localhost:8080/arcusys-koku-0.1-SNAPSHOT-arcusys-common-0.1-SNAPSHOT</attribute>
+		<attribute name="SchedulableArgumentTypes">java.lang.String</attribute>
+
+		<attribute name="InitialStartDate">NOW</attribute>
+		<attribute name="SchedulePeriod">60000</attribute>
+		<attribute name="InitialRepetitions">-1</attribute>
+	</mbean>
+</server>

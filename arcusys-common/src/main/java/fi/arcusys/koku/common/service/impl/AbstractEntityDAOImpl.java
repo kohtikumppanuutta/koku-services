@@ -1,6 +1,7 @@
 package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -155,6 +156,18 @@ public abstract class AbstractEntityDAOImpl<T extends AbstractEntity> implements
         } else {
             return searchString + "%";
         }
+    }
+
+    /**
+     * @param string
+     * @param singletonMap
+     */
+    protected int executeBulkOperation(String string, Map<String, ?> params) {
+        final Query query = em.createNamedQuery(string);
+        for (final Map.Entry<String, ?> param : params.entrySet()) {
+            query.setParameter(param.getKey(), param.getValue());
+        }
+        return query.executeUpdate();
     }
 
 }

@@ -21,6 +21,9 @@
 				<artifactId>maven-ear-plugin</artifactId>
 				<configuration>
 					<defaultJavaBundleDir>lib</defaultJavaBundleDir>
+					<jboss>
+					   <version>5</version>
+					</jboss>
 					<modules>
 						<ejbModule>
 							<groupId>fi.arcusys.koku</groupId>
@@ -42,42 +45,65 @@
 							<groupId>kohti-kumppanuutta</groupId>
 							<artifactId>hak-model</artifactId>
 						</ejbModule>
+						<SarModule>
+							<groupId>fi.arcusys.koku</groupId>
+							<artifactId>arcusys-sar</artifactId>
+						</SarModule>
+<!--                        <jarModule> -->
+<!--                            <groupId>fi.arcusys.koku</groupId> -->
+<!--                            <artifactId>arcusys-sar</artifactId> -->
+<!--                            <includeInApplicationXml>true</includeInApplicationXml> -->
+<!--                        </jarModule> -->
 					</modules>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>ear</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
 
-    <dependencies>
-        <dependency>
-            <groupId>fi.arcusys.koku</groupId>
-            <artifactId>arcusys-common</artifactId>
-            <version>0.1-SNAPSHOT</version>
-            <type>ejb</type>
-        </dependency>
-                <dependency>
-                        <groupId>kohti-kumppanuutta</groupId>
-                        <artifactId>av-model</artifactId>
-                        <version>0.1-SNAPSHOT</version>
-                        <type>ejb</type>
-                </dependency>
-                <dependency>
-                        <groupId>kohti-kumppanuutta</groupId>
-                        <artifactId>kv-model</artifactId>
-                        <version>0.1-SNAPSHOT</version>
-                        <type>ejb</type>
-                </dependency>
-                <dependency>
-                        <groupId>kohti-kumppanuutta</groupId>
-                        <artifactId>tiva-model</artifactId>
-                        <version>0.1-SNAPSHOT</version>
-                        <type>ejb</type>
-                </dependency>
-                <dependency>
-                        <groupId>kohti-kumppanuutta</groupId>
-                        <artifactId>hak-model</artifactId>
-                        <version>0.1-SNAPSHOT</version>
-                        <type>ejb</type>
-                </dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>fi.arcusys.koku</groupId>
+			<artifactId>arcusys-common</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>kohti-kumppanuutta</groupId>
+			<artifactId>av-model</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>kohti-kumppanuutta</groupId>
+			<artifactId>kv-model</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>kohti-kumppanuutta</groupId>
+			<artifactId>tiva-model</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>kohti-kumppanuutta</groupId>
+			<artifactId>hak-model</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>fi.arcusys.koku</groupId>
+			<artifactId>arcusys-sar</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>sar</type>
+		</dependency>
+	</dependencies>
 </project>
