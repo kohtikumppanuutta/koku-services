@@ -6,8 +6,9 @@
 		<attribute name="SchedulableArguments">http://localhost:8080/arcusys-koku-0.1-SNAPSHOT-arcusys-common-0.1-SNAPSHOT</attribute>
 		<attribute name="SchedulableArgumentTypes">java.lang.String</attribute>
 
-		<attribute name="InitialStartDate">NOW</attribute>
-		<attribute name="SchedulePeriod">60000</attribute>
+        <!--  Run ones per day -->
+		<attribute name="InitialStartDate">01/01/2011 01:00 AM</attribute>
+		<attribute name="SchedulePeriod">86400000</attribute>
 		<attribute name="InitialRepetitions">-1</attribute>
 	</mbean>
 </server>
