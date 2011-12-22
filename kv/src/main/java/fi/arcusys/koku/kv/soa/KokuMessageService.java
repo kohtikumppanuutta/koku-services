@@ -89,6 +89,10 @@ public interface KokuMessageService {
 	 */
 	public void archiveMessages(@WebParam(name = "messageId") List<Long> messageIds);
 	
+	public void archiveOldMessages(
+	        @WebParam(name = "userUid") final String userUid, 
+	        @WebParam(name = "folderType") final FolderType folderType);
+	
 	/**
 	 * Deletes the messages
 	 * @param messageIds List of message ids to be deleted

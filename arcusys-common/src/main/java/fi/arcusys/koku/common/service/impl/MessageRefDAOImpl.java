@@ -1,13 +1,18 @@
 package fi.arcusys.koku.common.service.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.MessageRefDAO;
+import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.datamodel.MessageRef;
+import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -57,5 +62,33 @@ public class MessageRefDAOImpl extends AbstractEntityDAOImpl<MessageRef> impleme
     @Override
     public int deleteOldMessages(Date olderThen) {
         return super.executeBulkOperation("deleteOldMessages", Collections.singletonMap("olderThen", olderThen));
+    }
+
+    /**
+     * @param asList
+     * @param time
+     * @return
+     */
+    @Override
+    public List<MessageRef> getMessagesByFolderTypeAndCreateDate(Collection<FolderType> folderTypes, Date time) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("folderTypes", folderTypes);
+        params.put("olderThen", time);
+        return super.getResultList("findOldMessagesByFolderType", params);
+    }
+
+    /**
+     * @param userUid
+     * @param singleton
+     * @param time
+     * @return
+     */
+    @Override
+    public List<MessageRef> getMessagesByUserAndFolderTypeAndCreateDate(User user, Collection<FolderType> folderTypes, Date time) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user", user);
+        params.put("folderTypes", folderTypes);
+        params.put("olderThen", time);
+        return super.getResultList("findOldMessagesByUserAndFolderType", params);
     }
 }

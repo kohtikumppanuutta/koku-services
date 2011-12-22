@@ -25,6 +25,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
@@ -120,6 +122,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 
     private static final String REQUEST_REPLIED_BODY = "request.replied.body";
     private static final String REQUEST_REPLIED_SUBJECT = "request.replied.subject";
+    private static final String MESSAGES_ARCHIVED_BODY = "messages.archived.body";
+    private static final String MESSAGES_ARCHIVED_SUBJECT = "messages.archived.subject";
+    
     private String notificationsBundleName = "kv_messages.msg";
     private Properties messageTemplates;
     
@@ -321,7 +326,11 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	public void archiveMessages(final List<Long> messageRefIds) {
 		final List<MessageRef> messageRefs = messageRefDao.getListByIds(messageRefIds);
 
-		final Map<User, Folders> folders = new HashMap<User, Folders>();
+		doArchiveMessages(messageRefs);
+	}
+
+    private void doArchiveMessages(final List<MessageRef> messageRefs) {
+        final Map<User, Folders> folders = new HashMap<User, Folders>();
 		
 		for (final MessageRef messageRef : messageRefs) {
 			final User user = messageRef.getFolder().getUser();
@@ -338,7 +347,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 			}
 		}
 		messageRefDao.updateAll(messageRefs);
-	}
+    }
 	
 	private static class Folders {
 		private Folder archiveInbox;
@@ -1095,9 +1104,14 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     @Override
     public void performTask() {
         logger.info("Perform scheduled tasks.");
-        logger.info("Start deletion of old messages.");
+        
+        logger.debug("Start deletion of old messages.");
         final int messagesDeleted = deleteOldMessages();
-        logger.info("Deleted " + messagesDeleted + " messages."); 
+        logger.debug("Deleted " + messagesDeleted + " messages."); 
+        
+        logger.debug("Start archiving of old messages");
+        final int messagesArchived = archiveOldMessages();
+        logger.debug("Archived " + messagesArchived + " messages."); 
     }
 
     /**
@@ -1117,4 +1131,50 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 2);
         return messageRefDao.deleteOldMessages(calendar.getTime());
     }
+
+    /**
+     * @return
+     */
+    @Override
+    public int archiveOldMessages() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1);
+        final List<MessageRef> messagesForArchive = messageRefDao.getMessagesByFolderTypeAndCreateDate(Arrays.asList(FolderType.Inbox, FolderType.Outbox), calendar.getTime());
+        final Map<String, Integer> msgCounts = new HashMap<String, Integer>();
+        for (final MessageRef msgRef : messagesForArchive) {
+            final String userUid = msgRef.getFolder().getUser().getUid();
+            msgCounts.put(userUid, (msgCounts.containsKey(userUid) ? msgCounts.get(userUid) : 0) + 1);
+        }
+        doArchiveMessages(messagesForArchive);
+        for (final Map.Entry<String, Integer> entry : msgCounts.entrySet()) {
+            doDeliverMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, Collections.singletonList(entry.getKey()),
+                    getValueFromBundle(MESSAGES_ARCHIVED_SUBJECT), 
+                    MessageFormat.format(getValueFromBundle(MESSAGES_ARCHIVED_BODY), 
+                            new Object[] {entry.getValue()}));
+        }
+        return messagesForArchive.size();
+    }
+
+    /**
+     * @param userUid
+     * @param folderType
+     * @return
+     */
+    @Override
+    public int archiveOldMessagesByUserAndFolderType(String userUid, FolderType folderType) {
+        // messages older then 3 month
+        final Calendar calendar = Calendar.getInstance();
+        final int currentMonth = calendar.get(Calendar.MONTH);
+        if (currentMonth >= 3) {
+            calendar.set(Calendar.MONTH, currentMonth - 3);
+        } else {
+            calendar.set(Calendar.MONTH, currentMonth - 3 + 12);
+            calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1);
+        }
+        final List<MessageRef> messagesForArchive = messageRefDao.getMessagesByUserAndFolderTypeAndCreateDate(getUserByUid(userUid), Collections.singleton(folderType), calendar.getTime());
+        doArchiveMessages(messagesForArchive);
+        return messagesForArchive.size();
+    }
+    
+    
 }

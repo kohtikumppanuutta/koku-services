@@ -129,4 +129,13 @@ public class KokuMessageServiceImpl implements KokuMessageService {
 	public void setMessagesStatus(final List<Long> messageIds, final MessageStatus messageStatus) {
 		kvFacade.setMessageStatus(messageIds, messageStatus);
 	}
+
+    /**
+     * @param userUid
+     * @param folderType
+     */
+    @Override
+    public void archiveOldMessages(String userUid, FolderType folderType) {
+        kvFacade.archiveOldMessagesByUserAndFolderType(userUid, folderType);
+    }
 }

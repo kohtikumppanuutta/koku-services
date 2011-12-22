@@ -439,6 +439,36 @@ public class MessageServiceTest {
         assertNotNull("New message wasn't removed from sender's Outbox folder: ", serviceFacade.getMessageById(messageNewId));
         assertNull("Old message removed from sender's Outbox folder: ", serviceFacade.getMessageById(messageId));
 	}
+	
+	@Test
+	public void autoarchiveOldMessages() {
+	    // create old message
+        final String fromUserId = "testSender";
+        final String toUserId = "testReceiver";
+        
+        final long messageId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content", false, false);
+        final long messageNewId = serviceFacade.sendNewMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content", false, false);
+        
+        assertEquals("Message is in sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageId).getMessageType());
+        
+        final MessageRef msgRef = messageRefDao.getById(messageId);
+        final MessageRef msgNewRef = messageRefDao.getById(messageNewId);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 2);
+        msgRef.setCreatedDate(calendar.getTime());
+        messageRefDao.update(msgRef);
+
+        // archive old message
+        final int inboxMessageCount = serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Inbox, null);
+        final int archivedMessageCount = serviceFacade.archiveOldMessages();
+                
+	    // check archive and message box for notification
+        assertTrue("Messages archived: " + archivedMessageCount, archivedMessageCount > 0);
+        
+        assertEquals("Message moved to sender's Archived Outbox folder: ", FolderType.Archive_Outbox, serviceFacade.getMessageById(messageId).getMessageType());
+        assertEquals("Message is still in the sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageNewId).getMessageType());
+        assertEquals("Notification received: ", inboxMessageCount + 1, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Inbox, null));
+	}
 
 	private void assertMessageFound(final String userId, FolderType folderType, final MessageQuery query, final String subject) {
 		List<MessageSummary> messages = serviceFacade.getMessages(userId, folderType, query);

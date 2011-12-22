@@ -13,6 +13,8 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = MessageRef.GET_MESSAGE_REFS_BY_IDS, query = "SELECT mr FROM MessageRef mr WHERE mr.id in (:ids) ORDER BY mr.id DESC"),
+    @NamedQuery(name = "findOldMessagesByFolderType", query = "SELECT mr FROM MessageRef mr WHERE mr.folder.folderType in (:folderTypes) AND mr.createdDate < :olderThen"),
+    @NamedQuery(name = "findOldMessagesByUserAndFolderType", query = "SELECT mr FROM MessageRef mr WHERE mr.folder.folderType in (:folderTypes) AND mr.folder.user = :user AND mr.createdDate < :olderThen"),
 	@NamedQuery(name = MessageRef.DELETE_MESSAGE_REFS_BY_IDS, query = "DELETE FROM MessageRef mr WHERE mr.id in (:ids)"),
 	@NamedQuery(name = "deleteOldMessages", query = "DELETE FROM MessageRef mr WHERE mr.createdDate < :olderThen")
 })

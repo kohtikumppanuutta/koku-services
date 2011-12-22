@@ -192,4 +192,11 @@ public interface MessageServiceFacade {
      * 
      */
     int deleteOldMessages();
+
+    /**
+     * 
+     */
+    int archiveOldMessages();
+    
+    int archiveOldMessagesByUserAndFolderType(final String userUid, final FolderType folderType);
 }
