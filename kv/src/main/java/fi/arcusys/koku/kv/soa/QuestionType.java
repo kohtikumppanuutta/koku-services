@@ -12,7 +12,8 @@ public enum QuestionType {
 	YES_NO(fi.arcusys.koku.common.service.datamodel.QuestionType.YES_NO_QUESTION),
 	FREE_TEXT(fi.arcusys.koku.common.service.datamodel.QuestionType.FREE_TEXT_QUESTION), 
 	MULTIPLE_CHOICE(fi.arcusys.koku.common.service.datamodel.QuestionType.MULTIPLE_CHOICE),
-    CALENDAR(fi.arcusys.koku.common.service.datamodel.QuestionType.CALENDAR)
+    CALENDAR(fi.arcusys.koku.common.service.datamodel.QuestionType.CALENDAR),
+    NUMBER(fi.arcusys.koku.common.service.datamodel.QuestionType.NUMBER)
 	;
 
 	private final fi.arcusys.koku.common.service.datamodel.QuestionType dmQuestionType;
