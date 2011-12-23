@@ -129,6 +129,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         templateTO.setTemplateId(template.getId());
         templateTO.setTemplateName(template.getName());
         templateTO.setDescription(template.getDescription());
+        templateTO.setConsentsOnly(template.isConsentsOnly());
+        templateTO.setToSecondGuardianOnly(template.isToSecondGuardianOnly());
+        templateTO.setValidTillMandatory(template.isValidTillMandatory());
         return templateTO;
     }
 

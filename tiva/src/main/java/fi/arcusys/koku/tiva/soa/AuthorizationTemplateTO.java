@@ -7,11 +7,51 @@ import javax.xml.bind.annotation.XmlType;
  * Aug 16, 2011
  */
 @XmlType (name = "valtakirjapohja", namespace = "http://soa.tiva.koku.arcusys.fi/",
-propOrder={"templateId", "templateName", "description"})
+propOrder={"templateId", "templateName", "description", "validTillMandatory", "consentsOnly", "toSecondGuardianOnly"})
 public class AuthorizationTemplateTO {
     private long templateId;
     private String templateName;
     private String description;
+    private boolean validTillMandatory;
+    private boolean consentsOnly;
+    private boolean toSecondGuardianOnly;
+    
+    /**
+     * @return the validTillMandatory
+     */
+    public boolean isValidTillMandatory() {
+        return validTillMandatory;
+    }
+    /**
+     * @param validTillMandatory the validTillMandatory to set
+     */
+    public void setValidTillMandatory(boolean validTillMandatory) {
+        this.validTillMandatory = validTillMandatory;
+    }
+    /**
+     * @return the consentsOnly
+     */
+    public boolean isConsentsOnly() {
+        return consentsOnly;
+    }
+    /**
+     * @param consentsOnly the consentsOnly to set
+     */
+    public void setConsentsOnly(boolean consentsOnly) {
+        this.consentsOnly = consentsOnly;
+    }
+    /**
+     * @return the toSecondGuardianOnly
+     */
+    public boolean isToSecondGuardianOnly() {
+        return toSecondGuardianOnly;
+    }
+    /**
+     * @param toSecondGuardianOnly the toSecondGuardianOnly to set
+     */
+    public void setToSecondGuardianOnly(boolean toSecondGuardianOnly) {
+        this.toSecondGuardianOnly = toSecondGuardianOnly;
+    }
     /**
      * @return the description
      */

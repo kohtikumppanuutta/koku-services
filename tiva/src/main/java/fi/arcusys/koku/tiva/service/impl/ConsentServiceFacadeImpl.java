@@ -174,6 +174,9 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
             templateType.setTemplateId(authorizationTemplate.getId());
             templateType.setTemplateName(authorizationTemplate.getName());
             templateType.setDescription(authorizationTemplate.getDescription());
+            templateType.setConsentsOnly(authorizationTemplate.isConsentsOnly());
+            templateType.setToSecondGuardianOnly(authorizationTemplate.isToSecondGuardianOnly());
+            templateType.setValidTillMandatory(authorizationTemplate.isValidTillMandatory());
             templateTO.setTemplateType(templateType);
         }
         final List<ActionRequestTO> actionTOs = new ArrayList<ActionRequestTO>();
