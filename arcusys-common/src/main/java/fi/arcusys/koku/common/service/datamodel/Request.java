@@ -1,6 +1,7 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -16,6 +17,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 import fi.arcusys.koku.common.service.CalendarUtil;
 
@@ -55,7 +58,11 @@ import fi.arcusys.koku.common.service.CalendarUtil;
     		" WHERE (r.fromUser = :user OR r.fromRoleUid in (:userRoles)) " +
             " AND (r.replyTill IS NOT NULL AND r.replyTill < CURRENT_DATE)"),
     
-    @NamedQuery(name = "countRequestsByTemplate", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.template = :template")
+    @NamedQuery(name = "countRequestsByTemplate", query = "SELECT COUNT(DISTINCT r) FROM Request r WHERE r.template = :template"),
+
+    @NamedQuery(name = "findOpenRequestsByNotificationDate", query = "SELECT r FROM Request r " +
+    		" WHERE (SELECT COUNT (rs) FROM Response rs WHERE rs.request = r) < (SELECT COUNT(repl) FROM User_ repl WHERE repl MEMBER OF r.receipients)" +
+    		" AND r.notifyDate BETWEEN :notifyDateFrom AND :notifyDateTo ")
 })
 public class Request extends AbstractEntity {
 	public static final String GET_REQUESTS_BY_IDS = "findRequestsByIds";
@@ -63,6 +70,7 @@ public class Request extends AbstractEntity {
 	
 	private Date replyTill;
 	private Integer notifyBeforeDays;
+	private Date notifyDate;
 
 	@ManyToOne
 	private RequestTemplate template;
@@ -193,5 +201,16 @@ public class Request extends AbstractEntity {
      */
     public void setNotifyBeforeDays(Integer notifyBeforeDays) {
         this.notifyBeforeDays = notifyBeforeDays;
+    }
+    
+    @PrePersist
+    @PreUpdate
+    public void updateNotifyDate() {
+        if (this.replyTill != null && this.notifyBeforeDays != null) {
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTime(replyTill);
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - this.notifyBeforeDays);
+            this.notifyDate = calendar.getTime();
+        }
     }
 }

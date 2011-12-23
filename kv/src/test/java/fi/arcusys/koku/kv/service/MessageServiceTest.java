@@ -23,8 +23,10 @@ import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.CommonTestUtil;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.MessageRefDAO;
+import fi.arcusys.koku.common.service.RequestDAO;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.datamodel.MessageRef;
+import fi.arcusys.koku.common.service.datamodel.Request;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
 import fi.arcusys.koku.kv.service.dto.MessageTO;
@@ -62,6 +64,9 @@ public class MessageServiceTest {
     
     @Autowired
     private MessageRefDAO messageRefDao;
+    
+    @Autowired
+    private RequestDAO requestDao;
 	
 	@Test
 	public void testSendTextMessage() {
@@ -250,14 +255,7 @@ public class MessageServiceTest {
         final List<String> toUsers = Collections.singletonList(toUserId);
         
         
-        final List<QuestionTO> questions = createTestQuestions();
-        
-        final RequestTemplateTO template = new RequestTemplateTO();
-        template.setChoices(new ArrayList<MultipleChoiceTO>());
-        template.setQuestions(questions);
-        template.setSubject("test request");
-        template.setCreatorUid(fromUserId);
-        template.setVisibility(RequestTemplateVisibility.Creator);
+        final RequestTemplateTO template = createRequestTemplate(fromUserId);
         
         final RequestProcessingTO request = new RequestProcessingTO();
         request.setContent("read-only form of request");
@@ -279,6 +277,18 @@ public class MessageServiceTest {
         // get request data by role
         assertNotNull(getById(serviceFacade.getRequests(employeeUserId, 1, 10), requestId));
 	}
+
+    private RequestTemplateTO createRequestTemplate(final String fromUserId) {
+        final List<QuestionTO> questions = createTestQuestions();
+        
+        final RequestTemplateTO template = new RequestTemplateTO();
+        template.setChoices(new ArrayList<MultipleChoiceTO>());
+        template.setQuestions(questions);
+        template.setSubject("test request");
+        template.setCreatorUid(fromUserId);
+        template.setVisibility(RequestTemplateVisibility.Creator);
+        return template;
+    }
 
     private RequestSummary getById(final List<RequestSummary> requests, final long requestId) {
         for (final RequestSummary request : requests) {
@@ -468,6 +478,49 @@ public class MessageServiceTest {
         assertEquals("Message moved to sender's Archived Outbox folder: ", FolderType.Archive_Outbox, serviceFacade.getMessageById(messageId).getMessageType());
         assertEquals("Message is still in the sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageNewId).getMessageType());
         assertEquals("Notification received: ", inboxMessageCount + 1, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Inbox, null));
+	}
+	
+	@Test
+	public void requestUnansweredReminder() {
+	    // send request
+        final String fromRole = "Role1";
+
+        final String fromUserId = testUtil.getUserByUidWithRoles("testRequestSender1WithRole1", Collections.singletonList(fromRole)).getUid();
+        
+        final String toUserId = "testRequestReplier2";
+        final RequestTemplateTO template = createRequestTemplate(fromUserId);
+        
+        final RequestProcessingTO request = new RequestProcessingTO();
+        request.setContent("read-only form of request");
+        request.setFromRole(fromRole);
+        request.setFromUserUid(fromUserId);
+        request.setReceipients(Collections.singletonList(toUserId));
+        request.setSubject("test request");
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 30);
+        request.setReplyTill(CalendarUtil.getXmlDate(calendar.getTime()));
+        request.setNotifyBeforeDays(1);
+        final Long requestId = serviceFacade.sendRequest(template, request);
+
+        // call auto reminders
+        final int totalInboxMessages = serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox, null);
+        serviceFacade.sendReminderForRequests();
+        assertEquals("nothing to remind", totalInboxMessages, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox, null));
+        
+        // notify today
+        final Request requestDO = requestDao.getById(requestId);
+        requestDO.setNotifyBeforeDays(30);
+        requestDao.update(requestDO);
+        serviceFacade.sendReminderForRequests();
+
+        // check reminder message
+        assertEquals("reminder received", totalInboxMessages + 1, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox, null));
+        serviceFacade.sendReminderForRequests();
+        assertEquals("reminder received again", totalInboxMessages + 2, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox, null));
+        
+        serviceFacade.replyToRequest(toUserId, requestId, createTestAnswers(), null);
+        assertEquals("no more reminders received", totalInboxMessages + 2, serviceFacade.getTotalMessagesCount(toUserId, FolderType.Inbox, null));
+        
 	}
 
 	private void assertMessageFound(final String userId, FolderType folderType, final MessageQuery query, final String subject) {

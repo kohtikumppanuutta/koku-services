@@ -199,4 +199,9 @@ public interface MessageServiceFacade {
     int archiveOldMessages();
     
     int archiveOldMessagesByUserAndFolderType(final String userUid, final FolderType folderType);
+
+    /**
+     * 
+     */
+    int sendReminderForRequests();
 }

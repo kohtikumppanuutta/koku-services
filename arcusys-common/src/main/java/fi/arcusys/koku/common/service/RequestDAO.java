@@ -1,5 +1,6 @@
 package fi.arcusys.koku.common.service;
 
+import java.util.Date;
 import java.util.List;
 
 import fi.arcusys.koku.common.service.datamodel.Request;
@@ -45,4 +46,10 @@ public interface RequestDAO extends AbstractEntityDAO<Request> {
      * @return
      */
     Long getTotalOldRequestsByUserAndRoles(User userByUid, List<String> userRoles);
+
+    /**
+     * @param time
+     * @return
+     */
+    List<Request> getOpenRequestsByNotifyDate(Date time);
 }

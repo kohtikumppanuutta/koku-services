@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -122,6 +123,8 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 
     private static final String REQUEST_REPLIED_BODY = "request.replied.body";
     private static final String REQUEST_REPLIED_SUBJECT = "request.replied.subject";
+    private static final String REQUEST_NOT_REPLIED_REMINDER_BODY = "request.not_replied_reminder.body";
+    private static final String REQUEST_NOT_REPLIED_REMINDER_SUBJECT = "request.not_replied_reminder.subject";
     private static final String MESSAGES_ARCHIVED_BODY = "messages.archived.body";
     private static final String MESSAGES_ARCHIVED_SUBJECT = "messages.archived.subject";
     
@@ -1112,6 +1115,11 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         logger.debug("Start archiving of old messages");
         final int messagesArchived = archiveOldMessages();
         logger.debug("Archived " + messagesArchived + " messages."); 
+        
+        logger.debug("Start reminding about requests");
+        final int remindersSent = sendReminderForRequests();
+        logger.debug("Sent " + remindersSent + " reminders."); 
+        
     }
 
     /**
@@ -1164,16 +1172,34 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     public int archiveOldMessagesByUserAndFolderType(String userUid, FolderType folderType) {
         // messages older then 3 month
         final Calendar calendar = Calendar.getInstance();
-        final int currentMonth = calendar.get(Calendar.MONTH);
-        if (currentMonth >= 3) {
-            calendar.set(Calendar.MONTH, currentMonth - 3);
-        } else {
-            calendar.set(Calendar.MONTH, currentMonth - 3 + 12);
-            calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1);
-        }
-        final List<MessageRef> messagesForArchive = messageRefDao.getMessagesByUserAndFolderTypeAndCreateDate(getUserByUid(userUid), Collections.singleton(folderType), calendar.getTime());
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 3);
+        final List<MessageRef> messagesForArchive = messageRefDao.getMessagesByUserAndFolderTypeAndCreateDate(getUserByUid(userUid), 
+                Collections.singleton(folderType), calendar.getTime());
         doArchiveMessages(messagesForArchive);
         return messagesForArchive.size();
+    }
+
+    /**
+     * 
+     */
+    @Override
+    public int sendReminderForRequests() {
+        int remindersSent = 0;
+        final List<Request> requests = requestDAO.getOpenRequestsByNotifyDate(new Date());
+        for (final Request request : requests) {
+            final Set<User> receipients = new HashSet<User>(request.getReceipients());
+            for (final Response response : request.getResponses()) {
+                receipients.remove(response.getReplier());
+            }
+            for (final User user : receipients) {
+                doDeliverMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, Collections.singletonList(user.getUid()),
+                        getValueFromBundle(REQUEST_NOT_REPLIED_REMINDER_SUBJECT), 
+                        MessageFormat.format(getValueFromBundle(REQUEST_NOT_REPLIED_REMINDER_BODY), 
+                                new Object[] {request.getSubject()}));
+                remindersSent++;
+            }
+        }
+        return remindersSent;
     }
     
     

@@ -1,12 +1,15 @@
 package fi.arcusys.koku.common.service.impl;
 
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
 
+import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.RequestDAO;
 import fi.arcusys.koku.common.service.datamodel.Request;
 import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
@@ -109,5 +112,19 @@ public class RequestDAOImpl extends AbstractEntityDAOImpl<Request> implements Re
         params.put("user", user);
         params.put("userRoles", userRoles);
         return params;
+    }
+
+    /**
+     * @param time
+     * @return
+     */
+    @Override
+    public List<Request> getOpenRequestsByNotifyDate(Date time) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        final Calendar calendar = CalendarUtil.getXmlDate(time).toGregorianCalendar();
+        params.put("notifyDateFrom", calendar.getTime());
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
+        params.put("notifyDateTo", calendar.getTime());
+        return getResultList("findOpenRequestsByNotificationDate", params);
     }
 }
