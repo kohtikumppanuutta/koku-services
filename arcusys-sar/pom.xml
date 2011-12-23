@@ -18,6 +18,23 @@
 	<properties>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>jboss-deprecated-repository</id>
+			<name>JBoss Deprecated Maven Repository</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+	
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -40,11 +57,11 @@
 	</build>
 
 	<dependencies>
-        <dependency>
-            <groupId>kohti-kumppanuutta</groupId>
-            <artifactId>scheduler-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+		<dependency>
+			<groupId>kohti-kumppanuutta</groupId>
+			<artifactId>scheduler-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossas</groupId>
 			<artifactId>jboss-as-system-jmx</artifactId>
@@ -56,7 +73,7 @@
 			<artifactId>jboss-as-varia</artifactId>
 			<version>5.1.0.GA</version>
 			<classifier>scheduler-plugin</classifier>
-            <scope>provided</scope>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
