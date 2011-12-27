@@ -112,5 +112,7 @@
     <bean id="rolesDao" class="fi.arcusys.koku.common.external.RolesDAOImpl" />
     <bean id="pyhServiceDao" class="fi.arcusys.koku.common.external.PyhServiceDAOImpl" />
     <bean id="ldapDao" class="fi.arcusys.koku.common.external.LdapDAOImpl" />
+    
+    <bean id="cacheDao" class="fi.arcusys.koku.common.external.CacheDAOTestImpl" />
 
 </beans>

@@ -34,7 +34,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -57,6 +57,13 @@
 	</build>
 
 	<dependencies>
+        <dependency>
+            <groupId>fi.arcusys.koku</groupId>
+            <artifactId>arcusys-common</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+            <type>ejb</type>
+        </dependency>
 		<dependency>
 			<groupId>kohti-kumppanuutta</groupId>
 			<artifactId>scheduler-api</artifactId>
@@ -74,6 +81,12 @@
 			<version>5.1.0.GA</version>
 			<classifier>scheduler-plugin</classifier>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.cache</groupId>
+			<artifactId>jbosscache-core</artifactId>
+			<version>3.1.0.GA</version>
+            <scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

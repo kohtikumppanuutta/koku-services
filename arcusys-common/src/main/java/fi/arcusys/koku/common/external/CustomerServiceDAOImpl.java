@@ -46,6 +46,9 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     @EJB
     private LdapDAO ldapDao;
     
+    @EJB
+    private CacheDAO cacheDao;
+    
     private CustomerServicePortType customerService;
     
     private String customerServiceUserUid;
@@ -108,10 +111,19 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     }
 
     private CustomerType getCustomer(final String ssn) throws ServiceFault {
+        final CustomerType cachedCustomer = (CustomerType)cacheDao.get(CustomerServiceDAOImpl.class, ssn);
+        if (cachedCustomer != null) {
+            return cachedCustomer;
+        }
+        
         final AuditInfoType auditHeader = new AuditInfoType();
         auditHeader.setComponent("tiva");
         auditHeader.setUserId(ssn);
-        return customerService.opGetCustomer(ssn, auditHeader);
+        final CustomerType customerFromWs = customerService.opGetCustomer(ssn, auditHeader);
+        
+        cacheDao.put(CustomerServiceDAOImpl.class, ssn, customerFromWs);
+        
+        return customerFromWs;
     }
 
     /**
