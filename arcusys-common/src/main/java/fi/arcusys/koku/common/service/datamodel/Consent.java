@@ -33,7 +33,23 @@ import javax.persistence.OneToMany;
             " AND cn.creator = :sender ORDER BY cn.id DESC"),
     @NamedQuery(name = "countProcessedConsentsBySender", query = "SELECT COUNT(DISTINCT cn) FROM Consent cn WHERE " +
             "(EXISTS (SELECT cr FROM ConsentReply cr WHERE cr.consent = cn))" +
-            " AND cn.creator = :sender")
+            " AND cn.creator = :sender"),
+            
+    @NamedQuery(name = "findOpenConsentsByReplyTillDate", query = "SELECT cn FROM Consent cn WHERE " +
+
+            " (" +
+            // ReceipientsType == BothParents
+            "   (cn.receipientsType = :receipientsTypeBoth AND " +
+            "    (SELECT COUNT (replyBoth.id) FROM ConsentReply replyBoth WHERE replyBoth.consent = cn) < " +
+            "    (SELECT COUNT(repl) FROM User_ repl WHERE repl MEMBER OF cn.receipients)) " +
+            " OR " +
+//            // ReceipientsType != BothParents
+            "   (cn.receipientsType <> :receipientsTypeBoth AND " +
+            "    NOT EXISTS (SELECT replyAny.id FROM ConsentReply replyAny WHERE replyAny.consent = cn) ) " +
+            " )" +
+            
+            " AND cn.replyTill BETWEEN :replyTillDateFrom AND :replyTillDateTo ")
+                        
 })
 public class Consent extends AbstractEntity {
     private Date replyTill;

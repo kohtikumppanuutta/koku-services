@@ -4,6 +4,7 @@ import static junit.framework.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.CommonTestUtil;
+import fi.arcusys.koku.common.service.ConsentDAO;
+import fi.arcusys.koku.common.service.datamodel.Consent;
 import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
 import fi.arcusys.koku.tiva.soa.ActionRequestStatus;
 import fi.arcusys.koku.tiva.soa.ActionRequestSummary;
@@ -29,6 +32,7 @@ import fi.arcusys.koku.tiva.soa.ConsentExternalGivenTo;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
 import fi.arcusys.koku.tiva.soa.ConsentKksExtraInfo;
 import fi.arcusys.koku.tiva.soa.ConsentQuery;
+import fi.arcusys.koku.tiva.soa.ConsentReceipientsType;
 import fi.arcusys.koku.tiva.soa.ConsentSearchCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentShortSummary;
 import fi.arcusys.koku.tiva.soa.ConsentSourceInfo;
@@ -49,7 +53,7 @@ public class ConsentServiceTest {
     private ConsentServiceFacade service;
     
     @Autowired
-    private CommonTestUtil testUtil;
+    private ConsentDAO consentDao;
     
     @Test
     public void createConsentTemplate() {
@@ -204,11 +208,11 @@ public class ConsentServiceTest {
         assertNotNull("found by receipient uid: ", getById(consentId, service.getProcessedConsents(employeeUid, query)));
     }
     
-//    @Test
+    @Test
     public void createConsentOnBehalf() {
         final Long templateId = service.createConsentTemplate(createTestTemplate("templateForCreationOnBehalf"));
         final String parent1 = "parent1";
-        final String parent2 = "parent2";
+        final List<String> recipients = Arrays.asList(parent1);
         
         final String employeeUid = "Ville Virkamies";
         
@@ -216,7 +220,7 @@ public class ConsentServiceTest {
         sourceInfo.setRepository("testRepository");
         sourceInfo.setAttachmentUrl("http://attachment.org");
         final Long consentId = service.writeConsentOnBehalf(templateId, employeeUid,
-                "Paper-based", "Lassi Lapsi", Arrays.asList(parent1, parent2), null, null, getTestActionsPermitted(), 
+                "Paper-based", "Lassi Lapsi", recipients, null, null, getTestActionsPermitted(), 
                 sourceInfo, "given on behalf");
         
         final ConsentQuery query = new ConsentQuery(1, 100);
@@ -225,10 +229,54 @@ public class ConsentServiceTest {
         assertEquals(ConsentStatus.Valid, autoApproved.getStatus());
         
         assertNotNull("Already processed consent for parent1: ", getById(consentId, service.getOwnConsents(parent1, 1, 10)));
-        assertNotNull("Already processed consent for parent2: ", getById(consentId, service.getOwnConsents(parent2, 1, 10)));
 
         service.revokeConsent(consentId, parent1, "no comments");
         assertEquals(ConsentStatus.Revoked, getById(consentId, service.getProcessedConsents(employeeUid, query)).getStatus());
+    }
+    
+    @Test
+    public void autoCancelConsent() {
+        // request for consent
+        final Long templateId = service.createConsentTemplate(createTestTemplate("templateForAutocancel"));
+        final String parent = "testParentAutoCancel";
+        final String parent2 = "testParentAutoCancel2";
+        final String employee = "testEmployee";
+        final List<String> parents = Arrays.asList(parent, parent2);
+
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
+        
+        final Long consentId = service.requestForConsent(templateId, employee, 
+                "Lassi Lapsi", parents, ConsentReceipientsType.AnyParent, CalendarUtil.getXmlDate(calendar.getTime()), null, Boolean.FALSE, null);
+        
+        final Long consentBothParentsId = service.requestForConsent(templateId, employee, 
+                "Lassi Lapsi", parents, ConsentReceipientsType.BothParents, CalendarUtil.getXmlDate(calendar.getTime()), null, Boolean.FALSE, null);
+        // auto cancel for skip
+        service.cancellationOfOutdatedConsents();
+        // check status
+        assertEquals(ConsentStatus.Open, service.getCombinedConsentById(consentId).getStatus());
+        assertEquals(ConsentStatus.Open, service.getCombinedConsentById(consentBothParentsId).getStatus());
+        
+        // update date
+        updateReplyTillEqToday(consentId);
+        updateReplyTillEqToday(consentBothParentsId);
+        service.giveConsent(consentBothParentsId, parent, getTestActionsPermitted(), null, "valid from " + parent);
+        
+        // auto cancel for cancel
+        assertEquals("Auto-cancelled both consents: ", 2, service.cancellationOfOutdatedConsents());
+
+        // check status
+        assertEquals(ConsentStatus.Declined, service.getCombinedConsentById(consentId).getStatus());
+        assertEquals(ConsentStatus.Declined, service.getCombinedConsentById(consentBothParentsId).getStatus());
+        
+        assertEquals("Consent given: ", ConsentStatus.Valid, service.getConsentById(consentBothParentsId, parent).getStatus());
+        assertEquals("Auto-declined consent: ", ConsentStatus.Declined, service.getConsentById(consentBothParentsId, parent2).getStatus());
+    }
+
+    private void updateReplyTillEqToday(final Long consentId) {
+        final Consent consentDO = consentDao.getById(consentId);
+        consentDO.setReplyTill(CalendarUtil.getXmlDate(new Date()).toGregorianCalendar().getTime());
+        consentDao.update(consentDO);
     }
     
     @Test

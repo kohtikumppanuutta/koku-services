@@ -1,5 +1,6 @@
 package fi.arcusys.koku.common.service;
 
+import java.util.Date;
 import java.util.List;
 
 import fi.arcusys.koku.common.service.datamodel.Consent;
@@ -46,4 +47,10 @@ public interface ConsentDAO extends AbstractEntityDAO<Consent> {
      * @return
      */
     List<Consent> searchConsents(ConsentExtDtoCriteria dtoCriteria);
+
+    /**
+     * @param date
+     * @return
+     */
+    List<Consent> getOpenConsentsByReplyTillDate(final Date replyTill);
 }

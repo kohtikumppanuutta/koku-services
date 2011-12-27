@@ -187,4 +187,9 @@ public interface ConsentServiceFacade {
      * @return
      */
     List<ConsentTO> searchConsents(ConsentSearchCriteria query);
+
+    /**
+     * 
+     */
+    int cancellationOfOutdatedConsents();
 }

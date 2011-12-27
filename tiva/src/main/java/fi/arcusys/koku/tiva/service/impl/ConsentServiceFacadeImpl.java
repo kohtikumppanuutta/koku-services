@@ -83,6 +83,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
 
     private static final String CONSENT_DECLINED_BODY = "consent.declined.body";
     private static final String CONSENT_DECLINED_SUBJECT = "consent.declined.subject";
+    private static final String CONSENT_AUTO_DECLINED_COMMENT = "consent.auto.declined.comment";
 
     private static final String CONSENT_REVOKED_BODY = "consent.revoked.body";
     private static final String CONSENT_REVOKED_SUBJECT = "consent.revoked.subject";
@@ -941,5 +942,34 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
     @Override
     public void performTask() {
         logger.info("Perform scheduled task.");
+        
+        logger.debug("Start cancellation of outdated consents.");
+        final int consentsCancelled = cancellationOfOutdatedConsents();
+        logger.debug("Cancelled " + consentsCancelled + " consents."); 
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public int cancellationOfOutdatedConsents() {
+        final List<Consent> consents = consentDao.getOpenConsentsByReplyTillDate(new Date());
+        
+        int cancelledConsentsCount = 0;
+        for (final Consent consent : consents) {
+            final Set<User> repliers = new HashSet<User>();
+            for (final ConsentReply reply : consentReplyDao.getReplies(consent)) {
+                repliers.add(reply.getReplier());
+            }
+            
+            for (final User user : consent.getReceipients()) {
+                if (!repliers.contains(user)) {
+                    declineConsent(consent.getId(), user.getUid(), getValueFromBundle(CONSENT_AUTO_DECLINED_COMMENT));
+                }
+            }
+            cancelledConsentsCount++;
+        }
+        
+        return cancelledConsentsCount;
     }
 }
