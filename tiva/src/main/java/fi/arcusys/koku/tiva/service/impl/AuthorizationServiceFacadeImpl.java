@@ -185,12 +185,19 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         final AuthorizationDetailTO authorizationTO = new AuthorizationDetailTO();
         authorizationTO.setAuthorizationId(authorization.getId());
         authorizationTO.setCreateDate(CalendarUtil.getXmlDate(authorization.getCreatedDate()));
-        authorizationTO.setReceiverUid(getDisplayName(authorization.getToUser()));
-        authorizationTO.setSenderUid(getDisplayName(authorization.getFromUser()));
-        authorizationTO.setTargetPersonUid(getDisplayName(authorization.getTargetPerson()));
+        authorizationTO.setReceiverUid(getUid(authorization.getToUser()));
+        authorizationTO.setSenderUid(getUid(authorization.getFromUser()));
+        authorizationTO.setTargetPersonUid(getUid(authorization.getTargetPerson()));
         authorizationTO.setTemplate(getTemplateTObyDM(authorization.getTemplate()));
         authorizationTO.setValidTill(CalendarUtil.getXmlDate(authorization.getValidTill()));
         return authorizationTO;
+    }
+    
+    private String getUid(final User user) {
+        if (user != null) {
+            return user.getUid();
+        }
+        return null;
     }
 
     private Authorization loadAuthorization(long authorizationId) {
