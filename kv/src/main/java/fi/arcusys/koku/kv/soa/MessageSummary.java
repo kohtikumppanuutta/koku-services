@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.common.service.datamodel.FolderType;
+import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Jun 9, 2011
@@ -16,13 +17,43 @@ import fi.arcusys.koku.common.service.datamodel.FolderType;
 public class MessageSummary {
 	private long messageId;
 	private String sender;
+	private UserInfo senderUserInfo;
 	private List<String> recipients;
+	private List<UserInfo> recipientUserInfos;
 	private String subject;
 	private XMLGregorianCalendar creationDate;
 	private FolderType messageType;
 	private MessageStatus messageStatus;
 
 	/**
+     * @return the senderUserInfo
+     */
+    public UserInfo getSenderUserInfo() {
+        return senderUserInfo;
+    }
+
+    /**
+     * @param senderUserInfo the senderUserInfo to set
+     */
+    public void setSenderUserInfo(UserInfo senderUserInfo) {
+        this.senderUserInfo = senderUserInfo;
+    }
+
+    /**
+     * @return the recipientUserInfos
+     */
+    public List<UserInfo> getRecipientUserInfos() {
+        return recipientUserInfos;
+    }
+
+    /**
+     * @param recipientUserInfos the recipientUserInfos to set
+     */
+    public void setRecipientUserInfos(List<UserInfo> recipientUserInfos) {
+        this.recipientUserInfos = recipientUserInfos;
+    }
+
+    /**
 	 * @return the messageId
 	 */
 	public long getMessageId() {

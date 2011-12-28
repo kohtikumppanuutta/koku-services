@@ -2,14 +2,15 @@ package fi.arcusys.koku.common.external;
 
 import java.util.List;
 
-import fi.arcusys.koku.common.soa.User;
+import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 17, 2011
  */
 public interface CustomerServiceDAO {
-    public User getUserInfo(final String userUid);
+    public UserInfo getUserInfo(final User user);
 
     /**
      * @param employeePortalName
@@ -27,13 +28,13 @@ public interface CustomerServiceDAO {
      * @param searchString
      * @return
      */
-    User getKunpoUserInfoBySsn(final String ssn);
+    UserInfo getKunpoUserInfoBySsn(final String ssn);
 
     /**
      * @param searchString
      * @return
      */
-    User getEmployeeUserInfoBySsn(final String ssn);
+    UserInfo getEmployeeUserInfoBySsn(final String ssn);
 
     /**
      * @param userUid
@@ -46,12 +47,12 @@ public interface CustomerServiceDAO {
      * @param ssn
      * @return
      */
-    User getKunpoUserInfoByPortalNameAndSsn(String kunpoUsername, String ssn);
+    UserInfo getKunpoUserInfoByPortalNameAndSsn(String kunpoUsername, String ssn);
 
     /**
      * @param looraUsername
      * @param ssn
      * @return
      */
-    User getEmployeeUserInfoByPortalNameAndSsn(String looraUsername, String ssn);
+    UserInfo getEmployeeUserInfoByPortalNameAndSsn(String looraUsername, String ssn);
 }

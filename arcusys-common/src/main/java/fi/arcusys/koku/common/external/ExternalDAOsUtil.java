@@ -1,6 +1,7 @@
 package fi.arcusys.koku.common.external;
 
-import fi.arcusys.koku.common.soa.User;
+import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.soa.UserInfo;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.ElectronicContactInfoType;
 import fi.koku.services.entity.customer.v1.ElectronicContactInfosType;
@@ -13,16 +14,16 @@ import fi.koku.services.entity.customer.v1.PhoneNumbersType;
  */
 class ExternalDAOsUtil {
 
-    static User convertCustomerToUser(final CustomerType customer, final String userUid) {
-        final User user = new User();
-        user.setDisplayName(customer.getEtuNimi() + " " + customer.getSukuNimi());
-        user.setEmail(getEmailAsString(customer.getElectronicContactInfos()));
-        user.setFirstname(customer.getEtuNimi());
-        user.setLastname(customer.getSukuNimi());
+    static UserInfo convertCustomerToUser(final CustomerType customer, final User user) {
+        final UserInfo userInfo = new UserInfo();
+        userInfo.setDisplayName(customer.getEtuNimi() + " " + customer.getSukuNimi());
+        userInfo.setEmail(getEmailAsString(customer.getElectronicContactInfos()));
+        userInfo.setFirstname(customer.getEtuNimi());
+        userInfo.setLastname(customer.getSukuNimi());
         final PhoneNumbersType phoneNumbers = customer.getPhoneNumbers();
-        user.setPhoneNumber(getPhonesAsString(phoneNumbers));
-        user.setUid(userUid);
-        return user;
+        userInfo.setPhoneNumber(getPhonesAsString(phoneNumbers));
+        userInfo.setUid(user.getUid());
+        return userInfo;
     }
 
     private static String getEmailAsString(final ElectronicContactInfosType electronicContactInfos) {

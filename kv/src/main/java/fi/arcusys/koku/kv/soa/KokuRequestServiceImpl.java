@@ -36,28 +36,6 @@ public class KokuRequestServiceImpl implements KokuRequestService {
 	@Override
 	public RequestTO getRequestById(long requestId) {
 		return kvFacade.getRequestById(requestId);
-		// TODO make real implementation
-//		if (requestId != -1) {
-//			return null;
-//		}
-//		
-//		final RequestTO request = new RequestTO();
-//		fillTestRequest(request);
-//		request.setContent("<html><body>Test content</body></html>");
-//		request.setNotResponded(Collections.<String>emptyList());
-//		final ResponseTO response = createTestResponse();
-//		request.setResponses(Collections.singletonList(response));
-//		return request;
-	}
-
-	private ResponseTO createTestResponse() {
-		final ResponseTO response = new ResponseTO();
-		response.setName("Kalle Kuntalainen");
-		final AnswerTO answer = new AnswerTO();
-		answer.setAnswer("Kyllä");
-		answer.setComment("Test comment");
-		response.setAnswers(Collections.singletonList(answer));
-		return response;
 	}
 
 	/**

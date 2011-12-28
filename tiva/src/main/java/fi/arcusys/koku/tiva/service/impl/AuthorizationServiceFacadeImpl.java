@@ -18,6 +18,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.arcusys.koku.common.external.CustomerServiceDAO;
 import fi.arcusys.koku.common.service.AuthorizationDAO;
 import fi.arcusys.koku.common.service.AuthorizationTemplateDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
@@ -29,6 +30,7 @@ import fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationType;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.AuthorizationDTOCriteria;
+import fi.arcusys.koku.common.soa.UserInfo;
 import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 import fi.arcusys.koku.tiva.soa.AuthorizationCreateType;
 import fi.arcusys.koku.tiva.soa.AuthorizationCriteria;
@@ -72,6 +74,9 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
     
     @EJB
     private UserDAO userDAO;
+    
+    @EJB
+    private CustomerServiceDAO customerDao;
     
     @EJB
     private KokuSystemNotificationsService notificationService;
@@ -243,8 +248,11 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
     private AuthorizationShortSummary fillShortSummaryByAuthorization(final Authorization authorization, final AuthorizationShortSummary authorizationTO) {
         authorizationTO.setAuthorizationId(authorization.getId());
         authorizationTO.setReceiverUid(authorization.getToUser().getUid());
+        authorizationTO.setReceiverUserInfo(getUserInfo(authorization.getToUser()));
         authorizationTO.setSenderUid(authorization.getFromUser().getUid());
+        authorizationTO.setSenderUserInfo(getUserInfo(authorization.getFromUser()));
         authorizationTO.setTargetPersonUid(authorization.getTargetPerson().getUid());
+        authorizationTO.setTargetPersonUserInfo(getUserInfo(authorization.getTargetPerson()));
         authorizationTO.setTemplate(getTemplateTObyDM(authorization.getTemplate()));
         final XMLGregorianCalendar validTill = CalendarUtil.getXmlDate(authorization.getValidTill());
         authorizationTO.setValidTill(validTill);
@@ -264,6 +272,10 @@ public class AuthorizationServiceFacadeImpl implements AuthorizationServiceFacad
         } 
         authorizationTO.setStatus(status);
         return authorizationTO;
+    }
+    
+    private UserInfo getUserInfo(final User user) {
+        return customerDao.getUserInfo(user);
     }
     
     @Override

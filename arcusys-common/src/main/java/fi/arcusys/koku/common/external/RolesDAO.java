@@ -5,7 +5,7 @@ import java.util.List;
 import javax.jws.WebParam;
 
 import fi.arcusys.koku.common.soa.Role;
-import fi.arcusys.koku.common.soa.User;
+import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

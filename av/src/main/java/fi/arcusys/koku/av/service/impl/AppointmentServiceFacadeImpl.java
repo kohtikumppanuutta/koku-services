@@ -38,6 +38,7 @@ import fi.arcusys.koku.av.soa.AppointmentSummaryStatus;
 import fi.arcusys.koku.av.soa.AppointmentTO;
 import fi.arcusys.koku.av.soa.AppointmentUserRejected;
 import fi.arcusys.koku.av.soa.AppointmentWithTarget;
+import fi.arcusys.koku.common.external.CustomerServiceDAO;
 import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
@@ -51,6 +52,7 @@ import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.AppointmentDTOCriteria;
+import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -95,6 +97,9 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	
 	@EJB
 	private TargetPersonDAO targetPersonDao;
+	
+	@EJB
+	private CustomerServiceDAO customerDao; 
 	
 	@EJB
 	private KokuSystemNotificationsService notificationService;
@@ -211,21 +216,23 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 
         appointmentTO.setRecipients(getReceipientsDTOByAppointment(appointment, true));
 
-		final HashMap<Integer, String> acceptedSlots = new HashMap<Integer, String>();
+		final HashMap<Integer, UserInfo> acceptedSlots = new HashMap<Integer, UserInfo>();
         final List<String> usersRejected = new ArrayList<String>();
         final List<AppointmentUserRejected> usersRejectedWithComments = new ArrayList<AppointmentUserRejected>();
 		
 		for (final AppointmentResponse response : appointment.getResponses()) {
 		    final User targetUser = response.getTarget().getTargetUser();
             final String targetPersonUid = getDisplayName(targetUser);
+            final UserInfo targetPersonUserInfo = getUserInfo(targetUser);
             if (response.getStatus() == AppointmentResponseStatus.Accepted) {
-	            acceptedSlots.put(response.getSlotNumber(), targetPersonUid);
+	            acceptedSlots.put(response.getSlotNumber(), targetPersonUserInfo);
 		    } else {
 		        usersRejected.add(targetPersonUid);
 		        final AppointmentUserRejected userRejected = new AppointmentUserRejected();
 		        userRejected.setRejectComment(response.getComment());
                 userRejected.setUserDisplayName(getDisplayName(targetUser));
                 userRejected.setUserUid(targetUser.getUid());
+                userRejected.setUserInfo(targetPersonUserInfo);
                 usersRejectedWithComments.add(userRejected);
 		    }
 		}
@@ -259,15 +266,19 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
             } else {
                 receipientTO.setTargetPerson(receipient.getTargetUser().getUid());
             }
+            receipientTO.setTargetPersonUserInfo(getUserInfo(receipient.getTargetUser()));
             final List<String> guardians = new ArrayList<String>();
+            final List<UserInfo> guardianUserInfos = new ArrayList<UserInfo>();
             for (final User guardian : receipient.getGuardians()) {
                 if (displayName) {
                     guardians.add(getDisplayName(guardian));
                 } else {
                     guardians.add(guardian.getUid());
                 }
+                guardianUserInfos.add(getUserInfo(guardian));
             }
             receipientTO.setReceipients(guardians);
+            receipientTO.setReceipientUserInfos(guardianUserInfos);
             recipients.add(receipientTO);
         }
         return recipients;
@@ -354,9 +365,14 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		appointmentSummary.setDescription(appointment.getDescription());
 		appointmentSummary.setSubject(appointment.getSubject());
 		appointmentSummary.setSender(getDisplayName(appointment.getSender()));
+		appointmentSummary.setSenderUserInfo(getUserInfo(appointment.getSender()));
 		appointmentSummary.setStatus(AppointmentSummaryStatus.valueOf(appointment.getStatus()));
 		
 		return appointmentSummary;
+	}
+	
+	private UserInfo getUserInfo(final User user) {
+	    return customerDao.getUserInfo(user);
 	}
 
     private AppointmentStatus getSummaryAppointmentStatus(
@@ -568,6 +584,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
             final AppointmentWithTarget appointmentTO = new AppointmentWithTarget();
             convertAppointmentToDTO(response.getAppointment(), appointmentTO);
             appointmentTO.setTargetPerson(response.getTarget().getTargetUser().getUid());
+            appointmentTO.setTargetPersonUserInfo(getUserInfo(response.getTarget().getTargetUser()));
             appointmentTO.setStatus(getAppointmentStatusByResponse(response));
             result.add(appointmentTO);
         }
@@ -650,8 +667,10 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         final AppointmentRespondedTO appointmentTO = new AppointmentRespondedTO();
         convertAppointmentToDTO(appointment, appointmentTO);
         appointmentTO.setTargetPerson(getDisplayName(response.getTarget().getTargetUser()));
+        appointmentTO.setTargetPersonUserInfo(getUserInfo(response.getTarget().getTargetUser()));
         appointmentTO.setStatus(getAppointmentStatusByResponse(response));
         appointmentTO.setReplier(getDisplayName(response.getReplier()));
+        appointmentTO.setReplierUserInfo(getUserInfo(response.getReplier()));
         appointmentTO.setReplierComment(response.getComment());
         if (appointment.getStatus() == AppointmentStatus.Cancelled) {
             appointmentTO.setEmployeesCancelComent(appointment.getCancelComment());

@@ -21,7 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.service.UserDAO;
-import fi.arcusys.koku.common.soa.User;
+import fi.arcusys.koku.common.service.datamodel.User;
+import fi.arcusys.koku.common.soa.UserInfo;
 import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
@@ -78,12 +79,11 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      * @return
      */
     @Override
-    public User getUserInfo(final String userUid) {
-        final fi.arcusys.koku.common.service.datamodel.User userByUid = userDao.getUserByUid(userUid);
-        if (userByUid.getCitizenPortalName() != null && !userByUid.getCitizenPortalName().trim().isEmpty()) {
-            return getUserInfoByUidAndSsn(userUid, getSsnByKunpoName(userByUid.getCitizenPortalName()));
+    public UserInfo getUserInfo(final User user) {
+        if (user.getCitizenPortalName() != null && !user.getCitizenPortalName().trim().isEmpty()) {
+            return getUserInfoByUidAndSsn(user, getSsnByKunpoName(user.getCitizenPortalName()));
         } else {
-            return getEmployeeUserInfo(userByUid);
+            return getEmployeeUserInfo(user);
         }
     }
 
@@ -99,15 +99,15 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         return ssn;
     }
 
-    private User getUserInfoByUidAndSsn(final String userUid, final String ssn) {
+    private UserInfo getUserInfoByUidAndSsn(final User user, final String ssn) {
         final CustomerType customer;
         try {
             customer = getCustomer(ssn);
         } catch (ServiceFault e) {
-            logger.error("Failed to get user info by userUid " + userUid + " and ssn " + ssn, e);
+            logger.error("Failed to get user info by userUid " + user.getUid() + " and ssn " + ssn, e);
             throw new RuntimeException(e);
         }
-        return ExternalDAOsUtil.convertCustomerToUser(customer, userUid);
+        return ExternalDAOsUtil.convertCustomerToUser(customer, user);
     }
 
     private CustomerType getCustomer(final String ssn) throws ServiceFault {
@@ -154,7 +154,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      * @return
      */
     @Override
-    public User getKunpoUserInfoBySsn(final String ssn) {
+    public UserInfo getKunpoUserInfoBySsn(final String ssn) {
         if (ssn == null || ssn.isEmpty()) {
             return null;
         }
@@ -176,14 +176,14 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
                     }
                     
                     ldapDao.createKunpoUserInLdap(ssn, ssn, firstName, lastName);
-                    return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(ssn).getUid(), ssn);
+                    return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(ssn), ssn);
                 } 
             } catch (ServiceFault e) {
                 logger.warn("Failed to get customer by ssn " + ssn + ". Probably, incorrect ssn is used. " + e.getMessage());
             }
             return null;
         } else {
-            return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(ldapNameBySsn).getUid(), ssn);
+            return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(ldapNameBySsn), ssn);
         }
     }
 
@@ -192,7 +192,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      * @return
      */
     @Override
-    public User getEmployeeUserInfoBySsn(String ssn) {
+    public UserInfo getEmployeeUserInfoBySsn(String ssn) {
         if (ssn == null || ssn.isEmpty()) {
             return null;
         }
@@ -203,9 +203,9 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         return getEmployeeUserInfo(userDao.getOrCreateUserByEmployeePortalName(ldapNameBySsn));
     }
 
-    private User getEmployeeUserInfo(
+    private UserInfo getEmployeeUserInfo(
             final fi.arcusys.koku.common.service.datamodel.User employee) {
-        final User user = new User();
+        final UserInfo user = new UserInfo();
         user.setDisplayName(employee.getEmployeePortalName());
         user.setUid(employee.getUid());
         final Pattern username = Pattern.compile("(\\w+)\\.(\\w+)");
@@ -225,7 +225,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      * @return
      */
     @Override
-    public User getKunpoUserInfoByPortalNameAndSsn(final String kunpoUsername, final String ssn) {
+    public UserInfo getKunpoUserInfoByPortalNameAndSsn(final String kunpoUsername, final String ssn) {
         if (kunpoUsername == null || kunpoUsername.trim().isEmpty()) {
             throw new IllegalArgumentException("Get of Kunpo user info failed: Kunpo username is empty: '" + kunpoUsername + "'");
         }
@@ -257,7 +257,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
             ldapDao.updateKunpoLdapName(ldapNameBySsn, kunpoUsername);
         }
 
-        return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(kunpoUsername).getUid(), ssn);
+        return getUserInfoByUidAndSsn(userDao.getOrCreateUserByCitizenPortalName(kunpoUsername), ssn);
     }
 
     /**
@@ -266,7 +266,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      * @return
      */
     @Override
-    public User getEmployeeUserInfoByPortalNameAndSsn(final String looraUsername, final String ssn) {
+    public UserInfo getEmployeeUserInfoByPortalNameAndSsn(final String looraUsername, final String ssn) {
         // TODO Auto-generated method stub
         return null;
     }

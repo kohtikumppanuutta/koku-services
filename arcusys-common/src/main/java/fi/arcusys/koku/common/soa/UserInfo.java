@@ -1,10 +1,13 @@
 package fi.arcusys.koku.common.soa;
 
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 19, 2011
  */
-public class User {
+@XmlType (name = "user", namespace = "http://soa.common.koku.arcusys.fi/")
+public class UserInfo {
 
     /**
      * @return
@@ -14,13 +17,50 @@ public class User {
         return "User [uid=" + uid + ", displayName=" + displayName + "]";
     }
 
+    /**
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+        return result;
+    }
+
+    /**
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof UserInfo)) {
+            return false;
+        }
+        UserInfo other = (UserInfo) obj;
+        if (uid == null) {
+            if (other.uid != null) {
+                return false;
+            }
+        } else if (!uid.equals(other.uid)) {
+            return false;
+        }
+        return true;
+    }
+
     private String uid;
     private String displayName;
     private String firstname;
     private String lastname;
     private String email;
     private String phoneNumber;
-
+    
     /**
      * @return the firstname
      */
@@ -80,10 +120,10 @@ public class User {
     /**
      * 
      */
-    public User() {
+    public UserInfo() {
     }
     
-    public User(final String uid, final String displayName) {
+    public UserInfo(final String uid, final String displayName) {
         this.uid = uid;
         this.displayName = displayName;
     }

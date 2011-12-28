@@ -51,20 +51,6 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
     public List<ConsentShortSummary> getAssignedConsents(String user, int startNum,
             int maxNum) {
         return serviceFacade.getAssignedConsents(user, startNum, maxNum);
-//        return getAssignedConsents_stubVersion(user);
-    }
-
-    private List<ConsentShortSummary> getAssignedConsents_stubVersion(
-            String user) {
-        logger.info("getAssignedConsents: " + user);
-        final List<ConsentShortSummary> result = new ArrayList<ConsentShortSummary>();
-        final ConsentShortSummary consent = new ConsentShortSummary();
-        consent.setConsentId(123L);
-        consent.setAnotherPermitterUid("Kirsi Kuntalainen");
-        consent.setTemplateName("suostumuspohja #1");
-        consent.setRequestor("Ville Virkamies");
-        result.add(consent);
-        return result;
     }
 
     /**
@@ -89,21 +75,6 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
             logger.debug("getOwnConsents: " + user);
         }
         return serviceFacade.getOwnConsents(user, startNum, maxNum);
-//        return Collections.singletonList(fillTestConsent(new ConsentSummary()));
-    }
-
-    private ConsentSummary fillTestConsent(final ConsentSummary consent) {
-        consent.setConsentId(123L);
-        consent.setAnotherPermitterUid("Kirsi Kuntalainen");
-        consent.setTemplateName("suostumuspohja #2");
-        consent.setRequestor("Ville Virkamies");
-        consent.setCreateType(ConsentCreateType.Electronic);
-        consent.setGivenAt(CalendarUtil.getXmlDate(new Date()));
-        consent.setStatus(ConsentStatus.Open);
-        final XMLGregorianCalendar validTill = CalendarUtil.getXmlDate(new Date());
-        validTill.setMonth(validTill.getMonth() + 1);
-        consent.setValidTill(validTill);
-        return consent;
     }
 
     /**
@@ -113,24 +84,6 @@ public class KokuKunpoSuostumusServiceImpl implements KokuKunpoSuostumusService 
     @Override
     public ConsentTO getConsentById(long suostumusId, final String userUid) {
         return serviceFacade.getConsentById(suostumusId, userUid);
-//        return getConsentById_stubVersion(suostumusId);
-    }
-
-    private ConsentTO getConsentById_stubVersion(long suostumusId) {
-        logger.info("getConsentById: " + suostumusId);
-        final ConsentTO consent = new ConsentTO();
-        fillTestConsent(consent);
-        final List<ActionRequestSummary> actionRequests = new ArrayList<ActionRequestSummary>();
-        final ActionRequestSummary actionRequest = new ActionRequestSummary();
-        actionRequest.setDescription("Some action given");
-        actionRequest.setStatus(ActionRequestStatus.Given);
-        actionRequests.add(actionRequest);
-        final ActionRequestSummary anotherActionRequest = new ActionRequestSummary();
-        anotherActionRequest.setDescription("Another action declined");
-        anotherActionRequest.setStatus(ActionRequestStatus.Declined);
-        actionRequests.add(anotherActionRequest);
-        consent.setActionRequests(actionRequests);
-        return consent;
     }
 
     /**

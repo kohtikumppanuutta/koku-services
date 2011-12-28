@@ -1,10 +1,15 @@
 package fi.arcusys.koku.kv.service.impl;
 
+import static fi.arcusys.koku.common.service.AbstractEntityDAO.FIRST_RESULT_NUMBER;
+import static fi.arcusys.koku.common.service.AbstractEntityDAO.MAX_RESULTS_COUNT;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -20,15 +25,12 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
-import fi.arcusys.koku.common.service.AbstractEntityDAO;
+import fi.arcusys.koku.common.external.CustomerServiceDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.MessageDAO;
@@ -41,7 +43,6 @@ import fi.arcusys.koku.common.service.ScheduledTaskExecutor;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.Folder;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
-import fi.arcusys.koku.common.service.datamodel.FreeTextAnswer;
 import fi.arcusys.koku.common.service.datamodel.Message;
 import fi.arcusys.koku.common.service.datamodel.MessageRef;
 import fi.arcusys.koku.common.service.datamodel.MultipleChoice;
@@ -51,22 +52,19 @@ import fi.arcusys.koku.common.service.datamodel.Request;
 import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 import fi.arcusys.koku.common.service.datamodel.Response;
 import fi.arcusys.koku.common.service.datamodel.User;
-import fi.arcusys.koku.common.service.datamodel.Visibility;
-import fi.arcusys.koku.common.service.datamodel.YesNoAnswer;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
-import fi.arcusys.koku.common.service.exception.UserNotFoundException;
 import fi.arcusys.koku.common.soa.Role;
+import fi.arcusys.koku.common.soa.UserInfo;
 import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.AnswerTO;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
+import fi.arcusys.koku.kv.soa.MessageTO;
 import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
-import fi.arcusys.koku.kv.soa.Questions;
-import fi.arcusys.koku.kv.soa.Receipients;
 import fi.arcusys.koku.kv.soa.RequestProcessingTO;
 import fi.arcusys.koku.kv.soa.RequestShortSummary;
 import fi.arcusys.koku.kv.soa.RequestSummary;
@@ -78,10 +76,6 @@ import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
 import fi.arcusys.koku.kv.soa.ResponseDetail;
 import fi.arcusys.koku.kv.soa.ResponseSummary;
 import fi.arcusys.koku.kv.soa.ResponseTO;
-import fi.arcusys.koku.kv.service.dto.MessageTO;
-
-import static fi.arcusys.koku.common.service.AbstractEntityDAO.FIRST_RESULT_NUMBER;
-import static fi.arcusys.koku.common.service.AbstractEntityDAO.MAX_RESULTS_COUNT;
 
 /**
  * 
@@ -115,10 +109,13 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 
     @EJB
 	private ResponseDAO responseDAO;
-    
+
     @EJB
     private UsersAndGroupsService usersService;
-
+    
+    @EJB
+    private CustomerServiceDAO customerDao;
+    
     private String notificationTemplate = "{2}";
 
     private static final String REQUEST_REPLIED_BODY = "request.replied.body";
@@ -229,14 +226,40 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		final Message message = messageRef.getMessage();
 		msg.setMessageId(messageRef.getId());
 		msg.setSender(getDisplayName(message.getUser()));
+		msg.setSenderUserInfo(getUserInfo(message.getUser()));
 		msg.setSubject(message.getSubject());
 		msg.setCreationDate(CalendarUtil.getXmlGregorianCalendar(message.getCreatedDate()));
 		msg.setMessageStatus(MessageStatus.getStatus(messageRef.isRead()));
 		msg.setMessageType(messageRef.getFolder().getFolderType());
 		
-		msg.setRecipients(getUidsListByUsers(message.getReceipients()));
+		msg.setRecipients(getDisplayNamesByUsers(message.getReceipients()));
+		msg.setRecipientUserInfos(getUserInfos(message.getReceipients()));
 		return msg;
 	}
+
+    /**
+     * @param users
+     * @return
+     */
+    private List<UserInfo> getUserInfos(final Collection<User> users) {
+        if (users == null || users.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        final List<UserInfo> result = new ArrayList<UserInfo>(users.size());
+        for (final User user : users) {
+            result.add(getUserInfo(user));
+        }
+        return result;
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    private UserInfo getUserInfo(final User user) {
+        return customerDao.getUserInfo(user);
+    }
 
     private String getDisplayName(final User user) {
         if (user == null) {
@@ -249,7 +272,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         }
     }
 
-	private List<String> getUidsListByUsers(final Set<User> receipients2) {
+	private List<String> getDisplayNamesByUsers(final Set<User> receipients2) {
 		final List<String> receipients = new ArrayList<String>();
 		for (final User receipient : receipients2) {
 			receipients.add(getDisplayName(receipient));
@@ -454,12 +477,12 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		final RequestTO result = new RequestTO();
 		
 		final Request request = requestDAO.getById(requestId);
-		final List<String> receipientsNotResponded = getUidsListByUsers(request.getReceipients());
+		final List<UserInfo> receipientsNotResponded = getUserInfos(request.getReceipients());
 		final List<ResponseTO> responseTOs = new ArrayList<ResponseTO>();
 
 		fillRequestSummary(result, request, receipientsNotResponded, responseTOs);
 		result.setContent("");
-		result.setNotResponded(receipientsNotResponded);
+		result.setNotRespondedUserInfos(receipientsNotResponded);
 		result.setResponses(responseTOs);
 
 		result.setQuestions(getQuestionsTObyDTO(request.getTemplate().getQuestions()));
@@ -486,7 +509,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     }
 
 	private void fillRequestSummary(final RequestSummary result, final Request request,
-			final List<String> receipientsNotResponded,
+			final List<UserInfo> receipientsNotResponded,
 			final List<ResponseTO> responseTOs) {
 		fillRequestShortSummary(result, request);
 		
@@ -494,8 +517,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 			final ResponseTO responseTO = new ResponseTO();
             responseTO.setAnswers(convertAnswersToAnswerTO(response.getAnswers()));
 			responseTO.setName(getDisplayName(response.getReplier()));
+			responseTO.setReplierUserInfo(getUserInfo(response.getReplier()));
 			responseTO.setComment(response.getComment());
-			receipientsNotResponded.remove(getDisplayName(response.getReplier()));
+			receipientsNotResponded.remove(getUserInfo(response.getReplier()));
 			responseTOs.add(responseTO);
 		}
 		
@@ -520,6 +544,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
             final Request request) {
         result.setRequestId(request.getId());
 		result.setSender(getDisplayName(request.getFromUser()));
+		result.setSenderUserInfo(getUserInfo(request.getFromUser()));
 		result.setSubject(request.getSubject());
 		result.setCreationDate(CalendarUtil.getXmlGregorianCalendar(request.getCreatedDate()));
 		result.setEndDate(CalendarUtil.getXmlGregorianCalendar(request.getReplyTill()));
@@ -742,10 +767,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		for (final Request request : requests) {
 			final RequestSummary requestSummary = new RequestSummary();
 			
-			final List<String> receipientsNotResponded = getUidsListByUsers(request.getReceipients());
-			final List<ResponseTO> responseTOs = new ArrayList<ResponseTO>();
-
-			fillRequestSummary(requestSummary, request, receipientsNotResponded, responseTOs);
+			fillRequestSummary(requestSummary, request, getUserInfos(request.getReceipients()), new ArrayList<ResponseTO>());
 			result.add(requestSummary);
 		}
 		return result;
@@ -783,9 +805,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     private String getReceipientNames(List<String> receipients) {
         final StringBuilder result = new StringBuilder();
         for (final String receipient : receipients) {
-            final User user = getUserByUid(receipient);
-            final String displayName = user.getCitizenPortalName() != null ? user.getCitizenPortalName() : user.getEmployeePortalName();
-            result.append(displayName).append(",");
+            result.append(getUserInfo(getUserByUid(receipient)).getDisplayName()).append(",");
         }
         if (result.length() > 0) {
             result.setLength(result.length() - 1);
@@ -994,6 +1014,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         responseSummary.setRequest(fillRequestShortSummary(new RequestShortSummary(), response.getRequest()));
         responseSummary.setResponseId(response.getId());
         responseSummary.setReplierUid(getDisplayName(response.getReplier()));
+        responseSummary.setReplierUserInfo(getUserInfo(response.getReplier()));
     }
 
     /**

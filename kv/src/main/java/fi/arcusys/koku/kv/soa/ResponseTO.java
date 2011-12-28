@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlType;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 22, 2011
@@ -11,10 +13,23 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType (name = "response", namespace = "http://soa.kv.koku.arcusys.fi/")
 public class ResponseTO {
 	private String name;
+	private UserInfo replierUserInfo;
 	private List<AnswerTO> answers;
 	private String comment;
 	
 	/**
+     * @return the replierUserInfo
+     */
+    public UserInfo getReplierUserInfo() {
+        return replierUserInfo;
+    }
+    /**
+     * @param replierUserInfo the replierUserInfo to set
+     */
+    public void setReplierUserInfo(UserInfo replierUserInfo) {
+        this.replierUserInfo = replierUserInfo;
+    }
+    /**
      * @return the comment
      */
     public String getComment() {

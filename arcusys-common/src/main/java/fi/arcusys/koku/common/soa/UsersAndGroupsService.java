@@ -15,10 +15,10 @@ public interface UsersAndGroupsService {
     // Portal part
     
     @WebResult(name = "user")
-    User loginByKunpoNameAndSsn(@WebParam(name = "kunpoUsername") final String username, @WebParam(name = "ssn") final String ssn);
+    UserInfo loginByKunpoNameAndSsn(@WebParam(name = "kunpoUsername") final String username, @WebParam(name = "ssn") final String ssn);
     
     @WebResult(name = "user")
-    User loginByLooraNameAndSsn(@WebParam(name = "looraUsername") final String username, @WebParam(name = "ssn") final String ssn);
+    UserInfo loginByLooraNameAndSsn(@WebParam(name = "looraUsername") final String username, @WebParam(name = "ssn") final String ssn);
     
     @WebResult(name = "userUid")
     String getUserUidByKunpoName(@WebParam(name = "kunpoUsername") final String username);
@@ -37,12 +37,12 @@ public interface UsersAndGroupsService {
     // get groups
     // get users
     @WebResult(name = "user")
-    List<User> searchUsers(
+    List<UserInfo> searchUsers(
             @WebParam(name = "searchString") final String searchString, 
             @WebParam(name = "limit") final int limit);
     
     @WebResult(name = "user")
-    List<User> searchEmployees(
+    List<UserInfo> searchEmployees(
             @WebParam(name = "searchString") final String searchString, 
             @WebParam(name = "limit") final int limit);
 
@@ -52,7 +52,7 @@ public interface UsersAndGroupsService {
             @WebParam(name = "limit") final int limit);
     
     @WebResult(name = "user")
-    List<User> getUsersByGroupUid(@WebParam(name = "groupUid") final String groupUid);
+    List<UserInfo> getUsersByGroupUid(@WebParam(name = "groupUid") final String groupUid);
 
     @WebResult(name = "child")
     List<Child> searchChildren(
@@ -67,7 +67,7 @@ public interface UsersAndGroupsService {
     Child getChildInfo(@WebParam(name = "childUid") final String childUid);
 
     @WebResult(name = "user")
-    User getUserInfo(@WebParam(name = "userUid") final String userUid);
+    UserInfo getUserInfo(@WebParam(name = "userUid") final String userUid);
 
     String getSsnByLdapName(final String username);
 

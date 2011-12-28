@@ -14,6 +14,7 @@ import fi.arcusys.koku.common.service.exception.UserNotFoundException;
 import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
+import fi.arcusys.koku.kv.soa.MessageTO;
 import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
 import fi.arcusys.koku.kv.soa.Questions;
@@ -28,7 +29,6 @@ import fi.arcusys.koku.kv.soa.RequestTemplateTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
 import fi.arcusys.koku.kv.soa.ResponseDetail;
 import fi.arcusys.koku.kv.soa.ResponseSummary;
-import fi.arcusys.koku.kv.service.dto.MessageTO;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

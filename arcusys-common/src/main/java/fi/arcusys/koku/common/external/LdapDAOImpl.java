@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.soa.Group;
 import fi.arcusys.koku.common.soa.Role;
-import fi.arcusys.koku.common.soa.User;
+import fi.arcusys.koku.common.soa.UserInfo;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.ServiceFault;
 

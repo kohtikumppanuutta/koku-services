@@ -6,7 +6,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.soa.Role;
-import fi.arcusys.koku.common.soa.User;
+import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

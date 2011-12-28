@@ -1,5 +1,7 @@
 package fi.arcusys.koku.kv.soa;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 6, 2011
@@ -8,7 +10,20 @@ public class ResponseSummary {
     private RequestShortSummary request;
     private Long responseId;
     private String replierUid;
+    private UserInfo replierUserInfo;
     
+    /**
+     * @return the replierUserInfo
+     */
+    public UserInfo getReplierUserInfo() {
+        return replierUserInfo;
+    }
+    /**
+     * @param replierUserInfo the replierUserInfo to set
+     */
+    public void setReplierUserInfo(UserInfo replierUserInfo) {
+        this.replierUserInfo = replierUserInfo;
+    }
     /**
      * @return the request
      */

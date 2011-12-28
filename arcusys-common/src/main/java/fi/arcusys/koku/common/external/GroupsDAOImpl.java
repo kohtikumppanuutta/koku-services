@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.soa.Group;
-import fi.arcusys.koku.common.soa.User;
+import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -75,8 +75,8 @@ public class GroupsDAOImpl implements GroupsDAO {
      * @return
      */
     @Override
-    public List<User> getUsersByGroupUid(String groupUid) {
-        final List<User> result = new ArrayList<User>();
+    public List<UserInfo> getUsersByGroupUid(String groupUid) {
+        final List<UserInfo> result = new ArrayList<UserInfo>();
         
         for (final String memberName : ldapDao.getGroupMembers(groupUid)) {
             result.add(customerDao.getKunpoUserInfoBySsn(customerDao.getSsnByKunpoName(memberName)));

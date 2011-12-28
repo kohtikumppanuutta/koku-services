@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.arcusys.koku.common.external.CustomerServiceDAO;
 import fi.arcusys.koku.common.service.AuthorizationTemplateDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.ConsentDAO;
@@ -44,6 +46,7 @@ import fi.arcusys.koku.common.service.datamodel.ReceipientsType;
 import fi.arcusys.koku.common.service.datamodel.SourceInfo;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
+import fi.arcusys.koku.common.soa.UserInfo;
 import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
 import fi.arcusys.koku.tiva.soa.ActionRequestStatus;
@@ -107,6 +110,9 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
 
     @EJB
     private UserDAO userDao;
+    
+    @EJB
+    private CustomerServiceDAO customerDao;
 
     @EJB
     private KokuSystemNotificationsService notificationService;
@@ -429,7 +435,9 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
             final Consent consent, final ConsentShortSummary consentTO) {
         consentTO.setConsentId(consent.getId());
         consentTO.setRequestor(getDisplayName(consent.getCreator()));
+        consentTO.setRequestorUserInfo(getUserInfo(consent.getCreator()));
         consentTO.setTargetPersonUid(getDisplayName(consent.getTargetPerson()));
+        consentTO.setTargetPersonUserInfo(getUserInfo(consent.getTargetPerson()));
         consentTO.setTemplateId(consent.getTemplate().getId());
         consentTO.setTemplateName(consent.getTemplate().getTitle());
         consentTO.setTemplateDescription(consent.getTemplate().getDescription());
@@ -439,6 +447,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
             consentTO.setTemplateTypeName(templateType.getName());
         }
         consentTO.setAnotherPermitterUid(getAnotherUserName(userUid, consent.getReceipients()));
+        consentTO.setAnotherPermitterUserInfo(getUserInfo(getAnotherUser(userUid, consent.getReceipients())));
         consentTO.setCreateType(ConsentCreateType.valueOf(consent.getCreationType()));
         consentTO.setReplyTill(CalendarUtil.getXmlDate(consent.getReplyTill()));
         
@@ -446,14 +455,27 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
         consentTO.setMetaInfo(consent.getMetaInfo());
         consentTO.setGivenToParties(getGivenToParties(consent));
     }
+    
+    private UserInfo getUserInfo(final User user) {
+        return customerDao.getUserInfo(user);
+    }
 
     private String getAnotherUserName(final String userUid, final Set<User> users) {
-        for (final User user : users) {
-            if (!getSafeUserUid(user).equals(userUid)) {
-                return getDisplayName(user);
-            }
+        User result = getAnotherUser(userUid, users);
+        if (result != null) {
+            return getDisplayName(result);
         }
         return "";
+    }
+
+    private User getAnotherUser(final String userUid, final Set<User> users) {
+        User result = null;
+        for (final User user : users) {
+            if (!getSafeUserUid(user).equals(userUid)) {
+                result = user;
+            }
+        }
+        return result;
     }
 
     /**
@@ -583,6 +605,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
         final Consent consent = reply.getConsent();
         fillShortSummaryByConsent(userUid, consent, consentSummary);
         consentSummary.setReceipients(convertUsersToNames(consent.getReceipients()));
+        consentSummary.setReceipientUserInfos(getUserInfos(consent.getReceipients()));
         consentSummary.setApprovalStatus(ConsentApprovalStatus.valueOf(reply.getStatus()));
         consentSummary.setGivenAt(CalendarUtil.getXmlDate(reply.getCreatedDate()));
         consentSummary.setValidTill(CalendarUtil.getXmlDate(reply.getValidTill()));
@@ -747,6 +770,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
     private void fillConsentSummaryCombined(final Consent consent, final List<ConsentReply> replies, final ConsentSummary consentTO) {
         fillShortSummaryByConsent(null, consent, consentTO);
         consentTO.setReceipients(convertUsersToNames(consent.getReceipients()));
+        consentTO.setReceipientUserInfos(getUserInfos(consent.getReceipients()));
 
         // default values
         consentTO.setApprovalStatus(ConsentApprovalStatus.Approved);
@@ -774,6 +798,18 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
         if (consentTO.getStatus() == ConsentStatus.Declined) {
             consentTO.setApprovalStatus(ConsentApprovalStatus.Declined);
         }
+    }
+    
+    private List<UserInfo> getUserInfos(final Collection<User> users) {
+        if (users == null || users.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        final List<UserInfo> result = new ArrayList<UserInfo>(users.size());
+        for (final User user : users) {
+            result.add(getUserInfo(user));
+        }
+        return result;
     }
 
     private List<ActionRequestSummary> getActionResponsesCombined(

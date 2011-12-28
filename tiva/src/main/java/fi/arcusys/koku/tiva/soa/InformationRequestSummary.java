@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 22, 2011
@@ -12,12 +14,51 @@ public class InformationRequestSummary {
     private Long requestId;
     private String title;
     private String targetPersonUid;
+    private UserInfo targetPersonUserInfo;
     private String senderUid;
+    private UserInfo senderUserInfo;
     private String receiverUid;
+    private UserInfo receiverUserInfo;
     private String receiverRoleUid;
     private XMLGregorianCalendar validTill;
     private InformationRequestStatus status;
     
+    /**
+     * @return the targetPersonUserInfo
+     */
+    public UserInfo getTargetPersonUserInfo() {
+        return targetPersonUserInfo;
+    }
+    /**
+     * @param targetPersonUserInfo the targetPersonUserInfo to set
+     */
+    public void setTargetPersonUserInfo(UserInfo targetPersonUserInfo) {
+        this.targetPersonUserInfo = targetPersonUserInfo;
+    }
+    /**
+     * @return the senderUserInfo
+     */
+    public UserInfo getSenderUserInfo() {
+        return senderUserInfo;
+    }
+    /**
+     * @param senderUserInfo the senderUserInfo to set
+     */
+    public void setSenderUserInfo(UserInfo senderUserInfo) {
+        this.senderUserInfo = senderUserInfo;
+    }
+    /**
+     * @return the receiverUserInfo
+     */
+    public UserInfo getReceiverUserInfo() {
+        return receiverUserInfo;
+    }
+    /**
+     * @param receiverUserInfo the receiverUserInfo to set
+     */
+    public void setReceiverUserInfo(UserInfo receiverUserInfo) {
+        this.receiverUserInfo = receiverUserInfo;
+    }
     /**
      * @return the receiverRoleUid
      */

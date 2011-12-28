@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -13,11 +15,26 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 public class ConsentSummary extends ConsentShortSummary {
     private List<String> receipients;
+    private List<UserInfo> receipientUserInfos;
     private ConsentApprovalStatus approvalStatus;
     private ConsentStatus status;
     private XMLGregorianCalendar givenAt;
     private XMLGregorianCalendar validTill;
     
+    /**
+     * @return the receipientUserInfos
+     */
+    public List<UserInfo> getReceipientUserInfos() {
+        return receipientUserInfos;
+    }
+
+    /**
+     * @param receipientUserInfos the receipientUserInfos to set
+     */
+    public void setReceipientUserInfos(List<UserInfo> receipientUserInfos) {
+        this.receipientUserInfos = receipientUserInfos;
+    }
+
     /**
      * @return the receipients
      */

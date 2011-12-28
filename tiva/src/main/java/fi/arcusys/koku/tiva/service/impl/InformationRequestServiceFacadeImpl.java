@@ -17,6 +17,7 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import fi.arcusys.koku.common.external.CustomerServiceDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.InformationRequestDAO;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
@@ -28,6 +29,7 @@ import fi.arcusys.koku.common.service.datamodel.InformationRequestCategory;
 import fi.arcusys.koku.common.service.datamodel.InformationRequestReply;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.InformationRequestDTOCriteria;
+import fi.arcusys.koku.common.soa.UserInfo;
 import fi.arcusys.koku.tiva.service.InformationRequestServiceFacade;
 import fi.arcusys.koku.tiva.service.KksCollectionsDAO;
 import fi.arcusys.koku.tiva.soa.InformationAccessType;
@@ -65,6 +67,9 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
     
     @EJB
     private KksCollectionsDAO kksDao;
+    
+    @EJB
+    private CustomerServiceDAO customerDao;
     
     @EJB
     private KokuSystemNotificationsService notificationService;
@@ -268,11 +273,14 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
     private InformationRequestSummary fillRequestSummaryByDO(InformationRequest request, final InformationRequestSummary requestTO) {
         if (request.getReceiver() != null) {
             requestTO.setReceiverUid(request.getReceiver().getUid());
+            requestTO.setReceiverUserInfo(getUserInfo(request.getReceiver()));
         }
         requestTO.setReceiverRoleUid(request.getReceiverRoleUid());
         requestTO.setRequestId(request.getId());
         requestTO.setSenderUid(request.getSender().getUid());
+        requestTO.setSenderUserInfo(getUserInfo(request.getSender()));
         requestTO.setTargetPersonUid(request.getTargetPerson().getUid());
+        requestTO.setTargetPersonUserInfo(getUserInfo(request.getTargetPerson()));
         requestTO.setTitle(request.getTitle());
         requestTO.setValidTill(CalendarUtil.getXmlDate(request.getValidTill()));
         final InformationRequestReply reply = request.getReply();
@@ -290,6 +298,10 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
             }
         } 
         return requestTO;
+    }
+    
+    private UserInfo getUserInfo(final User user) {
+        return customerDao.getUserInfo(user);
     }
 
     private String getDisplayName(final User user) {

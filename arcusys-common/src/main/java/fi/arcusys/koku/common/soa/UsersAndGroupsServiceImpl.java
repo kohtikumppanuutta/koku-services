@@ -95,7 +95,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      * @return
      */
     @Override
-    public List<User> searchUsers(String searchString, int limit) {
+    public List<UserInfo> searchUsers(String searchString, int limit) {
         return getListBySingleValue(customerDao.getKunpoUserInfoBySsn(searchString));
     }
 
@@ -105,7 +105,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      * @return
      */
     @Override
-    public List<User> searchEmployees(String searchString, int limit) {
+    public List<UserInfo> searchEmployees(String searchString, int limit) {
         // searchString is username in portal
         final String ssnByLooraName = customerDao.getSsnByLooraName(searchString);
         if (ssnByLooraName != null && !ssnByLooraName.isEmpty()) {
@@ -137,7 +137,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      * @return
      */
     @Override
-    public List<User> getUsersByGroupUid(String groupUid) {
+    public List<UserInfo> getUsersByGroupUid(String groupUid) {
         return groupsDao.getUsersByGroupUid(groupUid);
     }
 
@@ -174,8 +174,8 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      * @return
      */
     @Override
-    public User getUserInfo(String userUid) {
-        return customerDao.getUserInfo(userUid);
+    public UserInfo getUserInfo(String userUid) {
+        return customerDao.getUserInfo(userDao.getUserByUid(userUid));
     }
 
     /**
@@ -197,7 +197,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByKunpoSsn(String ssn) {
-        final User user = customerDao.getKunpoUserInfoBySsn(ssn);
+        final UserInfo user = customerDao.getKunpoUserInfoBySsn(ssn);
         if (user != null) {
             return user.getUid();
         } else {
@@ -211,7 +211,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByEmployeeSsn(String ssn) {
-        final User user = customerDao.getEmployeeUserInfoBySsn(ssn);
+        final UserInfo user = customerDao.getEmployeeUserInfoBySsn(ssn);
         if (user != null) {
             return user.getUid();
         } else {
@@ -243,7 +243,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      * @return
      */
     @Override
-    public User loginByKunpoNameAndSsn(String kunpoUsername, String ssn) {
+    public UserInfo loginByKunpoNameAndSsn(String kunpoUsername, String ssn) {
         if (ssn == null || ssn.isEmpty()) {
             return customerDao.getKunpoUserInfoBySsn(customerDao.getSsnByKunpoName(kunpoUsername));
         }
@@ -257,7 +257,7 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      * @return
      */
     @Override
-    public User loginByLooraNameAndSsn(String looraUsername, String ssn) {
+    public UserInfo loginByLooraNameAndSsn(String looraUsername, String ssn) {
         if (ssn == null || ssn.isEmpty()) {
             return customerDao.getEmployeeUserInfoBySsn(customerDao.getSsnByLooraName(looraUsername));
         }

@@ -11,7 +11,6 @@ import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
-import fi.arcusys.koku.kv.service.dto.MessageTO;
 
 
 /**

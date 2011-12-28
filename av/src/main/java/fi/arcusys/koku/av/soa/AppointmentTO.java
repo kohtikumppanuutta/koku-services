@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlType;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
@@ -15,7 +17,7 @@ public class AppointmentTO extends AppointmentSummary {
 	private List<AppointmentSlotTO> slots;
 
 	private List<AppointmentReceipientTO> recipients;
-    private Map<Integer, String> acceptedSlots;
+    private Map<Integer, UserInfo> acceptedSlots;
     private List<String> usersRejected;
     private List<AppointmentUserRejected> usersRejectedWithComments;
     private String cancelComment;
@@ -35,13 +37,13 @@ public class AppointmentTO extends AppointmentSummary {
     /**
      * @return the acceptedSlots
      */
-    public Map<Integer, String> getAcceptedSlots() {
+    public Map<Integer, UserInfo> getAcceptedSlots() {
         return acceptedSlots;
     }
     /**
      * @param acceptedSlots the acceptedSlots to set
      */
-    public void setAcceptedSlots(Map<Integer, String> acceptedSlots) {
+    public void setAcceptedSlots(Map<Integer, UserInfo> acceptedSlots) {
         this.acceptedSlots = acceptedSlots;
     }
     /**

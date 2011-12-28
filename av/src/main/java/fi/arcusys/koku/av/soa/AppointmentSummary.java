@@ -3,20 +3,37 @@ package fi.arcusys.koku.av.soa;
 
 import javax.xml.bind.annotation.XmlType;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 22, 2011
  */
 @XmlType (name = "appointmentSummary", namespace = "http://soa.av.koku.arcusys.fi/",
-propOrder={"appointmentId", "status", "sender" , "subject", "description"})
+propOrder={"appointmentId", "status", "sender" , "senderUserInfo", "subject", "description"})
 public class AppointmentSummary {
 
 
     private long appointmentId;
     private String sender;
+    private UserInfo senderUserInfo;
     private String subject;
     private String description;
     private AppointmentSummaryStatus status;
+
+    /**
+     * @return the senderUserInfo
+     */
+    public UserInfo getSenderUserInfo() {
+        return senderUserInfo;
+    }
+
+    /**
+     * @param senderUserInfo the senderUserInfo to set
+     */
+    public void setSenderUserInfo(UserInfo senderUserInfo) {
+        this.senderUserInfo = senderUserInfo;
+    }
 
     /**
      * @return the appointmentId

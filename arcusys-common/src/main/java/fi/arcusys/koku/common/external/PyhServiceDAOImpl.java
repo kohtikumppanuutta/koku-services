@@ -13,9 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.service.UserDAO;
+import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.soa.Child;
 import fi.arcusys.koku.common.soa.ChildWithHetu;
-import fi.arcusys.koku.common.soa.User;
+import fi.arcusys.koku.common.soa.UserInfo;
 import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
@@ -82,7 +83,7 @@ public class PyhServiceDAOImpl implements PyhServiceDAO {
                 final Child child = convertCustomerToChild(ssnByLdapName, customer);
                 final ChildWithHetu childWithHetu = new ChildWithHetu(child);
                 childWithHetu.setHetu(customer.getHenkiloTunnus());
-                for (final Iterator<User> iter = childWithHetu.getParents().iterator(); iter.hasNext();) {
+                for (final Iterator<UserInfo> iter = childWithHetu.getParents().iterator(); iter.hasNext();) {
                     if (userUid.equals(iter.next().getUid())) {
                         iter.remove();
                     }
@@ -98,15 +99,15 @@ public class PyhServiceDAOImpl implements PyhServiceDAO {
 
     private Child convertCustomerToChild(final String ssnByLdapName, final CustomerType customer) throws Exception {
         final String childSsn = customer.getHenkiloTunnus();
-        final User user = ExternalDAOsUtil.convertCustomerToUser(customer, customerDao.getKunpoUserInfoBySsn(customer.getHenkiloTunnus()).getUid());
+        final UserInfo user = customerDao.getKunpoUserInfoBySsn(customer.getHenkiloTunnus());
         return getChildByUserAndSsn(ssnByLdapName, childSsn, user);
     }
 
-    private Child getChildByUserAndSsn(final String ssnForAudit, final String childSsn, final User user) throws Exception {
+    private Child getChildByUserAndSsn(final String ssnForAudit, final String childSsn, final UserInfo user) throws Exception {
         final Child child = new Child(user);
-        final List<User> parents = new ArrayList<User>();
+        final List<UserInfo> parents = new ArrayList<UserInfo>();
         for (final CustomerType parentExt : familyService.getPersonsParents(childSsn, ssnForAudit, "TIVA")) {
-            parents.add(ExternalDAOsUtil.convertCustomerToUser(parentExt, customerDao.getKunpoUserInfoBySsn(parentExt.getHenkiloTunnus()).getUid()));
+            parents.add(customerDao.getKunpoUserInfoBySsn(parentExt.getHenkiloTunnus()));
         }
         child.setParents(parents);
         return child;
@@ -119,13 +120,14 @@ public class PyhServiceDAOImpl implements PyhServiceDAO {
      */
     @Override
     public Child getChildInfo(String childUid) {
-        final String ssnByLdapName = customerDao.getSsnByKunpoName(userDao.getOrCreateUser(childUid).getCitizenPortalName());
+        final User user = userDao.getOrCreateUser(childUid);
+        final String ssnByLdapName = customerDao.getSsnByKunpoName(user.getCitizenPortalName());
 
         try {
             final AuditInfoType auditHeader = new AuditInfoType();
             auditHeader.setComponent("tiva");
             auditHeader.setUserId(ssnByLdapName);
-            return getChildByUserAndSsn(ssnByLdapName, ssnByLdapName, customerDao.getUserInfo(childUid));
+            return getChildByUserAndSsn(ssnByLdapName, ssnByLdapName, customerDao.getUserInfo(user));
         } catch (Exception e) {
             logger.error("Failed to get child info by kunpoUid " + childUid + " and ssn " + ssnByLdapName, e);
             throw new RuntimeException(e);

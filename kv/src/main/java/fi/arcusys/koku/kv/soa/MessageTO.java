@@ -1,24 +1,29 @@
 package fi.arcusys.koku.kv.soa;
 
+import javax.xml.bind.annotation.XmlType;
+
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
- * Jun 9, 2011
+ * May 20, 2011
  */
-public class Message extends MessageSummary {
+@XmlType (name = "message", namespace = "http://soa.kv.koku.arcusys.fi/")
+public class MessageTO extends fi.arcusys.koku.kv.soa.MessageSummary {
 	private String content;
-
+	
+	
 	/**
 	 * @return the content
 	 */
 	public String getContent() {
 		return content;
 	}
-
 	/**
 	 * @param content the content to set
 	 */
-	public void setContent(String content) {
+	public void setContent(final String content) {
 		this.content = content;
 	}
+	
 	
 }

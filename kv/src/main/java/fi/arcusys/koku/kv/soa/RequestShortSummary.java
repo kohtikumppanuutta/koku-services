@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 6, 2011
@@ -12,9 +14,24 @@ public class RequestShortSummary {
 
     private long requestId;
     private String sender;
+    private UserInfo senderUserInfo;
     private String subject;
     private XMLGregorianCalendar creationDate;
     private XMLGregorianCalendar endDate;
+
+    /**
+     * @return the senderUserInfo
+     */
+    public UserInfo getSenderUserInfo() {
+        return senderUserInfo;
+    }
+
+    /**
+     * @param senderUserInfo the senderUserInfo to set
+     */
+    public void setSenderUserInfo(UserInfo senderUserInfo) {
+        this.senderUserInfo = senderUserInfo;
+    }
 
     /**
      * 

@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
@@ -19,8 +21,11 @@ public class ConsentShortSummary {
     private Long templateTypeId;
     private String templateTypeName;
     private String targetPersonUid;
+    private UserInfo targetPersonUserInfo;
     private String anotherPermitterUid;
+    private UserInfo anotherPermitterUserInfo;
     private String requestor;
+    private UserInfo requestorUserInfo;
     private ConsentCreateType createType;
     private XMLGregorianCalendar replyTill;
     
@@ -28,6 +33,42 @@ public class ConsentShortSummary {
     private String metaInfo;
     private List<ConsentExternalGivenTo> givenToParties;
     
+    /**
+     * @return the targetPersonUserInfo
+     */
+    public UserInfo getTargetPersonUserInfo() {
+        return targetPersonUserInfo;
+    }
+    /**
+     * @param targetPersonUserInfo the targetPersonUserInfo to set
+     */
+    public void setTargetPersonUserInfo(UserInfo targetPersonUserInfo) {
+        this.targetPersonUserInfo = targetPersonUserInfo;
+    }
+    /**
+     * @return the anotherPermitterUserInfo
+     */
+    public UserInfo getAnotherPermitterUserInfo() {
+        return anotherPermitterUserInfo;
+    }
+    /**
+     * @param anotherPermitterUserInfo the anotherPermitterUserInfo to set
+     */
+    public void setAnotherPermitterUserInfo(UserInfo anotherPermitterUserInfo) {
+        this.anotherPermitterUserInfo = anotherPermitterUserInfo;
+    }
+    /**
+     * @return the requestorUserInfo
+     */
+    public UserInfo getRequestorUserInfo() {
+        return requestorUserInfo;
+    }
+    /**
+     * @param requestorUserInfo the requestorUserInfo to set
+     */
+    public void setRequestorUserInfo(UserInfo requestorUserInfo) {
+        this.requestorUserInfo = requestorUserInfo;
+    }
     /**
      * @return the templateTypeId
      */

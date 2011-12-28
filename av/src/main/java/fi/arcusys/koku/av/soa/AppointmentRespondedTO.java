@@ -1,15 +1,44 @@
 package fi.arcusys.koku.av.soa;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 19, 2011
  */
 public class AppointmentRespondedTO extends AppointmentSummary {
     private String targetPerson;
+    private UserInfo targetPersonUserInfo;
     private String replier;
+    private UserInfo replierUserInfo;
     private String replierComment;
     private AppointmentSlotTO approvedSlot;
     private String employeesCancelComent;
+    
+    /**
+     * @return the targetPersonUserInfo
+     */
+    public UserInfo getTargetPersonUserInfo() {
+        return targetPersonUserInfo;
+    }
+    /**
+     * @param targetPersonUserInfo the targetPersonUserInfo to set
+     */
+    public void setTargetPersonUserInfo(UserInfo targetPersonUserInfo) {
+        this.targetPersonUserInfo = targetPersonUserInfo;
+    }
+    /**
+     * @return the replierUserInfo
+     */
+    public UserInfo getReplierUserInfo() {
+        return replierUserInfo;
+    }
+    /**
+     * @param replierUserInfo the replierUserInfo to set
+     */
+    public void setReplierUserInfo(UserInfo replierUserInfo) {
+        this.replierUserInfo = replierUserInfo;
+    }
     /**
      * @return the employeesCancelComent
      */

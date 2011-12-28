@@ -1,5 +1,7 @@
 package fi.arcusys.koku.av.soa;
 
+import fi.arcusys.koku.common.soa.UserInfo;
+
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Nov 28, 2011
@@ -7,8 +9,21 @@ package fi.arcusys.koku.av.soa;
 public class AppointmentUserRejected {
     private String userUid;
     private String userDisplayName;
+    private UserInfo userInfo;
     private String rejectComment;
 
+    /**
+     * @return the userInfo
+     */
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+    /**
+     * @param userInfo the userInfo to set
+     */
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
     /**
      * @return the userUid
      */
