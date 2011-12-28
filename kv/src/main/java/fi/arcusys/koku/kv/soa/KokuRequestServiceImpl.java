@@ -23,7 +23,7 @@ import fi.arcusys.koku.kv.service.MessageServiceFacade;
 @WebService(serviceName = "KokuRequestService", portName = "KokuRequestServicePort", 
 		endpointInterface = "fi.arcusys.koku.kv.soa.KokuRequestService",
 		targetNamespace = "http://soa.kv.koku.arcusys.fi/")
-public class KokuRequestServiceImpl implements KokuRequestService {
+public class KokuRequestServiceImpl extends KokuKunpoRequestServiceImpl implements KokuRequestService {
 	private final static Logger logger = LoggerFactory.getLogger(KokuRequestServiceImpl.class);
 
 	@EJB

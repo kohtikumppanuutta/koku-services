@@ -10,7 +10,7 @@ import javax.jws.WebService;
  * Jun 22, 2011
  */
 @WebService(targetNamespace = "http://soa.kv.koku.arcusys.fi/")
-public interface KokuRequestService {
+public interface KokuRequestService extends KokuKunpoRequestService {
 	/**
 	 * Gets amount of requests
 	 * @param user
