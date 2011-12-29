@@ -110,6 +110,7 @@
         <artifactId>maven-ear-plugin</artifactId>
         <version>2.6</version>
         <configuration>
+	  <version>5</version>
           <defaultLibBundleDir>lib</defaultLibBundleDir>
           <generateApplicationXml>true</generateApplicationXml>
            <archive>
