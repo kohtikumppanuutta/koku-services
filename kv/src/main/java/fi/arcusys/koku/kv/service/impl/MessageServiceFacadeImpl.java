@@ -88,6 +88,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 	private final static Logger logger = LoggerFactory.getLogger(MessageServiceFacadeImpl.class);
 	
 	public static final String SYSTEM_USER_NAME_FOR_NOTIFICATIONS = "KohtiKumppanuutta";
+    public static final UserInfo SYSTEM_USER_INFO = new UserInfo(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, SYSTEM_USER_NAME_FOR_NOTIFICATIONS);
 	
 	@EJB
 	private MessageDAO messageDao;
@@ -258,6 +259,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
      * @return
      */
     private UserInfo getUserInfo(final User user) {
+        if (user != null && SYSTEM_USER_NAME_FOR_NOTIFICATIONS.equals(user.getUid())) {
+            return SYSTEM_USER_INFO;
+        }
         return customerDao.getUserInfo(user);
     }
 

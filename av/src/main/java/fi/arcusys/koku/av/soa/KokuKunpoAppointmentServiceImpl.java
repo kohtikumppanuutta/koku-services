@@ -67,19 +67,6 @@ public class KokuKunpoAppointmentServiceImpl implements KokuKunpoAppointmentServ
     public List<AppointmentWithTarget> getAssignedAppointments(String user,
             int startNum, int maxNum) {
         return serviceFacade.getAssignedAppointments(user, startNum, maxNum);
-//        return getAssignedAppointments_stubVersion();
-    }
-
-    private List<AppointmentWithTarget> getAssignedAppointments_stubVersion() {
-        final List<AppointmentWithTarget> result = new ArrayList<AppointmentWithTarget>();
-        final AppointmentWithTarget appointment = new AppointmentWithTarget();
-        appointment.setAppointmentId(2L);
-        appointment.setDescription("Assigned appointment");
-        appointment.setSender("Ville Virkamies");
-        appointment.setSubject("Appointment #2_1");
-        appointment.setTargetPerson("Lassi Lapsi");
-        result.add(appointment);
-        return result;
     }
 
     /**

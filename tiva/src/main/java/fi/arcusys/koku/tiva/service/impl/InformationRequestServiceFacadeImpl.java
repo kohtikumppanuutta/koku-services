@@ -128,7 +128,7 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         request.setValidTill(getSafeDate(requestTO.getValidTill()));
         final InformationRequest result = informationRequestDao.create(request);
         
-        if (request.getReceiver().getUid() != null) {
+        if (request.getReceiver() != null) {
             notificationService.sendNotification(getValueFromBundle(INFORMATION_REQUEST_CREATED_SUBJECT), 
                     Collections.singletonList(request.getReceiver().getUid()), 
                     MessageFormat.format(getValueFromBundle(INFORMATION_REQUEST_CREATED_BODY), 

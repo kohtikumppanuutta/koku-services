@@ -353,6 +353,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 		        if (target.getGuardianByUid(userUid) != null) {
 		            final AppointmentWithTarget appointmentTO = convertAppointmentToDTO(appointment, new AppointmentWithTarget());
 		            appointmentTO.setTargetPerson(target.getTargetUser().getUid());
+		            appointmentTO.setTargetPersonUserInfo(getUserInfo(target.getTargetUser()));
                     result.add(appointmentTO);
 		        }
 		    }

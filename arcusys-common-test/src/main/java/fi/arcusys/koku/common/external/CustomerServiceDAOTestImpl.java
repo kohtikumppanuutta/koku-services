@@ -19,6 +19,6 @@ public class CustomerServiceDAOTestImpl extends CustomerServiceDAOImpl {
             return null;
         }
         
-        return new UserInfo(user.getUid(), user.getUid());
+        return new UserInfo(user.getUid(), "User: " + user.getUid());
     }
 }
