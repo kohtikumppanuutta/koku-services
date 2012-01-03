@@ -1,6 +1,10 @@
 package fi.arcusys.koku.kv.soa;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlType;
+
+import fi.arcusys.koku.common.soa.UserInfo;
 
 
 /**
@@ -10,6 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType (name = "message", namespace = "http://soa.kv.koku.arcusys.fi/")
 public class MessageTO extends fi.arcusys.koku.kv.soa.MessageSummary {
 	private String content;
+	private List<UserInfo> deliveryFailedTo;
 	
 	
 	/**
@@ -24,6 +29,16 @@ public class MessageTO extends fi.arcusys.koku.kv.soa.MessageSummary {
 	public void setContent(final String content) {
 		this.content = content;
 	}
-	
-	
+    /**
+     * @return the deliveryFailedTo
+     */
+    public List<UserInfo> getDeliveryFailedTo() {
+        return deliveryFailedTo;
+    }
+    /**
+     * @param deliveryFailedTo the deliveryFailedTo to set
+     */
+    public void setDeliveryFailedTo(List<UserInfo> deliveryFailedTo) {
+        this.deliveryFailedTo = deliveryFailedTo;
+    }
 }

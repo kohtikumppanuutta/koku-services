@@ -23,6 +23,8 @@ import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.CommonTestUtil;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.MessageRefDAO;
+import fi.arcusys.koku.common.service.MessageRefDAOTest;
+import fi.arcusys.koku.common.service.MessageRefDAOTestImpl;
 import fi.arcusys.koku.common.service.RequestDAO;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.datamodel.MessageRef;
@@ -63,7 +65,7 @@ public class MessageServiceTest {
 	private CommonTestUtil testUtil;
     
     @Autowired
-    private MessageRefDAO messageRefDao;
+    private MessageRefDAOTest messageRefDao;
     
     @Autowired
     private RequestDAO requestDao;
@@ -434,15 +436,11 @@ public class MessageServiceTest {
         
         assertEquals("Message is in sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageId).getMessageType());
         
-        final MessageRef msgRef = messageRefDao.getById(messageId);
-        final MessageRef msgNewRef = messageRefDao.getById(messageNewId);
         final Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1);
-        msgNewRef.setCreatedDate(calendar.getTime());
+        messageRefDao.updateCreatedDate(messageNewId, calendar.getTime());
         calendar.set(Calendar.YEAR, 2000);
-        msgRef.setCreatedDate(calendar.getTime());
-        messageRefDao.update(msgRef);
-        messageRefDao.update(msgNewRef);
+        messageRefDao.updateCreatedDate(messageId, calendar.getTime());
         
         serviceFacade.deleteOldMessages();
         
@@ -461,12 +459,9 @@ public class MessageServiceTest {
         
         assertEquals("Message is in sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageId).getMessageType());
         
-        final MessageRef msgRef = messageRefDao.getById(messageId);
-        final MessageRef msgNewRef = messageRefDao.getById(messageNewId);
         final Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 2);
-        msgRef.setCreatedDate(calendar.getTime());
-        messageRefDao.update(msgRef);
+        messageRefDao.updateCreatedDate(messageId, calendar.getTime());
 
         // archive old message
         final int inboxMessageCount = serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Inbox, null);
@@ -479,7 +474,7 @@ public class MessageServiceTest {
         assertEquals("Message is still in the sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageNewId).getMessageType());
         assertEquals("Notification received: ", inboxMessageCount + 1, serviceFacade.getTotalMessagesCount(fromUserId, FolderType.Inbox, null));
 	}
-	
+
 	@Test
 	public void requestUnansweredReminder() {
 	    // send request

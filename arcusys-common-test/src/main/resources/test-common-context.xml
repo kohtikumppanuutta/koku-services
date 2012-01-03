@@ -82,18 +82,19 @@
             <tx:method name="delete*" propagation="REQUIRED" />
             <tx:method name="update*" propagation="REQUIRED" />
             <tx:method name="store*" propagation="REQUIRED" />
+            <tx:method name="getById" propagation="REQUIRED" />
             <tx:method name="*OrCreate*" propagation="REQUIRED" />
             <tx:method name="*" propagation="SUPPORTS" read-only="true" />
         </tx:attributes>
     </tx:advice>
 
+    <bean id="messageRefDao" class="fi.arcusys.koku.common.service.MessageRefDAOTestImpl" />
+
     <bean id="messageDao" class="fi.arcusys.koku.common.service.impl.MessageDAOImpl" />
     <bean id="messageFolderDao" class="fi.arcusys.koku.common.service.impl.MessageFolderDAOImpl" />
-    <bean id="messageRefDao" class="fi.arcusys.koku.common.service.impl.MessageRefDAOImpl" />
     <bean id="requestDao" class="fi.arcusys.koku.common.service.impl.RequestDAOImpl" />
     <bean id="requestTemplateDao" class="fi.arcusys.koku.common.service.impl.RequestTemplateDAOImpl" />
     <bean id="responseDao" class="fi.arcusys.koku.common.service.impl.ResponseDAOImpl" />
-    <bean id="userDao" class="fi.arcusys.koku.common.service.UserDAOTestImpl" />
     <bean id="targetPersonDao" class="fi.arcusys.koku.common.service.impl.TargetPersonDAOImpl" />
     <bean id="appointmentDao" class="fi.arcusys.koku.common.service.impl.AppointmentDAOImpl" />
     <bean id="consentTemplateDao" class="fi.arcusys.koku.common.service.impl.ConsentTemplateDAOImpl" />
@@ -109,8 +110,10 @@
     <bean id="rolesDao" class="fi.arcusys.koku.common.external.RolesDAOImpl" />
     <bean id="pyhServiceDao" class="fi.arcusys.koku.common.external.PyhServiceDAOImpl" />
     <bean id="ldapDao" class="fi.arcusys.koku.common.external.LdapDAOImpl" />
+    <bean id="emailDao" class="fi.arcusys.koku.common.external.EmailServiceDAOImpl" />
 
     <!-- Test service implementations -->
+    <bean id="userDao" class="fi.arcusys.koku.common.service.UserDAOTestImpl" />
     <bean id="usersAndGroupsService" class="fi.arcusys.koku.common.service.UsersAndGroupsTestImpl" />
     <bean id="customerServiceDao" class="fi.arcusys.koku.common.external.CustomerServiceDAOTestImpl" />
     <bean id="cacheDao" class="fi.arcusys.koku.common.external.CacheDAOTestImpl" />

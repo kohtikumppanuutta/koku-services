@@ -1,6 +1,10 @@
 package fi.arcusys.koku.common.service.datamodel;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -29,8 +33,25 @@ public class MessageRef extends AbstractEntity {
 	
 	@ManyToOne
 	private Message message;
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Set<User> deliveryFailedTo; 
 
 	/**
+     * @return the deliveryFailedTo
+     */
+    public Set<User> getDeliveryFailedTo() {
+        return deliveryFailedTo;
+    }
+
+    /**
+     * @param deliveryFailedTo the deliveryFailedTo to set
+     */
+    public void setDeliveryFailedTo(Set<User> deliveryFailedTo) {
+        this.deliveryFailedTo = deliveryFailedTo;
+    }
+
+    /**
 	 * @return the isRead
 	 */
 	public boolean isRead() {

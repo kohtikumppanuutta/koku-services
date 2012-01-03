@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.external.CustomerServiceDAO;
+import fi.arcusys.koku.common.external.EmailServiceDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.MessageDAO;
@@ -76,6 +77,7 @@ import fi.arcusys.koku.kv.soa.RequestTemplateVisibility;
 import fi.arcusys.koku.kv.soa.ResponseDetail;
 import fi.arcusys.koku.kv.soa.ResponseSummary;
 import fi.arcusys.koku.kv.soa.ResponseTO;
+import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
  * 
@@ -117,6 +119,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     @EJB
     private CustomerServiceDAO customerDao;
     
+    @EJB
+    private EmailServiceDAO emailDao;
+    
     private String notificationTemplate = "{2}";
 
     private static final String REQUEST_REPLIED_BODY = "request.replied.body";
@@ -125,6 +130,14 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     private static final String REQUEST_NOT_REPLIED_REMINDER_SUBJECT = "request.not_replied_reminder.subject";
     private static final String MESSAGES_ARCHIVED_BODY = "messages.archived.body";
     private static final String MESSAGES_ARCHIVED_SUBJECT = "messages.archived.subject";
+    // email messages
+    private static final String EMAIL_NEW_REQUEST_RECEIVED_BODY = "email.new.request.received.body";
+    private static final String EMAIL_NEW_REQUEST_RECEIVED_SUBJECT = "email.new.request.received.subject";
+    private static final String EMAIL_NEW_MESSAGE_RECEIVED_BODY = "email.new.message.received.body";
+    private static final String EMAIL_NEW_MESSAGE_RECEIVED_SUBJECT = "email.new.message.received.subject";
+    
+    private final static String EMAIL_LINKS_MESSAGE_INBOX_PATH = "navigationPortlet.portlet.absolute.path";
+    private final static String EMAIL_LINKS_NEW_REQUEST_PATH = "navigationPortlet.link.requests.recievedRequests";
     
     private String notificationsBundleName = "kv_messages.msg";
     private Properties messageTemplates;
@@ -154,16 +167,21 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		final User fromUser = getUserByUid(fromUserUid);
 		
         final MessageRef storedMessage = createNewMessageInOutbox(subject, receipientUids, content, fromUser, sendToFamilyMembers, sendToGroupSite);
+        final String emailSubject = getValueFromBundle(EMAIL_NEW_MESSAGE_RECEIVED_SUBJECT);
+        final String emailContent = MessageFormat.format(getValueFromBundle(EMAIL_NEW_MESSAGE_RECEIVED_BODY), 
+                new Object[] {KoKuPropertiesUtil.get(EMAIL_LINKS_MESSAGE_INBOX_PATH)});
+        sendEmailNotifications(getUsersByUids(receipientUids), storedMessage, emailSubject, emailContent);
+        
 		return storedMessage.getId();
 	}
 
-    protected MessageRef createNewMessageInOutbox(final String subject,
+    private MessageRef createNewMessageInOutbox(final String subject,
             final List<String> receipientUids, final String content,
             final User fromUser) {
         return createNewMessageInOutbox(subject, receipientUids, content, fromUser, false, false);
     }
 
-    protected MessageRef createNewMessageInOutbox(final String subject,
+    private MessageRef createNewMessageInOutbox(final String subject,
             final List<String> receipientUids, final String content,
             final User fromUser, boolean sendToFamilyMembers, boolean sendToGroupSite) {
         Message msg = new Message();
@@ -277,6 +295,13 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     }
 
 	private List<String> getDisplayNamesByUsers(final Set<User> receipients2) {
+	    if (receipients2 == null) {
+	        return null;
+	    }
+	    if (receipients2.isEmpty()) {
+	        return Collections.emptyList();
+	    }
+	    
 		final List<String> receipients = new ArrayList<String>();
 		for (final User receipient : receipients2) {
 			receipients.add(getDisplayName(receipient));
@@ -297,6 +322,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
 		}
 		final MessageTO msg = new MessageTO();
 		msg.setContent(msgRef.getMessage().getText());
+		msg.setDeliveryFailedTo(getUserInfos(msgRef.getDeliveryFailedTo()));
 		return convertMessageToDTO(msgRef, msg);
 	}
 
@@ -618,15 +644,40 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         request.setReplyTill(CalendarUtil.getSafeDate(requestTO.getReplyTill()));
         request.setNotifyBeforeDays(requestTO.getNotifyBeforeDays());
         request.setSubject(requestTO.getSubject());
-        request.setReceipients(getUsersByUids(requestTO.getReceipients()));
+        final Set<User> recipients = getUsersByUids(requestTO.getReceipients());
+        request.setReceipients(recipients);
         request.setFromUser(fromUser);
         request.setFromRoleUid(requestTO.getFromRole());
 
-        createNewMessageInOutbox(requestTO.getSubject(), requestTO.getReceipients(), requestTO.getContent(), fromUser);
+        final MessageRef msgRef = createNewMessageInOutbox(requestTO.getSubject(), requestTO.getReceipients(), requestTO.getContent(), fromUser);
+        
+        final String emailSubject = getValueFromBundle(EMAIL_NEW_REQUEST_RECEIVED_SUBJECT);
+        final String emailContent = MessageFormat.format(getValueFromBundle(EMAIL_NEW_REQUEST_RECEIVED_BODY), 
+                new Object[] {KoKuPropertiesUtil.get(EMAIL_LINKS_MESSAGE_INBOX_PATH) + KoKuPropertiesUtil.get(EMAIL_LINKS_NEW_REQUEST_PATH),
+                              request.getReplyTill()});
+
+        sendEmailNotifications(recipients, msgRef, emailSubject, emailContent);
         
 		request = requestDAO.create(request);
 		
         return request;
+    }
+
+    private void sendEmailNotifications(final Set<User> recipients,
+            final MessageRef msgRef, final String emailSubject,
+            final String emailContent) {
+        final Set<User> deliveryFailed = new HashSet<User>();
+        for (final User recipient : recipients) {
+            if (!emailDao.sendMessage(recipient, emailSubject, 
+                    emailContent)) {
+                deliveryFailed.add(recipient);
+            } 
+        }
+        if (!deliveryFailed.isEmpty()) {
+            // report message delivery failure
+            msgRef.setDeliveryFailedTo(deliveryFailed);
+            messageRefDao.update(msgRef);
+        }
     }
 
     /**
@@ -693,7 +744,9 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         fillMessage(msg, sentRequest.getFromUser(), sentRequest.getSubject(), Collections.singletonList(toUserId), content);
         msg = messageDao.create(msg);
         
-        return doReceiveNewMessage(toUser, msg).getId();
+        final MessageRef msgRef = doReceiveNewMessage(toUser, msg);
+
+        return msgRef.getId();
 	}
 
 	/**
@@ -931,7 +984,8 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
     @Override
     public Long receiveNewMessage(final String fromUserUid, final String subject, final String toUserUid, final String content) {
         Message msg = new Message();
-        fillMessage(msg, getUserByUid(fromUserUid), subject, Collections.singletonList(toUserUid), content);
+        final User user = getUserByUid(fromUserUid);
+        fillMessage(msg, user, subject, Collections.singletonList(toUserUid), content);
         msg = messageDao.create(msg);
         
         return doReceiveNewMessage(getUserByUid(toUserUid), msg).getId();

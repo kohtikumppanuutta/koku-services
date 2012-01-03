@@ -15,16 +15,21 @@
     <import resource="classpath:test-common-context.xml"/>
 
 	<bean id="messageServiceFacade" class="fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl" />
-<!--     <aop:config> -->
-<!--         <aop:pointcut id="kvMessageMethods" expression="execution(* fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl.*(..))" /> -->
-<!--         <aop:advisor advice-ref="txKvAdvice" pointcut-ref="kvMessageMethods" /> -->
-<!--     </aop:config> -->
+    <aop:config>
+        <aop:pointcut id="kvMessageMethods" expression="execution(* fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl.get*(..)) || 
+                                                         execution(* fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl.archive*(..)) || 
+                                                         execution(* fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl.delete*(..)) || 
+                                                         execution(* fi.arcusys.koku.kv.service.impl.MessageServiceFacadeImpl.setMessageStatus(..)) || 
+                                                         execution(* fi.arcusys.koku.common.service.MessageRefDAOTestImpl.update*(..)) 
+                                                         " /> 
+        <aop:advisor advice-ref="txKvAdvice" pointcut-ref="kvMessageMethods" />
+    </aop:config>
 
-<!--     <tx:advice id="txKvAdvice" transaction-manager="transactionManager"> -->
-<!--         <tx:attributes> -->
-<!--             <tx:method name="*" propagation="REQUIRED"/> -->
-<!--         </tx:attributes> -->
-<!--     </tx:advice> -->
+    <tx:advice id="txKvAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
 
 
 </beans>
