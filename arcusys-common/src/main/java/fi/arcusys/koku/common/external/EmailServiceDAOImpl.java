@@ -13,6 +13,7 @@ import fi.arcusys.koku.common.service.datamodel.User;
 import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customercommunication.v1.CustomerCommunicationServiceFactory;
+import fi.koku.settings.KoKuPropertiesUtil;
 import fi.tampere.contract.municipalityportal.ccs.CustomerCommunicationServicePortType;
 import fi.tampere.schema.municipalityportal.ccs.ObjectFactory;
 import fi.tampere.schema.municipalityportal.ccs.SendEmailMessageResponseType;
@@ -35,7 +36,7 @@ public class EmailServiceDAOImpl implements EmailServiceDAO {
     
     private String communicationServiceUserUid;
     private String communicationServiceUserPwd;
-    private String communicationServiceEndpoint;
+    private String communicationServiceEndpoint = KoKuPropertiesUtil.get("customercommunication.service.endpointaddress.full.url");
 
     @PostConstruct
     public void init() {
