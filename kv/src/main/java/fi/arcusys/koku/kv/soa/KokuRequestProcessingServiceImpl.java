@@ -46,10 +46,12 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
 	 * @param requestId
 	 */
 	@Override
-	public void receiveRequest(String toUserUid, Long requestId, final String content) {
-		logger.debug("receiveRequest: [toUserUid,requestId] = [" + toUserUid + "," + requestId + "]");
-		final Long receivedRequest = kvFacade.receiveRequest(toUserUid, requestId, content);
-		logger.debug("request received: " + receivedRequest);
+	public void receiveRequest(String toUserUids, Long requestId, final String content) {
+		for (final String toUserUid : toUserUids.split(",")) {
+            logger.debug("receiveRequest: [toUserUid,requestId] = [" + toUserUid + "," + requestId + "]");
+            final Long receivedRequest = kvFacade.receiveRequest(toUserUid, requestId, content);
+            logger.debug("request received: " + receivedRequest);
+		}
 	}
 
 	/**
@@ -91,7 +93,7 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
                 fromUserUid, subject, receipients, content, replyTill,
                 notifyBeforeDays);
 
-        final Long requestId = kvFacade.sendRequest(templateTO, requestTO);
+        final Long requestId = kvFacade.sendRequest(templateTO, correctRequestRecipients(requestTO));
 		return requestId;
 	}
 
@@ -175,7 +177,7 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
         final RequestProcessingTO requestTO = createRequestProcessingTO(
                 fromUserUid, subject, receipients, content, replyTill,
                 notifyBeforeDays);
-        return kvFacade.sendRequestWithTemplate(requestTemplateId, requestTO);
+        return kvFacade.sendRequestWithTemplate(requestTemplateId, correctRequestRecipients(requestTO));
     }
 
     /**
@@ -209,7 +211,7 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
      */
     @Override
     public Long sendRequestNew(RequestTemplateTO template, RequestProcessingTO request) {
-        return kvFacade.sendRequest(template, request);
+        return kvFacade.sendRequest(template, correctRequestRecipients(request));
     }
 
     /**
@@ -219,6 +221,20 @@ public class KokuRequestProcessingServiceImpl implements KokuRequestProcessingSe
      */
     @Override
     public Long sendRequestWithTemplateNew(long requestTemplateId, RequestProcessingTO request) {
-        return kvFacade.sendRequestWithTemplate(requestTemplateId, request);
+        return kvFacade.sendRequestWithTemplate(requestTemplateId, correctRequestRecipients(request));
+    }
+
+    private RequestProcessingTO correctRequestRecipients(RequestProcessingTO request) {
+        if (request.getReceipients() == null || request.getReceipients().isEmpty()) {
+            throw new IllegalArgumentException("Empty recipients list.");
+        }
+        final List<String> recipients = new ArrayList<String>();
+        for (final String recipientUid : request.getReceipients()) {
+            for (final String splittedUid : recipientUid.split(",")) {
+                recipients.add(splittedUid);
+            }
+        }
+        request.setReceipients(recipients);
+        return request;
     }
 }
