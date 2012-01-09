@@ -169,7 +169,7 @@ public class KksServiceBean implements KksService {
     l.setMessage(message);
     l.setOperation(Log.UPDATE);
     l.setTimestamp(CalendarUtil.getXmlDateTime(new Date()));
-    l.setUserPic(customer);
+    l.setUserPic(user);
     return l;
   }
 
