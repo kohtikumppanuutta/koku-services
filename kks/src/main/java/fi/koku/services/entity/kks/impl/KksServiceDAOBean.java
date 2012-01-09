@@ -578,7 +578,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
       tmp.append(t);
       tmp.append("%' ");
       if ((i + 1) < tagNames.size()) {
-        tmp.append("AND");
+        tmp.append("OR");
       }
     }
 
