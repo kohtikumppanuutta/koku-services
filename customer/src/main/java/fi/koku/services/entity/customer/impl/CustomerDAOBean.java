@@ -28,7 +28,6 @@ import fi.koku.KoKuFaultException;
  * Customer related data access facilities.
  * 
  * @author laukksa
- *
  */
 @Stateless
 public class CustomerDAOBean implements CustomerDAO {

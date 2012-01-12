@@ -90,5 +90,4 @@ public class CommunityMember implements Serializable {
   public void setCommunity(Community c) {
     this.community = c;
   }
-  
 }

@@ -82,5 +82,4 @@ public class CustomerServiceBean implements CustomerService {
             CustomerServiceErrorCode.UNAUTHORIZED.getDescription() );   
     }
   }
-  
 }

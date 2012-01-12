@@ -27,7 +27,6 @@ import fi.koku.KoKuFaultException;
  * 
  * @author aspluma
  * @author laukksa
- *
  */
 @Stateless
 public class CommunityDAOBean implements CommunityDAO {
@@ -187,5 +186,4 @@ public class CommunityDAOBean implements CommunityDAO {
     MembershipRequest rq = getMembershipRequest(requestId);
     em.remove(rq);
   }
-  
 }

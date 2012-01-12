@@ -33,5 +33,4 @@ public class CustomerQueryCriteria {
   public String getSelection() {
     return selection;
   }
-
 }

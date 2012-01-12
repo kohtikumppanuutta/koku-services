@@ -230,7 +230,5 @@ public class CustomerServiceEndpointBean implements CustomerServicePortType {
 	    
 	    return c;
 	  }
-	  
 	}
-	
 }

@@ -15,7 +15,6 @@ import javax.ejb.Local;
  * Customer related data access facilities.
  * 
  * @author laukksa
- *
  */
 @Local
 public interface CustomerDAO {

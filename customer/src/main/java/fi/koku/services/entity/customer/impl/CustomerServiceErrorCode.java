@@ -11,7 +11,6 @@ package fi.koku.services.entity.customer.impl;
  * Error codes for customer service.
  * 
  * @author laukksa
- *
  */
 public enum CustomerServiceErrorCode {
 

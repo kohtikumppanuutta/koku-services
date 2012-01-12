@@ -11,7 +11,6 @@ package fi.koku.services.entity.community.impl;
  * Error codes for community service.
  * 
  * @author laukksa
- *
  */
 public enum CommunityServiceErrorCode {
 

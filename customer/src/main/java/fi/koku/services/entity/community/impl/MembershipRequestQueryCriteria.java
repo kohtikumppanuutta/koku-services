@@ -41,5 +41,4 @@ public class MembershipRequestQueryCriteria {
   public void setApproverPic(String approverPic) {
     this.approverPic = approverPic;
   }
-
 }

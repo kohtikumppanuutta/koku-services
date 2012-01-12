@@ -25,7 +25,6 @@ import fi.koku.services.entity.customer.v1.ServiceFaultDetailType;
  * Catches and logs all exceptions and converts them to ServiceFault (as defined in the contract/wsdl).
  * 
  * @author laukksa
- *
  */
 public class CustomerServiceFaultInterceptor {
 

@@ -15,7 +15,6 @@ import javax.ejb.Local;
  * Community related data access facilities.
  * 
  * @author laukksa
- *
  */
 @Local
 public interface CommunityDAO {
@@ -39,5 +38,4 @@ public interface CommunityDAO {
   MembershipRequest getMembershipRequest(Long requestId);
   
   void deleteMembershipRequest(Long requestId);
-  
 }

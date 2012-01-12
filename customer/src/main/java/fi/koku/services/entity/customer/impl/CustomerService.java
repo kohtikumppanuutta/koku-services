@@ -28,5 +28,4 @@ public interface CustomerService {
   void delete(String pic);
 
   Collection<Customer> query(CustomerQueryCriteria q);
-  
 }
