@@ -24,10 +24,16 @@ public class EmployeeInfoServiceMockImpl implements EmployeeInfoService {
   @Override
   public EmployeesType getEmployeesByIds(UserIdsType idsType) {
     EmployeesType employeesType = new EmployeesType();
-   
-    for(String id : idsType.getId()){
-      employeesType.getEmployee().add(getEmployeeById(id));
+
+    for (String id : idsType.getId()) {
+      EmployeeType emp = getEmployeeById(id);
+
+      if (emp != null) {
+        employeesType.getEmployee().add(emp);
+      }
     }
+    
+    // TODO throw exception if the list is empty and real employee service does that also.
     return employeesType;
   }
 
@@ -36,68 +42,55 @@ public class EmployeeInfoServiceMockImpl implements EmployeeInfoService {
     EmployeesType employeesType = new EmployeesType();
     
     for(String pic : picsType.getPic()){
-      employeesType.getEmployee().add(getEmployeeByPic(pic));
+      EmployeeType emp = getEmployeeByPic(pic);
+
+      if (emp != null) {
+        employeesType.getEmployee().add(emp);
+      }
     }
+    
+    // TODO throw exception if the list is empty and real employee service does that also.
     return employeesType;
   }
 
-  /**
-   * Mock user data
-   * 
-   * @param id userId (from portal in this case) that is a key in properties file
-   * @return Returns mock user data read from properties file. If match not
-   *         found return empty User object
-   */
   private EmployeeType getEmployeeById(String id) {
-    Properties props = load("/getUsersByIdMock.properties");
-
-    // Currently supported (and required) user information: userId,ssn,firstName,lastName,email.
+    // Currently supported (and required) user information:
+    // userId,ssn,firstName,lastName,email.
     // Example row:
     // toivo.toivola=toivo.toivola,111111-1111,Toivo,Toivola,toivo.toivola@localhost.fi
+    Properties props = load("/getUsersByIdMock.properties");
 
-    EmployeeType emp = new EmployeeType();
-    if (props != null) {
-      LOG.info("props=" + props.toString());
-      String property = props.getProperty(id).trim(); // id is key in properties
-      LOG.info("used property=" + property);
-      if (property != null && !"".equals(property)) {
-
-        // Put values from props-file to User object
-        String[] p = property.split(",");
-        emp.setUserId(p[0]);
-        emp.setPic(p[1]);
-        emp.setFirstname(p[2]);
-        emp.setLastname(p[3]);
-        emp.setEmail(p[4]);
-      }
-    }
-    return emp;
+    return getEmp(id, props);
   }
 
   private EmployeeType getEmployeeByPic(String pic) {
-    Properties props = load("/getUsersByPicMock.properties");
-
-    // Currently supported (and required) user information: userId,ssn,firstName,lastName,email.
+    // Currently supported (and required) user information:
+    // userId,ssn,firstName,lastName,email.
     // Example row:
     // 111111-1111=toivo.toivola,111111-1111,Toivo,Toivola,toivo.toivola@localhost.fi
+    Properties props = load("/getUsersByPicMock.properties");
 
-    EmployeeType emp = new EmployeeType();
+    return getEmp(pic, props);
+  }
+
+  private EmployeeType getEmp(String key, Properties props) {
+    EmployeeType emp = null;
     if (props != null) {
       LOG.info("props=" + props.toString());
-      String property = props.getProperty(pic); // id is key in properties
+      String property = props.getProperty(key);
       if (property == null) {
-        LOG.info("could not find person with pic " + pic);
+        LOG.info("could not find person with key " + key);
       } else {
         property = property.trim();
       }
+
       LOG.info("used property=" + property);
       if (property != null && !"".equals(property)) {
-
+        emp = new EmployeeType();
         // Put values from props-file to User object
         String[] p = property.split(",");
         emp.setUserId(p[0]);
         emp.setPic(p[1]);
-
         emp.setFirstname(p[2]);
         emp.setLastname(p[3]);
         emp.setEmail(p[4]);
