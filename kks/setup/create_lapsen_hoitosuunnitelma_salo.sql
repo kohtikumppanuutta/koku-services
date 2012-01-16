@@ -6,7 +6,7 @@ insert into kks_collection_class (
   ,consent_type
 ) VALUES (
 	50
-  ,'kks.kehitysasialaji.lapsen.hoitosuunnitelma'   -- type_code
+  ,'kks.kehitysasialaji.lapsen_hoitosuunnitelma'   -- type_code
   ,'Lapsen hoitosuunnitelma (Salo)'  -- name
   ,''  -- description
   ,''  -- concent_type
