@@ -64,7 +64,7 @@ public interface UsersAndGroupsService {
     List<ChildWithHetu> getUsersChildren(@WebParam(name = "userUid") final String userUid);
     
     @WebResult(name = "child")
-    Child getChildInfo(@WebParam(name = "childUid") final String childUid);
+    List<Child> getChildInfo(@WebParam(name = "childUid") final List<String> childUids);
 
     @WebResult(name = "user")
     UserInfo getUserInfo(@WebParam(name = "userUid") final String userUid);

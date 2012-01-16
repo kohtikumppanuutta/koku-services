@@ -1,5 +1,6 @@
 package fi.arcusys.koku.common.soa;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -165,8 +166,15 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      * @return
      */
     @Override
-    public Child getChildInfo(String childUid) {
-        return pyhServiceDao.getChildInfo(childUid);
+    public List<Child> getChildInfo(List<String> childUids) {
+        if (childUids == null || childUids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<Child> result = new ArrayList<Child>();
+        for (final String childUid : childUids) {
+            result.add(pyhServiceDao.getChildInfo(childUid));
+        }
+        return result;
     }
 
     /**
