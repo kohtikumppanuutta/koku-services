@@ -95,8 +95,7 @@ public class InformationRequestServiceTest {
         request.setTargetPersonUid(targetPersonUid);
         request.setValidTill(CalendarUtil.getXmlDate(new Date()));
         request.setCategories(Arrays.asList("1", "2"));
-        final Long requestId = service.createInformationRequest(request);
-        return requestId;
+        return service.createInformationRequest(request);
     }
     
     @Test
@@ -152,11 +151,17 @@ public class InformationRequestServiceTest {
         assertEquals(oldTotal, service.getTotalRequests(criteria));
         assertNull(getById(service.getRequests(query), requestId));
         
-        service.declineRequest(requestId, receiverUid, "rejected");
+        final InformationRequestReplyTO reply = new InformationRequestReplyTO();
+        reply.setRequestId(requestId);
+        reply.setReplierUid(receiverUid);
+        reply.setInformationDetails("Details for searching by query");
+        reply.setAdditionalInfo("Extra text for search by free text");
+        service.approveRequest(reply);
 
         assertEquals(oldTotal + 1, service.getTotalRequests(criteria));
         assertNotNull(getById(service.getRequests(query), requestId));
         
+        // date searches
         final XMLGregorianCalendar xmlDate = CalendarUtil.getXmlDate(new Date());
         criteria.setCreatedFromDate(xmlDate);
         assertNotNull(getById(service.getRequests(query), requestId));
@@ -167,6 +172,22 @@ public class InformationRequestServiceTest {
         
         criteria.setRepliedToDate(xmlDate);
         criteria.setCreatedFromDate(null);
+        assertNotNull(getById(service.getRequests(query), requestId));
+        
+        // text searches
+        criteria.setInformationContent("_Details_");
+        assertNull(getById(service.getRequests(query), requestId));
+
+        criteria.setInformationContent("Details");
+        assertNotNull(getById(service.getRequests(query), requestId));
+
+        criteria.setFreeText("_Extra_");
+        assertNull(getById(service.getRequests(query), requestId));
+
+        criteria.setFreeText("Extra");
+        assertNotNull(getById(service.getRequests(query), requestId));
+
+        criteria.setFreeText("Details");
         assertNotNull(getById(service.getRequests(query), requestId));
     }
     

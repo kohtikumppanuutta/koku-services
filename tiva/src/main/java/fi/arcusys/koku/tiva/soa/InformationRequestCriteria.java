@@ -16,6 +16,9 @@ public class InformationRequestCriteria {
     private String senderUid;
     private String receiverUid;
     private String targetPersonUid;
+    
+    private String informationContent;
+    private String freeText;
 
     private XMLGregorianCalendar createdFromDate;
     private XMLGregorianCalendar createdToDate;
@@ -27,6 +30,10 @@ public class InformationRequestCriteria {
         dtoCriteria.setSenderUid(senderUid);
         dtoCriteria.setReceiverUid(receiverUid);
         dtoCriteria.setTargetPersonUid(targetPersonUid);
+        
+        dtoCriteria.setInformationContent(informationContent);
+        dtoCriteria.setFreeText(freeText);
+        
         dtoCriteria.setCreatedFromDate(getSafeDate(createdFromDate));
         dtoCriteria.setCreatedToDate(getSafeDate(createdToDate));
         dtoCriteria.setRepliedFromDate(getSafeDate(repliedFromDate));
@@ -34,6 +41,42 @@ public class InformationRequestCriteria {
         return dtoCriteria;
     }
     
+    /**
+     * @return the informationContent
+     */
+    public String getInformationContent() {
+        return informationContent;
+    }
+
+
+
+    /**
+     * @param informationContent the informationContent to set
+     */
+    public void setInformationContent(String informationContent) {
+        this.informationContent = informationContent;
+    }
+
+
+
+    /**
+     * @return the freeText
+     */
+    public String getFreeText() {
+        return freeText;
+    }
+
+
+
+    /**
+     * @param freeText the freeText to set
+     */
+    public void setFreeText(String freeText) {
+        this.freeText = freeText;
+    }
+
+
+
     /**
      * @return the senderUid
      */

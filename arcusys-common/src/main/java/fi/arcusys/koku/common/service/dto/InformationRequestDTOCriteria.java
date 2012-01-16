@@ -10,11 +10,37 @@ public class InformationRequestDTOCriteria {
     private String senderUid;
     private String receiverUid;
     private String targetPersonUid;
+    private String informationContent;
+    private String freeText;
     private Date createdFromDate;
     private Date createdToDate;
     private Date repliedFromDate;
     private Date repliedToDate;
 
+    /**
+     * @return the informationContent
+     */
+    public String getInformationContent() {
+        return informationContent;
+    }
+    /**
+     * @param informationContent the informationContent to set
+     */
+    public void setInformationContent(String informationContent) {
+        this.informationContent = informationContent;
+    }
+    /**
+     * @return the freeText
+     */
+    public String getFreeText() {
+        return freeText;
+    }
+    /**
+     * @param freeText the freeText to set
+     */
+    public void setFreeText(String freeText) {
+        this.freeText = freeText;
+    }
     /**
      * @return the createdFromDate
      */

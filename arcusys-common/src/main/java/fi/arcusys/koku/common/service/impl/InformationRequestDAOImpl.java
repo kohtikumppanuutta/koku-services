@@ -20,6 +20,30 @@ import fi.arcusys.koku.common.service.dto.InformationRequestDTOCriteria;
  */
 @Stateless
 public class InformationRequestDAOImpl extends AbstractEntityDAOImpl<InformationRequest> implements InformationRequestDAO {
+
+    /* 
+     * InformationRequest text fields:
+        - title;
+        - description;
+        - requestPurpose;
+        - legislationInfo;
+        - additionalInfo;
+     * InformationRequestReply text fields:
+        - replyDescription;
+        - informationDetails;
+        - additionalReplyInfo;
+     * */
+    private final static String[] FREE_TEXT_SEARCHABLE_FIELDS = new String[] {
+        "request.title",
+        "request.description",
+        "request.requestPurpose",
+        "request.legislationInfo",
+        "request.additionalInfo",
+        
+        "request.reply.replyDescription",
+        "request.reply.informationDetails",
+        "request.reply.additionalReplyInfo"
+    };
     
     public InformationRequestDAOImpl() {
         super(InformationRequest.class);
@@ -108,6 +132,25 @@ public class InformationRequestDAOImpl extends AbstractEntityDAOImpl<Information
         if (repliedFromDate != null) {
             appendAnd(where, " request.reply.replyCreatedDate <= :repliedToDate ");
             params.put("repliedToDate", repliedToDate);
+        }
+        
+        // text search criteria applied
+        final String informationContent = criteria.getInformationContent();
+        if (informationContent != null && !informationContent.isEmpty()) {
+            appendAnd(where, " request.reply.informationDetails LIKE :informationContent ");
+            params.put("informationContent", getPrefixAndSuffixLike(informationContent));
+        }
+        final String freeText = criteria.getFreeText();
+        if (freeText != null && !freeText.isEmpty() && FREE_TEXT_SEARCHABLE_FIELDS.length > 0) {
+            final StringBuilder freeTextQuery = new StringBuilder();
+            freeTextQuery.append(" (");
+            for (final String freeTextField : FREE_TEXT_SEARCHABLE_FIELDS) {
+                freeTextQuery.append(" ").append(freeTextField).append(" LIKE :freeText OR ");
+            }
+            freeTextQuery.setLength(freeTextQuery.length() - " OR ".length());
+            freeTextQuery.append(" )");
+            appendAnd(where, freeTextQuery.toString());
+            params.put("freeText", getPrefixAndSuffixLike(freeText));
         }
 
         appendAnd(query, where.toString());

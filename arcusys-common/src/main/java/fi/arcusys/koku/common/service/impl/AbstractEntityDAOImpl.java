@@ -158,6 +158,14 @@ public abstract class AbstractEntityDAOImpl<T extends AbstractEntity> implements
         }
     }
 
+    protected String getPrefixAndSuffixLike(final String searchString) {
+        if (searchString == null) {
+            return "%";
+        } else {
+            return "%" + searchString + "%";
+        }
+    }
+
     /**
      * @param string
      * @param singletonMap

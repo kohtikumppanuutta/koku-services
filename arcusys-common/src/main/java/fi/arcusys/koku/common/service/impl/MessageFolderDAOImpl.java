@@ -150,7 +150,7 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 			whereString.append(")");
 			
 			for (int i = 0; i < keywords.size(); i++) {
-				params.put("keyword" + i, "%" + keywords.get(i) + "%");
+                params.put("keyword" + i, getPrefixAndSuffixLike(keywords.get(i)));
 			}
 		}
 		return whereString;

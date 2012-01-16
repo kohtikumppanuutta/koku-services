@@ -1,6 +1,7 @@
 package fi.arcusys.koku.tiva.soa;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -56,10 +57,17 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
         if (criteria == null) {
             return null;
         }
-        criteria.setReceiverUid(userService.getUserUidByEmployeeSsn(criteria.getReceiverUid()));
-        criteria.setSenderUid(userService.getUserUidByEmployeeSsn(criteria.getSenderUid()));
-        criteria.setTargetPersonUid(userService.getUserUidByKunpoSsn(criteria.getTargetPersonUid()));
+        criteria.setReceiverUid(getRandomUidIfEmpty(userService.getUserUidByLooraName(criteria.getReceiverUid())));
+        criteria.setSenderUid(getRandomUidIfEmpty(userService.getUserUidByLooraName(criteria.getSenderUid())));
+        criteria.setTargetPersonUid(getRandomUidIfEmpty(userService.getUserUidByKunpoSsn(criteria.getTargetPersonUid())));
         return criteria;
+    }
+
+    private String getRandomUidIfEmpty(final String userUid) {
+        if (userUid != null && !userUid.isEmpty()) {
+            return userUid;
+        }
+        return UUID.randomUUID().toString();
     }
 
     /**
