@@ -586,3 +586,25 @@ insert into kks_tag (
   ,''  -- description
 );
 
+-- new tags (founded in SALO)
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   68   -- tag_id
+  ,'kks.kehitysasia.toimintamallit'  -- name
+  ,''  -- description
+);
+
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   69   -- tag_id
+  ,'kks.kehitysasia.lisätiedot'  -- name
+  ,''  -- description
+);
