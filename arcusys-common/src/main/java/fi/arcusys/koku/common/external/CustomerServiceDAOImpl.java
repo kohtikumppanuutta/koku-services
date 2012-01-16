@@ -80,6 +80,10 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      */
     @Override
     public UserInfo getUserInfo(final User user) {
+        if (user == null) {
+            return null;
+        }
+        
         if (user.getEmployeePortalName() != null && !user.getEmployeePortalName().trim().isEmpty()) {
             return getEmployeeUserInfo(user);
         } else {
