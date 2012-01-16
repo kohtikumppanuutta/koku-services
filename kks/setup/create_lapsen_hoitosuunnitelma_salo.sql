@@ -85,7 +85,7 @@ insert into kks_entry_class (
 ) VALUES (
    500   -- entry_class_id
   ,1   -- sort_order
-  ,'Osoite ja puhelinnumero'  -- name
+  ,'Osoite ja puhelinnumero:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -105,7 +105,7 @@ insert into kks_entry_class (
 ) VALUES (
    501   -- entry_class_id
   ,2   -- sort_order
-  ,'Allergiat, lääkehoito ym. huomioitavaa'  -- name
+  ,'Allergiat, lääkehoito ym. huomioitavaa:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -125,7 +125,7 @@ insert into kks_entry_class (
 ) VALUES (
    502   -- entry_class_id
   ,3   -- sort_order
-  ,'Viimeisin neuvolakäynti'  -- name
+  ,'Viimeisin neuvolakäynti:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -145,7 +145,7 @@ insert into kks_entry_class (
 ) VALUES (
    503   -- entry_class_id
   ,4   -- sort_order
-  ,'Äiti/muu huoltaja'  -- name
+  ,'Äiti/muu huoltaja:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -165,7 +165,7 @@ insert into kks_entry_class (
 ) VALUES (
    504   -- entry_class_id
   ,5   -- sort_order
-  ,'Äiti/muu huoltaja, matkapuhelin'  -- name
+  ,'Äiti/muu huoltaja, matkapuhelin:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'TEXT'  -- data_type
@@ -185,7 +185,7 @@ insert into kks_entry_class (
 ) VALUES (
    505   -- entry_class_id
   ,6   -- sort_order
-  ,'Äiti/muu huoltaja, työpuhelin'  -- name
+  ,'Äiti/muu huoltaja, työpuhelin:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'TEXT'  -- data_type
@@ -205,7 +205,7 @@ insert into kks_entry_class (
 ) VALUES (
    506   -- entry_class_id
   ,7   -- sort_order
-  ,'Äiti/muu huoltaja, sähköposti'  -- name
+  ,'Äiti/muu huoltaja, sähköposti:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -225,7 +225,7 @@ insert into kks_entry_class (
 ) VALUES (
    507   -- entry_class_id
   ,8   -- sort_order
-  ,'Äiti/muu huoltaja'  -- name
+  ,'Äiti/muu huoltaja:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -245,7 +245,7 @@ insert into kks_entry_class (
 ) VALUES (
    508   -- entry_class_id
   ,9   -- sort_order
-  ,'Isä/muu huoltaja, matkapuhelin'  -- name
+  ,'Isä/muu huoltaja, matkapuhelin:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'TEXT'  -- data_type
@@ -265,7 +265,7 @@ insert into kks_entry_class (
 ) VALUES (
    509   -- entry_class_id
   ,10   -- sort_order
-  ,'Isä/muu huoltaja, työpuhelin'  -- name
+  ,'Isä/muu huoltaja, työpuhelin:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'TEXT'  -- data_type
@@ -285,7 +285,7 @@ insert into kks_entry_class (
 ) VALUES (
    510   -- entry_class_id
   ,11  -- sort_order
-  ,'Isä/muu huoltaja, sähköposti'  -- name
+  ,'Isä/muu huoltaja, sähköposti:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -305,7 +305,7 @@ insert into kks_entry_class (
 ) VALUES (
    511   -- entry_class_id
   ,12   -- sort_order
-  ,'18 v. täyttänyt varahakija ja puhelinnumero'  -- name
+  ,'18 v. täyttänyt varahakija ja puhelinnumero:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -326,7 +326,7 @@ insert into kks_entry_class (
    512   -- entry_class_id
   ,13   -- sort_order
   ,'Päivittäinen hoitoaika'  -- name
-  ,'Päivittäinen hoitoaika (ma,ti,ke,to,pe)'  -- description
+  ,'Päivittäinen hoitoaika (ma,ti,ke,to,pe):'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
   ,''  -- value_spaces
@@ -346,7 +346,7 @@ insert into kks_entry_class (
    513   -- entry_class_id
   ,14   -- sort_order
   ,'Huoltajien työajat'  -- name
-  ,'Huoltajien päivittäiset työajat'  -- description
+  ,'Huoltajien päivittäiset työajat:'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
   ,''  -- value_spaces
@@ -365,7 +365,7 @@ insert into kks_entry_class (
 ) VALUES (
    514   -- entry_class_id
   ,15   -- sort_order
-  ,'Hoidon alkamispäivä'  -- name
+  ,'Hoidon alkamispäivä:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'TEXT'  -- data_type
@@ -385,7 +385,7 @@ insert into kks_entry_class (
 ) VALUES (
    515   -- entry_class_id
   ,16   -- sort_order
-  ,'Ruokailu'  -- name
+  ,'Ruokailu:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'MULTI_SELECT'  -- data_type
@@ -405,7 +405,7 @@ insert into kks_entry_class (
 ) VALUES (
    516   -- entry_class_id
   ,17   -- sort_order
-  ,'Lastani saa valokuvata, esim sanomalehtikuvat'  -- name
+  ,'Lastani saa valokuvata, esim. sanomalehtikuvat:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'SELECT'  -- data_type
@@ -425,7 +425,7 @@ insert into kks_entry_class (
 ) VALUES (
    517   -- entry_class_id
   ,18   -- sort_order
-  ,'Lapseni kuvia saa laittaa varhaiskasvatuksen kotisivuille'  -- name
+  ,'Lapseni kuvia saa laittaa varhaiskasvatuksen kotisivuille:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'SELECT'  -- data_type
@@ -445,7 +445,7 @@ insert into kks_entry_class (
 ) VALUES (
    518   -- entry_class_id
   ,19   -- sort_order
-  ,'Lapseni saa osallistua varhaiskasvatuksen retkiin'  -- name
+  ,'Lapseni saa osallistua varhaiskasvatuksen retkiin:'  -- name
   ,'Teemme retkiä lähiseudulla. Retket tehdään yleisillä kulkuneuvoilla. '  -- description
   ,0   -- multi_value
   ,'SELECT'  -- data_type
@@ -465,7 +465,7 @@ insert into kks_entry_class (
 ) VALUES (
    519   -- entry_class_id
   ,20   -- sort_order
-  ,'Hätätapauksessa lasta saa kuljettaa henkilöautolla'  -- name
+  ,'Hätätapauksessa lasta saa kuljettaa henkilöautolla:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'SELECT'  -- data_type
@@ -485,7 +485,7 @@ insert into kks_entry_class (
 ) VALUES (
    520   -- entry_class_id
   ,21   -- sort_order
-  ,'Lapseni saa osallistua seurakunnan järjestämiin tilaisuuksiin'  -- name
+  ,'Lapseni saa osallistua seurakunnan järjestämiin tilaisuuksiin:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'SELECT'  -- data_type

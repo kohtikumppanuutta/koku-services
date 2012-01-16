@@ -142,7 +142,7 @@ insert into kks_entry_class (
 ) VALUES (
    600   -- entry_class_id
   ,1   -- sort_order
-  ,'Lapsen äidinkieli'  -- name
+  ,'Lapsen äidinkieli?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'TEXT'  -- data_type
@@ -162,7 +162,7 @@ insert into kks_entry_class (
 ) VALUES (
    601   -- entry_class_id
   ,2   -- sort_order
-  ,'Muut perheessä puhutu kielet'  -- name
+  ,'Muut perheessä puhutut kielet?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -182,7 +182,7 @@ insert into kks_entry_class (
 ) VALUES (
    602   -- entry_class_id
   ,3   -- sort_order
-  ,'Tapaamiset, jos vanhemmat asuvat erillään'  -- name
+  ,'Tapaamiset, jos vanhemmat asuvat erillään?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -202,7 +202,7 @@ insert into kks_entry_class (
 ) VALUES (
    603   -- entry_class_id
   ,4   -- sort_order
-  ,'Mikäli vanhemmilla yhteishuoltajuus, voiko huoltajan avo/aviopuoliso osallistua vasu keskusteluun?'  -- name
+  ,'Mikäli vanhemmilla on yhteishuoltajuus, voiko huoltajan avo/aviopuoliso osallistua varhaiskasvatuskeskusteluun?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'SELECTION'  -- data_type
@@ -222,7 +222,7 @@ insert into kks_entry_class (
 ) VALUES (
    604   -- entry_class_id
   ,5   -- sort_order
-  ,'Muut mahdolliset asiat'  -- name
+  ,'Muut mahdolliset asiat?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -242,7 +242,7 @@ insert into kks_entry_class (
 ) VALUES (
    605   -- entry_class_id
   ,6   -- sort_order
-  ,'Nukkuminen ja päivälepo'  -- name
+  ,'Nukkuminen ja päivälepo?'  -- name
   ,'Miten pitkät yöunet, herääminen, vireystila heräämisen jälkeen jne.'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -262,7 +262,7 @@ insert into kks_entry_class (
 ) VALUES (
    606   -- entry_class_id
   ,7   -- sort_order
-  ,'Ruokailutottumukset'  -- name
+  ,'Ruokailutottumukset?'  -- name
   ,'Käyttääkö ruokailuvälineitä itsenäisesti, syökö siististi, ruokailutavat, mieliruoat ym.'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -282,7 +282,7 @@ insert into kks_entry_class (
 ) VALUES (
    607   -- entry_class_id
   ,8   -- sort_order
-  ,'WC-käytännöt ja hygienia'  -- name
+  ,'WC-käytännöt ja hygienia?'  -- name
   ,'Vaippa, potta, wc-istuin, omatoimisuus, käsien peseminen'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -302,7 +302,7 @@ insert into kks_entry_class (
 ) VALUES (
    608   -- entry_class_id
   ,9   -- sort_order
-  ,'Omatoimisuus'  -- name
+  ,'Omatoimisuus?'  -- name
   ,'Pukeutuminen, tavaroista huolehtiminen jne.'  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -322,7 +322,7 @@ insert into kks_entry_class (
 ) VALUES (
    609   -- entry_class_id
   ,10   -- sort_order
-  ,'Muuta terveyteen liittyvää'  -- name
+  ,'Muuta terveyteen liittyvää?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -342,7 +342,7 @@ insert into kks_entry_class (
 ) VALUES (
    610   -- entry_class_id
   ,11   -- sort_order
-  ,'Toiveet tuomis- ja hakutilanteissa'  -- name
+  ,'Toiveet tuomis- ja hakutilanteissa?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -362,7 +362,7 @@ insert into kks_entry_class (
 ) VALUES (
    611   -- entry_class_id
   ,12   -- sort_order
-  ,'Huolenaiheiden esille ottaminen'  -- name
+  ,'Huolenaiheiden esille ottaminen?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -382,7 +382,7 @@ insert into kks_entry_class (
 ) VALUES (
    612   -- entry_class_id
   ,13   -- sort_order
-  ,'Toiveet ja odotukset päivähoidolle'  -- name
+  ,'Toiveet ja odotukset päivähoidolle?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -450,25 +450,6 @@ insert into kks_entry_class (
   ,554   -- entry_group
 );
 
-insert into kks_entry_class (
-   entry_class_id
-  ,sort_order
-  ,name
-  ,description
-  ,multi_value
-  ,data_type
-  ,value_spaces
-  ,entry_group
-) VALUES (
-   616   -- entry_class_id
-  ,17   -- sort_order
-  ,'Tuemme lapsen kehitystä seuraavalla tavalla'  -- name
-  ,''  -- description
-  ,0   -- multi_value
-  ,'FREE_TEXT'  -- data_type
-  ,''  -- value_spaces
-  ,555   -- entry_group
-);
 
 -- Päivähoito
 
@@ -482,9 +463,30 @@ insert into kks_entry_class (
   ,value_spaces
   ,entry_group
 ) VALUES (
+   616   -- entry_class_id
+  ,17   -- sort_order
+  ,'Tuemme lapsen kehitystä seuraavalla tavalla:'  -- name
+  ,''  -- description
+  ,0   -- multi_value
+  ,'FREE_TEXT'  -- data_type
+  ,''  -- value_spaces
+  ,555   -- entry_group
+);
+
+
+insert into kks_entry_class (
+   entry_class_id
+  ,sort_order
+  ,name
+  ,description
+  ,multi_value
+  ,data_type
+  ,value_spaces
+  ,entry_group
+) VALUES (
    617   -- entry_class_id
   ,18   -- sort_order
-  ,'Arviointi'  -- name
+  ,'Arviointi:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
