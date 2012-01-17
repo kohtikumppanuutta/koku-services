@@ -9,7 +9,7 @@ insert into kks_collection_class (
   ,'kks.kehitysasialaji.esiopetuksen_terveiset_kouluun'   -- type_code
   ,'Esiopetuksen terveiset kouluun (Salo)'  -- name
   ,''  -- description
-  ,''  -- concent_type
+  ,'kks.suostumus.esiopetuksen_terveiset_kouluun'  -- concent_type
 );
 
 
