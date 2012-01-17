@@ -983,10 +983,10 @@ insert into kks_entry_class (
    1139   -- entry_class_id
   ,40   -- sort_order
   ,''  -- name
-  ,''  -- description
+  ,'Seurattavaa'  -- description
   ,0   -- multi_value
-  ,'MULTI_SELECTION'  -- data_type
-  ,'Ei seurattavaa'  -- value_spaces
+  ,'SELECTION'  -- data_type
+  ,'kyllä,ei'  -- value_spaces
   ,807   -- entry_group
 );
 

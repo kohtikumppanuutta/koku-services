@@ -21,6 +21,7 @@ delete from kks_group WHERE group_id = 23;
 delete from kks_group WHERE group_id = 20;
 
 -- Statistics
+select count(id) from kks_collection where created >= '2011-11-25';
 select count(id) from kks_collection where created >= '2011-11-25' and creator = '300846-920B'
 select count(id) from kks_collection where created >= '2011-11-25' and collection_class_id = 1 and creator = '300846-920B'
 

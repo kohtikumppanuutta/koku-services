@@ -187,7 +187,7 @@ insert into kks_entry_class (
   ,'Yö- tai päiväkastelua:'  -- name
   ,''  -- description
   ,0   -- multi_value
-  ,'MULTI_SELECT'  -- data_type
+  ,'SELECT'  -- data_type
   ,'kyllä,oppimassa,ei'  -- value_spaces
   ,751   -- entry_group
 );
@@ -207,7 +207,7 @@ insert into kks_entry_class (
   ,'Pukee ylleen ilman apua:'  -- name
   ,''  -- description
   ,0   -- multi_value
-  ,'MULTI_SELECT'  -- data_type
+  ,'SELECT'  -- data_type
   ,'kyllä,oppimassa,ei'  -- value_spaces
   ,751   -- entry_group
 );
@@ -227,7 +227,7 @@ insert into kks_entry_class (
   ,'Syö hyvin ja monipuolisesti:'  -- name
   ,''  -- description
   ,0   -- multi_value
-  ,'MULTI_SELECT'  -- data_type
+  ,'SELECT'  -- data_type
   ,'kyllä,oppimassa,ei'  -- value_spaces
   ,751   -- entry_group
 );
@@ -247,7 +247,7 @@ insert into kks_entry_class (
   ,'Kestää pettymyksiä:'  -- name
   ,''  -- description
   ,0   -- multi_value
-  ,'MULTI_SELECT'  -- data_type
+  ,'SELECT'  -- data_type
   ,'kyllä,oppimassa,ei'  -- value_spaces
   ,751   -- entry_group
 );
@@ -267,7 +267,7 @@ insert into kks_entry_class (
   ,'Puhuu vieraiden kanssa:'  -- name
   ,''  -- description
   ,0   -- multi_value
-  ,'MULTI_SELECT'  -- data_type
+  ,'SELECT'  -- data_type
   ,'kyllä,oppimassa,ei'  -- value_spaces
   ,751   -- entry_group
 );
@@ -287,7 +287,7 @@ insert into kks_entry_class (
   ,'Leikkii toisten kanssa:'  -- name
   ,''  -- description
   ,0   -- multi_value
-  ,'MULTI_SELECT'  -- data_type
+  ,'SELECT'  -- data_type
   ,'kyllä,oppimassa,ei'  -- value_spaces
   ,751   -- entry_group
 );
@@ -307,7 +307,7 @@ insert into kks_entry_class (
   ,'Pitää puoliaan toisten lasten joukossa:'  -- name
   ,''  -- description
   ,0   -- multi_value
-  ,'MULTI_SELECT'  -- data_type
+  ,'SELECT'  -- data_type
   ,'kyllä,oppimassa,ei'  -- value_spaces
   ,751   -- entry_group
 );
