@@ -3,9 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+  
+  <bean id="authorizationinfo-ejb-context" class="org.springframework.context.support.ClassPathXmlApplicationContext">
+    <constructor-arg value="authorizationinfo-application-context.xml" type="java.lang.String" />
+  </bean>
 
-  <bean id="ejb-context" class="org.springframework.context.support.ClassPathXmlApplicationContext">
-    <constructor-arg value="application-context.xml" type="java.lang.String"/>
+  <bean id="employeeinfo-ejb-context" class="org.springframework.context.support.ClassPathXmlApplicationContext">
+    <constructor-arg value="employeeinfo-application-context.xml" type="java.lang.String" />
   </bean>
 
 </beans>

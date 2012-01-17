@@ -16,7 +16,6 @@ import javax.jws.WebService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import fi.koku.services.utility.authorization.v1.AuthorizationInfoServicePortType;
 import fi.koku.services.utility.authorization.v1.GroupQueryCriteriaType;
@@ -35,7 +34,7 @@ import fi.koku.services.utility.authorization.v1.ServiceFault;
   portName = "authorizationInfoService-soap11-port",
   serviceName = "authorizationInfoService")
 @RolesAllowed("koku-role")
-@Interceptors(SpringBeanAutowiringInterceptor.class)
+@Interceptors(AuthorizationInfoAutowiringInterceptor.class)
 public class AuthorizationInfoServiceEndpointBean implements AuthorizationInfoServicePortType {
   private Logger logger = LoggerFactory.getLogger(AuthorizationInfoServiceEndpointBean.class);
 
@@ -48,9 +47,14 @@ public class AuthorizationInfoServiceEndpointBean implements AuthorizationInfoSe
   }
   
   @PostConstruct
-  public void init() {
+  public void init() {    
     logger.debug("init(): "+groupServiceHolder);
-    groupService = groupServiceHolder.getGroupService();
+    
+    // null check is needed, because this method is called twice, by EJB Container and by Spring Framework.
+    // when the EJB Container makes the call groupServiceHolder has not yet been populated.
+    if (groupServiceHolder != null) {
+      groupService = groupServiceHolder.getGroupService();
+    }
   }
   
   @Override
