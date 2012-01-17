@@ -144,7 +144,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
                 Collections.singletonList(response.getAppointment().getSender().getUid()), 
                 MessageFormat.format(getValueFromBundle(APPOINTMENT_APPROVED_BODY), 
                         new Object[] {response.getAppointment().getSubject(), 
-                    response.getTarget().getTargetUser().getCitizenPortalName(), response.getReplier().getCitizenPortalName()}));
+                    getUserInfoDisplayName(response.getTarget().getTargetUser()), getUserInfoDisplayName(response.getReplier())}));
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
                 Collections.singletonList(response.getAppointment().getSender().getUid()), 
                 MessageFormat.format(getValueFromBundle(APPOINTMENT_DECLINED_BODY), 
                         new Object[] {response.getAppointment().getSubject(), 
-                    response.getTarget().getTargetUser().getCitizenPortalName(), response.getReplier().getCitizenPortalName()}));
+                    getUserInfoDisplayName(response.getTarget().getTargetUser()), getUserInfoDisplayName(response.getReplier())}));
 	}
 
     private AppointmentResponse processReply(final String targetPersonUid,
@@ -375,6 +375,15 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
 	private UserInfo getUserInfo(final User user) {
 	    return customerDao.getUserInfo(user);
 	}
+
+    private String getUserInfoDisplayName(final User user) {
+        final UserInfo userInfo = getUserInfo(user);
+        if (userInfo != null) {
+            return userInfo.getDisplayName();
+        } else {
+            return null;
+        }
+    }
 
     private AppointmentStatus getSummaryAppointmentStatus(
             final Appointment appointment) {
@@ -721,8 +730,8 @@ public class AppointmentServiceFacadeImpl implements AppointmentServiceFacade {
         notificationService.sendNotification(getValueFromBundle(APPOINTMENT_CANCELLED_SUBJECT), 
                 Collections.singletonList(response.getAppointment().getSender().getUid()), 
                 MessageFormat.format(getValueFromBundle(APPOINTMENT_CANCELLED_FOR_TARGET_BODY), new Object[] {
-                    response.getAppointment().getSubject(), response.getTarget().getTargetUser().getCitizenPortalName(), 
-                    userDao.getOrCreateUser(user).getCitizenPortalName()}));
+                    response.getAppointment().getSubject(), getUserInfoDisplayName(response.getTarget().getTargetUser()), 
+                    getUserInfoDisplayName(userDao.getOrCreateUser(user))}));
     }
 
     protected String getValueFromBundle(final String bundleKey) {
