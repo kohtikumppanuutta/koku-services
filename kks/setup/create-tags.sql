@@ -605,6 +605,26 @@ insert into kks_tag (
   ,description
 ) VALUES (
    69   -- tag_id
-  ,'kks.kehitysasia.lisätiedot'  -- name
+  ,'kks.kehitysasia.lisätiedot'  -- name  
+  ,''  -- description
+);
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   70   -- tag_id
+  ,'kks.kehitysasia.terveydentila.rokotus.luvat'  -- name
+  ,''  -- description
+);
+
+insert into kks_tag (
+   tag_id
+  ,name
+  ,description
+) VALUES (
+   71   -- tag_id
+  ,'kks.kehitysasia.koulu.luvat'  -- name
   ,''  -- description
 );
