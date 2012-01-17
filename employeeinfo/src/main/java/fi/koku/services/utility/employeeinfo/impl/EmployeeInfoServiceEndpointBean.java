@@ -16,7 +16,6 @@ import javax.jws.WebService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import fi.koku.services.utility.employee.v1.EmployeeInfoServicePortType;
 import fi.koku.services.utility.employee.v1.EmployeePicsType;
@@ -36,7 +35,7 @@ import fi.koku.services.utility.employee.v1.UserIdsType;
   portName = "employeeInfoService-soap11-port",
   serviceName = "employeeInfoService")
 @RolesAllowed("koku-role")
-@Interceptors(SpringBeanAutowiringInterceptor.class)
+@Interceptors(EmployeeAutoInfowiringInterceptor.class)
 public class EmployeeInfoServiceEndpointBean implements EmployeeInfoServicePortType {
   private Logger logger = LoggerFactory.getLogger(EmployeeInfoServiceEndpointBean.class);
 
@@ -48,7 +47,12 @@ public class EmployeeInfoServiceEndpointBean implements EmployeeInfoServicePortT
   @PostConstruct
   public void init() {
     logger.debug("init(): "+employeeInfoServiceHolder);
-    employeeInfoService = employeeInfoServiceHolder.getEmployeeInfoService();
+    
+    // null check is needed, because this method is called twice, by EJB Container and by Spring Framework.
+    // when the EJB Container makes the call employeeInfoServiceHolder has not yet been populated.
+    if (employeeInfoServiceHolder != null) {
+      employeeInfoService = employeeInfoServiceHolder.getEmployeeInfoService();
+    } 
   }
 
   public EmployeesType opGetEmployeesByIds(UserIdsType userIds) throws ServiceFault {
