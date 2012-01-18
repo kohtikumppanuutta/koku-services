@@ -49,6 +49,9 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByKunpoName(String username) {
+        if (username == null || username.isEmpty()) {
+            return null;
+        }
         final fi.arcusys.koku.common.service.datamodel.User user = userDao.getUserByCitizenPortalNameOrNull(username);
         if (user == null) {
             final String ssnByKunpoName = customerDao.getSsnByKunpoName(username);
@@ -78,6 +81,9 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public String getUserUidByLooraName(String username) {
+        if (username == null || username.isEmpty()) {
+            return null;
+        }
         return userDao.getOrCreateUserByEmployeePortalName(username).getUid();
     }
 

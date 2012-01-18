@@ -57,14 +57,24 @@ public class KokuLooraTietopyyntoServiceImpl implements KokuLooraTietopyyntoServ
         if (criteria == null) {
             return null;
         }
-        criteria.setReceiverUid(getRandomUidIfEmpty(userService.getUserUidByLooraName(criteria.getReceiverUid())));
-        criteria.setSenderUid(getRandomUidIfEmpty(userService.getUserUidByLooraName(criteria.getSenderUid())));
-        criteria.setTargetPersonUid(getRandomUidIfEmpty(userService.getUserUidByKunpoSsn(criteria.getTargetPersonUid())));
+        if (!isEmpty(criteria.getReceiverUid())) {
+            criteria.setReceiverUid(getRandomUidIfEmpty(userService.getUserUidByLooraName(criteria.getReceiverUid())));
+        }
+        if (!isEmpty(criteria.getSenderUid())) {
+            criteria.setSenderUid(getRandomUidIfEmpty(userService.getUserUidByLooraName(criteria.getSenderUid())));
+        }
+        if (!isEmpty(criteria.getTargetPersonUid())) {
+            criteria.setTargetPersonUid(getRandomUidIfEmpty(userService.getUserUidByKunpoSsn(criteria.getTargetPersonUid())));
+        }
         return criteria;
     }
 
+    private boolean isEmpty(final String str) {
+        return str == null || str.isEmpty();
+    }
+
     private String getRandomUidIfEmpty(final String userUid) {
-        if (userUid != null && !userUid.isEmpty()) {
+        if (!isEmpty(userUid)) {
             return userUid;
         }
         return UUID.randomUUID().toString();

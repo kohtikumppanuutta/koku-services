@@ -6,8 +6,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -17,7 +19,9 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import fi.arcusys.koku.common.external.CacheDAO;
 import fi.arcusys.koku.common.external.CustomerServiceDAO;
+import fi.arcusys.koku.common.external.CustomerServiceDAOImpl;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.InformationRequestDAO;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
@@ -41,6 +45,7 @@ import fi.arcusys.koku.tiva.soa.InformationRequestReplyTO;
 import fi.arcusys.koku.tiva.soa.InformationRequestStatus;
 import fi.arcusys.koku.tiva.soa.InformationRequestSummary;
 import fi.arcusys.koku.tiva.soa.InformationRequestTO;
+import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.kks.v1.InfoGroup;
 
 /**
@@ -73,6 +78,9 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
     
     @EJB
     private KokuSystemNotificationsService notificationService;
+    
+    @EJB
+    private CacheDAO cacheDao;
 
     private String notificationsBundleName = "information_request.msg";
     private Properties messageTemplates;
@@ -226,12 +234,20 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
      */
     @Override
     public InformationCategoryTO getCategories(final String employeeUid) {
+        final InformationCategoryTO cachedCategories = (InformationCategoryTO)cacheDao.get(InformationRequestServiceFacadeImpl.class, "getCategories");
+        if (cachedCategories != null) {
+            return cachedCategories;
+        }
+
         final InformationCategoryTO rootCategoryTO = new InformationCategoryTO();
         rootCategoryTO.setCategoryId("root");
         rootCategoryTO.setDescription("Pääkategoria");
         rootCategoryTO.setName("kaikki");
         final List<InfoGroup> infoGroups = kksDao.getInfoGroups(employeeUid);
         rootCategoryTO.setSubcategories(convertInfoGroupsToCategories(infoGroups));
+        
+        cacheDao.put(InformationRequestServiceFacadeImpl.class, "getCategories", rootCategoryTO);
+        
         return rootCategoryTO;
     }
 
@@ -302,17 +318,6 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
     
     private UserInfo getUserInfo(final User user) {
         return customerDao.getUserInfo(user);
-    }
-
-    private String getDisplayName(final User user) {
-        if (user == null) {
-            return "";
-        }
-        if (user.getCitizenPortalName() != null && !user.getCitizenPortalName().isEmpty()) {
-            return user.getCitizenPortalName();
-        } else {
-            return user.getEmployeePortalName();
-        }
     }
 
     /**
@@ -394,12 +399,25 @@ public class InformationRequestServiceFacadeImpl implements InformationRequestSe
         }
 
         final List<String> categories = new ArrayList<String>();
+        final Map<String, String> categoryNames = new HashMap<String, String>();
+        fillCategoryNames(categoryNames, getCategories(request.getSender().getUid()));
         for (final InformationRequestCategory category : request.getCategories()) {
-            categories.add(category.getCategoryUid());
+            final String categoryUid = category.getCategoryUid();
+            categories.add(categoryNames.containsKey(categoryUid) ? categoryNames.get(categoryUid) : categoryUid);
         }
         requestTO.setCategories(categories);
 
         return requestTO;
+    }
+
+    private void fillCategoryNames(final Map<String, String> categoryNames,
+            final InformationCategoryTO categoryTO) {
+        categoryNames.put(categoryTO.getCategoryId(), categoryTO.getName());
+        if (categoryTO.getSubcategories() != null) {
+            for (final InformationCategoryTO childCategory : categoryTO.getSubcategories()) {
+                fillCategoryNames(categoryNames, childCategory);
+            }
+        }
     }
 
     /**

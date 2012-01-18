@@ -22,5 +22,5 @@
 
     <bean id="informationRequestServiceFacade" class="fi.arcusys.koku.tiva.service.impl.InformationRequestServiceFacadeImpl" />
     
-    <bean id="kksCollectionsDao" class="fi.arcusys.koku.tiva.service.impl.KksCollectionsDAOImpl" />
+    <bean id="kksCollectionsDao" class="fi.arcusys.koku.tiva.service.KksCollectionsDAOTestImpl" />
 </beans>
