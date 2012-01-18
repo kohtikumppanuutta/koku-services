@@ -916,11 +916,12 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
      */
     @Override
     public Long writeConsentOnBehalf(Long templateId, String employeeUid,
-            String consentType, String targetPersonUid,
+            ConsentCreateType consentType, String targetPersonUid,
             List<String> receipientUids, XMLGregorianCalendar endDate, XMLGregorianCalendar givenDate,
             List<ActionPermittedTO> actions, ConsentSourceInfo sourceInfo, final String comment) {
-        final Consent consent = doConsentCreation(templateId, ConsentType.PaperBased, employeeUid, 
-                targetPersonUid, receipientUids, ConsentReceipientsType.BothParents, 
+        final Consent consent = doConsentCreation(templateId, 
+                consentType != null ? consentType.getConsentType() : ConsentType.PaperBased, 
+                employeeUid, targetPersonUid, receipientUids, ConsentReceipientsType.BothParents, 
                 null, endDate, Boolean.TRUE, sourceInfo, null);
         for (final User receipient : consent.getReceipients() ) {
             doGiveConsent(actions, endDate, givenDate, comment, consent, receipient);

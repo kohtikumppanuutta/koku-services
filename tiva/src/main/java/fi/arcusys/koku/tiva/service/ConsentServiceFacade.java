@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.tiva.soa.ActionPermittedTO;
+import fi.arcusys.koku.tiva.soa.ConsentCreateType;
 import fi.arcusys.koku.tiva.soa.ConsentCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
 import fi.arcusys.koku.tiva.soa.ConsentKksExtraInfo;
@@ -170,7 +171,7 @@ public interface ConsentServiceFacade {
      * @param object
      * @return
      */
-    Long writeConsentOnBehalf(final Long templateId, final String employeeUid, final String consentType, 
+    Long writeConsentOnBehalf(final Long templateId, final String employeeUid, final ConsentCreateType consentType, 
             final String targetPersonUid, final List<String> receipientUids, final XMLGregorianCalendar endDate,
             XMLGregorianCalendar givenDate, List<ActionPermittedTO> actions, ConsentSourceInfo sourceInfo, final String comment);
 

@@ -5,5 +5,5 @@ package fi.arcusys.koku.common.service.datamodel;
  * Aug 23, 2011
  */
 public enum ConsentType {
-    Electronic, PaperBased, EmailBased;
+    Electronic, PaperBased, EmailBased, Verbal, Fax;
 }

@@ -27,6 +27,7 @@ import fi.arcusys.koku.tiva.soa.ActionRequestStatus;
 import fi.arcusys.koku.tiva.soa.ActionRequestSummary;
 import fi.arcusys.koku.tiva.soa.ActionRequestTO;
 import fi.arcusys.koku.tiva.soa.ConsentApprovalStatus;
+import fi.arcusys.koku.tiva.soa.ConsentCreateType;
 import fi.arcusys.koku.tiva.soa.ConsentCriteria;
 import fi.arcusys.koku.tiva.soa.ConsentExternalGivenTo;
 import fi.arcusys.koku.tiva.soa.ConsentForReplyTO;
@@ -220,7 +221,7 @@ public class ConsentServiceTest {
         sourceInfo.setRepository("testRepository");
         sourceInfo.setAttachmentUrl("http://attachment.org");
         final Long consentId = service.writeConsentOnBehalf(templateId, employeeUid,
-                "Paper-based", "Lassi Lapsi", recipients, null, null, getTestActionsPermitted(), 
+                ConsentCreateType.PaperBased, "Lassi Lapsi", recipients, null, null, getTestActionsPermitted(), 
                 sourceInfo, "given on behalf");
         
         final ConsentQuery query = new ConsentQuery(1, 100);

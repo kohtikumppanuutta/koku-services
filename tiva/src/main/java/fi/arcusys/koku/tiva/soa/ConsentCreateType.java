@@ -10,7 +10,7 @@ import fi.arcusys.koku.common.service.datamodel.ConsentType;
  * Aug 11, 2011
  */
 public enum ConsentCreateType {
-    Electronic(ConsentType.Electronic), EmailBased(ConsentType.EmailBased), PaperBased(ConsentType.PaperBased);
+    Electronic(ConsentType.Electronic), EmailBased(ConsentType.EmailBased), PaperBased(ConsentType.PaperBased), Verbal(ConsentType.Verbal), Fax(ConsentType.Fax);
 
     private final static Map<ConsentType, ConsentCreateType> dmToSoaMapping = new HashMap<ConsentType, ConsentCreateType>();
     
@@ -33,5 +33,9 @@ public enum ConsentCreateType {
             }
         }
         return dmToSoaMapping.get(datamodelStatus);
+    }
+    
+    public ConsentType getConsentType() {
+        return dmStatus;
     }
 }

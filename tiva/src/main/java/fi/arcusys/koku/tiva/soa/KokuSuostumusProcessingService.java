@@ -42,7 +42,7 @@ public interface KokuSuostumusProcessingService {
     Long writeConsentOnBehalf(
             @WebParam(name = "suostumuspohjaId") final long consentTemplateId,
             @WebParam(name = "lahettaja") final String senderUid,
-            @WebParam(name = "suostumustapa") final String consentType,
+            @WebParam(name = "suostumustapa") final ConsentCreateType consentType,
             @WebParam(name = "kohdehenkilo") final String targetPersonUid,
             @WebParam(name = "vastaanottaja") final List<String> receivers,
             @WebParam(name = "maaraaika") final XMLGregorianCalendar endDate,

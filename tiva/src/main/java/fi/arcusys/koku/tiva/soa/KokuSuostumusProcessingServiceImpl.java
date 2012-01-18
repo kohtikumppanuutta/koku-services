@@ -129,7 +129,7 @@ public class KokuSuostumusProcessingServiceImpl implements KokuSuostumusProcessi
      */
     @Override
     public Long writeConsentOnBehalf(long consentTemplateId, String senderUid,
-            String consentType, String targetPersonUid, List<String> receivers, final XMLGregorianCalendar endDate,
+            ConsentCreateType consentType, String targetPersonUid, List<String> receivers, final XMLGregorianCalendar endDate,
             final XMLGregorianCalendar givenDate,
             final List<ActionPermittedTO> actions, final ConsentSourceInfo sourceInfo, final String comment) {
         return serviceFacade.writeConsentOnBehalf(consentTemplateId, senderUid, consentType, targetPersonUid, receivers, endDate, givenDate, actions, sourceInfo, comment);
