@@ -12,16 +12,10 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
  * @author hanhian
  */
 public class EmployeeAutoInfowiringInterceptor extends SpringBeanAutowiringInterceptor {
-  private static final String BEAN_FACTORY_RESOURCE_LOCATION = "classpath*:beanRefContext-empinfo.xml";
-  
-  @Override
-  protected String getBeanFactoryLocatorKey(Object target) {  
-    return "employeeinfo-ejb-context";
-  }
+  private static final String BEAN_FACTORY_RESOURCE_LOCATION = "classpath*:employeeinfo-beanRefContext.xml";
 
-//  @Override
-//  protected BeanFactoryLocator getBeanFactoryLocator(Object target) {
-//    return ContextSingletonBeanFactoryLocator.getInstance(BEAN_FACTORY_RESOURCE_LOCATION);
-//  }
-  
+  @Override
+  protected BeanFactoryLocator getBeanFactoryLocator(Object target) {
+    return ContextSingletonBeanFactoryLocator.getInstance(BEAN_FACTORY_RESOURCE_LOCATION);
+  }
 }

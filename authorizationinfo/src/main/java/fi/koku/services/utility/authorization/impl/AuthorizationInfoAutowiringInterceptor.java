@@ -1,5 +1,7 @@
 package fi.koku.services.utility.authorization.impl;
 
+import org.springframework.beans.factory.access.BeanFactoryLocator;
+import org.springframework.context.access.ContextSingletonBeanFactoryLocator;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 /**
@@ -10,9 +12,10 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
  * @author hanhian
  */
 public class AuthorizationInfoAutowiringInterceptor extends SpringBeanAutowiringInterceptor{
+  private static final String BEAN_FACTORY_RESOURCE_LOCATION = "classpath*:authorizationinfo-beanRefContext.xml";
 
   @Override
-  protected String getBeanFactoryLocatorKey(Object target) {   
-    return "authorizationinfo-ejb-context";
+  protected BeanFactoryLocator getBeanFactoryLocator(Object target) {
+    return ContextSingletonBeanFactoryLocator.getInstance(BEAN_FACTORY_RESOURCE_LOCATION);
   }  
 }
