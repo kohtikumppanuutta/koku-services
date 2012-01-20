@@ -3,6 +3,8 @@ package fi.arcusys.koku.tiva.soa;
 import fi.arcusys.koku.common.service.datamodel.ReceipientsType;
 
 /**
+ * Types of recipients for consent. 
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 5, 2011
  */

@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 
 /**
+ * Implementation of TIVA-Valtakirja-processing operations, called from the TIVA-Valtakirja Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 16, 2011
  */

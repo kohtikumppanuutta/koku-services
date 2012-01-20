@@ -3,6 +3,8 @@ package fi.arcusys.koku.tiva.soa;
 import fi.arcusys.koku.common.service.dto.AuthorizationDTOCriteria;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds search criteria for searching authorizations.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 16, 2011
  */

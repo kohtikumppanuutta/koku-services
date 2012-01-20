@@ -9,6 +9,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import fi.arcusys.koku.common.service.dto.InformationRequestDTOCriteria;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds criteria for searching information requests.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 22, 2011
  */

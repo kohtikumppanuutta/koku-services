@@ -5,9 +5,10 @@ import java.util.List;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlElement;
 
 /**
+ * TIVA-to-KKS interface with operations for accessing Consents from KKS component.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 3, 2011
  */

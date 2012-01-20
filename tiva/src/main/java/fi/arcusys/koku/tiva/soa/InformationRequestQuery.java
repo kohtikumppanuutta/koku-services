@@ -1,6 +1,8 @@
 package fi.arcusys.koku.tiva.soa;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds query for searching information requests.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 22, 2011
  */

@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds summary data about authorization.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 13, 2011
  */

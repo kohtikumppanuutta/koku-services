@@ -6,6 +6,8 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 /**
+ * UI service interface for employee-related operations in TIVA-Valtakirja functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 16, 2011
  */

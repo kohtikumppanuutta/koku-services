@@ -3,6 +3,8 @@ package fi.arcusys.koku.tiva.soa;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationType;
 
 /**
+ * Types of authorization source.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 13, 2011
  */

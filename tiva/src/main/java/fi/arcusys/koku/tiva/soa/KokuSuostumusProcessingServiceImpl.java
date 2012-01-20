@@ -1,7 +1,5 @@
 package fi.arcusys.koku.tiva.soa;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -13,10 +11,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 
 /**
+ * Implementation of TIVA-Suostumus-processing operations, called from the TIVA-Suostumus Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 9, 2011
  */

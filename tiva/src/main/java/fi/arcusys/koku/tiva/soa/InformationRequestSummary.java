@@ -7,6 +7,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds summary data about information request (tietopyyntö).
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 22, 2011
  */

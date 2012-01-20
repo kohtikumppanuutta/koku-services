@@ -10,6 +10,8 @@ import javax.jws.WebService;
 import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 
 /**
+ * UI service implementation for citizen-related operations in TIVA-Valtakirja functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 16, 2011
  */

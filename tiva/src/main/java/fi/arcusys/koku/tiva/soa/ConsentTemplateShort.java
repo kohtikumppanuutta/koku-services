@@ -3,6 +3,8 @@ package fi.arcusys.koku.tiva.soa;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds summary data about consent template.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Oct 3, 2011
  */
 @XmlType(name = "consentTemplate", namespace = "http://services.koku.fi/entity/tiva/v1", propOrder = {

@@ -9,6 +9,8 @@ import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
+ * Interface with TIVA-Suostumus-processing operations, called from the TIVA-Suostumus Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Aug 9, 2011
  */
 @WebService(targetNamespace = "http://soa.tiva.koku.arcusys.fi/")

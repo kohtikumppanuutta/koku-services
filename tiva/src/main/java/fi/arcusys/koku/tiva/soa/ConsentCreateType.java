@@ -6,6 +6,8 @@ import java.util.Map;
 import fi.arcusys.koku.common.service.datamodel.ConsentType;
 
 /**
+ * Type of consent creation.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 11, 2011
  */

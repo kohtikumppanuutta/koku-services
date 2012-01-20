@@ -1,8 +1,5 @@
 package fi.arcusys.koku.tiva.soa;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -14,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.tiva.service.InformationRequestServiceFacade;
 
 /**
+ * Implementation of TIVA-Tietopyyntö-processing operations, called from the TIVA-Tietopyyntö Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 17, 2011
  */

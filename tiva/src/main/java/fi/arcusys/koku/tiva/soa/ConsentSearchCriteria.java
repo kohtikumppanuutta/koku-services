@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlType;
 import fi.arcusys.koku.common.service.dto.ConsentExtDtoCriteria;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds search criteria for searching consents.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 3, 2011
  */

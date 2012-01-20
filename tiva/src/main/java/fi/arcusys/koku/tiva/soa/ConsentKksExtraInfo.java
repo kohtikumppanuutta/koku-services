@@ -3,6 +3,8 @@ package fi.arcusys.koku.tiva.soa;
 import java.util.List;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds KKS-specific data about consent.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 11, 2011
  */

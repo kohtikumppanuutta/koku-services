@@ -11,6 +11,8 @@ import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.arcusys.koku.tiva.service.InformationRequestServiceFacade;
 
 /**
+ * UI service implementation for employee-related operations in TIVA-Tietopyyntö functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 23, 2011
  */

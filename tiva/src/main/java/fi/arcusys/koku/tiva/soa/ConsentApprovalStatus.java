@@ -6,6 +6,8 @@ import java.util.Map;
 import fi.arcusys.koku.common.service.datamodel.ConsentReplyStatus;
 
 /**
+ * Status of the consent.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 16, 2011
  */

@@ -18,6 +18,8 @@ import fi.koku.services.entity.kks.v1.GroupsHelper;
 import fi.koku.services.entity.kks.v1.InfoGroup;
 
 /**
+ * DAO interface implementation for accessing KKS-component in TIVA-Tietopyyntö functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 14, 2011
  */

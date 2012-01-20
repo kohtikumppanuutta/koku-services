@@ -11,6 +11,8 @@ import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.arcusys.koku.tiva.service.AuthorizationServiceFacade;
 
 /**
+ * UI service implementation for employee-related operations in TIVA-VAltakirja functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 16, 2011
  */

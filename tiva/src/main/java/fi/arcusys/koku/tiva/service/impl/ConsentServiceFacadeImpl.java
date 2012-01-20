@@ -71,6 +71,8 @@ import fi.arcusys.koku.tiva.soa.ConsentTemplateSummary;
 import fi.arcusys.koku.tiva.soa.ConsentTemplateTO;
 
 /**
+ * Service facade implementation for business methods in TIVA-Suostumus functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

@@ -3,6 +3,8 @@ package fi.arcusys.koku.tiva.soa;
 import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds search criteria for searching consents.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 11, 2011
  */

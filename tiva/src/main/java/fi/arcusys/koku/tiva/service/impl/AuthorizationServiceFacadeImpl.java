@@ -42,6 +42,8 @@ import fi.arcusys.koku.tiva.soa.AuthorizationSummary;
 import fi.arcusys.koku.tiva.soa.AuthorizationTemplateTO;
 
 /**
+ * Service facade implementation for business methods in TIVA-Valtakirja functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 13, 2011
  */

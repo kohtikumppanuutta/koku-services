@@ -2,8 +2,6 @@ package fi.arcusys.koku.tiva.service;
 
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.tiva.soa.AuthorizationCriteria;
@@ -14,6 +12,8 @@ import fi.arcusys.koku.tiva.soa.AuthorizationSummary;
 import fi.arcusys.koku.tiva.soa.AuthorizationTemplateTO;
 
 /**
+ * Service facade interface for business methods in TIVA-Valtakirja functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 12, 2011
  */

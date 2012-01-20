@@ -21,12 +21,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import fi.arcusys.koku.common.external.CacheDAO;
 import fi.arcusys.koku.common.external.CustomerServiceDAO;
-import fi.arcusys.koku.common.external.CustomerServiceDAOImpl;
 import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.common.service.InformationRequestDAO;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.UserDAO;
-import fi.arcusys.koku.common.service.datamodel.InformationReplyAccessType;
 import fi.arcusys.koku.common.service.datamodel.InformationReplyStatus;
 import fi.arcusys.koku.common.service.datamodel.InformationRequest;
 import fi.arcusys.koku.common.service.datamodel.InformationRequestCategory;
@@ -45,10 +43,11 @@ import fi.arcusys.koku.tiva.soa.InformationRequestReplyTO;
 import fi.arcusys.koku.tiva.soa.InformationRequestStatus;
 import fi.arcusys.koku.tiva.soa.InformationRequestSummary;
 import fi.arcusys.koku.tiva.soa.InformationRequestTO;
-import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.kks.v1.InfoGroup;
 
 /**
+ * Service facade implementation for business methods in TIVA-Tietopyyntö functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 22, 2011
  */

@@ -6,6 +6,8 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 /**
+ * UI service interface for citizen-related operations in TIVA-Suostumus functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 11, 2011
  */

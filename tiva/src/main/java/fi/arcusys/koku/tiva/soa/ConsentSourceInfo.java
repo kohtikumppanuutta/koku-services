@@ -1,6 +1,8 @@
 package fi.arcusys.koku.tiva.soa;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about source for consent creation.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 7, 2011
  */

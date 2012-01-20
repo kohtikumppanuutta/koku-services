@@ -6,6 +6,8 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 
 /**
+ * Interface with TIVA-Tietopyyntö-processing operations, called from the TIVA-Tietopyyntö Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 17, 2011
  */

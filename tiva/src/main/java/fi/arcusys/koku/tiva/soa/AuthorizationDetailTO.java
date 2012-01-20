@@ -3,6 +3,8 @@ package fi.arcusys.koku.tiva.soa;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds detailed data about authorization.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 16, 2011
  */

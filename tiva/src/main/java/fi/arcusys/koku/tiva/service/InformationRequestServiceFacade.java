@@ -11,6 +11,8 @@ import fi.arcusys.koku.tiva.soa.InformationRequestSummary;
 import fi.arcusys.koku.tiva.soa.InformationRequestTO;
 
 /**
+ * Service facade interface for business methods in TIVA-Tietopyyntö functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 22, 2011
  */

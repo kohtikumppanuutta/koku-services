@@ -9,6 +9,8 @@ import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
+ * Interface with TIVA-Valtakirja-processing operations, called from the TIVA-Valtakirja Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 16, 2011
  */

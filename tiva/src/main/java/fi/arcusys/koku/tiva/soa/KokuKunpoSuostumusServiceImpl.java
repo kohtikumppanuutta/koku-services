@@ -1,22 +1,20 @@
 package fi.arcusys.koku.tiva.soa;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 
 /**
+ * UI service implementation for citizen-related operations in TIVA-Suostumus functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 11, 2011
  */

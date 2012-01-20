@@ -12,6 +12,8 @@ import fi.arcusys.koku.common.external.SystemArea;
 import fi.arcusys.koku.common.soa.AbstractLoggingInterceptor;
 
 /**
+ * Interceptor for performing logging about business valuable events in TIVA-Suostumus
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 4, 2011
  */

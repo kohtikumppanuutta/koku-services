@@ -1,6 +1,5 @@
 package fi.arcusys.koku.tiva.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -21,6 +20,8 @@ import fi.arcusys.koku.tiva.soa.ConsentTemplateSummary;
 import fi.arcusys.koku.tiva.soa.ConsentTemplateTO;
 
 /**
+ * Service facade interface for business methods in TIVA-Suostumus functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

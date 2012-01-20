@@ -11,6 +11,8 @@ import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.arcusys.koku.tiva.service.ConsentServiceFacade;
 
 /**
+ * Implementation of TIVA-to-KKS interface for accessing Consents from KKS component.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 3, 2011
  */
