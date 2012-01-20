@@ -3,12 +3,8 @@ package fi.arcusys.koku.common.service;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertSame;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,14 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fi.arcusys.koku.common.service.ResponseDAO;
 import fi.arcusys.koku.common.service.datamodel.Answer;
-import fi.arcusys.koku.common.service.datamodel.FreeTextAnswer;
-import fi.arcusys.koku.common.service.datamodel.Question;
-import fi.arcusys.koku.common.service.datamodel.QuestionType;
-import fi.arcusys.koku.common.service.datamodel.Request;
 import fi.arcusys.koku.common.service.datamodel.Response;
-import fi.arcusys.koku.common.service.datamodel.YesNoAnswer;
 
 /**
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
