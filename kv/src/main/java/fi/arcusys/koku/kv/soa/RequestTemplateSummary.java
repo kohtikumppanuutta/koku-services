@@ -1,6 +1,8 @@
 package fi.arcusys.koku.kv.soa;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds summary data about request template.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 2, 2011
  */

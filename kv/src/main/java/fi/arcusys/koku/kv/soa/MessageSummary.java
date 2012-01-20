@@ -11,6 +11,8 @@ import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds summary data about message.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Jun 9, 2011
  */
 @XmlType (name = "messageSummary", namespace = "http://soa.kv.koku.arcusys.fi/")

@@ -3,6 +3,8 @@ package fi.arcusys.koku.kv.soa;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about single answer.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 22, 2011
  */

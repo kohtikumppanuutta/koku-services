@@ -9,6 +9,8 @@ import javax.jws.WebService;
 import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 
 /**
+ * Implementation of general notification service.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 20, 2011
  */

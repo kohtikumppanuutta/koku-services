@@ -2,25 +2,18 @@ package fi.arcusys.koku.kv.service;
 
 import java.util.List;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import fi.arcusys.koku.common.service.KokuSystemNotificationsService;
 import fi.arcusys.koku.common.service.datamodel.FolderType;
 import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
-import fi.arcusys.koku.common.service.exception.UserNotFoundException;
 import fi.arcusys.koku.kv.soa.Answer;
 import fi.arcusys.koku.kv.soa.MessageStatus;
 import fi.arcusys.koku.kv.soa.MessageSummary;
 import fi.arcusys.koku.kv.soa.MessageTO;
 import fi.arcusys.koku.kv.soa.MultipleChoiceTO;
 import fi.arcusys.koku.kv.soa.QuestionTO;
-import fi.arcusys.koku.kv.soa.Questions;
-import fi.arcusys.koku.kv.soa.Receipients;
 import fi.arcusys.koku.kv.soa.RequestProcessingTO;
-import fi.arcusys.koku.kv.soa.RequestShortSummary;
 import fi.arcusys.koku.kv.soa.RequestSummary;
 import fi.arcusys.koku.kv.soa.RequestTO;
 import fi.arcusys.koku.kv.soa.RequestTemplateExistenceStatus;
@@ -31,6 +24,8 @@ import fi.arcusys.koku.kv.soa.ResponseDetail;
 import fi.arcusys.koku.kv.soa.ResponseSummary;
 
 /**
+ * Service facade interface for all business methods related to KV function area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 20, 2011
  */

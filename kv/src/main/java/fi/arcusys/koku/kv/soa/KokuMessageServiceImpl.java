@@ -14,6 +14,8 @@ import fi.arcusys.koku.kv.service.MessageServiceFacade;
 
 
 /**
+ * UI service implementation for all operations in KV-Messages functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 9, 2011
  */

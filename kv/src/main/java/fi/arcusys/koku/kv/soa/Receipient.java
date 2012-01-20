@@ -1,6 +1,8 @@
 package fi.arcusys.koku.kv.soa;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Wrapper object for storing single recipient.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 15, 2011
  */

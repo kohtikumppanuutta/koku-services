@@ -1,6 +1,8 @@
 package fi.arcusys.koku.kv.soa;
 
 /**
+ * Read/unread status of the message
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 9, 2011
  */

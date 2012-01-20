@@ -5,6 +5,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Wrapper object for list of questions.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 22, 2011
  */

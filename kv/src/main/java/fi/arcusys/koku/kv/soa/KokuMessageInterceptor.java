@@ -12,6 +12,8 @@ import fi.arcusys.koku.common.external.SystemArea;
 import fi.arcusys.koku.common.soa.AbstractLoggingInterceptor;
 
 /**
+ * Interceptor for performing logging about business valuable events in KV-Messages.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Oct 4, 2011
  */
 public class KokuMessageInterceptor extends AbstractLoggingInterceptor {

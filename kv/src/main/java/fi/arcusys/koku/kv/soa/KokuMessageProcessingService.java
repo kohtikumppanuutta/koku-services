@@ -6,6 +6,8 @@ import javax.jws.WebService;
 
 
 /**
+ * Interface with KV-Message-processing operations, called from the KV-Message Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 15, 2011
  */

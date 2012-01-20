@@ -80,6 +80,7 @@ import fi.arcusys.koku.kv.soa.ResponseTO;
 import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
+ * Service facade implementation for all business methods in KV functional area.
  * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 18, 2011

@@ -21,6 +21,8 @@ import fi.arcusys.koku.common.soa.Role;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 
 /**
+ * Implementation of KV-Request-processing operations, called from the KV-Request Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 22, 2011
  */

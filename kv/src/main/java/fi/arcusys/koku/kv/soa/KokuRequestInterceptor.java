@@ -14,6 +14,8 @@ import fi.arcusys.koku.common.soa.AbstractLoggingInterceptor;
 
 
 /**
+ * Interceptor for performing logging about business valuable events in KV-Requests.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 4, 2011
  */

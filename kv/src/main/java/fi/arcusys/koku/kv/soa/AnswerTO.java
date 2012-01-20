@@ -3,6 +3,8 @@ package fi.arcusys.koku.kv.soa;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about single answer to question in KV-Request.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 22, 2011
  */

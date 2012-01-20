@@ -3,6 +3,8 @@ package fi.arcusys.koku.kv.soa;
 import java.util.List;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about request template.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 2, 2011
  */

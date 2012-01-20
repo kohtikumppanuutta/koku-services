@@ -6,6 +6,8 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 /**
+ * Interface for general notification service, used by external components.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 19, 2011
  */

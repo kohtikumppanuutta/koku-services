@@ -8,6 +8,8 @@ import javax.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
+ * Interface with KV-Requests-processing operations, called from the KV-Requests Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 22, 2011
  */

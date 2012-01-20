@@ -9,6 +9,8 @@ import javax.jws.WebService;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 
 /**
+ * Implementation for general notification service, used by external components.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 19, 2011
  */

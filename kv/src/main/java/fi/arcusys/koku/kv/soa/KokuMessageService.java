@@ -10,6 +10,8 @@ import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
 
 /**
+ * UI service interface for all operations in KV-Messages functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 9, 2011
  */

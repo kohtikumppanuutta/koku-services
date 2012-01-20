@@ -3,6 +3,8 @@ package fi.arcusys.koku.kv.soa;
 import fi.arcusys.koku.common.service.datamodel.Visibility;
 
 /**
+ * RequestTemplate visibility type. 
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 5, 2011
  */

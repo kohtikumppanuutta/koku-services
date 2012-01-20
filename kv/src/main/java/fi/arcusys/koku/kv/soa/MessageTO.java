@@ -8,6 +8,8 @@ import fi.arcusys.koku.common.soa.UserInfo;
 
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds detailed data about message.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 20, 2011
  */

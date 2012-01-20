@@ -3,12 +3,13 @@ package fi.arcusys.koku.kv.soa;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
-import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 
 /**
+ * Implementation of KV-Message-processing operations, called from the KV-Message Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 15, 2011
  */

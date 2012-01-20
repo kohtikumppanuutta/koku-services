@@ -3,6 +3,8 @@ package fi.arcusys.koku.kv.soa;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about single possible answer to multiple choice question.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 2, 2011
  */

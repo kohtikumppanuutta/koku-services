@@ -3,6 +3,8 @@ package fi.arcusys.koku.kv.soa;
 import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds summary data about response to request.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 6, 2011
  */

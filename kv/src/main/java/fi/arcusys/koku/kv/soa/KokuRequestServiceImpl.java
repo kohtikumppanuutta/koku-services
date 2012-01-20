@@ -1,14 +1,10 @@
 package fi.arcusys.koku.kv.soa;
 
-import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 
 /**
+ * UI service implementation for employee-related operations in KV-Requests functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 22, 2011
  */

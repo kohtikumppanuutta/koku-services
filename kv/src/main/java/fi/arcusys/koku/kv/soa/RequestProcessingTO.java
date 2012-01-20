@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about request for usage in Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 12, 2011
  */

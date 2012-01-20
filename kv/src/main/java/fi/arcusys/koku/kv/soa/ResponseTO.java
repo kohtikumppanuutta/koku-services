@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlType;
 import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about response to request.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 22, 2011
  */

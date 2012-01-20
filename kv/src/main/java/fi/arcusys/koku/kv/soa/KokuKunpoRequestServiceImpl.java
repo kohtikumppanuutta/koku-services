@@ -9,6 +9,8 @@ import javax.jws.WebService;
 import fi.arcusys.koku.kv.service.MessageServiceFacade;
 
 /**
+ * UI service implementation for citizen-related operations in KV-Requests functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 6, 2011
  */
