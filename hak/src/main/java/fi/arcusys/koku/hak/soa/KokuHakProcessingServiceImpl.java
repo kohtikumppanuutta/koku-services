@@ -1,7 +1,5 @@
 package fi.arcusys.koku.hak.soa;
 
-import java.util.Date;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
@@ -9,10 +7,11 @@ import javax.jws.WebService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.common.service.CalendarUtil;
 import fi.arcusys.koku.hak.service.DaycareRequestServiceFacade;
 
 /**
+ * Implementation of HAK-processing operations, called from the HAK Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 20, 2011
  */

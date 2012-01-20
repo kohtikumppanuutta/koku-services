@@ -5,6 +5,8 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 
 /**
+ * Interface with HAK-processing operations, called from the HAK Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 20, 2011
  */

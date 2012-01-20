@@ -3,6 +3,8 @@ package fi.arcusys.koku.hak.service;
 import fi.arcusys.koku.hak.soa.DaycareRequestTO;
 
 /**
+ * Service facade interface for all business methods related to HAK function area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 13, 2011
  */

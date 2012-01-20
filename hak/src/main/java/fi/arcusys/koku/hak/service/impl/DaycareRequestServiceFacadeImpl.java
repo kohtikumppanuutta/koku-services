@@ -23,6 +23,8 @@ import fi.arcusys.koku.hak.service.DaycareRequestServiceFacade;
 import fi.arcusys.koku.hak.soa.DaycareRequestTO;
 
 /**
+ * Service facade implementation for all business methods in HAK functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 13, 2011
  */
