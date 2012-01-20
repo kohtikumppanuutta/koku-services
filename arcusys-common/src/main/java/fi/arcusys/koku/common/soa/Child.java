@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.soa;
 import java.util.List;
 
 /**
+ * Entity for representing child in communications with external components (UI, Intalio Forms etc.)
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 19, 2011
  */

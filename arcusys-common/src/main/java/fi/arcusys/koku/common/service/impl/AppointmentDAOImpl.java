@@ -1,5 +1,6 @@
 package fi.arcusys.koku.common.service.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,8 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
-
-import java.util.Arrays;
 
 import fi.arcusys.koku.common.service.AppointmentDAO;
 import fi.arcusys.koku.common.service.datamodel.Appointment;
@@ -21,6 +20,8 @@ import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.AppointmentDTOCriteria;
 
 /**
+ * DAO implementation for CRUD operations with 'Appointment' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */

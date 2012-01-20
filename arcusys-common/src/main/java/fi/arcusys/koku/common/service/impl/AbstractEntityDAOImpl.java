@@ -1,11 +1,8 @@
 package fi.arcusys.koku.common.service.impl;
 
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
@@ -14,9 +11,10 @@ import javax.persistence.Query;
 
 import fi.arcusys.koku.common.service.AbstractEntityDAO;
 import fi.arcusys.koku.common.service.datamodel.AbstractEntity;
-import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 
 /**
+ * Abstract implementation for all data model related DAO implementations. 
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 18, 2011
  */

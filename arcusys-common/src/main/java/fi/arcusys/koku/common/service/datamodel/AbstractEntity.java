@@ -8,6 +8,8 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 
 /**
+ * Superclass for all other entities with common fields and lifecycle processing methods.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 24, 2011
  */

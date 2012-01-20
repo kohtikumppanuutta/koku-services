@@ -9,6 +9,8 @@ import javax.persistence.NamedQuery;
 
 
 /**
+ * Entity for representing message folder in KV-Messages functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 18, 2011
  */

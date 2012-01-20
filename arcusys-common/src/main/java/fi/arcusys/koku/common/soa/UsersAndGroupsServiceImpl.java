@@ -15,13 +15,11 @@ import fi.arcusys.koku.common.external.RolesDAO;
 import fi.arcusys.koku.common.service.UserDAO;
 
 /**
+ * Implementation of external SOA/Web Service interface for providing user/group/role related operations to other parts of the system (UI, Intalio Forms etc.)
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 10, 2011
  */
-//@Stateless
-//@WebService(serviceName = "UsersAndGroupsServiceIntegrated", portName = "UsersAndGroupsServiceIntegratedPort", 
-//        endpointInterface = "fi.arcusys.koku.common.soa.UsersAndGroupsService",
-//        targetNamespace = "http://soa.common.koku.arcusys.fi/")
 @Stateless
 @WebService(serviceName = "UsersAndGroupsService", portName = "UsersAndGroupsServicePort", 
       endpointInterface = "fi.arcusys.koku.common.soa.UsersAndGroupsService",

@@ -7,6 +7,8 @@ import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.AuthorizationDTOCriteria;
 
 /**
+ * DAO interface for CRUD operations with 'Authorization' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 12, 2011
  */

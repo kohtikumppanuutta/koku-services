@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 
 /**
+ * Entity for representing appointment request in AV functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */

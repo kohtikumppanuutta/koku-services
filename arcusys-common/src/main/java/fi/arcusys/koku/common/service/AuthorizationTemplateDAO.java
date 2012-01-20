@@ -5,6 +5,8 @@ import java.util.List;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate;
 
 /**
+ * DAO interface for CRUD operations with 'AuthorizationTemplate' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 12, 2011
  */

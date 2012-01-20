@@ -7,6 +7,8 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 
 /**
+ * External SOA/Web Service interface for providing user/group/role related operations to other parts of the system (UI, Intalio Forms etc.)
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 16, 2011
  */

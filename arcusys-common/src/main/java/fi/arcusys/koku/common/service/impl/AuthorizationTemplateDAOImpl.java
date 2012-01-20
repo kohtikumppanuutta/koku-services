@@ -9,6 +9,8 @@ import fi.arcusys.koku.common.service.AuthorizationTemplateDAO;
 import fi.arcusys.koku.common.service.datamodel.AuthorizationTemplate;
 
 /**
+ * DAO implementation for CRUD operations with 'AuthorizationTemplate' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 12, 2011
  */

@@ -6,6 +6,8 @@ import fi.arcusys.koku.common.soa.Group;
 import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * DAO interface for accessing user-visible groups information. 
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 17, 2011
  */

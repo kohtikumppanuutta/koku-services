@@ -6,6 +6,8 @@ import fi.arcusys.koku.common.service.DaycareRequestDAO;
 import fi.arcusys.koku.common.service.datamodel.DaycareRequest;
 
 /**
+ * DAO implementation for CRUD operations with 'DaycareRequest' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 13, 2011
  */

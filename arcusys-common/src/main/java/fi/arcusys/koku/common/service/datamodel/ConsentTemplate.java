@@ -16,6 +16,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 /**
+ * Entity for representing consent template in TIVA-Suostumus functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

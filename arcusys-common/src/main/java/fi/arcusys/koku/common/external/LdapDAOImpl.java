@@ -25,13 +25,11 @@ import javax.naming.directory.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.arcusys.koku.common.soa.Group;
 import fi.arcusys.koku.common.soa.Role;
-import fi.arcusys.koku.common.soa.UserInfo;
-import fi.koku.services.entity.customer.v1.CustomerType;
-import fi.koku.services.entity.customer.v1.ServiceFault;
 
 /**
+ * DAO implementation for general access to LDAP, where users/groups/roles related information is stored. 
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 2, 2011
  */

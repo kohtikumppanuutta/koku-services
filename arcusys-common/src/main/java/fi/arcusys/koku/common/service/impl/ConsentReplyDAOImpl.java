@@ -14,6 +14,8 @@ import fi.arcusys.koku.common.service.datamodel.ConsentReplyStatus;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
+ * DAO implementation for CRUD operations with 'ConsentReply' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

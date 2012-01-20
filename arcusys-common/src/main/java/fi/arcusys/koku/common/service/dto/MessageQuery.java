@@ -5,6 +5,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Data transfer object for passing search query to message search.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 19, 2011
  */

@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.soa;
 
 /**
+ * Entity for represented detailed child info in communication with external components (UI, Intalio Forms etc.)
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 21, 2011
  */

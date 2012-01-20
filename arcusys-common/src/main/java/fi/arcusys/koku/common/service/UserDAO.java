@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.service;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
+ * DAO interface for CRUD operations with 'User' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 20, 2011
  */

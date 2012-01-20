@@ -17,20 +17,13 @@ import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.soa.Child;
 import fi.arcusys.koku.common.soa.ChildWithHetu;
 import fi.arcusys.koku.common.soa.UserInfo;
-import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
-import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
-import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
-import fi.koku.services.entity.customer.v1.ElectronicContactInfoType;
-import fi.koku.services.entity.customer.v1.ElectronicContactInfosType;
-import fi.koku.services.entity.customer.v1.PhoneNumberType;
-import fi.koku.services.entity.customer.v1.PhoneNumbersType;
-import fi.koku.services.entity.customer.v1.ServiceFault;
-import fi.koku.services.entity.family.FamilyConstants;
 import fi.koku.services.entity.family.v1.FamilyService;
 
 /**
+ * DAO implementation for accessing PYH-component interfaces: getting data about family relations.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 14, 2011
  */

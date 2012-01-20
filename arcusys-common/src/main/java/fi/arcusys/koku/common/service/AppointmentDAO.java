@@ -10,6 +10,8 @@ import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.dto.AppointmentDTOCriteria;
 
 /**
+ * DAO interface for CRUD operations with 'Appointment' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */

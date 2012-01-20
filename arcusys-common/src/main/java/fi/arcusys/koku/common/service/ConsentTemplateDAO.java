@@ -5,6 +5,8 @@ import java.util.List;
 import fi.arcusys.koku.common.service.datamodel.ConsentTemplate;
 
 /**
+ * DAO interface for CRUD operations with 'ConsentTemplate' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

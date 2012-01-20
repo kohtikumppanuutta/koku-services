@@ -3,6 +3,9 @@ package fi.arcusys.koku.common.service;
 import java.util.List;
 
 /**
+ * Common DAO interface for all other DAO interfaces with real entities. 
+ * Defines common set of CRUD operations, available for all entities.   
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 20, 2011
  */

@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 /**
+ * Type of question in KV-Requests function area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 23, 2011
  */

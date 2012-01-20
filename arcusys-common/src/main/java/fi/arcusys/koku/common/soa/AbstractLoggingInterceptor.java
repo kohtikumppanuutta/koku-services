@@ -8,6 +8,8 @@ import fi.arcusys.koku.common.external.LogMessage;
 import fi.arcusys.koku.common.external.LogServiceDAO;
 
 /**
+ * Abstract class for performing common logic in accessing LOK-interface'es DAO service.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 4, 2011
  */

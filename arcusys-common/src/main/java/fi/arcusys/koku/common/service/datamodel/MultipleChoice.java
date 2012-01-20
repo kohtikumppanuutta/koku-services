@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.service.datamodel;
 import javax.persistence.Entity;
 
 /**
+ * Entity for representing single answer in multiple choice question in KV-Requests functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 2, 2011
  */

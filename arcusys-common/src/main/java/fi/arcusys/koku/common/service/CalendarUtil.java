@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Common util methods for processing Date/XMLGregorianCalendar conversion.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 25, 2011
  */

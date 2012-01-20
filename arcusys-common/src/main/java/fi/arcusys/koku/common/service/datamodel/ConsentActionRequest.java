@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 
 /**
+ * Entity for representing single action in consent request in TIVA-Suostumus functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

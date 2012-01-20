@@ -6,6 +6,8 @@ import java.util.Map;
 import fi.arcusys.koku.common.soa.Role;
 
 /**
+ * DAO interface for accessing user/group/role information from LDAP
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 2, 2011
  */

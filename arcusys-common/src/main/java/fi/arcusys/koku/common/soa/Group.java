@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.soa;
 
 /**
+ * Entity for representing Group in communication with external components (UI, Intalio Forms etc.)
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 19, 2011
  */

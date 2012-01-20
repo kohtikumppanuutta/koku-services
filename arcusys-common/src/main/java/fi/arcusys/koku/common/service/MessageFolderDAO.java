@@ -11,6 +11,8 @@ import fi.arcusys.koku.common.service.dto.Criteria;
 import fi.arcusys.koku.common.service.dto.MessageQuery;
 
 /**
+ * DAO interface for CRUD operations with 'Folder' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 20, 2011
  */

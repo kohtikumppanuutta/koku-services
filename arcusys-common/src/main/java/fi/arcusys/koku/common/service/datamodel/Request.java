@@ -16,13 +16,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-import fi.arcusys.koku.common.service.CalendarUtil;
-
 /**
+ * Entity for representing Request in KV-Requests functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 23, 2011
  */

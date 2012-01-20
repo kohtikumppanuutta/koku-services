@@ -15,6 +15,8 @@ import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
+ * DAO implementation for CRUD operations with 'TargetPerson' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 22, 2011
  */

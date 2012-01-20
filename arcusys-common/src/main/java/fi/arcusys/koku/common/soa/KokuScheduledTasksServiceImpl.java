@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.common.service.ScheduledTaskExecutor;
 
 /**
+ * Service implementation for calling all registered scheduled tasks executors. Service should be called by external scheduler.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 21, 2011
  */

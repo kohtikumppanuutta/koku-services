@@ -8,6 +8,7 @@ import javax.persistence.UniqueConstraint;
 
 
 /**
+ * Entity for representing user.
  * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 18, 2011

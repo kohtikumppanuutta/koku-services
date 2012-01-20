@@ -23,6 +23,8 @@ import fi.arcusys.koku.common.service.dto.MessageQuery;
 import fi.arcusys.koku.common.service.dto.OrderBy;
 
 /**
+ * DAO implementation for CRUD operations with 'Folder' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 18, 2011
  */

@@ -7,6 +7,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 /**
+ * Entity for representing authorization template in TIVA-Valtakirja functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 12, 2011
  */

@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.service.dto;
 
 /**
+ * Data transfer object for passing orderBy parameters to message search.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 19, 2011
  */

@@ -15,6 +15,8 @@ import fi.arcusys.koku.common.service.datamodel.MessageRef;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
+ * DAO implementation for CRUD operations with 'MessageRef' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 20, 2011
  */

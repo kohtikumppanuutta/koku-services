@@ -15,6 +15,8 @@ import fi.arcusys.koku.common.service.datamodel.InformationRequestCategory;
 import fi.arcusys.koku.common.service.dto.InformationRequestDTOCriteria;
 
 /**
+ * DAO implementation for CRUD operations with 'InformationRequest' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 22, 2011
  */

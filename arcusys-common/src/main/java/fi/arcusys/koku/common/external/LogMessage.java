@@ -2,6 +2,8 @@ package fi.arcusys.koku.common.external;
 
 
 /**
+ * Entity for passing log events through LogServiceDAO to LOK component.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 4, 2011
  */

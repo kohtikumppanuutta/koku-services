@@ -19,6 +19,8 @@ import fi.arcusys.koku.common.service.dto.ConsentDTOCriteria;
 import fi.arcusys.koku.common.service.dto.ConsentExtDtoCriteria;
 
 /**
+ * DAO implementation for CRUD operations with 'Consent' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

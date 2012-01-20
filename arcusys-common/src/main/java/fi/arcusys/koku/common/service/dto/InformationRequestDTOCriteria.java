@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.service.dto;
 import java.util.Date;
 
 /**
+ * Data transfer object for passing search criteria to information request search.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 22, 2011
  */

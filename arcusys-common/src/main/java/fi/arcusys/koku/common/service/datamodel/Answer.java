@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 
 
 /**
+ * Entity for representing answer to single question from Request in KV-Requests functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 23, 2011
  */

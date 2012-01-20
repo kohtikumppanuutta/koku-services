@@ -6,9 +6,10 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.soa.Role;
-import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * DAO implementation for accessing roles information: search roles, get role users etc.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 12, 2011
  */

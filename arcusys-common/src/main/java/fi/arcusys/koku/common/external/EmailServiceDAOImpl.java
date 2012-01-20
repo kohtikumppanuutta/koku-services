@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.service.datamodel.User;
-import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
-import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customercommunication.v1.CustomerCommunicationServiceFactory;
 import fi.koku.settings.KoKuPropertiesUtil;
 import fi.tampere.contract.municipalityportal.ccs.CustomerCommunicationServicePortType;
@@ -20,6 +18,8 @@ import fi.tampere.schema.municipalityportal.ccs.SendEmailMessageResponseType;
 import fi.tampere.schema.municipalityportal.ccs.SendEmailMessageType;
 
 /**
+ * DAO implementation for sending email notifications to citizens through Gofore's provided email service.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jan 2, 2012
  */

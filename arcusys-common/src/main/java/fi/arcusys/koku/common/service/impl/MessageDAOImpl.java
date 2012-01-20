@@ -6,6 +6,8 @@ import fi.arcusys.koku.common.service.MessageDAO;
 import fi.arcusys.koku.common.service.datamodel.Message;
 
 /**
+ * DAO implementation for CRUD operations with 'Message' Entity
+ * 
  * CRUD operations for messages. 
  * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)

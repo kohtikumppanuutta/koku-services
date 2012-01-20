@@ -3,7 +3,6 @@ package fi.arcusys.koku.common.service.impl;
 import java.util.Collections;
 import java.util.UUID;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import org.slf4j.Logger;
@@ -11,9 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.User;
-import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 
 /**
+ * DAO implementation for CRUD operations with 'User' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 18, 2011
  */

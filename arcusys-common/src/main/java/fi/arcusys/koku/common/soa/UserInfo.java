@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.soa;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Entity for representing user with related information in communication with external services (UI, Intalio Forms)
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 19, 2011
  */

@@ -1,7 +1,6 @@
 package fi.arcusys.koku.common.service.datamodel;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,6 +16,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 /**
+ * Entity for representing request for consent in TIVA-Suostumus functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.service.dto;
 import java.util.Set;
 
 /**
+ * Data transfer object for passing search criteria to message search.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 19, 2011
  */

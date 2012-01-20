@@ -7,6 +7,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 /**
+ * Entity for representing request for daycare in HAK functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 13, 2011
  */

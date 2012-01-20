@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.service.dto;
 
 /**
+ * Data transfer object for passing search criteria to appointments search.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 1, 2011
  */

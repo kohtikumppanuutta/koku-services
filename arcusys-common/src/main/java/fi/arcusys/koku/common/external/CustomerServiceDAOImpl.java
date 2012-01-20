@@ -7,15 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.BasicAttributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +15,15 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.soa.UserInfo;
-import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.ServiceFault;
-import fi.koku.services.entity.family.FamilyConstants;
-import fi.koku.services.entity.family.v1.FamilyService;
 
 /**
+ * DAO implementation for accessing external CustomerService.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 17, 2011
  */

@@ -6,6 +6,8 @@ import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 import fi.arcusys.koku.common.service.datamodel.User;
 
 /**
+ * DAO interface for CRUD operations with 'RequestTemplate' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 2, 2011
  */

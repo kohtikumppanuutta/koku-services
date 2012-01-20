@@ -5,6 +5,8 @@ import java.util.List;
 import fi.arcusys.koku.common.service.datamodel.TargetPerson;
 
 /**
+ * DAO interface for CRUD operations with 'TargetPerson' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 22, 2011
  */

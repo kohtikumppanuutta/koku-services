@@ -8,6 +8,8 @@ import javax.persistence.Lob;
 
 
 /**
+ * Entity for representing single time slot in appointment in AV functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */

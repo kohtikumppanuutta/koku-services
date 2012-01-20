@@ -9,6 +9,8 @@ import fi.koku.services.entity.customer.v1.PhoneNumberType;
 import fi.koku.services.entity.customer.v1.PhoneNumbersType;
 
 /**
+ * Common methods for usage by DAO-implementations, related to access to external components  
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 17, 2011
  */

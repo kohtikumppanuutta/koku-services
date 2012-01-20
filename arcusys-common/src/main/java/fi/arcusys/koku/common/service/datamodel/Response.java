@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 
 
 /**
+ * Entity for representing Response to Request.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 23, 2011
  */

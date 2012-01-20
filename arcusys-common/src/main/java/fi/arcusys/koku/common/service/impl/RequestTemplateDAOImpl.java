@@ -10,14 +10,14 @@ import java.util.Set;
 import javax.ejb.Stateless;
 
 import fi.arcusys.koku.common.service.RequestTemplateDAO;
-import fi.arcusys.koku.common.service.datamodel.InformationRequest;
-import fi.arcusys.koku.common.service.datamodel.InformationRequestCategory;
 import fi.arcusys.koku.common.service.datamodel.Question;
 import fi.arcusys.koku.common.service.datamodel.RequestTemplate;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.datamodel.Visibility;
 
 /**
+ * DAO implementation for CRUD operations with 'RequestTemplate' Entity
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Sep 2, 2011
  */
 @Stateless

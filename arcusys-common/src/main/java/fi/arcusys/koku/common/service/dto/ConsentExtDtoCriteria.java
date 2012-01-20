@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.service.dto;
 import java.util.List;
 
 /**
+ * Data transfer object for passing search criteria to consent search. Used by KKS-component related search.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 11, 2011
  */

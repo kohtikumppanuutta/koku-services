@@ -7,6 +7,8 @@ import javax.persistence.ManyToOne;
 
 
 /**
+ * Entity for representing response to appointment request in AV functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 22, 2011
  */

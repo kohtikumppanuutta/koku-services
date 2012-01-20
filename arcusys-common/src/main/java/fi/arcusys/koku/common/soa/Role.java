@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.soa;
 
 /**
+ * Entity for representing Role in communications with external components (UI, Intalio Forms etc.) 
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 12, 2011
  */

@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
+ * Entity for representing reply to consent request in TIVA-Suostumus functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

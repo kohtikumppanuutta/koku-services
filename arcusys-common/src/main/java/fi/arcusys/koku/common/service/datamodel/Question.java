@@ -11,6 +11,8 @@ import javax.persistence.OneToMany;
 
 
 /**
+ * Entity for representing single question in KV-Requests functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jun 23, 2011
  */

@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.service.datamodel;
 import javax.persistence.Entity;
 
 /**
+ * Entity for representing reply to single consent's action in TIVA-Suostumus functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 23, 2011
  */

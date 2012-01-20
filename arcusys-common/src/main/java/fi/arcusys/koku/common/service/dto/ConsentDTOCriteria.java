@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.service.dto;
 
 /**
+ * Data transfer object for passing search criteria to consent search.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 3, 2011
  */

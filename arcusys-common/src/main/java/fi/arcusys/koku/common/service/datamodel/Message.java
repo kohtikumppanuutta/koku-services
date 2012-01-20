@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 
 
 /**
+ * Entity for representing whole message in KV-Requests functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Apr 6, 2011
  */

@@ -9,6 +9,8 @@ import fi.arcusys.koku.common.soa.Child;
 import fi.arcusys.koku.common.soa.ChildWithHetu;
 
 /**
+ * DAO interface for PYH component: getting family relations information.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 14, 2011
  */

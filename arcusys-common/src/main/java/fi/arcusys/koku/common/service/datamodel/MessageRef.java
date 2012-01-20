@@ -11,6 +11,8 @@ import javax.persistence.NamedQuery;
 
 
 /**
+ * Entity for representing reference to message in KV-Messages functionality.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * May 20, 2011
  */

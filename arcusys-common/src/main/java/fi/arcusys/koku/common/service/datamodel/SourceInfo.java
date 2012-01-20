@@ -3,6 +3,8 @@ package fi.arcusys.koku.common.service.datamodel;
 import javax.persistence.Embeddable;
 
 /**
+ * Entity for representing source info of Consent.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 7, 2011
  */

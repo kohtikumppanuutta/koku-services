@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 /**
+ * Entity for representing party, which getting consent in TIVA-Suostumus functionality. Used mainly by KKS-component.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Oct 11, 2011
  */

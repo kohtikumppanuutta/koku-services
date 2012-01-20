@@ -2,12 +2,11 @@ package fi.arcusys.koku.common.external;
 
 import java.util.List;
 
-import javax.jws.WebParam;
-
 import fi.arcusys.koku.common.soa.Role;
-import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * DAO interface for processing roles: search, getting role-users etc.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 12, 2011
  */

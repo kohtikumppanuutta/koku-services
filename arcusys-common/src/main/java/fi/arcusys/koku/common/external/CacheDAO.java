@@ -1,6 +1,8 @@
 package fi.arcusys.koku.common.external;
 
 /**
+ * DAO interface to cache implementation.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 27, 2011
  */
