@@ -55,6 +55,8 @@ import fi.arcusys.koku.common.service.dto.AppointmentDTOCriteria;
 import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * Service facade implementation for all business methods in AV functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 22, 2011
  */

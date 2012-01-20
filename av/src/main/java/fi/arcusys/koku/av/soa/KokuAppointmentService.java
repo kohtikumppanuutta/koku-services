@@ -5,6 +5,8 @@ import java.util.List;
 import javax.jws.WebParam;
 
 /**
+ * Deprecated: old version of service for AV - left for compatibility only. Use KokuLoora/KokuKunpo-Service instead.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 27, 2011
  */

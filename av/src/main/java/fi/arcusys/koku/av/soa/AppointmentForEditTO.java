@@ -3,6 +3,8 @@ package fi.arcusys.koku.av.soa;
 import java.util.List;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data for editing appointment.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 18, 2011
  */

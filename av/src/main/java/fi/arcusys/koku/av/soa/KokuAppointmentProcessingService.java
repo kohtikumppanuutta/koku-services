@@ -5,6 +5,8 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 
 /**
+ * Interface with AV-processing operations, called from the AV Intalio process.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */

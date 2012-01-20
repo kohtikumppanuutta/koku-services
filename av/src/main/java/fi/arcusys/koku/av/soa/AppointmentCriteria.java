@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import fi.arcusys.koku.common.service.dto.AppointmentDTOCriteria;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds criteria for searching appointments.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Dec 1, 2011
  */

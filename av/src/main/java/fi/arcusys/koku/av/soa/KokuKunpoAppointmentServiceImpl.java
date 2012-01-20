@@ -1,20 +1,17 @@
 package fi.arcusys.koku.av.soa;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 
 /**
+ * UI service implementation for citizen-related operations in AV functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 19, 2011
  */

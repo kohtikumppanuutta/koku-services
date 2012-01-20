@@ -11,6 +11,8 @@ import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 
 /**
+ * UI service implementation for employee-related operations in AV functional area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 19, 2011
  */

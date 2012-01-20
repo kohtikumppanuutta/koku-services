@@ -13,6 +13,8 @@ import fi.arcusys.koku.av.soa.AppointmentWithTarget;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 
 /**
+ * Service facade interface for all business methods related to AV function area.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 22, 2011
  */

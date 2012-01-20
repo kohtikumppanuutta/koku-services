@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlType;
 import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds summary data about appointment.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 22, 2011
  */

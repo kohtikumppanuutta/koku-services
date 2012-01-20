@@ -3,6 +3,8 @@ package fi.arcusys.koku.av.soa;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 
 /**
+ * Types of appointment status for displaying on UI.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Sep 2, 2011
  */

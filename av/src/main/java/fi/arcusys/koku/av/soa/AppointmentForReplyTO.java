@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about appointment for reply by recipient.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Aug 18, 2011
  */

@@ -13,13 +13,12 @@ import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 import fi.arcusys.koku.common.service.datamodel.AppointmentStatus;
 
 /**
+ * Deprecated: old version of service for AV - left for compatibility only. Use KokuLoora/KokuKunpo-Service instead.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 27, 2011
  */
 @Stateless
-//@WebService(serviceName = "KokuAppointmentService", portName = "KokuAppointmentServicePort", 
-//		endpointInterface = "fi.arcusys.koku.av.soa.KokuAppointmentService",
-//		targetNamespace = "http://soa.av.koku.arcusys.fi/")
 public class KokuAppointmentServiceImpl implements KokuAppointmentService {
 
 	@EJB

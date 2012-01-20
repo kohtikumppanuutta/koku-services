@@ -3,6 +3,8 @@ package fi.arcusys.koku.av.soa;
 import fi.arcusys.koku.common.soa.UserInfo;
 
 /**
+ * Data transfer object for communication with UI/Intalio process. Holds data about users, rejected appointment.
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Nov 28, 2011
  */

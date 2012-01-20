@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.av.service.AppointmentServiceFacade;
 
 /**
+ * Implementation of AV-processing operations, called from the AV Intalio process. 
+ * 
  * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
  * Jul 21, 2011
  */
