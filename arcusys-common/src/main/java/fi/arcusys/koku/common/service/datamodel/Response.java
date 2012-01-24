@@ -27,7 +27,7 @@ import javax.persistence.OneToMany;
     @NamedQuery(name = "countRequestResponsesByUser", query = "SELECT COUNT(DISTINCT r) FROM Response r WHERE r.replier = :user " +
     		" AND (r.request.replyTill IS NULL OR r.request.replyTill >= CURRENT_DATE)"),
     @NamedQuery(name = "findOldRequestResponsesByUser", query = "SELECT DISTINCT r FROM Response r WHERE r.replier = :user " +
-            " AND (r.request.replyTill IS NOT NULL OR r.request.replyTill < CURRENT_DATE) " +
+            " AND (r.request.replyTill IS NOT NULL AND r.request.replyTill < CURRENT_DATE) " +
             " ORDER BY r.id DESC"),
     @NamedQuery(name = "countOldRequestResponsesByUser", query = "SELECT COUNT(DISTINCT r) FROM Response r WHERE r.replier = :user " +
             " AND (r.request.replyTill IS NOT NULL AND r.request.replyTill < CURRENT_DATE)")
