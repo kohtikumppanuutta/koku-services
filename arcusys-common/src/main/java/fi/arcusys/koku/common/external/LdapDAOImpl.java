@@ -88,8 +88,8 @@ public class LdapDAOImpl implements LdapDAO {
                 controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                 controls.setReturningAttributes(new String[] {"dn", searchAttrName});
                 final NamingEnumeration<SearchResult> results = dirContext.search("", 
-                        userSearchFilter.replaceAll("#attrName#", filterAttrName)
-                                        .replaceAll("#attrValue#", filterAttrValue), controls);
+                        buildLdapSearchFilter(userSearchFilter, filterAttrName,
+                                filterAttrValue), controls);
                 try {
                     while (results.hasMore()) {
                         final SearchResult searchResult = results.next();
@@ -121,6 +121,44 @@ public class LdapDAOImpl implements LdapDAO {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    private String buildLdapSearchFilter(final String searchFilter, final String filterAttrName, final String filterAttrValue) {
+        return searchFilter.replaceAll("#attrName#", filterAttrName).replaceAll("#attrValue#", escapeLDAPSearchFilter(filterAttrValue));
+    }
+    
+    /**
+     * KOKU-1070 - preventing of LDAP injection in search filter.
+     * Taken from https://www.owasp.org/index.php/Preventing_LDAP_Injection_in_Java
+     * 
+     * @param filter
+     * @return
+     */
+    private static final String escapeLDAPSearchFilter(final String filter) {
+        final StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < filter.length(); i++) {
+            char curChar = filter.charAt(i);
+            switch (curChar) {
+                case '\\':
+                    sb.append("\\5c");
+                    break;
+                case '*':
+                    sb.append("\\2a");
+                    break;
+                case '(':
+                    sb.append("\\28");
+                    break;
+                case ')':
+                    sb.append("\\29");
+                    break;
+                case '\u0000': 
+                    sb.append("\\00"); 
+                    break;
+                default:
+                    sb.append(curChar);
+            }
+        }
+        return sb.toString();
     }
     
     /**
@@ -222,8 +260,7 @@ public class LdapDAOImpl implements LdapDAO {
                 SearchControls controls = new SearchControls();
                 controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                 final NamingEnumeration<SearchResult> results = dirContext.search("", 
-                        groupsSearchFilter.replaceAll("#attrName#", filterAttrName)
-                        .replaceAll("#attrValue#", filterAttrValue), controls);
+                        buildLdapSearchFilter(groupsSearchFilter, filterAttrName, filterAttrValue), controls);
                 try {
                     while (results.hasMore()) {
                         final SearchResult searchResult = results.next();
@@ -272,8 +309,7 @@ public class LdapDAOImpl implements LdapDAO {
                 SearchControls controls = new SearchControls();
                 controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                 final NamingEnumeration<SearchResult> results = dirContext.search("", 
-                        groupsSearchFilter.replaceAll("#attrName#", filterAttrName)
-                        .replaceAll("#attrValue#", filterAttrValue), controls);
+                        buildLdapSearchFilter(groupsSearchFilter, filterAttrName, filterAttrValue), controls);
                 try {
                     if (results.hasMore()) {
                         final SearchResult searchResult = results.next();
