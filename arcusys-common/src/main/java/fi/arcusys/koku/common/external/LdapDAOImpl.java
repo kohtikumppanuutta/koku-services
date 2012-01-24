@@ -72,11 +72,11 @@ public class LdapDAOImpl implements LdapDAO {
     }
 
     private String getLdapNameBySsn(final String ssn, final String systemRole) {
-        return getUsersAttrNameByFilter(ssnAttributeName, ssn, usernameAttributeName, systemRole);
+        return getUsersAttrNameByFilter(ssnAttributeName, escapeLDAPSearchFilter(ssn), usernameAttributeName, systemRole);
     }
 
     private String getSsnByLdapName(final String ldapName, final String systemRole) {
-        return getUsersAttrNameByFilter(usernameAttributeName, ldapName, ssnAttributeName, systemRole);
+        return getUsersAttrNameByFilter(usernameAttributeName, escapeDN(ldapName), ssnAttributeName, systemRole);
     }
 
     private String getUsersAttrNameByFilter(final String filterAttrName, final String filterAttrValue, final String searchAttrName, final String systemRole) {
@@ -124,7 +124,7 @@ public class LdapDAOImpl implements LdapDAO {
     }
 
     private String buildLdapSearchFilter(final String searchFilter, final String filterAttrName, final String filterAttrValue) {
-        return searchFilter.replaceAll("#attrName#", filterAttrName).replaceAll("#attrValue#", escapeLDAPSearchFilter(filterAttrValue));
+        return searchFilter.replaceAll("#attrName#", filterAttrName).replaceAll("#attrValue#", filterAttrValue);
     }
     
     /**
@@ -157,6 +157,52 @@ public class LdapDAOImpl implements LdapDAO {
                 default:
                     sb.append(curChar);
             }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * KOKU-1070 - preventing of LDAP injection in DN.
+     * Taken from https://www.owasp.org/index.php/Preventing_LDAP_Injection_in_Java
+     * 
+     * @param name
+     * @return
+     */
+    private static String escapeDN(final String name) {
+        final StringBuilder sb = new StringBuilder(); // If using JDK >= 1.5 consider using StringBuilder
+        if ((name.length() > 0) && ((name.charAt(0) == ' ') || (name.charAt(0) == '#'))) {
+            sb.append('\\'); // add the leading backslash if needed
+        }
+        for (int i = 0; i < name.length(); i++) {
+            char curChar = name.charAt(i);
+            switch (curChar) {
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case ',':
+                    sb.append("\\,");
+                    break;
+                case '+':
+                    sb.append("\\+");
+                    break;
+                case '"':
+                    sb.append("\\\"");
+                    break;
+                case '<':
+                    sb.append("\\<");
+                    break;
+                case '>':
+                    sb.append("\\>");
+                    break;
+                case ';':
+                    sb.append("\\;");
+                    break;
+                default:
+                    sb.append(curChar);
+            }
+        }
+        if ((name.length() > 1) && (name.charAt(name.length() - 1) == ' ')) {
+            sb.insert(sb.length() - 1, '\\'); // add the trailing backslash if needed
         }
         return sb.toString();
     }
@@ -204,7 +250,7 @@ public class LdapDAOImpl implements LdapDAO {
     }
 
     private String getUserDn(final String kunpoUsername) {
-        return usernameAttributeName + "=" + kunpoUsername;
+        return usernameAttributeName + "=" + escapeDN(kunpoUsername);
     }
     
     @Override
@@ -247,7 +293,7 @@ public class LdapDAOImpl implements LdapDAO {
     @Override
     public Map<String, String> searchGroups(String searchString) {
         final String filterAttrName = groupNameAttribute;
-        final String filterAttrValue = "*" + searchString + "*";
+        final String filterAttrValue = "*" + escapeLDAPSearchFilter(searchString) + "*";
         return doSearchGroups(filterAttrName, filterAttrValue, filterAttrName, GroupType.CommunityGroup);
     }
     
@@ -489,7 +535,7 @@ public class LdapDAOImpl implements LdapDAO {
      */
     @Override
     public List<Role> searchRoles(String searchString) {
-        return createRolesFromSearchResult(doSearchGroups(groupNameAttribute, "*" + searchString + "*", groupNameAttribute, GroupType.Roles));
+        return createRolesFromSearchResult(doSearchGroups(groupNameAttribute, "*" + escapeLDAPSearchFilter(searchString) + "*", groupNameAttribute, GroupType.Roles));
     }
     
     private enum GroupType {
@@ -502,6 +548,6 @@ public class LdapDAOImpl implements LdapDAO {
      */
     @Override
     public List<String> getRoleMembers(String groupUid) {
-        return doGetGroupMembers(groupUid, GroupType.Roles);
+        return doGetGroupMembers(escapeLDAPSearchFilter(groupUid), GroupType.Roles);
     }
 }
