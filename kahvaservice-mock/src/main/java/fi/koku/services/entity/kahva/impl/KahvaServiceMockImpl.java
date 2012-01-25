@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.tampere.hrsoa.entity.User;
+import static fi.koku.services.entity.kahva.impl.KahvaServiceErrorCode.*;
+import fi.koku.KoKuFaultException;
 
 /**
  * @author mikkope
@@ -41,6 +43,8 @@ public class KahvaServiceMockImpl {
     User u = new User();
     if (props != null) {
       LOG.info("props=" + props.toString());
+      if(!props.containsKey(id))
+        throw new KoKuFaultException(ENTITY_NOT_FOUND.getValue(), "entity not found using ID="+id);
       String property = props.getProperty(id).trim(); // id is key in properties
       LOG.info("used property=" + property);
       if (property != null && !"".equals(property)) {
