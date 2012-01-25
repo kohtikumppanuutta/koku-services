@@ -43,6 +43,9 @@ public class EmployeeInfoServiceEndpointBean implements EmployeeInfoServicePortT
 
   @Autowired
   private EmployeeInfoServiceHolder employeeInfoServiceHolder;
+
+  public EmployeeInfoServiceEndpointBean() {
+  }
   
   @PostConstruct
   public void init() {
