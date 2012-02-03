@@ -8,15 +8,15 @@
 
 <!-- 
   <webservices>
-    <context-root>/employeeinfo-service</context-root>
+    <context-root>/userinfo-service</context-root>
   </webservices>
  -->
 
   <enterprise-beans>
     <session>
-      <ejb-name>EmployeeInfoServiceEndpointBean</ejb-name>
+      <ejb-name>UserInfoServiceEndpointBean</ejb-name>
       <port-component>
-        <port-component-name>EmloyeeInfoService</port-component-name>
+        <port-component-name>UserInfoService</port-component-name>
         <auth-method>BASIC</auth-method>
       </port-component>
     </session>

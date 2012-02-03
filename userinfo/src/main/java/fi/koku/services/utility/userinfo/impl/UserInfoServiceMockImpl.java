@@ -1,4 +1,4 @@
-package fi.koku.services.utility.employeeinfo.impl;
+package fi.koku.services.utility.userinfo.impl;
 
 import java.io.IOException;
 import java.net.URL;
@@ -7,53 +7,55 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.koku.services.utility.employee.v1.EmployeePicsType;
-import fi.koku.services.utility.employee.v1.EmployeeType;
-import fi.koku.services.utility.employee.v1.EmployeesType;
-import fi.koku.services.utility.employee.v1.UserIdsType;
+import fi.koku.services.utility.user.v1.UserIdsQueryParamType;
+import fi.koku.services.utility.user.v1.UserPicsQueryParamType;
+import fi.koku.services.utility.user.v1.UserType;
+import fi.koku.services.utility.user.v1.UsersType;
 
 /**
- * KoKu employeeInfo service Mock implementation class. Uses the same data format as the Kahva mock service.
+ * KoKu userInfo service Mock implementation class. Uses the same data format as the Kahva mock service.
  * 
  * @author hanhian
  */
-public class EmployeeInfoServiceMockImpl implements EmployeeInfoService {
+public class UserInfoServiceMockImpl implements UserInfoService {
 
-  private final Logger LOG = LoggerFactory.getLogger(EmployeeInfoServiceMockImpl.class);
-
+  private final Logger LOG = LoggerFactory.getLogger(UserInfoServiceMockImpl.class);
+  
   @Override
-  public EmployeesType getEmployeesByIds(UserIdsType idsType) {
-    EmployeesType employeesType = new EmployeesType();
+  public UsersType getUsersByIds(UserIdsQueryParamType idsType) {
+    
+   // TODO HANDLE THE DOMAIN: idsType.getDomain()
+    
+    UsersType usersType = new UsersType();
 
     for (String id : idsType.getId()) {
-      EmployeeType emp = getEmployeeById(id);
+      UserType emp = getUserById(id);
 
       if (emp != null) {
-        employeesType.getEmployee().add(emp);
+        usersType.getUser().add(emp);
       }
     }
-    
-    // TODO throw exception if the list is empty and real employee service does that also.
-    return employeesType;
+    return usersType;
   }
 
   @Override
-  public EmployeesType getEmployeesByPics(EmployeePicsType picsType) {
-    EmployeesType employeesType = new EmployeesType();
+  public UsersType getUsersByPics(UserPicsQueryParamType picsType) {
     
-    for(String pic : picsType.getPic()){
-      EmployeeType emp = getEmployeeByPic(pic);
+    // TODO HANDLE THE DOMAIN: idsType.getDomain()
+    
+    UsersType usersType = new UsersType();
+
+    for (String pic : picsType.getPic()) {
+      UserType emp = getUserByPic(pic);
 
       if (emp != null) {
-        employeesType.getEmployee().add(emp);
+        usersType.getUser().add(emp);
       }
     }
-    
-    // TODO throw exception if the list is empty and real employee service does that also.
-    return employeesType;
-  }
+    return usersType;
+  } 
 
-  private EmployeeType getEmployeeById(String id) {
+  private UserType getUserById(String id) {
     // Currently supported (and required) user information:
     // userId,ssn,firstName,lastName,email.
     // Example row:
@@ -63,7 +65,7 @@ public class EmployeeInfoServiceMockImpl implements EmployeeInfoService {
     return getEmp(id, props);
   }
 
-  private EmployeeType getEmployeeByPic(String pic) {
+  private UserType getUserByPic(String pic) {
     // Currently supported (and required) user information:
     // userId,ssn,firstName,lastName,email.
     // Example row:
@@ -73,8 +75,8 @@ public class EmployeeInfoServiceMockImpl implements EmployeeInfoService {
     return getEmp(pic, props);
   }
 
-  private EmployeeType getEmp(String key, Properties props) {
-    EmployeeType emp = null;
+  private UserType getEmp(String key, Properties props) {
+    UserType emp = null;
     if (props != null) {
       LOG.info("props=" + props.toString());
       String property = props.getProperty(key);
@@ -86,7 +88,7 @@ public class EmployeeInfoServiceMockImpl implements EmployeeInfoService {
 
       LOG.info("used property=" + property);
       if (property != null && !"".equals(property)) {
-        emp = new EmployeeType();
+        emp = new UserType();
         // Put values from props-file to User object
         String[] p = property.split(",");
         emp.setUserId(p[0]);

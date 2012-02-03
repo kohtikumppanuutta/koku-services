@@ -6,15 +6,15 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-  <artifactId>employeeinfo-service-ear</artifactId>
+  <artifactId>userinfo-service-ear</artifactId>
   <packaging>ear</packaging>
-  <name>employeeoninfo-service-ear</name>
+  <name>userinfo-service-ear</name>
   
   <dependencies>
 
     <dependency>
       <groupId>kohti-kumppanuutta</groupId>
-      <artifactId>employeeinfo-service</artifactId>
+      <artifactId>userinfo-service</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
     </dependency>

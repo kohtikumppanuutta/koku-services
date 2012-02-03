@@ -4,8 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <bean id="employeeinfo-ejb-context" class="org.springframework.context.support.ClassPathXmlApplicationContext">
-    <constructor-arg value="employeeinfo-application-context.xml" type="java.lang.String" />
+  <bean id="userinfo-ejb-context" class="org.springframework.context.support.ClassPathXmlApplicationContext">
+    <constructor-arg value="userinfo-application-context.xml" type="java.lang.String" />
   </bean>
   
 </beans>

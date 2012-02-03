@@ -14,14 +14,14 @@
     </property>
   </bean>
 
-  <bean id="employeeInfoServiceHolder" class="fi.koku.services.utility.employeeinfo.impl.EmployeeInfoServiceHolder">
-    <property name="employeeInfoService" ref="${employeeinfoservice.employeeInfoServiceImpl}"/>
+  <bean id="userInfoServiceHolder" class="fi.koku.services.utility.userinfo.impl.UserInfoServiceHolder">
+    <property name="userInfoService" ref="${userinfoservice.userInfoServiceImpl}"/>
   </bean>
 
-  <bean id="employeeInfoServiceMockImpl" class="fi.koku.services.utility.employeeinfo.impl.EmployeeInfoServiceMockImpl">
+  <bean id="userInfoServiceMockImpl" class="fi.koku.services.utility.userinfo.impl.UserInfoServiceMockImpl">
   </bean>
 
-  <bean id="employeeInfoServiceLdapImpl" class="fi.koku.services.utility.employeeinfo.impl.EmployeeInfoServiceLDAPImpl" lazy-init="true">
+  <bean id="userInfoServiceLdapImpl" class="fi.koku.services.utility.userinfo.impl.UserInfoServiceLDAPImpl" lazy-init="true">
     <property name="ldapTemplate" ref="ldapTemplate"/>
   </bean>
 
@@ -39,10 +39,10 @@
   <bean id="dirContextValidator" class="org.springframework.ldap.pool.validation.DefaultDirContextValidator"/>
 
   <bean id="contextSourceTarget" class="org.springframework.ldap.core.support.LdapContextSource" lazy-init="true">
-    <property name="url" value="${employeeinfoservice.ldap.url}" />
-    <property name="base" value="${employeeinfoservice.ldap.base}" />
-    <property name="userDn" value="${employeeinfoservice.ldap.userDn}" />
-    <property name="password" value="${employeeinfoservice.ldap.password}" />
+    <property name="url" value="${userinfoservice.ldap.url}" />
+    <property name="base" value="${userinfoservice.ldap.base}" />
+    <property name="userDn" value="${userinfoservice.ldap.userDn}" />
+    <property name="password" value="${userinfoservice.ldap.password}" />
     <property name="pooled" value="false"/>
   </bean>
 
