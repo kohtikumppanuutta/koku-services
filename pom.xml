@@ -222,6 +222,8 @@
     <module>authorizationinfo-ear</module>
     <module>kahvaservice-mock</module>
     <module>kahvaservice-mock-ear</module>	
+	<module>userinfo</module>
+    <module>userinfo-ear</module>
   </modules>
 
   <repositories>
