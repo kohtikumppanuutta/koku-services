@@ -45,6 +45,7 @@ insert into kks_group (
   ,'Huoltaja/esikoululainen'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
+  ,'guardian' -- accountable
   ,90
 );
 
