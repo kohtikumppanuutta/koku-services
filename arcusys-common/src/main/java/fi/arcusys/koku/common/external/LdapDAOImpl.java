@@ -28,23 +28,23 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.common.soa.Role;
 
 /**
- * DAO implementation for general access to LDAP, where users/groups/roles related information is stored. 
+ * DAO implementation for general access to LDAP, where users/groups/roles
+ * related information is stored.
  * 
- * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi)
- * Dec 2, 2011
+ * @author Dmitry Kudinov (dmitry.kudinov@arcusys.fi) Dec 2, 2011
  */
 @Stateless
 public class LdapDAOImpl implements LdapDAO {
 
     private final static Logger logger = LoggerFactory.getLogger(LdapDAOImpl.class);
 
-    //  @Resource(mappedName = "external/ldap/myldap")
-//  private DirContext dirContext;
-    
+    // @Resource(mappedName = "external/ldap/myldap")
+    // private DirContext dirContext;
+
     private String ssnAttributeName;
     private String usernameAttributeName;
     private String userSearchFilter;
-  
+
     private String kunpoUserBaseDn;
     private String citizensGroupUid;
     private String employeesGroupUid;
@@ -79,17 +79,17 @@ public class LdapDAOImpl implements LdapDAO {
         return getUsersAttrNameByFilter(usernameAttributeName, escapeDN(ldapName), ssnAttributeName, systemRole);
     }
 
-    private String getUsersAttrNameByFilter(final String filterAttrName, final String filterAttrValue, final String searchAttrName, final String systemRole) {
+    private String getUsersAttrNameByFilter(final String filterAttrName, final String filterAttrValue, final String searchAttrName,
+            final String systemRole) {
         try {
             final Map<String, String> dnToAttrValue = new HashMap<String, String>();
             DirContext dirContext = createUsersDirContext();
             try {
                 SearchControls controls = new SearchControls();
                 controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-                controls.setReturningAttributes(new String[] {"dn", searchAttrName});
-                final NamingEnumeration<SearchResult> results = dirContext.search("", 
-                        buildLdapSearchFilter(userSearchFilter, filterAttrName,
-                                filterAttrValue), controls);
+                controls.setReturningAttributes(new String[] { "dn", searchAttrName });
+                final NamingEnumeration<SearchResult> results = dirContext.search("",
+                        buildLdapSearchFilter(userSearchFilter, filterAttrName, filterAttrValue), controls);
                 try {
                     while (results.hasMore()) {
                         final SearchResult searchResult = results.next();
@@ -109,10 +109,10 @@ public class LdapDAOImpl implements LdapDAO {
                 if (!isMemberOf(iter.next().getKey(), systemRole)) {
                     iter.remove();
                 }
-            } 
+            }
             if (dnToAttrValue.size() > 1) {
-                throw new IllegalStateException("Multiple values found in users context for filterAttrName = " + 
-                        filterAttrName + " and filterAttrValue = " + filterAttrValue + ": " + dnToAttrValue);
+                throw new IllegalStateException("Multiple values found in users context for filterAttrName = " + filterAttrName
+                        + " and filterAttrValue = " + filterAttrValue + ": " + dnToAttrValue);
             } else if (!dnToAttrValue.isEmpty()) {
                 return dnToAttrValue.values().iterator().next();
             }
@@ -126,10 +126,10 @@ public class LdapDAOImpl implements LdapDAO {
     private String buildLdapSearchFilter(final String searchFilter, final String filterAttrName, final String filterAttrValue) {
         return searchFilter.replaceAll("#attrName#", filterAttrName).replaceAll("#attrValue#", filterAttrValue);
     }
-    
+
     /**
-     * KOKU-1070 - preventing of LDAP injection in search filter.
-     * Taken from https://www.owasp.org/index.php/Preventing_LDAP_Injection_in_Java
+     * KOKU-1070 - preventing of LDAP injection in search filter. Taken from
+     * https://www.owasp.org/index.php/Preventing_LDAP_Injection_in_Java
      * 
      * @param filter
      * @return
@@ -139,74 +139,77 @@ public class LdapDAOImpl implements LdapDAO {
         for (int i = 0; i < filter.length(); i++) {
             char curChar = filter.charAt(i);
             switch (curChar) {
-                case '\\':
-                    sb.append("\\5c");
-                    break;
-                case '*':
-                    sb.append("\\2a");
-                    break;
-                case '(':
-                    sb.append("\\28");
-                    break;
-                case ')':
-                    sb.append("\\29");
-                    break;
-                case '\u0000': 
-                    sb.append("\\00"); 
-                    break;
-                default:
-                    sb.append(curChar);
+            case '\\':
+                sb.append("\\5c");
+                break;
+            case '*':
+                sb.append("\\2a");
+                break;
+            case '(':
+                sb.append("\\28");
+                break;
+            case ')':
+                sb.append("\\29");
+                break;
+            case '\u0000':
+                sb.append("\\00");
+                break;
+            default:
+                sb.append(curChar);
             }
         }
         return sb.toString();
     }
-    
+
     /**
-     * KOKU-1070 - preventing of LDAP injection in DN.
-     * Taken from https://www.owasp.org/index.php/Preventing_LDAP_Injection_in_Java
+     * KOKU-1070 - preventing of LDAP injection in DN. Taken from
+     * https://www.owasp.org/index.php/Preventing_LDAP_Injection_in_Java
      * 
      * @param name
      * @return
      */
     private static String escapeDN(final String name) {
-        final StringBuilder sb = new StringBuilder(); // If using JDK >= 1.5 consider using StringBuilder
+        final StringBuilder sb = new StringBuilder(); // If using JDK >= 1.5
+                                                      // consider using
+                                                      // StringBuilder
         if ((name.length() > 0) && ((name.charAt(0) == ' ') || (name.charAt(0) == '#'))) {
             sb.append('\\'); // add the leading backslash if needed
         }
         for (int i = 0; i < name.length(); i++) {
             char curChar = name.charAt(i);
             switch (curChar) {
-                case '\\':
-                    sb.append("\\\\");
-                    break;
-                case ',':
-                    sb.append("\\,");
-                    break;
-                case '+':
-                    sb.append("\\+");
-                    break;
-                case '"':
-                    sb.append("\\\"");
-                    break;
-                case '<':
-                    sb.append("\\<");
-                    break;
-                case '>':
-                    sb.append("\\>");
-                    break;
-                case ';':
-                    sb.append("\\;");
-                    break;
-                default:
-                    sb.append(curChar);
+            case '\\':
+                sb.append("\\\\");
+                break;
+            case ',':
+                sb.append("\\,");
+                break;
+            case '+':
+                sb.append("\\+");
+                break;
+            case '"':
+                sb.append("\\\"");
+                break;
+            case '<':
+                sb.append("\\<");
+                break;
+            case '>':
+                sb.append("\\>");
+                break;
+            case ';':
+                sb.append("\\;");
+                break;
+            default:
+                sb.append(curChar);
             }
         }
         if ((name.length() > 1) && (name.charAt(name.length() - 1) == ' ')) {
-            sb.insert(sb.length() - 1, '\\'); // add the trailing backslash if needed
+            sb.insert(sb.length() - 1, '\\'); // add the trailing backslash if
+                                              // needed
         }
         return sb.toString();
     }
-    
+
     /**
      * @param key
      * @param systemRole
@@ -220,8 +223,7 @@ public class LdapDAOImpl implements LdapDAO {
     public void createKunpoUserInLdap(final String kunpoUsername, final String ssn, final String firstName, final String lastName) {
         try {
             Attributes personAttributes = new BasicAttributes();
-            BasicAttribute personBasicAttribute = new BasicAttribute(
-                    "objectclass");
+            BasicAttribute personBasicAttribute = new BasicAttribute("objectclass");
             personBasicAttribute.add("inetOrgPerson");
             personBasicAttribute.add("top");
             personAttributes.put(personBasicAttribute);
@@ -246,13 +248,13 @@ public class LdapDAOImpl implements LdapDAO {
         } catch (NamingException e) {
             logger.error("Failed to create new user in ldap by portal name '" + kunpoUsername + "' and ssn '" + ssn + "'", e);
             throw new RuntimeException(e);
-        } 
+        }
     }
 
     private String getUserDn(final String kunpoUsername) {
         return usernameAttributeName + "=" + escapeDN(kunpoUsername);
     }
-    
+
     @Override
     public void updateKunpoLdapName(final String oldKunpoName, final String newKunpoName) {
         try {
@@ -281,9 +283,13 @@ public class LdapDAOImpl implements LdapDAO {
     private DirContext createUsersDirContext() throws NamingException {
         InitialContext iniCtx = new InitialContext();
         DirContext dirContext = (DirContext) iniCtx.lookup("external/ldap/myldap");
-        return (DirContext)dirContext.lookup("ou=People");
-    } 
-    
+        try {
+            return (DirContext) dirContext.lookup("ou=People");
+        } finally {
+            dirContext.close();
+        }
+    }
+
     // Groups
     /**
      * @param searchString
@@ -296,16 +302,16 @@ public class LdapDAOImpl implements LdapDAO {
         final String filterAttrValue = "*" + escapeLDAPSearchFilter(searchString) + "*";
         return doSearchGroups(filterAttrName, filterAttrValue, filterAttrName, GroupType.CommunityGroup);
     }
-    
-    private Map<String, String> doSearchGroups(final String filterAttrName,
-            final String filterAttrValue, final String returnAttrValue, final GroupType groupType) {
+
+    private Map<String, String> doSearchGroups(final String filterAttrName, final String filterAttrValue, final String returnAttrValue,
+            final GroupType groupType) {
         try {
             DirContext dirContext = getGroupsContext(groupType);
             try {
                 final Map<String, String> result = new HashMap<String, String>();
                 SearchControls controls = new SearchControls();
                 controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-                final NamingEnumeration<SearchResult> results = dirContext.search("", 
+                final NamingEnumeration<SearchResult> results = dirContext.search("",
                         buildLdapSearchFilter(groupsSearchFilter, filterAttrName, filterAttrValue), controls);
                 try {
                     while (results.hasMore()) {
@@ -328,23 +334,36 @@ public class LdapDAOImpl implements LdapDAO {
     }
 
     private DirContext getCommunityGroupsContext() throws NamingException {
+        return getCommunitiesSubcontext("Groups");
+    }
+
+    private DirContext getCommunitiesSubcontext(final String subcontextName) throws NamingException {
         InitialContext iniCtx = new InitialContext();
-        DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/myldap");
-        DirContext communities = (DirContext)dirContext.lookup("ou=KokuCommunities");
-        return (DirContext)communities.lookup("ou=Groups");
+        DirContext dirContext = (DirContext) iniCtx.lookup("external/ldap/myldap");
+        try {
+            DirContext communities = (DirContext) dirContext.lookup("ou=KokuCommunities");
+            try {
+                return (DirContext) communities.lookup("ou=" + subcontextName);
+            } finally {
+                communities.close();
+            }
+        } finally {
+            dirContext.close();
+        }
     }
 
     private DirContext getRolesContext() throws NamingException {
-        InitialContext iniCtx = new InitialContext();
-        DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/myldap");
-        DirContext communities = (DirContext)dirContext.lookup("ou=KokuCommunities");
-        return (DirContext)communities.lookup("ou=Roles");
+        return getCommunitiesSubcontext("Roles");
     }
 
     private DirContext getSystemGroupsContext() throws NamingException {
         InitialContext iniCtx = new InitialContext();
-        DirContext dirContext = (DirContext)iniCtx.lookup("external/ldap/myldap");
-        return (DirContext)dirContext.lookup("ou=Groups");
+        DirContext dirContext = (DirContext) iniCtx.lookup("external/ldap/myldap");
+        try {
+            return (DirContext) dirContext.lookup("ou=Groups");
+        } finally {
+            dirContext.close();
+        }
     }
 
     private List<String> getGroupMembers(final String filterAttrName, final String filterAttrValue, final GroupType groupType) {
@@ -354,7 +373,7 @@ public class LdapDAOImpl implements LdapDAO {
                 final List<String> result = new ArrayList<String>();
                 SearchControls controls = new SearchControls();
                 controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-                final NamingEnumeration<SearchResult> results = dirContext.search("", 
+                final NamingEnumeration<SearchResult> results = dirContext.search("",
                         buildLdapSearchFilter(groupsSearchFilter, filterAttrName, filterAttrValue), controls);
                 try {
                     if (results.hasMore()) {
@@ -363,7 +382,7 @@ public class LdapDAOImpl implements LdapDAO {
 
                         final Attribute attribute = attributes.get("member");
                         for (int i = 0; i < attribute.size(); i++) {
-                            result.add((String)attribute.get(i));
+                            result.add((String) attribute.get(i));
                         }
                     }
                     return result;
@@ -394,22 +413,21 @@ public class LdapDAOImpl implements LdapDAO {
         }
         try {
             DirContext dirContext = getGroupsContext(GroupType.SystemGroup);
-    
+
             try {
-                dirContext.modifyAttributes(groupUidAttribute + "=" + groupUid, 
-                        DirContext.ADD_ATTRIBUTE, new BasicAttributes("member", userDn));
+                dirContext.modifyAttributes(groupUidAttribute + "=" + groupUid, DirContext.ADD_ATTRIBUTE, new BasicAttributes("member", userDn));
             } finally {
                 dirContext.close();
             }
         } catch (NamingException e) {
             logger.error("Failed to add user " + userDn + " to group " + groupUid, e);
             throw new RuntimeException(e);
-        } 
+        }
     }
 
     private void updateMembership(String oldUserDn, String newUserDn) {
         for (final GroupType groupType : GroupType.values()) {
-            doUpdateMembership(oldUserDn, newUserDn, groupType); 
+            doUpdateMembership(oldUserDn, newUserDn, groupType);
         }
     }
 
@@ -418,7 +436,7 @@ public class LdapDAOImpl implements LdapDAO {
         if (groups == null || groups.isEmpty()) {
             return;
         }
-        
+
         final Map<String, BasicAttributes> groupsForUpdate = new HashMap<String, BasicAttributes>();
         for (final String groupUid : groups.keySet()) {
             final Set<String> members = new HashSet<String>(getGroupMembers(groupUidAttribute, groupUid, groupType));
@@ -432,10 +450,10 @@ public class LdapDAOImpl implements LdapDAO {
             attributes.put(member);
             groupsForUpdate.put(groupUid, attributes);
         }
-        
+
         try {
             DirContext dirContext = getGroupsContext(groupType);
-            
+
             try {
                 for (final Map.Entry<String, BasicAttributes> entry : groupsForUpdate.entrySet()) {
                     dirContext.modifyAttributes(groupUidAttribute + "=" + entry.getKey(), DirContext.REPLACE_ATTRIBUTE, entry.getValue());
@@ -444,13 +462,14 @@ public class LdapDAOImpl implements LdapDAO {
                 dirContext.close();
             }
         } catch (NamingException e) {
-            logger.error("Failed to update user membership: oldUserDn '" + oldUserDn + "', newUserDn '" + newUserDn +  ", groups " + groupsForUpdate.keySet(), e);
+            logger.error(
+                    "Failed to update user membership: oldUserDn '" + oldUserDn + "', newUserDn '" + newUserDn + ", groups "
+                            + groupsForUpdate.keySet(), e);
             throw new RuntimeException(e);
         }
     }
 
-    private DirContext getGroupsContext(final GroupType groupType)
-            throws NamingException {
+    private DirContext getGroupsContext(final GroupType groupType) throws NamingException {
         DirContext dirContext;
         if (groupType == GroupType.SystemGroup) {
             dirContext = getSystemGroupsContext();
@@ -461,7 +480,7 @@ public class LdapDAOImpl implements LdapDAO {
         }
         return dirContext;
     }
-    
+
     /**
      * @param groupUid
      * @return
@@ -474,7 +493,7 @@ public class LdapDAOImpl implements LdapDAO {
     private List<String> doGetGroupMembers(String groupUid, final GroupType groupType) {
         final List<String> result = new ArrayList<String>();
         final Pattern pattern = Pattern.compile(usernameAttributeName + "=([^,]+)\\,");
-        
+
         for (final String member : getGroupMembers(groupUidAttribute, groupUid, groupType)) {
             final Matcher matcher = pattern.matcher(member);
             if (matcher.find()) {
@@ -513,10 +532,9 @@ public class LdapDAOImpl implements LdapDAO {
         return createRolesFromSearchResult(doSearchGroups("member", getUserDnWithBase(getUserDn(employeeName)), "description", GroupType.Roles));
     }
 
-    private List<Role> createRolesFromSearchResult(
-            final Map<String, String> roles) {
+    private List<Role> createRolesFromSearchResult(final Map<String, String> roles) {
         final List<Role> result = new ArrayList<Role>();
-        for (final Map.Entry<String, String> entry : roles.entrySet() ) {
+        for (final Map.Entry<String, String> entry : roles.entrySet()) {
             final Role role = new Role();
             role.setRoleUid(entry.getKey());
             if (entry.getValue() != null && !entry.getValue().isEmpty()) {
@@ -535,9 +553,10 @@ public class LdapDAOImpl implements LdapDAO {
      */
     @Override
     public List<Role> searchRoles(String searchString) {
-        return createRolesFromSearchResult(doSearchGroups(groupNameAttribute, "*" + escapeLDAPSearchFilter(searchString) + "*", groupNameAttribute, GroupType.Roles));
+        return createRolesFromSearchResult(doSearchGroups(groupNameAttribute, "*" + escapeLDAPSearchFilter(searchString) + "*", groupNameAttribute,
+                GroupType.Roles));
     }
-    
+
     private enum GroupType {
         SystemGroup, CommunityGroup, Roles;
     }
