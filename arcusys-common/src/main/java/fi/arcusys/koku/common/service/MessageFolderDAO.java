@@ -39,15 +39,8 @@ public interface MessageFolderDAO extends AbstractEntityDAO<Folder>{
 	 */
 	List<MessageRef> getMessagesByUserAndFolderType(final User user, final FolderType folderType);
 
-	/**
-	 * @param maxNum 
-	 * @param startNum 
-	 * @param query 
-	 * @param testUser
-	 * @param sent
-	 * @return
-	 */
-	List<MessageRef> getMessagesByUserAndFolderType(final User user, final FolderType folderType, final MessageQuery query, final int startNum, final int maxNum);
+    List<MessageRef> getMessagesByUserWithRoleAndFolderType(final User user, final List<String> roleUids, final FolderType folderType, 
+            final MessageQuery query, final int startNum, final int maxNum);
 
 	/**
 	 * @param testUser
@@ -60,14 +53,14 @@ public interface MessageFolderDAO extends AbstractEntityDAO<Folder>{
 	 * @param folderType
 	 * @return
 	 */
-	Long getTotalMessagesCount(final User user, final FolderType folderType);
+	Long getTotalMessagesCountByUserAndRoles(final User user, final List<String> roleUids, final FolderType folderType);
 
-	Long getTotalMessagesCount(final User user, final FolderType folderType, final Criteria criteria);
+	Long getTotalMessagesCountByUserAndRoles(final User user, final List<String> roleUids, final FolderType folderType, final Criteria criteria);
 
 	/**
 	 * @param userId
 	 * @param folderType
 	 * @return
 	 */
-	Long getUnreadMessagesCount(final User user, final FolderType folderType);
+	Long getUnreadMessagesCountByUserAndRoles(final User user, final List<String> roleUids, final FolderType folderType);
 }

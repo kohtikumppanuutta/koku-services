@@ -2,6 +2,7 @@ package fi.arcusys.koku.common.service.datamodel;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -36,7 +37,7 @@ public class MessageRef extends AbstractEntity {
 	@ManyToOne
 	private Message message;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<User> deliveryFailedTo; 
 
 	/**

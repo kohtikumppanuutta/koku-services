@@ -30,6 +30,8 @@ public class Message extends AbstractEntity {
 	
 	@ManyToOne
 	private User fromUser;
+	
+	private String fromRoleUid;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<User> receipients;
@@ -86,8 +88,22 @@ public class Message extends AbstractEntity {
 	public User getUser() {
 		return this.fromUser;
 	}
-
+	
 	/**
+     * @return the fromRoleUid
+     */
+    public String getFromRoleUid() {
+        return fromRoleUid;
+    }
+
+    /**
+     * @param fromRoleUid the fromRoleUid to set
+     */
+    public void setFromRoleUid(String fromRoleUid) {
+        this.fromRoleUid = fromRoleUid;
+    }
+
+    /**
 	 * @return the subject
 	 */
 	public String getSubject() {

@@ -17,10 +17,16 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "findFolderByUserAndType", query = "SELECT f FROM Folder f WHERE f.user = :user AND f.folderType = :folderType"),
-	@NamedQuery(name = "findMessagesByUserAndFolderType", query = "SELECT DISTINCT mr FROM MessageRef mr WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user " +
+	@NamedQuery(name = "findMessagesByUserWithRoleAndFolderType", query = "SELECT DISTINCT mr FROM MessageRef mr " +
+			" WHERE mr.folder.folderType = :folderType AND " +
+			" (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) " +
 			" ORDER BY mr.createdDate DESC, mr.id DESC"),
-	@NamedQuery(name = "getTotalMessagesCount", query = "SELECT COUNT(mr) FROM MessageRef mr WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user"),
-	@NamedQuery(name = "getMessagesCountByReadStatus", query = "SELECT COUNT(mr) FROM MessageRef mr WHERE mr.folder.folderType = :folderType AND mr.folder.user = :user and mr.isRead = :isRead")
+	@NamedQuery(name = "getTotalMessagesCount", query = "SELECT COUNT(mr) FROM MessageRef mr " +
+			" WHERE mr.folder.folderType = :folderType AND " +
+			" (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) "),
+	@NamedQuery(name = "getMessagesCountByReadStatus", query = "SELECT COUNT(mr) FROM MessageRef mr " +
+			" WHERE mr.folder.folderType = :folderType AND " +
+			" (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) AND mr.isRead = :isRead")
 }) 
 
 public class Folder extends AbstractEntity {
