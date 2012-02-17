@@ -42,20 +42,20 @@ import javax.persistence.PrePersist;
             "    AND :user MEMBER OF tp.guardians " +
             "    AND ap.status in (:statuses) "),
     @NamedQuery(name = "findProcessedAppointmentsBySender", query = "SELECT DISTINCT ap FROM Appointment ap " +
-            " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            " WHERE (ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap ))" +
             "    AND :sender = ap.sender  ORDER BY ap.id DESC"),
     @NamedQuery(name = "countProcessedAppointmentsBySender", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap " +
-            " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            " WHERE (ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap ))" +
             "    AND :sender = ap.sender "),
 
 // Criteria search            
     @NamedQuery(name = "findProcessedAppointmentsBySenderAndTarget", query = "SELECT DISTINCT ap FROM Appointment ap JOIN ap.recipients AS tp " +
-            " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            " WHERE (ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap ))" +
             "    AND :sender = ap.sender " +
             "    AND tp.targetUser.uid = :targetUserUid " +
             " ORDER BY ap.id DESC"),
     @NamedQuery(name = "countProcessedAppointmentsBySenderAndTarget", query = "SELECT COUNT(DISTINCT ap) FROM Appointment ap JOIN ap.recipients AS tp " +
-            " WHERE ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap )" +
+            " WHERE (ap.status = :status_cancelled OR EXISTS ( SELECT ar FROM AppointmentResponse ar WHERE ar.appointment = ap ))" +
             "    AND :sender = ap.sender " +
             "    AND tp.targetUser.uid = :targetUserUid "),
                     
