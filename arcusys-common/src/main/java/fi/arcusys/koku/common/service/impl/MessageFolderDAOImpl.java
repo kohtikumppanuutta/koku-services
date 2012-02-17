@@ -87,7 +87,11 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 	public List<MessageRef> getMessagesByUserWithRoleAndFolderType(final User user, final List<String> roleUids, final FolderType folderType, final MessageQuery query, final int startNum, final int maxNum) {
 		final Map<String, Object> params = getCommonQueryParams(user, roleUids, folderType);
 		if (query == null || query.getCriteria() == null && query.getOrderBy() == null) {
-			return getResultList("findMessagesByUserWithRoleAndFolderType", params, startNum, maxNum);
+		    if (isEmpty(roleUids)) {
+                return getResultList("findMessagesByUserAndFolderType", params, startNum, maxNum);
+		    } else {
+	            return getResultList("findMessagesByUserWithRoleAndFolderType", params, startNum, maxNum);
+		    }
 		} else {
 			/*
 			 * SELECT mr FROM MessageRef mr 
@@ -102,7 +106,7 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 
 			final StringBuilder queryString = new StringBuilder("SELECT DISTINCT mr FROM MessageRef mr, IN(mr.message.receipients) to_ ");
 			// build "where" string, put params
-			final StringBuilder whereString = getWhereStringByCriteria(criteria, folderType, params);
+			final StringBuilder whereString = getWhereStringByCriteria(criteria, folderType, params, !isEmpty(roleUids));
 			// build "order by" string, put params
 			final StringBuilder orderByString = new StringBuilder();
 			if (orderBys != null && !orderBys.isEmpty()) {
@@ -125,9 +129,14 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 	}
 
 	private StringBuilder getWhereStringByCriteria(final Criteria criteria,
-			final FolderType folderType, final Map<String, Object> params) {
-		final StringBuilder whereString = new StringBuilder("WHERE mr.folder.folderType = :folderType AND " +
-				" (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) ");
+			final FolderType folderType, final Map<String, Object> params, final boolean withRoles) {
+		final StringBuilder whereString = new StringBuilder("WHERE mr.folder.folderType = :folderType AND ").append(
+				" (mr.folder.user = :user");
+		if (withRoles) {
+	        whereString.append(" OR mr.message.fromRoleUid in (:userRoles)");
+		}
+		whereString.append(") ");
+		
 		if (criteria != null && !criteria.getFields().isEmpty() && !criteria.getKeywords().isEmpty()) {
 			// escape JPQL symbols
 			final List<String> keywords = new ArrayList<String>();
@@ -198,7 +207,12 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 	 */
 	@Override
 	public Long getTotalMessagesCountByUserAndRoles(final User user, final List<String> roleUids, final FolderType folderType) {
-		return getSingleResult("getTotalMessagesCount", getCommonQueryParams(user, roleUids, folderType));
+	    final boolean withRoles = !isEmpty(roleUids);
+        if (withRoles) {
+            return getSingleResult("getTotalMessagesCountWithRole", getCommonQueryParams(user, roleUids, folderType));
+        } else {
+            return getSingleResult("getTotalMessagesCount", getCommonQueryParams(user, roleUids, folderType));
+        }
 	}
 
 	@Override
@@ -206,7 +220,7 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 		final Map<String, Object> params = getCommonQueryParams(user, roleUids, folderType);
 
 		final StringBuilder queryString = new StringBuilder("SELECT COUNT(DISTINCT mr) FROM MessageRef mr, IN (mr.message.receipients) to_ ");
-		queryString.append(getWhereStringByCriteria(criteria, folderType, params));
+		queryString.append(getWhereStringByCriteria(criteria, folderType, params, !isEmpty(roleUids)));
 		return executeQueryWithSingleResult(queryString.toString(), params);
 	}
 
@@ -219,7 +233,12 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 	public Long getUnreadMessagesCountByUserAndRoles(final User user, final List<String> roleUids, FolderType folderType) {
 		final Map<String, Object> params = getCommonQueryParams(user, roleUids, folderType);
 		params.put("isRead", Boolean.FALSE);
-		return getSingleResult("getMessagesCountByReadStatus", params);
+        final boolean withRoles = !isEmpty(roleUids);
+        if (withRoles) {
+            return getSingleResult("getMessagesCountByReadStatusWithRole", params);
+        } else {
+            return getSingleResult("getMessagesCountByReadStatus", params);
+        }
 	}
 
 	private Map<String, Object> getCommonQueryParams(final User user, final FolderType folderType) {
@@ -233,7 +252,13 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
         final Map<String, Object> params = new HashMap<String,Object>();
         params.put("user", user);
         params.put("folderType", folderType);
-        params.put("userRoles", userRoles);
+        if (!isEmpty(userRoles)) {
+            params.put("userRoles", userRoles);
+        }
         return params;
+    }
+
+    private boolean isEmpty(final List<String> userRoles) {
+        return userRoles == null || userRoles.isEmpty();
     }
 }

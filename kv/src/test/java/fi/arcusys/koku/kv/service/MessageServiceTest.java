@@ -114,7 +114,9 @@ public class MessageServiceTest {
 
         final long messageId = sendMessage(fromUserId, "subject", Collections.singletonList(toUserId), "content", false, false);
 
-        assertEquals("Message is in sender's Outbox folder: ", FolderType.Outbox, serviceFacade.getMessageById(messageId).getMessageType());
+        final MessageTO messageById = serviceFacade.getMessageById(messageId);
+        assertEquals("Message is in sender's Outbox folder: ", FolderType.Outbox, messageById.getMessageType());
+        assertFalse("Delivery by email is disabled in tests", messageById.getDeliveryFailedTo().isEmpty());
 
         serviceFacade.deleteMessages(Collections.singletonList(messageId));
 

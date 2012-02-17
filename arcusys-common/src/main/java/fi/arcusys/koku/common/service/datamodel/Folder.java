@@ -17,16 +17,29 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "findFolderByUserAndType", query = "SELECT f FROM Folder f WHERE f.user = :user AND f.folderType = :folderType"),
-	@NamedQuery(name = "findMessagesByUserWithRoleAndFolderType", query = "SELECT DISTINCT mr FROM MessageRef mr " +
+	
+	@NamedQuery(name = "findMessagesByUserAndFolderType", query = "SELECT DISTINCT mr FROM MessageRef mr " +
 			" WHERE mr.folder.folderType = :folderType AND " +
-			" (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) " +
+			" (mr.folder.user = :user) " +
 			" ORDER BY mr.createdDate DESC, mr.id DESC"),
-	@NamedQuery(name = "getTotalMessagesCount", query = "SELECT COUNT(mr) FROM MessageRef mr " +
+    @NamedQuery(name = "findMessagesByUserWithRoleAndFolderType", query = "SELECT DISTINCT mr FROM MessageRef mr " +
+            " WHERE mr.folder.folderType = :folderType AND " +
+            " (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) " +
+            " ORDER BY mr.createdDate DESC, mr.id DESC"),
+
+    @NamedQuery(name = "getTotalMessagesCount", query = "SELECT COUNT(mr) FROM MessageRef mr " +
+            " WHERE mr.folder.folderType = :folderType AND " +
+            " (mr.folder.user = :user) "),
+	@NamedQuery(name = "getTotalMessagesCountWithRole", query = "SELECT COUNT(mr) FROM MessageRef mr " +
 			" WHERE mr.folder.folderType = :folderType AND " +
 			" (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) "),
+			
 	@NamedQuery(name = "getMessagesCountByReadStatus", query = "SELECT COUNT(mr) FROM MessageRef mr " +
 			" WHERE mr.folder.folderType = :folderType AND " +
-			" (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) AND mr.isRead = :isRead")
+			" (mr.folder.user = :user) AND mr.isRead = :isRead"),
+    @NamedQuery(name = "getMessagesCountByReadStatusWithRole", query = "SELECT COUNT(mr) FROM MessageRef mr " +
+            " WHERE mr.folder.folderType = :folderType AND " +
+            " (mr.folder.user = :user OR mr.message.fromRoleUid in (:userRoles)) AND mr.isRead = :isRead")
 }) 
 
 public class Folder extends AbstractEntity {

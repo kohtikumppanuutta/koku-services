@@ -283,7 +283,11 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
      */
     @Override
     public List<Role> getUserRoles(String userUid) {
-        return rolesDao.getEmployeeRoles(getLooraNameByUserUid(userUid));
+        final String looraName = getLooraNameByUserUid(userUid);
+        if (looraName == null || looraName.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return rolesDao.getEmployeeRoles(looraName);
     }
 
     /**
