@@ -137,7 +137,8 @@ public class MessageFolderDAOImpl extends AbstractEntityDAOImpl<Folder> implemen
 		}
 		whereString.append(") ");
 		
-		if (criteria != null && !criteria.getFields().isEmpty() && !criteria.getKeywords().isEmpty()) {
+		if (criteria != null && criteria.getFields() != null &&  criteria.getKeywords() != null &&
+		        !criteria.getFields().isEmpty() && !criteria.getKeywords().isEmpty()) {
 			// escape JPQL symbols
 			final List<String> keywords = new ArrayList<String>();
 			for (final String keyword : criteria.getKeywords()) {
