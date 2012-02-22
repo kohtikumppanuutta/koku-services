@@ -17,6 +17,7 @@ import java.util.Date;
  */
 public class LogQueryCriteria {
 
+//TODO: KOKU-1187
   private String logType;
   private String customerPic;
   private String dataItemType;

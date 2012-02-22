@@ -188,6 +188,7 @@ public class LogServiceEndpointBean implements LogServicePortType {
      */
     public LogQueryCriteria fromWsType(LogQueryCriteriaType type) {
       // criteria parameters have been null-checked on the portlet side
+      // TODO: KOKU-1187
       LogQueryCriteria criteria = new LogQueryCriteria(type.getLogType(), type.getCustomerPic(),
           type.getDataItemType(), CalendarUtil.getDate(type.getStartTime()), CalendarUtil.getDate(type.getEndTime()));
 

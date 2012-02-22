@@ -134,6 +134,8 @@ public class LogDAOBean implements LogDAO {
 
     String entity = "";
 
+    // TODO: KOKU-1187
+    
     // All four query parameters are mandatory: starttime, endime,
     // customerpic, dataitemtype. These fields are null-checked on the
     // portlet side but let's check them here again
