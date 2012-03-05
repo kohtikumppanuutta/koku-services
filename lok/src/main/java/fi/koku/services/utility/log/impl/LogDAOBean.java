@@ -137,14 +137,25 @@ public class LogDAOBean implements LogDAO {
     // TODO: KOKU-1187
     
     // All four query parameters are mandatory: starttime, endime,
-    // customerpic, dataitemtype. These fields are null-checked on the
+    // customerpic or userpic,  dataitemtype. These fields are null-checked on the
     // portlet side but let's check them here again
-    if (criteria.getStartTime() == null || criteria.getEndTime() == null || criteria.getCustomerPic() == null
-        || criteria.getDataItemType() == null) {
-      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
-      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
+    if (criteria.getPicType().contentEquals("customerPic")) {
+	    if (criteria.getStartTime() == null || criteria.getEndTime() == null || criteria.getCustomerPic() == null
+	        || criteria.getDataItemType() == null) {
+	      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
+	      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
+	      }
     }
-
+    
+    if (criteria.getPicType().contentEquals("userPic")) {
+	    if (criteria.getStartTime() == null || criteria.getEndTime() == null || criteria.getUserPic() == null
+	        || criteria.getDataItemType() == null) {
+	      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
+	      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
+	      }
+    }
+    
+    
     if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
       entity = "LogEntry";
     } else {
@@ -169,8 +180,15 @@ public class LogDAOBean implements LogDAO {
 
     sb.append(" AND ");
 
-    sb.append("e.customerPic = :pic");
-    params.add(new Object[] { "pic", criteria.getCustomerPic() });
+    if (criteria.getPicType() != null && criteria.getPicType().contentEquals("customerPic")) {
+    	sb.append("e.customerPic = :pic");    	
+    	params.add(new Object[] { "pic", criteria.getCustomerPic() });
+    }
+    else if
+    	(criteria.getPicType() != null && criteria.getPicType().contentEquals("userPic")) {
+        	sb.append("e.userPic = :pic");    	
+        	params.add(new Object[] { "pic", criteria.getUserPic() });
+     }
 
     if (criteria.getDataItemType() != null && !criteria.getDataItemType().isEmpty()) {
       sb.append(" AND ");
