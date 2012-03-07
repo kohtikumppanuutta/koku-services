@@ -18,6 +18,9 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.tiva.v1.Consent;
 import fi.koku.services.entity.tiva.v1.ConsentStatus;
@@ -40,6 +43,8 @@ public class KksServiceBean implements KksService {
   private Authorization authorization;
 
   private Log log;
+  
+  private static final Logger LOG = LoggerFactory.getLogger(KksServiceBean.class);
 
   public KksServiceBean() {
     log = new Log();
@@ -128,27 +133,42 @@ public class KksServiceBean implements KksService {
 
   private void setConsentStatus(Map<Integer, KksCollectionClass> collectionClasses,
       Map<String, List<Consent>> consents, KksCollection c) {
-    List<Consent> consentList = consents.get(collectionClasses.get(c.getCollectionClass()).getConsentType());
-
+    
+    String consentType = collectionClasses.get(c.getCollectionClass()).getConsentType();
+    List<Consent> consentList = consents.get( consentType );
+    
+    LOG.debug("Found " + (consentList == null ? "null" : consentList.size()) + " consents for " + consentType);
+    
     if (consentList != null && consentList.size() > 0) {
-      for (Consent con : consentList) {
-
-        if (ConsentStatus.VALID.equals(con.getStatus())) {
-          c.setConsentRequested(true);
-          c.setUserConsentStatus(ConsentStatus.VALID.toString());
-        } else if (ConsentStatus.PARTIALLY_GIVEN.equals(con.getStatus())) {
-          c.setConsentRequested(true);
-          c.setUserConsentStatus(con.getStatus().toString());
-        } else if (ConsentStatus.OPEN.equals(con.getStatus())) {
-          c.setConsentRequested(false);
-        } else {
-          c.setConsentRequested(false);
-          c.setUserConsentStatus(ConsentStatus.DECLINED.toString());
-        }
+      
+      List<ConsentStatus> statusList = new ArrayList<ConsentStatus>();
+      
+      for( Consent cons : consentList ) {
+        statusList.add(cons.getStatus());
       }
-    }
-  }
+      
+      LOG.debug(consentType + " consents are " + statusList );
+      if (statusList.contains(ConsentStatus.VALID)) {
+        // consent is always requested if valid consent exists
+        c.setConsentRequested(true);
+        c.setUserConsentStatus(ConsentStatus.VALID.toString());
+      } else if (statusList.contains(ConsentStatus.PARTIALLY_GIVEN)) {
+        // one of guardians has accepted the consent req
+        c.setConsentRequested(true);
+        c.setUserConsentStatus(ConsentStatus.PARTIALLY_GIVEN.toString());
+      } else if (statusList.contains(ConsentStatus.OPEN) && !statusList.contains(ConsentStatus.DECLINED)) {
+        // request is created and no one has declined it yet
+        c.setConsentRequested(true);
+      } else {
+        c.setConsentRequested(false);
+        c.setUserConsentStatus(ConsentStatus.DECLINED.toString());               
+      }
+      LOG.debug("Consent " + consentType + " state set in collection is " + c.isConsentRequested() + " and " + c.getUserConsentStatus() ); 
 
+    }
+
+  }
+  
   @Override
   public void update(KksCollection collection, fi.koku.services.entity.kks.v1.AuditInfoType audit) {
     KksCollectionClass c = serviceDAO.getCollectionClass(collection.getCollectionClass());
