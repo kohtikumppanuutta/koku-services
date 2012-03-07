@@ -7,7 +7,7 @@ insert into kks_collection_class (
 ) VALUES (
 	60
   ,'kks.kehitysasialaji.vasu.salo'   -- type_code
-  ,'Varhaiskasvatussuunnitelma (Salo)'  -- name
+  ,'Varhaiskasvatussuunnitelma'  -- name
   ,''  -- description
   ,''  -- concent_type
 );
@@ -44,7 +44,7 @@ insert into kks_group (
   ,'Päivähoito'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,60
 );
 
@@ -123,7 +123,7 @@ insert into kks_group (
   ,'Tavoitteet'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,551   -- parent_id
   ,60
 );

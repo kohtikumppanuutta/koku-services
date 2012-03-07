@@ -7,7 +7,7 @@ insert into kks_collection_class (
 ) VALUES (
 	70
   ,'kks.kehitysasialaji.mita_teille_kuuluu_4v_vanhemmat'   -- type_code
-  ,'Mitä teille kuuluu? 4-vuotiaan lapsen vanhemmille (Salo)'  -- name
+  ,'Mitä teille kuuluu? 4-vuotiaan lapsen vanhemmille'  -- name
   ,''  -- description
   ,''  -- concent_type
 );

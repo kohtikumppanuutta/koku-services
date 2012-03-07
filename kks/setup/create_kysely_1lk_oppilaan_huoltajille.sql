@@ -7,7 +7,7 @@ insert into kks_collection_class (
 ) VALUES (
 	100
   ,'kks.kehitysasialaji.kysely_1lk_oppilaan_huoltajille'   -- type_code
-  ,'Kysely 1. lk:n oppilaan huoltajille  (Salo)'  -- name
+  ,'Kysely 1. lk:n oppilaan huoltajille'  -- name
   ,''  -- description
   ,''  -- concent_type
 );

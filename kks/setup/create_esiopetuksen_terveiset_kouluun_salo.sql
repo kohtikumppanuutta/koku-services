@@ -7,7 +7,7 @@ insert into kks_collection_class (
 ) VALUES (
 	90
   ,'kks.kehitysasialaji.esiopetuksen_terveiset_kouluun'   -- type_code
-  ,'Esiopetuksen terveiset kouluun (Salo)'  -- name
+  ,'Esiopetuksen terveiset kouluun'  -- name
   ,''  -- description
   ,'kks.suostumus.esiopetuksen_terveiset_kouluun'  -- concent_type
 );
@@ -27,7 +27,7 @@ insert into kks_group (
   ,'Päivähoito'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,90
 );
 
@@ -65,7 +65,7 @@ insert into kks_group (
   ,'Sosiaaliset taidot/kaverisuhteet'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,700   -- parent_id
   ,90
 );
@@ -86,7 +86,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,700   -- parent_id
   ,90
 );
@@ -107,7 +107,7 @@ insert into kks_group (
   ,'Kielelliset valmiudet'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,700   -- parent_id
   ,90
 );
@@ -127,7 +127,7 @@ insert into kks_group (
   ,'Matemaattiset valmiudet'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,700   -- parent_id
   ,90
 );
@@ -147,7 +147,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,700   -- parent_id
   ,90
 );

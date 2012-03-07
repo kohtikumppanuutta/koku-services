@@ -7,7 +7,7 @@ insert into kks_collection_class (
 ) VALUES (
 	80
   ,'kks.kehitysasialaji.ohr_tapaamisen_muistio'   -- type_code
-  ,'OHR-tapaamisen muistio (Salo)'  -- name
+  ,'OHR-tapaamisen muistio'  -- name
   ,''  -- description
   ,''  -- concent_type
 );
@@ -26,7 +26,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,80
 );
 
@@ -46,7 +46,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,650   -- parent_id
   ,80
 );

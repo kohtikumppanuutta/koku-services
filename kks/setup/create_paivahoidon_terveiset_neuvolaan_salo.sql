@@ -7,9 +7,9 @@ insert into kks_collection_class (
 ) VALUES (
 	110
   ,'kks.kehitysasialaji.paivahoidon_havainnot_4v_neuvolaan'   -- type_code
-  ,'Päivähoidon havainnot 4-vuotisneuvolaan (Salo)'  -- name
+  ,'Päivähoidon havainnot 4-vuotisneuvolaan'  -- name
   ,''  -- description
-  ,''  -- concent_type
+  ,'kks.suostumus.paivahoidon_terveiset_4v_neuvolaan'  -- concent_type
 );
 
 insert into kks_group (
@@ -26,7 +26,7 @@ insert into kks_group (
   ,'Päivähoito'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,110
 );
 
@@ -44,7 +44,7 @@ insert into kks_group (
   ,'Neuvola'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,110
 );
 
@@ -64,7 +64,7 @@ insert into kks_group (
   ,''  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,800   -- parent_id
   ,110
 );
@@ -84,7 +84,7 @@ insert into kks_group (
   ,'Päivittäiset toiminnot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,800   -- parent_id
   ,110
 );
@@ -104,7 +104,7 @@ insert into kks_group (
   ,'Motoriset taidot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,800   -- parent_id
   ,110
 );
@@ -124,7 +124,7 @@ insert into kks_group (
   ,'Kieli ja kommunikaatio'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,800   -- parent_id
   ,110
 );
@@ -144,7 +144,7 @@ insert into kks_group (
   ,'Sosiaalisuus ja tunneilmaisu'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,800   -- parent_id
   ,110
 );
@@ -164,7 +164,7 @@ insert into kks_group (
   ,'Neuvolan palaute päivähoitoon'  -- name
   ,''  -- description
   ,'healthcareregistry'  -- register
-  ,'guardian' -- accountable
+  ,'municipal_employee' -- accountable
   ,801   -- parent_id
   ,110
 );

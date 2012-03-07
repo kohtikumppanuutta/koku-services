@@ -7,7 +7,7 @@ insert into kks_collection_class (
 ) VALUES (
 	50
   ,'kks.kehitysasialaji.lapsen_hoitosuunnitelma'   -- type_code
-  ,'Lapsen hoitosuunnitelma (Salo)'  -- name
+  ,'Lapsen hoitosuunnitelma'  -- name
   ,''  -- description
   ,''  -- concent_type
 );
@@ -225,7 +225,7 @@ insert into kks_entry_class (
 ) VALUES (
    507   -- entry_class_id
   ,8   -- sort_order
-  ,'Äiti/muu huoltaja:'  -- name
+  ,'Isä/muu huoltaja:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
