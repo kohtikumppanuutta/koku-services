@@ -127,10 +127,7 @@ public class ConsentDAOImpl extends AbstractEntityDAOImpl<Consent> implements Co
         final Map<String, Object> params = new HashMap<String, Object>();
         // where
         
-        // only replied and valid consents will be retreived
-//        query.append(" WHERE (NOT (:given_status <> ANY (SELECT cr.status FROM ConsentReply cr WHERE cr.consent = cn ))) ");
-        query.append(" WHERE (EXISTS (SELECT DISTINCT cr.id FROM ConsentReply cr WHERE cr.consent = cn AND cr.status = :given_status)) ");
-        params.put("given_status", ConsentReplyStatus.Given);
+        query.append(" WHERE 1 = 1 ");
         // criteria applied
         final String templatePrefix = criteria.getTemplateNamePrefix();
         if (templatePrefix != null && !"".equals(templatePrefix.trim())) {

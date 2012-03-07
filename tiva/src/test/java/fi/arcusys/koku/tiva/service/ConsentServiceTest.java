@@ -302,19 +302,30 @@ public class ConsentServiceTest {
         final Long consentId = service.requestForConsent(templateId, employeeUid, 
                 targetPersonUid, Arrays.asList(parent1, parent2), null, null, null, Boolean.FALSE, extraInfo);
         
-        final ActionPermittedTO actionPermittedTO = new ActionPermittedTO();
-        actionPermittedTO.setActionRequestNumber(1);
-        actionPermittedTO.setPermitted(true);
-        
-        service.giveConsent(consentId, parent1, Collections.singletonList(actionPermittedTO), null, "");
-        service.giveConsent(consentId, parent2, Collections.singletonList(actionPermittedTO), null, "");
-        
         final ConsentSearchCriteria query = new ConsentSearchCriteria();
         query.setGivenTo(Collections.singletonList("partyId"));
         query.setInformationTargetId(informationTargetId);
         query.setTargetPerson(targetPersonUid);
         query.setTemplateNamePrefix("kks");
-        assertNotNull(getById(consentId, service.searchConsents(query)));
+        
+        final ConsentTO requestedConsent = getById(consentId, service.searchConsents(query));
+        assertNotNull(requestedConsent);
+        assertEquals(ConsentStatus.Open, requestedConsent.getStatus());
+
+        final ActionPermittedTO actionPermittedTO = new ActionPermittedTO();
+        actionPermittedTO.setActionRequestNumber(1);
+        actionPermittedTO.setPermitted(true);
+        
+        service.giveConsent(consentId, parent1, Collections.singletonList(actionPermittedTO), null, "");
+        final ConsentTO partiallyGivenConsent = getById(consentId, service.searchConsents(query));
+        assertNotNull(partiallyGivenConsent);
+        assertEquals(ConsentStatus.PartiallyGiven, partiallyGivenConsent.getStatus());
+
+        service.giveConsent(consentId, parent2, Collections.singletonList(actionPermittedTO), null, "");
+
+        final ConsentTO validConsent = getById(consentId, service.searchConsents(query));
+        assertNotNull(validConsent);
+        assertEquals(ConsentStatus.Valid, validConsent.getStatus());
     }
 
     private List<ActionPermittedTO> getTestActionsPermitted() {

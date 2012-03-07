@@ -24,6 +24,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import scala.actors.threadpool.Arrays;
+
 import fi.arcusys.koku.common.external.CustomerServiceDAO;
 import fi.arcusys.koku.common.service.AuthorizationTemplateDAO;
 import fi.arcusys.koku.common.service.CalendarUtil;
@@ -968,7 +970,7 @@ public class ConsentServiceFacadeImpl implements ConsentServiceFacade, Scheduled
         
         // currently it was agreed to ignore statuses filter - only Valid consents are retreived
         final Set<ConsentStatus> statuses = new HashSet<ConsentStatus>();
-        statuses.add(ConsentStatus.Valid);
+        statuses.addAll(Arrays.asList(ConsentStatus.values()));
                 
         final List<ConsentTO> result = new ArrayList<ConsentTO>();
         for (final Consent consent : consentDao.searchConsents(criteria.toDtoCriteria())) {
