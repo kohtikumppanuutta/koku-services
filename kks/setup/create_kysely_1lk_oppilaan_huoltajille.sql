@@ -41,6 +41,27 @@ insert into kks_group (
   ,parent_id
   ,collection_class_id
 ) VALUES (
+   757   -- group_id
+  ,1   -- sort_order
+  ,'Perhetiedot'  -- name
+  ,''  -- description
+  ,'healthcareregistry'  -- register
+  ,'guardian' -- accountable
+  ,750   -- parent_id
+  ,100
+);
+
+
+insert into kks_group (
+   group_id
+  ,sort_order
+  ,name
+  ,description
+  ,register
+  ,accountable
+  ,parent_id
+  ,collection_class_id
+) VALUES (
    751   -- group_id
   ,2   -- sort_order
   ,'Lapsen tilanne'  -- name
@@ -832,6 +853,180 @@ insert into kks_entry_class (
   ,755   -- entry_group
 );
 
+-- NEW FIELDS
+
+insert into kks_entry_class (
+   entry_class_id
+  ,sort_order
+  ,name
+  ,description
+  ,multi_value
+  ,data_type
+  ,value_spaces
+  ,entry_group
+) VALUES (
+   1034   -- entry_class_id
+  ,34   -- sort_order
+  ,'Osoite:'  -- name
+  ,''  -- description
+  ,0   -- multi_value
+  ,'FREE_TEXT'  -- data_type
+  ,''  -- value_spaces
+  ,757   -- entry_group
+);
+
+insert into kks_entry_class (
+   entry_class_id
+  ,sort_order
+  ,name
+  ,description
+  ,multi_value
+  ,data_type
+  ,value_spaces
+  ,entry_group
+) VALUES (
+   1035   -- entry_class_id
+  ,35   -- sort_order
+  ,'Puh:'  -- name
+  ,''  -- description
+  ,0   -- multi_value
+  ,'TEXT'  -- data_type
+  ,''  -- value_spaces
+  ,757   -- entry_group
+);
+
+insert into kks_entry_class (
+   entry_class_id
+  ,sort_order
+  ,name
+  ,description
+  ,multi_value
+  ,data_type
+  ,value_spaces
+  ,entry_group
+) VALUES (
+   1036   -- entry_class_id
+  ,36   -- sort_order
+  ,'Lapsen vanhemmat tai muu(t) huoltaja(t) sekä puhelinnumero päivisin:'  -- name
+  ,''  -- description
+  ,0   -- multi_value
+  ,'FREE_TEXT'  -- data_type
+  ,''  -- value_spaces
+  ,757   -- entry_group
+);
+
+insert into kks_entry_class (
+   entry_class_id
+  ,sort_order
+  ,name
+  ,description
+  ,multi_value
+  ,data_type
+  ,value_spaces
+  ,entry_group
+) VALUES (
+   1037   -- entry_class_id
+  ,37   -- sort_order
+  ,'Sisarukset (nimi ja syntymävuosi):'  -- name
+  ,''  -- description
+  ,0   -- multi_value
+  ,'FREE_TEXT'  -- data_type
+  ,''  -- value_spaces
+  ,757   -- entry_group
+);
+
+insert into kks_entry_class (
+   entry_class_id
+  ,sort_order
+  ,name
+  ,description
+  ,multi_value
+  ,data_type
+  ,value_spaces
+  ,entry_group
+) VALUES (
+   1038   -- entry_class_id
+  ,38   -- sort_order
+  ,'Lapsen kanssa samassa taloudessa asuvat henkilöt:'  -- name
+  ,''  -- description
+  ,0   -- multi_value
+  ,'FREE_TEXT'  -- data_type
+  ,''  -- value_spaces
+  ,757   -- entry_group
+);
+
+insert into kks_entry_class (
+   entry_class_id
+  ,sort_order
+  ,name
+  ,description
+  ,multi_value
+  ,data_type
+  ,value_spaces
+  ,entry_group
+) VALUES (
+   1039   -- entry_class_id
+  ,39   -- sort_order
+  ,'Yhteydenpito ja tapaamisjärjestelyt muualla asuvaan biologiseen vanhempaan/sisarukseen:'  -- name
+  ,''  -- description
+  ,0   -- multi_value
+  ,'FREE_TEXT'  -- data_type
+  ,''  -- value_spaces
+  ,757   -- entry_group
+);
+
+-- NEW TAGS START
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   1034   -- entry_class_id
+  ,56   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   1035   -- entry_class_id
+  ,56   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   1036   -- entry_class_id
+  ,56   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   1037   -- entry_class_id
+  ,56   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   1038   -- entry_class_id
+  ,56   -- tag_id
+);
+
+insert into kks_entry_class_tags (
+   entry_class_id
+  ,tag_id
+) VALUES (
+   1039   -- entry_class_id
+  ,56   -- tag_id
+);
+
+
+-- NEW TAGS END --
 
 insert into kks_entry_class_tags (
    entry_class_id

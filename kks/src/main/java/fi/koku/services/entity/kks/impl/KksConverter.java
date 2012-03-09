@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import fi.koku.calendar.CalendarUtil;
 import fi.koku.services.entity.kks.v1.EntryValuesType;
 import fi.koku.services.entity.kks.v1.KksCollectionClassType;
@@ -252,9 +254,7 @@ public final class KksConverter {
     entry.setCreator(entryType.getCreator());
 
     entry.setCustomer(entryType.getCustomerId());
-    if (entryType.getId() != null) {
-      entry.setId(Long.parseLong(entryType.getId()));
-    }
+    
     entry.setKksCollection(collection);
 
     entry.setEntryClassId(Integer.valueOf(entryType.getEntryClassId()));
@@ -297,11 +297,15 @@ public final class KksConverter {
   }
 
   public static Long parseNullableLong(String strInt) {
-    if (strInt == null) {
-      return null;
-    } else if (strInt.equals("")) {
+    try {
+      if (strInt == null) {
+        return null;
+      } else if (strInt.equals("") || strInt.equals("null")) {
+        return null;
+      }
+      return new Long(strInt);
+    } catch (Exception e) {
       return null;
     }
-    return new Long(strInt);
   }
 }

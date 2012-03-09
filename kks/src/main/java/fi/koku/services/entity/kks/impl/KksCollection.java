@@ -292,5 +292,14 @@ public class KksCollection implements Serializable {
   public void setUserConsentStatus(String userConsentStatus) {
     this.userConsentStatus = userConsentStatus;
   }
+  
+  public boolean hasEntry( KksEntryClass entryClass ) {
+      for ( KksEntry e : entries ) {
+        if ( e.getEntryClassId() == entryClass.getEntryClassId() ) {
+          return true;
+        }
+      }
+      return false;    
+  }
 
 }

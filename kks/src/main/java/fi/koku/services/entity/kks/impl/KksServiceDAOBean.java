@@ -196,7 +196,43 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
   @Override
   public KksCollection getCollection(String id) {
-    return new KksCollection( em.find(KksCollection.class, Long.parseLong(id)));
+    KksCollection c = new KksCollection( em.find(KksCollection.class, Long.parseLong(id)));
+    List<KksEntryClass> entryClasses = getCollectionEntryClasses(c);
+    List<KksEntry> entries = c.getEntries();
+    
+    boolean newFields = false;
+    for (KksEntryClass ec : entryClasses) {
+
+      if (!ec.isMultiValue() && !c.hasEntry(ec) ) {
+        newFields = true;
+        KksEntry e = new KksEntry();
+        e.setCreator(c.getCreator());
+        e.setCustomer(c.getCustomer());
+        e.setEntryClassId(ec.getEntryClassId());
+        e.setKksCollection(c);
+        e.setModified(new Date());
+
+        List<KksValue> values = new ArrayList<KksValue>();
+
+        KksValue value = new KksValue();
+        value.setEntry(e);
+        value.setModified(new Date());
+        value.setModifier(c.getCreator());
+        value.setValue("");
+        values.add(value);
+        e.setValues(values);
+        entries.add(e);
+      }
+    }
+    
+    if (newFields) {
+      c.setEntries(entries);
+      c = em.merge(c);
+      em.flush();
+    }
+    
+    return c;
+    
   }
 
   @Override
@@ -211,19 +247,7 @@ public class KksServiceDAOBean implements KksServiceDAO {
     k.setModifier(creation.getCreator());
     k.setStatus(ACTIVE);
 
-    Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS).setParameter("id",
-        k.getCollectionClass());
-
-    @SuppressWarnings("unchecked")
-    List<KksGroup> tmp = q.getResultList();
-
-    Set<Integer> groups = new HashSet<Integer>();
-
-    for (KksGroup g : tmp) {
-      groups.add(g.getGroupId());
-    }
-
-    List<KksEntryClass> entryClasses = getEntryClassesForGroups(groups);
+    List<KksEntryClass> entryClasses = getCollectionEntryClasses(k);
     List<KksEntry> entrys = new ArrayList<KksEntry>();
     for (KksEntryClass ec : entryClasses) {
 
@@ -253,6 +277,23 @@ public class KksServiceDAOBean implements KksServiceDAO {
 
     em.persist(k);
     return k.getId();
+  }
+
+  private List<KksEntryClass> getCollectionEntryClasses(KksCollection k) {
+    Query q = em.createNamedQuery(KksGroup.NAMED_QUERY_GET_ALL_COLLECTION_CLASS_GROUPS).setParameter("id",
+        k.getCollectionClass());
+
+    @SuppressWarnings("unchecked")
+    List<KksGroup> tmp = q.getResultList();
+
+    Set<Integer> groups = new HashSet<Integer>();
+
+    for (KksGroup g : tmp) {
+      groups.add(g.getGroupId());
+    }
+
+    List<KksEntryClass> entryClasses = getEntryClassesForGroups(groups);
+    return entryClasses;
   }
 
   @Override
