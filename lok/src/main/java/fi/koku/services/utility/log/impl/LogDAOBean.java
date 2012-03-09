@@ -139,21 +139,12 @@ public class LogDAOBean implements LogDAO {
     // All four query parameters are mandatory: starttime, endime,
     // customerpic or userpic,  dataitemtype. These fields are null-checked on the
     // portlet side but let's check them here again
-    if (criteria.getPicType().contentEquals("customerPic")) {
-	    if (criteria.getStartTime() == null || criteria.getEndTime() == null || criteria.getCustomerPic() == null
+	    if (criteria.getStartTime() == null || criteria.getEndTime() == null || (criteria.getCustomerPic() == null &&criteria.getUserPic() == null)
 	        || criteria.getDataItemType() == null) {
 	      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
 	      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
 	      }
-    }
     
-    if (criteria.getPicType().contentEquals("userPic")) {
-	    if (criteria.getStartTime() == null || criteria.getEndTime() == null || criteria.getUserPic() == null
-	        || criteria.getDataItemType() == null) {
-	      LogServiceErrorCode errorCode = LogServiceErrorCode.LOG_ERROR_INVALID_QUERY_CRITERIA;
-	      throw new KoKuFaultException(errorCode.getValue(), errorCode.getDescription());
-	      }
-    }
     
     
     if (LogConstants.LOG_NORMAL.equalsIgnoreCase(criteria.getLogType())) { // tapahtumaloki
@@ -180,12 +171,12 @@ public class LogDAOBean implements LogDAO {
 
     sb.append(" AND ");
 
-    if (criteria.getPicType() != null && criteria.getPicType().contentEquals("customerPic")) {
+    if (criteria.getCustomerPic() != null ) {
     	sb.append("e.customerPic = :pic");    	
     	params.add(new Object[] { "pic", criteria.getCustomerPic() });
     }
     else if
-    	(criteria.getPicType() != null && criteria.getPicType().contentEquals("userPic")) {
+    	(criteria.getUserPic() != null ) {
         	sb.append("e.userPic = :pic");    	
         	params.add(new Object[] { "pic", criteria.getUserPic() });
      }

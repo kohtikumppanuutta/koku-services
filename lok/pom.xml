@@ -10,7 +10,7 @@
   <name>lok-service</name>
 
   <properties>
-    <lokservice-api.version>0.0.191</lokservice-api.version>
+    <lokservice-api.version>0.0.20</lokservice-api.version>
 	<authorizationinfoservice-api.version>0.0.7</authorizationinfoservice-api.version>
   </properties>
 

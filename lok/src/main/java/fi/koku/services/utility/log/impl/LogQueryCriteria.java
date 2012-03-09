@@ -24,16 +24,14 @@ public class LogQueryCriteria {
   private String dataItemType;
   private Date startTime;
   private Date endTime;
-  private String picType;
 
-  public LogQueryCriteria(String logType, String customerPic, String dataItemType, String userPic,  Date startTime, Date endTime, String picType) {
+  public LogQueryCriteria(String logType, String customerPic, String dataItemType, String userPic,  Date startTime, Date endTime ) {
     this.logType = logType;
     this.customerPic = customerPic;    
     this.dataItemType = dataItemType;
     this.userPic = userPic;
     this.startTime = startTime;
     this.endTime = endTime;
-    this.picType = picType;
   }
 
   public String getLogType() {
@@ -84,12 +82,5 @@ public class LogQueryCriteria {
     this.endTime = endTime;
   }
   
-  public String getPicType() {
-	    return picType;
-	  }
 
-  public void setPicType(String picType) {
-	    this.picType = picType;
-	  }
-  
 }
