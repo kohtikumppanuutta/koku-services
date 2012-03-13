@@ -133,8 +133,6 @@ public class LogDAOBean implements LogDAO {
     List<Object[]> params = new ArrayList<Object[]>();
 
     String entity = "";
-
-    // TODO: KOKU-1187
     
     // All four query parameters are mandatory: starttime, endime,
     // customerpic or userpic,  dataitemtype. These fields are null-checked on the
@@ -181,6 +179,11 @@ public class LogDAOBean implements LogDAO {
         	params.add(new Object[] { "pic", criteria.getUserPic() });
      }
 
+    // we can have concept with no value, this equals get all concepts
+    if (criteria.getDataItemType() == null || criteria.getDataItemType().isEmpty()) {
+    	criteria.setDataItemType("*");
+    }
+    
     if (criteria.getDataItemType() != null && !criteria.getDataItemType().isEmpty()) {
       sb.append(" AND ");
       String concept = criteria.getDataItemType();
