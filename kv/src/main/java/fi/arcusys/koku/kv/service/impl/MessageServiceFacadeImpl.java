@@ -791,7 +791,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade, KokuSyste
         doDeliverMessage(SYSTEM_USER_NAME_FOR_NOTIFICATIONS, Collections.singletonList(sentRequest.getFromUser().getUid()),
                 getValueFromBundle(REQUEST_REPLIED_SUBJECT), 
                 MessageFormat.format(getValueFromBundle(REQUEST_REPLIED_BODY), 
-                        new Object[] {sentRequest.getSubject(), replier.getCitizenPortalName()}));
+                        new Object[] {sentRequest.getSubject(), getUserInfo(replier).getDisplayName()}));
         
         return newResponse.getId();
 	}
