@@ -3,6 +3,7 @@ package fi.arcusys.koku.common.service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -32,6 +33,7 @@ public class CalendarUtil {
 		return getXmlCalendar(date, new SetDateOnlyCalendar() {
 			@Override
 			void setCalendar(Calendar calendar) {
+			    calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
 				super.setCalendar(calendar);
 				calendar.set(Calendar.MINUTE, minutes);
 			}

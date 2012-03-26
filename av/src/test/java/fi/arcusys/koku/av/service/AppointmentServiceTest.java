@@ -14,9 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -177,6 +179,30 @@ public class AppointmentServiceTest {
         }
 	}
 
+    @Test
+    public void testTimeOffset() {
+        final AppointmentForEditTO newAppointment = createTestAppointment("new appointment", "appointment description", 1);
+        final XMLGregorianCalendar startTime = newAppointment.getSlots().get(0).getStartTime();
+        
+        assertEquals(10, startTime.getHour());
+        assertEquals(0, startTime.getMinute());
+
+        final AppointmentReceipientTO appointmentReceipient = newAppointment.getReceipients().get(0);
+        final String receipient = appointmentReceipient.getReceipients().get(0);
+        final String targetPerson = appointmentReceipient.getTargetPerson();
+        final Long appointmentId = serviceFacade.storeAppointment(newAppointment);
+        
+        List<AppointmentWithTarget> appointments = serviceFacade.getAssignedAppointments(receipient);
+        assertNotNull(getById(appointments, appointmentId));
+
+        final AppointmentForReplyTO forReply = serviceFacade.getAppointmentForReply(appointmentId, targetPerson);
+        final XMLGregorianCalendar forReplyStartTime = forReply.getSlots().get(0).getStartTime();
+        
+        assertEquals(startTime.getHour(), forReplyStartTime.getHour());
+        assertEquals(startTime.getMinute(), forReplyStartTime.getMinute());
+        assertEquals("timezone offset", 0, forReplyStartTime.getTimezone());
+    }
+    
 	private <AS extends AppointmentSummary> AS getById(final List<AS> appointments, final Long appointmentId) {
 		for (final AS appointment : appointments) {
 			if (appointment.getAppointmentId() == appointmentId) {
