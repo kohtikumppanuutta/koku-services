@@ -125,8 +125,9 @@ public class ConsentServiceTest {
         // first parent's update
         final List<ConsentSummary> ownConsents = service.getOwnConsents(parentForApprove, 1, 10);
         assertNotNull(getById(consentId, ownConsents));
-        final XMLGregorianCalendar newDate = CalendarUtil.getXmlDate(new Date());
-        newDate.setYear(newDate.getYear() + 1);
+        final XMLGregorianCalendar currentDate = CalendarUtil.getXmlDate(new Date());
+        currentDate.setYear(currentDate.getYear() + 1);
+        final XMLGregorianCalendar newDate = CalendarUtil.getXmlDate(currentDate.toGregorianCalendar().getTime());
         service.updateConsent(consentId, parentForApprove, newDate, "extended consent");
         assertEquals(newDate, getById(consentId, service.getOwnConsents(parentForApprove, 1, 10)).getValidTill());
         final ConsentTO replied = service.getConsentById(consentId, parentForApprove);

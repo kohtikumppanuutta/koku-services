@@ -100,10 +100,11 @@ public class AuthorizationServiceTest {
         final Long authorizationId = createNewAuthorization(senderUid, receiverUid, targetPersonUid);
         
         final AuthorizationDetailTO authorizationTO = serviceFacade.getAuthorization(authorizationId, senderUid);
-        final XMLGregorianCalendar validTill = authorizationTO.getValidTill();
-        assertNotNull(validTill);
+        final XMLGregorianCalendar oldValidTill = authorizationTO.getValidTill();
+        assertNotNull(oldValidTill);
         
-        validTill.setYear(validTill.getYear() + 1);
+        oldValidTill.setYear(oldValidTill.getYear() + 1);
+        final XMLGregorianCalendar validTill = CalendarUtil.getXmlDate(oldValidTill.toGregorianCalendar().getTime()); 
         
         serviceFacade.updateAuthorization(authorizationId, senderUid, validTill, "valid for one year");
         assertEquals(validTill, serviceFacade.getAuthorization(authorizationId, senderUid).getValidTill());
