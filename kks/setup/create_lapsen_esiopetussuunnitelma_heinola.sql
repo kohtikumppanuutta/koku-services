@@ -7,11 +7,11 @@ insert into kks_collection_class (
 ) VALUES (
 	130
   ,'kks.kehitysasialaji.lapsen_esiopetussuunnitelma.heinola'   -- type_code
-  ,'Lapsen esiopetussuunnitelma (Heinola)'  -- name
+  ,'Lapsen esiopetussuunnitelma'  -- name
   ,'Esiopetus on leikin ja toiminnan avulla tapahtuvaa tavoitteellista toimintaa.<br/> 
-	Esiopetussuunnitelman tekeminen on osa perheen ja esiopetuksen v√§list√§ kasvatuskumppanuutta. Kasvatuskumppanuus l√§htee lapsen tarpeista ja siin√§ yhdistyv√§t lapselle kahden t√§rke√§n tahon, vanhempien ja varhaiskasvatuksen kasvattajien tiedot ja kokemukset.<br/>
-Esiopetussuunnitelma tehd√§√§n yhteisty√∂ss√§ perheen ja esiopetuksesta vastaavan aikuisen kanssa. T√§m√§n avulla sovitaan yhteisty√∂ss√§ perheen kanssa lapsen kasvatustavoitteista ja seurataan lapsen kehityst√§ esiopetusvuoden aikana. L√§ht√∂kohtana on, ett√§ suunnitelmat ovat aktiivisessa k√§yt√∂ss√§ ja niiden sis√§lt√∂ on sek√§ vanhempien ett√§ koko esiopetushenkil√∂st√∂n tiedossa ja arvioitavissa.<br/>
-Teemme esiopetuksessa moniammatillista yhteisty√∂t√§ taataksemme laadukkaan esiopetuksen. Yhteisty√∂kumppaneita ovat mm. neuvola, koulu, psykologit ja terapeutit. Ensisijainen yhteisty√∂kumppani on kuitenkin aina lapsen oma perhe. Esiin tulevat asiat ovat luottamuksellisia ja tietoja voidaan antaa ulkopuolisille vain vanhempien luvalla ja heid√§n kanssa keskustellen.<br/>Esiopetussuunnitelman koontisivu l√§hetet√§√§n vanhempien suostumuksella lapsen tulevaan kouluun.<br/>
+	Esiopetussuunnitelman tekeminen on osa perheen ja esiopetuksen v‰list‰ kasvatuskumppanuutta. Kasvatuskumppanuus l‰htee lapsen tarpeista ja siin‰ yhdistyv‰t lapselle kahden t‰rke‰n tahon, vanhempien ja varhaiskasvatuksen kasvattajien tiedot ja kokemukset.<br/>
+Esiopetussuunnitelma tehd‰‰n yhteistyˆss‰ perheen ja esiopetuksesta vastaavan aikuisen kanssa. T‰m‰n avulla sovitaan yhteistyˆss‰ perheen kanssa lapsen kasvatustavoitteista ja seurataan lapsen kehityst‰ esiopetusvuoden aikana. L‰htˆkohtana on, ett‰ suunnitelmat ovat aktiivisessa k‰ytˆss‰ ja niiden sis‰ltˆ on sek‰ vanhempien ett‰ koko esiopetushenkilˆstˆn tiedossa ja arvioitavissa.<br/>
+Teemme esiopetuksessa moniammatillista yhteistyˆt‰ taataksemme laadukkaan esiopetuksen. Yhteistyˆkumppaneita ovat mm. neuvola, koulu, psykologit ja terapeutit. Ensisijainen yhteistyˆkumppani on kuitenkin aina lapsen oma perhe. Esiin tulevat asiat ovat luottamuksellisia ja tietoja voidaan antaa ulkopuolisille vain vanhempien luvalla ja heid‰n kanssa keskustellen.<br/>Esiopetussuunnitelman koontisivu l‰hetet‰‰n vanhempien suostumuksella lapsen tulevaan kouluun.<br/>
 '  -- description
   ,''  -- concent_type
 );
@@ -65,16 +65,16 @@ insert into kks_group (
 ) VALUES (
    902   -- group_id
   ,1   -- sort_order
-  ,'P√§ivitt√§istoiminnot'  -- name
+  ,'P‰ivitt‰istoiminnot'  -- name
   ,'Esimerkiksi:<br/>
   <ul>
 	<li>Ruokailu</li>
 	<li>Omista tavaroista huolehtiminen</li> 
 	<li>Pukeutuminen ja riisuminen</li>
-	<li>Wc-k√§ytt√§ytyminen, omasta hygieniasta huolehtiminen</li> 
-	<li>P√§iv√§lepo</li>
-	<li>P√§iv√§rytmin omaksuminen</li>
-	<li>Miten toiminnot sujuvat, mit√§ huomioitavaa, omatoimisuus toiminnoissa</li>
+	<li>Wc-k‰ytt‰ytyminen, omasta hygieniasta huolehtiminen</li> 
+	<li>P‰iv‰lepo</li>
+	<li>P‰iv‰rytmin omaksuminen</li>
+	<li>Miten toiminnot sujuvat, mit‰ huomioitavaa, omatoimisuus toiminnoissa</li>
   </ul>'  -- description
   ,'daycareregistry'  -- register
   ,'guardian' -- accountable
@@ -98,15 +98,15 @@ insert into kks_group (
   ,'Esimerkiksi:<br/>
   <ul>
 	<li>Suhtautuu aikuisiin luottavaisesti</li>
-	<li>Tunteiden nime√§minen ja niiden ilmaisun kontrolloiminen sek√§ pettymysten siet√§minen</li>
-	<li>Ratkaisee erimielisyyksi√§ my√∂nteisin keinoin</li>
-	<li>Vuoron odottaminen, s√§√§nt√∂jen noudattaminen</li>
-	<li>Vuorottelee v√§lineiden k√§yt√∂ss√§</li>
-	<li>Itsens√§ arvostaminen</li>
-	<li>Hyv√§t tavat</li>
-	<li>Yhdess√§ leikkimisen taidot; valmius neuvotella ja tehd√§ kompromisseja sek√§ solmia yst√§vyyssuhteita</li>
-	<li>Leikin sis√§lt√∂ ja kesto/pitk√§j√§nteisyys, leikkiv√§lineet</li>
-	<li>Roolit leikiss√§ ja mielikuvitus</li>
+	<li>Tunteiden nime‰minen ja niiden ilmaisun kontrolloiminen sek‰ pettymysten siet‰minen</li>
+	<li>Ratkaisee erimielisyyksi‰ myˆnteisin keinoin</li>
+	<li>Vuoron odottaminen, s‰‰ntˆjen noudattaminen</li>
+	<li>Vuorottelee v‰lineiden k‰ytˆss‰</li>
+	<li>Itsens‰ arvostaminen</li>
+	<li>Hyv‰t tavat</li>
+	<li>Yhdess‰ leikkimisen taidot; valmius neuvotella ja tehd‰ kompromisseja sek‰ solmia yst‰vyyssuhteita</li>
+	<li>Leikin sis‰ltˆ ja kesto/pitk‰j‰nteisyys, leikkiv‰lineet</li>
+	<li>Roolit leikiss‰ ja mielikuvitus</li>
   </ul>'  -- description
   ,'daycareregistry'  -- register
   ,'guardian' -- accountable
@@ -126,13 +126,13 @@ insert into kks_group (
 ) VALUES (
    904   -- group_id
   ,3   -- sort_order
-  ,'Ty√∂skentelytaidot'  -- name
+  ,'Tyˆskentelytaidot'  -- name
   ,'Esimerkiksi:<br/>
   <ul>
-	<li>Osallistuminen, yritt√§minen ja suhtautuminen uusiin tilanteisiin ja asioihin</li>
-	<li>Lapsen k√§ytt√§ytyminen oppimistilanteissa (sek√§ yksil√∂- ett√§ ryhm√§tilanteissa; ohjeiden vastaanottaminen, toimiminen niiden mukaan ja teht√§vien loppuun suorittaminen) sek√§ vapaassa ryhm√§tilanteessa (noudattaa s√§√§nt√∂j√§ peleiss√§ ja leikeiss√§)</li>
-	<li>Tarkkaavaisuus (yll√§pit√§minen, siirt√§minen, oman toiminnan ohjaaminen)</li>
-	<li>Pystyy itsen√§iseen ty√∂skentelyyn</li>
+	<li>Osallistuminen, yritt‰minen ja suhtautuminen uusiin tilanteisiin ja asioihin</li>
+	<li>Lapsen k‰ytt‰ytyminen oppimistilanteissa (sek‰ yksilˆ- ett‰ ryhm‰tilanteissa; ohjeiden vastaanottaminen, toimiminen niiden mukaan ja teht‰vien loppuun suorittaminen) sek‰ vapaassa ryhm‰tilanteessa (noudattaa s‰‰ntˆj‰ peleiss‰ ja leikeiss‰)</li>
+	<li>Tarkkaavaisuus (yll‰pit‰minen, siirt‰minen, oman toiminnan ohjaaminen)</li>
+	<li>Pystyy itsen‰iseen tyˆskentelyyn</li>
   </ul>'  -- description
   ,'daycareregistry'  -- register
   ,'guardian' -- accountable
@@ -155,9 +155,9 @@ insert into kks_group (
   ,'Kielelliset valmiudet'  -- name
   ,'Esimerkiksi:<br/>
   <ul>
-	<li>Kielen/puheen tuottaminen; kertoo ja kuvailee, puheen sujuvuus ja selkeys, sana- ja k√§sitevarasto ja kielen rakenteet, vertailee asioita</li>
-	<li>Kielen/puheen ymm√§rt√§minen; kuunteleminen ja kuullun ymm√§rt√§minen sek√§ muistaminen, ajan ja paikan k√§sitteet, p√§√§ttely</li>
-	<li>Kiinnostus lukemisen ja kirjoittamisen oppimiseen (esim. tutustuminen kirjaimiin ja alku√§√§nteisiin, rytmi, riimit, oman nimen kirjoittaminen)</li>
+	<li>Kielen/puheen tuottaminen; kertoo ja kuvailee, puheen sujuvuus ja selkeys, sana- ja k‰sitevarasto ja kielen rakenteet, vertailee asioita</li>
+	<li>Kielen/puheen ymm‰rt‰minen; kuunteleminen ja kuullun ymm‰rt‰minen sek‰ muistaminen, ajan ja paikan k‰sitteet, p‰‰ttely</li>
+	<li>Kiinnostus lukemisen ja kirjoittamisen oppimiseen (esim. tutustuminen kirjaimiin ja alku‰‰nteisiin, rytmi, riimit, oman nimen kirjoittaminen)</li>
 	<li>Vuorovaikutus</li>
   </ul>'  -- description
   ,'daycareregistry'  -- register
@@ -178,13 +178,13 @@ insert into kks_group (
 ) VALUES (
    906   -- group_id
   ,5   -- sort_order
-  ,'Matemaattiset valmiudet, looginen ajattelu ja p√§√§ttely'  -- name
+  ,'Matemaattiset valmiudet, looginen ajattelu ja p‰‰ttely'  -- name
   ,'Esimerkiksi:<br/>
   <ul>
-	<li>Tutustuminen matemaattisiin k√§sitteisiin (esim.yht√§ suuri, enemm√§n, keskimm√§inen)</li>
-	<li>Luettelee ja tunnistaa luvut 1-10 sek√§ ymm√§rt√§√§ kuva-numerovastaavuuden</li>
-	<li>Ajan, paikan ja tilan hahmottaminen (esim.viikonp√§iv√§t)</li>
-	<li>Matemaattisen ajattelun ja ongelmanratkaisukyvyn kehitt√§minen</li>
+	<li>Tutustuminen matemaattisiin k‰sitteisiin (esim.yht‰ suuri, enemm‰n, keskimm‰inen)</li>
+	<li>Luettelee ja tunnistaa luvut 1-10 sek‰ ymm‰rt‰‰ kuva-numerovastaavuuden</li>
+	<li>Ajan, paikan ja tilan hahmottaminen (esim.viikonp‰iv‰t)</li>
+	<li>Matemaattisen ajattelun ja ongelmanratkaisukyvyn kehitt‰minen</li>
   </ul>'  -- description
   ,'daycareregistry'  -- register
   ,'guardian' -- accountable
@@ -208,11 +208,11 @@ insert into kks_group (
   ,'Esimerkiksi:<br/>
   <ul>
 	<li>Lapsen ja perheen suhtautuminen liikuntaan</li>
-	<li>Oman kehonhallinta ja kehonosien nime√§minen ja tunnistaminen</li>
-	<li>Perusliikuntataidot (esim. k√§vely, juoksu, hiihto, luistelu, py√∂r√§ily, uinti)</li> 
-	<li>Erilaisten ty√∂skentelyv√§lineiden hallinta (esim. liikuntav√§lineet, sakset, kyn√§, napit, nauhat, helmet, ruokailuv√§lineet)</li> 
+	<li>Oman kehonhallinta ja kehonosien nime‰minen ja tunnistaminen</li>
+	<li>Perusliikuntataidot (esim. k‰vely, juoksu, hiihto, luistelu, pyˆr‰ily, uinti)</li> 
+	<li>Erilaisten tyˆskentelyv‰lineiden hallinta (esim. liikuntav‰lineet, sakset, kyn‰, napit, nauhat, helmet, ruokailuv‰lineet)</li> 
 	<li>Tilan hallinta ja hahmottaminen (esim. liikkuminen tilassa, rakentelu, palapelit, labyrintit)</li>
-	<li>Vakiintunut k√§tisyys (oikea tai vasen)</li>
+	<li>Vakiintunut k‰tisyys (oikea tai vasen)</li>
   </ul>'  -- description
   ,'daycareregistry'  -- register
   ,'guardian' -- accountable
@@ -234,7 +234,7 @@ insert into kks_group (
 ) VALUES (
    908   -- group_id
   ,1   -- sort_order
-  ,'P√§ivitt√§istoiminnot'  -- name
+  ,'P‰ivitt‰istoiminnot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'employee' -- accountable
@@ -274,7 +274,7 @@ insert into kks_group (
 ) VALUES (
    910   -- group_id
   ,3   -- sort_order
-  ,'Ty√∂skentelytaidot'  -- name
+  ,'Tyˆskentelytaidot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'employee' -- accountable
@@ -314,7 +314,7 @@ insert into kks_group (
 ) VALUES (
    912   -- group_id
   ,5   -- sort_order
-  ,'Matemaattiset valmiudet, looginen ajattelu ja p√§√§ttely'  -- name
+  ,'Matemaattiset valmiudet, looginen ajattelu ja p‰‰ttely'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'employee' -- accountable
@@ -342,7 +342,7 @@ insert into kks_group (
   ,130
 );
 
--- Kent√§t
+-- Kent‰t
 
 insert into kks_entry_class (
    entry_class_id
@@ -356,7 +356,7 @@ insert into kks_entry_class (
 ) VALUES (
    1250   -- entry_class_id
   ,1   -- sort_order
-  ,'Mitk√§ t√§m√§n osa-alueen asiat ovat mielest√§si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
+  ,'Mitk‰ t‰m‰n osa-alueen asiat ovat mielest‰si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -376,7 +376,7 @@ insert into kks_entry_class (
 ) VALUES (
    1251   -- entry_class_id
   ,1   -- sort_order
-  ,'Mitk√§ t√§m√§n osa-alueen asiat ovat mielest√§si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
+  ,'Mitk‰ t‰m‰n osa-alueen asiat ovat mielest‰si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -396,7 +396,7 @@ insert into kks_entry_class (
 ) VALUES (
    1252   -- entry_class_id
   ,1   -- sort_order
-  ,'Mitk√§ t√§m√§n osa-alueen asiat ovat mielest√§si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
+  ,'Mitk‰ t‰m‰n osa-alueen asiat ovat mielest‰si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -416,7 +416,7 @@ insert into kks_entry_class (
 ) VALUES (
    1253   -- entry_class_id
   ,1   -- sort_order
-  ,'Mitk√§ t√§m√§n osa-alueen asiat ovat mielest√§si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
+  ,'Mitk‰ t‰m‰n osa-alueen asiat ovat mielest‰si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -436,7 +436,7 @@ insert into kks_entry_class (
 ) VALUES (
    1254   -- entry_class_id
   ,1   -- sort_order
-  ,'Mitk√§ t√§m√§n osa-alueen asiat ovat mielest√§si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
+  ,'Mitk‰ t‰m‰n osa-alueen asiat ovat mielest‰si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -456,7 +456,7 @@ insert into kks_entry_class (
 ) VALUES (
    1255   -- entry_class_id
   ,1   -- sort_order
-  ,'Mitk√§ t√§m√§n osa-alueen asiat ovat mielest√§si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
+  ,'Mitk‰ t‰m‰n osa-alueen asiat ovat mielest‰si oleellisia eskarivuonna sinun lapsesi kannalta?'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type

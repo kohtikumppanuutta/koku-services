@@ -7,7 +7,7 @@ insert into kks_collection_class (
 ) VALUES (
 	140
   ,'kks.kehitysasialaji.lapsen_esiopetussuunnitelma.tavoitteiden.koonti.heinola'   -- type_code
-  ,'Lapsen esiopetussuunnitelman, tavoitteiden koonti (Heinola)'  -- name
+  ,'Lapsen esiopetussuunnitelman, tavoitteiden koonti'  -- name
   ,''  -- description
   ,''  -- concent_type
 );
@@ -81,7 +81,7 @@ insert into kks_group (
 ) VALUES (
    952   -- group_id
   ,1   -- sort_order
-  ,'P√§ivitt√§istoiminnot'  -- name
+  ,'P‰ivitt‰istoiminnot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'guardian' -- accountable
@@ -121,7 +121,7 @@ insert into kks_group (
 ) VALUES (
    954   -- group_id
   ,3   -- sort_order
-  ,'Ty√∂skentelytaidot'  -- name
+  ,'Tyˆskentelytaidot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'guardian' -- accountable
@@ -161,7 +161,7 @@ insert into kks_group (
 ) VALUES (
    956   -- group_id
   ,5   -- sort_order
-  ,'Matemaattiset valmiudet, looginen ajattelu ja p√§√§ttely'  -- name
+  ,'Matemaattiset valmiudet, looginen ajattelu ja p‰‰ttely'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'guardian' -- accountable
@@ -203,7 +203,7 @@ insert into kks_group (
 ) VALUES (
    958   -- group_id
   ,1   -- sort_order
-  ,'P√§ivitt√§istoiminnot'  -- name
+  ,'P‰ivitt‰istoiminnot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'employee' -- accountable
@@ -243,7 +243,7 @@ insert into kks_group (
 ) VALUES (
    960   -- group_id
   ,3   -- sort_order
-  ,'Ty√∂skentelytaidot'  -- name
+  ,'Tyˆskentelytaidot'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'employee' -- accountable
@@ -283,7 +283,7 @@ insert into kks_group (
 ) VALUES (
    962   -- group_id
   ,5   -- sort_order
-  ,'Matemaattiset valmiudet, looginen ajattelu ja p√§√§ttely'  -- name
+  ,'Matemaattiset valmiudet, looginen ajattelu ja p‰‰ttely'  -- name
   ,''  -- description
   ,'daycareregistry'  -- register
   ,'employee' -- accountable
@@ -331,7 +331,7 @@ insert into kks_group (
   ,140
 );
 
--- Kent√§t
+-- Kent‰t
 
 insert into kks_entry_class (
    entry_class_id
@@ -587,7 +587,7 @@ insert into kks_entry_class (
 ) VALUES (
    1333  -- entry_class_id
   ,2   -- sort_order
-  ,'P√§iv√§koti/esiopetusryhm√§:'  -- name
+  ,'P‰iv‰koti/esiopetusryhm‰:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -974,7 +974,7 @@ insert into kks_entry_class (
 ) VALUES (
    1330  -- entry_class_id
   ,2   -- sort_order
-  ,'Esiopetusvuoden tavoitteet, menetelm√§t ja keinot:'  -- name
+  ,'Esiopetusvuoden tavoitteet, menetelm‰t ja keinot:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'FREE_TEXT'  -- data_type
@@ -1014,11 +1014,11 @@ insert into kks_entry_class (
 ) VALUES (
    1332  -- entry_class_id
   ,2   -- sort_order
-  ,'Tiedot saa siirt√§√§ tulevaan kouluun:'  -- name
+  ,'Tiedot saa siirt‰‰ tulevaan kouluun:'  -- name
   ,''  -- description
   ,0   -- multi_value
   ,'SELECT'  -- data_type
-  ,'kyll√§,ei'  -- value_spaces
+  ,'kyll‰,ei'  -- value_spaces
   ,964 -- entry_group
 );
 

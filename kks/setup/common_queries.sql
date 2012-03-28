@@ -26,3 +26,10 @@ select count(id) from kks_collection where created >= '2011-11-25' and creator =
 select count(id) from kks_collection where created >= '2011-11-25' and collection_class_id = 1 and creator = '300846-920B'
 
 select count(id) from log where log.timestamp >= '2011-12-12' and log.data_item_type = 'kks.kehitysasialaji.4-vuotiaan.neuvolatarkastus' and operation = 'read'
+
+
+--DELETE METADATA
+delete from kks_entry_class_tags;
+delete from kks_entry_class;
+delete from kks_group;
+delete from kks_collection_class;
