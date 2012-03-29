@@ -23,7 +23,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "phone_number")
 public class PhoneNumber {
-	bamboo build test
   
   @Id
   @GeneratedValue
