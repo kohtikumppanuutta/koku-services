@@ -25,7 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 /**
- * Community entity.
+ * Community entity. Git test
  * 
  * @author Ixonos / aspluma
  */
