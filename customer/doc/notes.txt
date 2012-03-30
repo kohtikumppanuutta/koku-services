@@ -1,4 +1,6 @@
 
+# note for testing git branching
+
 TODO
 - input validation
 - faults in contract
