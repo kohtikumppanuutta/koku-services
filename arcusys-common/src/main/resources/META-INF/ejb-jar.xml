@@ -199,12 +199,12 @@
                 </injection-target>
             </env-entry>
             <env-entry>
-                <env-entry-name>kunpoUserBaseDn</env-entry-name>
+                <env-entry-name>userBaseDn</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>ou=People,o=koku,dc=example,dc=org</env-entry-value>
                 <injection-target>
                     <injection-target-class>fi.arcusys.koku.common.external.LdapDAOImpl</injection-target-class>
-                    <injection-target-name>kunpoUserBaseDn</injection-target-name>
+                    <injection-target-name>userBaseDn</injection-target-name>
                 </injection-target>
             </env-entry>
 

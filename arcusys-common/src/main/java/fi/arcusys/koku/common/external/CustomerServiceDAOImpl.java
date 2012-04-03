@@ -1,5 +1,7 @@
 package fi.arcusys.koku.common.external;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,11 +17,15 @@ import org.slf4j.LoggerFactory;
 import fi.arcusys.koku.common.service.UserDAO;
 import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.soa.UserInfo;
+import fi.koku.services.common.kahva.LdapServiceFactory;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
 import fi.koku.services.entity.customer.v1.CustomerServicePortType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.customer.v1.ServiceFault;
+import fi.koku.services.entity.person.v1.Person;
+import fi.koku.services.entity.person.v1.PersonConstants;
+import fi.koku.services.entity.person.v1.PersonService;
 
 /**
  * DAO implementation for accessing external CustomerService.
@@ -46,6 +52,8 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     private String customerServiceUserUid;
     private String customerServiceUserPwd;
     private String customerServiceEndpoint;
+    
+    private PersonService personService;
 
     @PostConstruct
     public void init() {
@@ -63,6 +71,11 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         } catch(Exception re) {
             logger.error(null, re);
         } 
+        try {
+            personService = new PersonService();
+        } catch(Exception re) {
+            logger.error(null, re);
+        } 
     }
 
     /**
@@ -76,7 +89,7 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         }
         
         if (user.getEmployeePortalName() != null && !user.getEmployeePortalName().trim().isEmpty()) {
-            return getEmployeeUserInfo(user);
+            return getEmployeeUserInfo(user, getSsnByLooraName(user.getEmployeePortalName()));
         } else {
             return getUserInfoByUidAndSsn(user, getSsnByKunpoName(user.getCitizenPortalName()));
         }
@@ -195,22 +208,32 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
         if (ldapNameBySsn == null || ldapNameBySsn.isEmpty()) {
             return null;
         }
-        return getEmployeeUserInfo(userDao.getOrCreateUserByEmployeePortalName(ldapNameBySsn));
+        return getEmployeeUserInfo(userDao.getOrCreateUserByEmployeePortalName(ldapNameBySsn), ssn);
     }
 
-    private UserInfo getEmployeeUserInfo(
-            final fi.arcusys.koku.common.service.datamodel.User employee) {
+    private UserInfo getEmployeeUserInfo(final fi.arcusys.koku.common.service.datamodel.User employee, final String ssn) {
         final UserInfo user = new UserInfo();
-        user.setDisplayName(employee.getEmployeePortalName());
-        user.setUid(employee.getUid());
-        final Pattern username = Pattern.compile("(\\w+)\\.(\\w+)");
-        final Matcher matcher = username.matcher(employee.getEmployeePortalName());
-        if (matcher.matches()) {
-            user.setFirstname(matcher.group(1));
-            user.setLastname(matcher.group(2));
-        } else {
-            user.setFirstname(employee.getEmployeePortalName());
+        String firstName = employee.getEmployeePortalName();
+        String lastName = employee.getEmployeePortalName();
+        try {
+            List<Person> personlist = personService.getPersonsByPics(Collections.singletonList(ssn), 
+                    PersonConstants.PERSON_SERVICE_DOMAIN_OFFICER, ssn, "tiva");
+            if (personlist != null && !personlist.isEmpty()) {
+                final Person person = personlist.get(0);
+                if (person.getFname() != null && !person.getFname().isEmpty()) {
+                    firstName = person.getFname();
+                }
+                if (person.getSname() != null && !person.getSname().isEmpty()) {
+                    lastName = person.getSname();
+                }
+            }
+        } catch (Exception e) {
+            logger.error(null, e);
         }
+        user.setDisplayName(firstName + " " + lastName);
+        user.setUid(employee.getUid());
+        user.setFirstname(firstName);
+        user.setLastname(lastName);
         return user;
     }
     
@@ -262,7 +285,42 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
      */
     @Override
     public UserInfo getEmployeeUserInfoByPortalNameAndSsn(final String looraUsername, final String ssn) {
-        // TODO Auto-generated method stub
-        return null;
+        if (looraUsername == null || looraUsername.trim().isEmpty()) {
+            throw new IllegalArgumentException("Get of Loora user info failed: Loora username is empty: '" + looraUsername + "'");
+        }
+        if (ssn == null || ssn.trim().isEmpty()) {
+            throw new IllegalArgumentException("Get of Loora user info failed: Loora user ssn is empty: '" + ssn + "'");
+        }
+        
+        final String ldapNameBySsn = ldapDao.getLooraNameBySsn(ssn);
+        if (ldapNameBySsn == null || ldapNameBySsn.isEmpty()) {
+            // create new user in ldap/DB
+            String firstName = looraUsername;
+            String lastName = ssn;
+            try {
+                List<Person> personlist = personService.getPersonsByPics(Collections.singletonList(ssn), 
+                        PersonConstants.PERSON_SERVICE_DOMAIN_OFFICER, ssn, "tiva");
+                if (personlist != null && !personlist.isEmpty()) {
+                    final Person person = personlist.get(0);
+                    if (person.getFname() != null && !person.getFname().isEmpty()) {
+                        firstName = person.getFname();
+                    }
+                    if (person.getSname() != null && !person.getSname().isEmpty()) {
+                        lastName = person.getSname();
+                    }
+                }
+            } catch (Exception e) {
+                logger.error(null, e);
+            }
+            ldapDao.createLooraUserInLdap(looraUsername, ssn, firstName, lastName);
+        } else if (!looraUsername.equals(ldapNameBySsn)) {
+            // update username in ldap/db
+            final fi.arcusys.koku.common.service.datamodel.User userForUpdate = userDao.getOrCreateUserByEmployeePortalName(ldapNameBySsn);
+            userForUpdate.setEmployeePortalName(looraUsername);
+            userDao.update(userForUpdate);
+            ldapDao.updateLooraLdapName(ldapNameBySsn, looraUsername);
+        }
+
+        return getEmployeeUserInfo(userDao.getOrCreateUserByEmployeePortalName(looraUsername), ssn);
     }
 }

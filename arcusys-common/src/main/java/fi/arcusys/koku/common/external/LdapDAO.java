@@ -37,6 +37,8 @@ public interface LdapDAO {
      */
     void createKunpoUserInLdap(final String kunpoUsername, final String ssn, final String firstName, final String lastName);
 
+    void createLooraUserInLdap(final String looraUsername, final String ssn, final String firstName, final String lastName);
+
     /**
      * @param ssn
      * @return
@@ -49,6 +51,8 @@ public interface LdapDAO {
      * @param kunpoUsername
      */
     void updateKunpoLdapName(String ldapNameBySsn, String kunpoUsername);
+
+    void updateLooraLdapName(String ldapNameBySsn, String looraUsername);
 
     /**
      * @param searchString
