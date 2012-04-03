@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.arcusys.koku.common.soa.Role;
+import fi.koku.services.entity.customer.v1.CustomerServiceFactory;
 
 /**
  * DAO implementation for general access to LDAP, where users/groups/roles
@@ -45,13 +47,34 @@ public class LdapDAOImpl implements LdapDAO {
     private String usernameAttributeName;
     private String userSearchFilter;
 
-    private String kunpoUserBaseDn;
+    private String userBaseDn;
     private String citizensGroupUid;
     private String employeesGroupUid;
 
     private String groupsSearchFilter;
     private String groupNameAttribute;
     private String groupUidAttribute;
+    
+    private boolean allowKunpoUserModificaiton = true;
+    private boolean allowLooraUserModificaiton = false;
+
+    @PostConstruct
+    public void init() {
+        try {
+            final InitialContext ctx = new InitialContext();
+            allowKunpoUserModificaiton = Boolean.parseBoolean((String) ctx.lookup("koku/arcusys-common/allow-kunpo-user-modificaiton"));
+            logger.debug("Overwrite allowKunpoUserModificaiton with " + allowKunpoUserModificaiton);
+        } catch (NamingException e) {
+            logger.error(e.toString());
+        }
+        try {
+            final InitialContext ctx = new InitialContext();
+            allowLooraUserModificaiton = Boolean.parseBoolean((String) ctx.lookup("koku/arcusys-common/allow-loora-user-modificaiton"));
+            logger.debug("Overwrite allowLooraUserModificaiton with " + allowLooraUserModificaiton);
+        } catch (NamingException e) {
+            logger.error(e.toString());
+        }
+    }
 
     /**
      * @param employeePortalName
@@ -221,6 +244,12 @@ public class LdapDAOImpl implements LdapDAO {
 
     @Override
     public void createKunpoUserInLdap(final String kunpoUsername, final String ssn, final String firstName, final String lastName) {
+        if (allowKunpoUserModificaiton) {
+            createUserInLdap(kunpoUsername, ssn, firstName, lastName, citizensGroupUid);
+        }
+    }
+
+    private void createUserInLdap(final String ldapUsername, final String ssn, final String firstName, final String lastName, final String systemGroup) {
         try {
             Attributes personAttributes = new BasicAttributes();
             BasicAttribute personBasicAttribute = new BasicAttribute("objectclass");
@@ -229,13 +258,13 @@ public class LdapDAOImpl implements LdapDAO {
             personAttributes.put(personBasicAttribute);
 
             personAttributes.put("givenName", firstName);
-            personAttributes.put("cn", kunpoUsername);
+            personAttributes.put("cn", ldapUsername);
             personAttributes.put("sn", lastName);
             personAttributes.put("description", ssn);
             personAttributes.put("uid", ssn);
             personAttributes.put("userPassword", "test");
 
-            final String newContactDN = getUserDn(kunpoUsername);
+            final String newContactDN = getUserDn(ldapUsername);
 
             DirContext dirContext = createUsersDirContext();
             try {
@@ -244,22 +273,28 @@ public class LdapDAOImpl implements LdapDAO {
             } finally {
                 dirContext.close();
             }
-            addUserToSystemGroup(getUserDnWithBase(newContactDN), citizensGroupUid);
+            addUserToSystemGroup(getUserDnWithBase(newContactDN), systemGroup);
         } catch (NamingException e) {
-            logger.error("Failed to create new user in ldap by portal name '" + kunpoUsername + "' and ssn '" + ssn + "'", e);
+            logger.error("Failed to create new user in ldap by portal name '" + ldapUsername + "' and ssn '" + ssn + "'", e);
             throw new RuntimeException(e);
         }
     }
 
-    private String getUserDn(final String kunpoUsername) {
-        return usernameAttributeName + "=" + escapeDN(kunpoUsername);
+    private String getUserDn(final String username) {
+        return usernameAttributeName + "=" + escapeDN(username);
     }
 
     @Override
     public void updateKunpoLdapName(final String oldKunpoName, final String newKunpoName) {
+        if (allowKunpoUserModificaiton) {
+            doUpdateLdapNameAndMembership(oldKunpoName, newKunpoName);
+        }
+    }
+
+    private void doUpdateLdapNameAndMembership(final String oldLdapName, final String newLdapName) {
         try {
-            final String oldName = getUserDn(oldKunpoName);
-            final String newName = getUserDn(newKunpoName);
+            final String oldName = getUserDn(oldLdapName);
+            final String newName = getUserDn(newLdapName);
             final String userOldDn = getUserDnWithBase(oldName);
             final String userNewDn = getUserDnWithBase(newName);
 
@@ -271,13 +306,13 @@ public class LdapDAOImpl implements LdapDAO {
             }
             updateMembership(userOldDn, userNewDn);
         } catch (NamingException e) {
-            logger.error("Failed to update user in ldap: old name '" + oldKunpoName + "', new name '" + newKunpoName + "'", e);
+            logger.error("Failed to update user in ldap: old name '" + oldLdapName + "', new name '" + newLdapName + "'", e);
             throw new RuntimeException(e);
         }
     }
 
     private String getUserDnWithBase(final String oldName) {
-        return oldName + "," + kunpoUserBaseDn;
+        return oldName + "," + userBaseDn;
     }
 
     private DirContext createUsersDirContext() throws NamingException {
@@ -568,5 +603,29 @@ public class LdapDAOImpl implements LdapDAO {
     @Override
     public List<String> getRoleMembers(String groupUid) {
         return doGetGroupMembers(escapeLDAPSearchFilter(groupUid), GroupType.Roles);
+    }
+
+    /**
+     * @param kunpoUsername
+     * @param ssn
+     * @param firstName
+     * @param lastName
+     */
+    @Override
+    public void createLooraUserInLdap(String looraUsername, String ssn, String firstName, String lastName) {
+        if (allowLooraUserModificaiton) {
+            createUserInLdap(looraUsername, ssn, firstName, lastName, employeesGroupUid);
+        }
+    }
+
+    /**
+     * @param ldapNameBySsn
+     * @param kunpoUsername
+     */
+    @Override
+    public void updateLooraLdapName(String ldapNameBySsn, String looraUsername) {
+        if (allowLooraUserModificaiton) {
+            doUpdateLdapNameAndMembership(ldapNameBySsn, looraUsername);
+        }
     }
 }
