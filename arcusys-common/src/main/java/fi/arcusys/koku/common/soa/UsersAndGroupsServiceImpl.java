@@ -82,7 +82,17 @@ public class UsersAndGroupsServiceImpl implements UsersAndGroupsService {
         if (username == null || username.isEmpty()) {
             return null;
         }
-        return userDao.getOrCreateUserByEmployeePortalName(username).getUid();
+        final fi.arcusys.koku.common.service.datamodel.User user = userDao.getUserByEmployeePortalNameOrNull(username);
+        if (user == null) {
+            final String ssnByLooraName = customerDao.getSsnByLooraName(username);
+            if (ssnByLooraName != null && !ssnByLooraName.isEmpty()) {
+                return userDao.getOrCreateUserByEmployeePortalName(username).getUid();
+            } else {
+                throw new IllegalArgumentException("Loora user '" + username + "' not found in ldap and DB.");
+            }
+        } else {
+            return user.getUid();
+        }
     }
 
     /**

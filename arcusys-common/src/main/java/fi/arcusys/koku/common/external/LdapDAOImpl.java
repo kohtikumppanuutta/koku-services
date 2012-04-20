@@ -573,9 +573,9 @@ public class LdapDAOImpl implements LdapDAO {
             final Role role = new Role();
             role.setRoleUid(entry.getKey());
             if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                role.setRoleName(entry.getKey());
-            } else {
                 role.setRoleName(entry.getValue());
+            } else {
+                role.setRoleName(entry.getKey());
             }
             result.add(role);
         }

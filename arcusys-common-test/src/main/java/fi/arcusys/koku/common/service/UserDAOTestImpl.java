@@ -1,5 +1,6 @@
 package fi.arcusys.koku.common.service;
 
+import fi.arcusys.koku.common.service.datamodel.User;
 import fi.arcusys.koku.common.service.impl.UserDAOImpl;
 
 /**
@@ -14,5 +15,23 @@ public class UserDAOTestImpl extends UserDAOImpl {
     protected boolean allowCreationByUid() {
         // TODO Auto-generated method stub
         return true;
+    }
+
+    /**
+     * @param kunpoName
+     * @return
+     */
+    @Override
+    public User getUserByCitizenPortalNameOrNull(String kunpoName) {
+        return getOrCreateUserByCitizenPortalName(kunpoName);
+    }
+
+    /**
+     * @param looraName
+     * @return
+     */
+    @Override
+    public User getUserByEmployeePortalNameOrNull(String looraName) {
+        return getOrCreateUserByEmployeePortalName(looraName);
     }
 }

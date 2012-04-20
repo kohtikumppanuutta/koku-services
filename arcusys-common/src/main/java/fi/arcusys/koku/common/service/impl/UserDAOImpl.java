@@ -120,4 +120,13 @@ public class UserDAOImpl extends AbstractEntityDAOImpl<User> implements UserDAO 
     public User getUserByCitizenPortalNameOrNull(String kunpoName) {
         return getUserByPortalName(kunpoName, "findUserByCitizenPortalName");
     }
+
+    /**
+     * @param looraName
+     * @return
+     */
+    @Override
+    public User getUserByEmployeePortalNameOrNull(String looraName) {
+        return getUserByPortalName(looraName, "findUserByEmployeePortalName");
+    }
 }
