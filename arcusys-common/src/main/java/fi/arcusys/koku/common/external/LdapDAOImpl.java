@@ -353,7 +353,7 @@ public class LdapDAOImpl implements LdapDAO {
                         final SearchResult searchResult = results.next();
                         final Attributes attributes = searchResult.getAttributes();
 
-                        result.put(getAttributeValue(attributes, groupUidAttribute), getAttributeValue(attributes, filterAttrName));
+                        result.put(getAttributeValue(attributes, groupUidAttribute), getAttributeValue(attributes, returnAttrValue));
                     }
                     return result;
                 } finally {
