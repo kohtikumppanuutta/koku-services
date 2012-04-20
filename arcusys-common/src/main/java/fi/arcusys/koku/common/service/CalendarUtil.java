@@ -26,7 +26,13 @@ public class CalendarUtil {
 	}
 
 	public static XMLGregorianCalendar getXmlDate(final Date date) {
-		return getXmlCalendar(date, new SetDateOnlyCalendar());
+		return getXmlCalendar(date, new SetDateOnlyCalendar() {
+            @Override
+            void setCalendar(Calendar calendar) {
+                calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+                super.setCalendar(calendar);
+            }
+		});
 	}
 
 	public static XMLGregorianCalendar getXmlTime(final Date date, final int minutes) {
