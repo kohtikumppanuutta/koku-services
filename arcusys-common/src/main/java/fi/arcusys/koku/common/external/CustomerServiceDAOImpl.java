@@ -26,6 +26,7 @@ import fi.koku.services.entity.customer.v1.ServiceFault;
 import fi.koku.services.entity.person.v1.Person;
 import fi.koku.services.entity.person.v1.PersonConstants;
 import fi.koku.services.entity.person.v1.PersonService;
+import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
  * DAO implementation for accessing external CustomerService.
@@ -49,8 +50,8 @@ public class CustomerServiceDAOImpl implements CustomerServiceDAO {
     
     private CustomerServicePortType customerService;
     
-    private String customerServiceUserUid;
-    private String customerServiceUserPwd;
+    private String customerServiceUserUid = KoKuPropertiesUtil.get("arcusys.customer.service.user.id");
+    private String customerServiceUserPwd = KoKuPropertiesUtil.get("arcusys.customer.service.password");
     private String customerServiceEndpoint;
     
     private PersonService personService;

@@ -16,6 +16,7 @@ import fi.arcusys.koku.common.soa.UsersAndGroupsService;
 import fi.arcusys.koku.tiva.service.KksCollectionsDAO;
 import fi.koku.services.entity.kks.v1.GroupsHelper;
 import fi.koku.services.entity.kks.v1.InfoGroup;
+import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
  * DAO interface implementation for accessing KKS-component in TIVA-Tietopyyntö functional area.
@@ -34,8 +35,8 @@ public class KksCollectionsDAOImpl implements KksCollectionsDAO {
     @EJB
     private UserDAO userDao;
     
-    private String uid;
-    private String pwd;
+    private String uid = KoKuPropertiesUtil.get("arcusys.kks.service.user.id");
+    private String pwd = KoKuPropertiesUtil.get("arcusys.kks.service.password");
     private String component;
     private String urlBase;
     
