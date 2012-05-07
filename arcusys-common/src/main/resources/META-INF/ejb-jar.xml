@@ -54,24 +54,6 @@
         <session>
             <ejb-name>LogServiceDAOImpl</ejb-name>
             <env-entry>
-                <env-entry-name>logUserUid</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.LogServiceDAOImpl</injection-target-class>
-                    <injection-target-name>logUserUid</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
-                <env-entry-name>logUserPwd</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.LogServiceDAOImpl</injection-target-class>
-                    <injection-target-name>logUserPwd</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
                 <env-entry-name>serviceEndpointBaseUrl</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>http://localhost:8080</env-entry-value>
@@ -82,64 +64,7 @@
             </env-entry>
         </session>
         <session>
-            <ejb-name>PyhServiceDAOImpl</ejb-name>
-            <env-entry>
-                <env-entry-name>customerServiceUserUid</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.PyhServiceDAOImpl</injection-target-class>
-                    <injection-target-name>customerServiceUserUid</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
-                <env-entry-name>customerServiceUserPwd</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.PyhServiceDAOImpl</injection-target-class>
-                    <injection-target-name>customerServiceUserPwd</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
-                <env-entry-name>communityServiceUserUid</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.PyhServiceDAOImpl</injection-target-class>
-                    <injection-target-name>communityServiceUserUid</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
-                <env-entry-name>communityServiceUserPwd</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.PyhServiceDAOImpl</injection-target-class>
-                    <injection-target-name>communityServiceUserPwd</injection-target-name>
-                </injection-target>
-            </env-entry>
-        </session>
-        <session>
             <ejb-name>CustomerServiceDAOImpl</ejb-name>
-            <env-entry>
-                <env-entry-name>customerServiceUserUid</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
-                    <injection-target-name>customerServiceUserUid</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
-                <env-entry-name>customerServiceUserPwd</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.common.external.CustomerServiceDAOImpl</injection-target-class>
-                    <injection-target-name>customerServiceUserPwd</injection-target-name>
-                </injection-target>
-            </env-entry>
             <env-entry>
                 <env-entry-name>customerServiceEndpoint</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>

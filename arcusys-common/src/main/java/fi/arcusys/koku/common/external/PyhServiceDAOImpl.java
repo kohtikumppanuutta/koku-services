@@ -20,6 +20,7 @@ import fi.arcusys.koku.common.soa.UserInfo;
 import fi.koku.services.entity.customer.v1.AuditInfoType;
 import fi.koku.services.entity.customer.v1.CustomerType;
 import fi.koku.services.entity.family.v1.FamilyService;
+import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
  * DAO implementation for accessing PYH-component interfaces: getting data about family relations.
@@ -43,10 +44,10 @@ public class PyhServiceDAOImpl implements PyhServiceDAO {
     
     private FamilyService familyService;
     
-    private String customerServiceUserUid;
-    private String customerServiceUserPwd;
-    private String communityServiceUserUid;
-    private String communityServiceUserPwd;
+    private String customerServiceUserUid = KoKuPropertiesUtil.get("arcusys.customer.service.user.id");
+    private String customerServiceUserPwd = KoKuPropertiesUtil.get("arcusys.customer.service.password");
+    private String communityServiceUserUid = KoKuPropertiesUtil.get("arcusys.community.service.user.id");
+    private String communityServiceUserPwd = KoKuPropertiesUtil.get("arcusys.community.service.password");
 
     @PostConstruct
     public void init() {

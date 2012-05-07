@@ -16,6 +16,7 @@ import fi.koku.services.utility.log.v1.AuditInfoType;
 import fi.koku.services.utility.log.v1.LogEntriesType;
 import fi.koku.services.utility.log.v1.LogEntryType;
 import fi.koku.services.utility.log.v1.LogServiceFactory;
+import fi.koku.settings.KoKuPropertiesUtil;
 
 /**
  * DAO implementation for acccessing LOK-component: logging important system events. 
@@ -28,8 +29,8 @@ public class LogServiceDAOImpl implements LogServiceDAO {
 
     private final static Logger logger = LoggerFactory.getLogger(LogServiceDAOImpl.class); 
     
-    private String logUserUid;
-    private String logUserPwd;
+    private String logUserUid = KoKuPropertiesUtil.get("arcusys.lok.service.user.id");
+    private String logUserPwd = KoKuPropertiesUtil.get("arcusys.lok.service.password");
     private String serviceEndpointBaseUrl;
     
     private LogServiceFactory logServiceFactory;
@@ -46,7 +47,7 @@ public class LogServiceDAOImpl implements LogServiceDAO {
         } catch (NamingException e) {
             logger.error(null, e);
         }
-
+        
         logServiceFactory = new LogServiceFactory(logUserUid, logUserPwd, serviceEndpointBaseUrl);
     }
     

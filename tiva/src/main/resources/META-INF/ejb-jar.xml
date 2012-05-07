@@ -8,24 +8,6 @@
         <session>
             <ejb-name>KksCollectionsDAOImpl</ejb-name>
             <env-entry>
-                <env-entry-name>uid</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.tiva.service.impl.KksCollectionsDAOImpl</injection-target-class>
-                    <injection-target-name>uid</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
-                <env-entry-name>pwd</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>changeit</env-entry-value>
-                <injection-target>
-                    <injection-target-class>fi.arcusys.koku.tiva.service.impl.KksCollectionsDAOImpl</injection-target-class>
-                    <injection-target-name>pwd</injection-target-name>
-                </injection-target>
-            </env-entry>
-            <env-entry>
                 <env-entry-name>component</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
                 <env-entry-value>tiva</env-entry-value>
